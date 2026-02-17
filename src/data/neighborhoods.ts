@@ -311,6 +311,62 @@ export const neighborhoods: NeighborhoodData[] = [
     ],
     zipCodes: ["33128", "33130", "33132"],
   },
+  {
+    slug: "edgewater",
+    name: "Edgewater",
+    tagline: "Bayfront Rising",
+    heroDescription:
+      "One of Miami's fastest-transforming neighborhoods. Edgewater offers direct Biscayne Bay views, a wave of new luxury towers, and a prime location between Downtown, Wynwood, and the Design District — at prices still below Brickell.",
+    overview:
+      "Edgewater occupies a narrow strip along Biscayne Bay between Downtown Miami and the Julia Tuttle Causeway (I-195). Once a quiet residential area of older low-rise apartments, it has become a development hotspot with over a dozen luxury condo towers completed or under construction since 2020. Margaret Pace Park provides bayfront green space, and the neighborhood's central location offers easy access to Wynwood's galleries, the Design District's luxury retail, and Downtown's cultural institutions.",
+    buyerProfile:
+      "Young professionals priced out of Brickell but wanting bay views and urban access. Investors attracted by appreciation potential in a neighborhood still mid-transformation. International buyers seeking pre-construction opportunities. Artists and creative professionals drawn to the Wynwood/Design District adjacency. First-time luxury buyers who want waterfront living under $1M.",
+    lifestyle:
+      "Morning runs along Margaret Pace Park with Biscayne Bay views, weekend brunch at Wynwood restaurants a short walk away, paddleboarding from the bayfront, and easy access to the Design District's flagship stores (Louis Vuitton, Dior, Hermès). The Adrienne Arsht Center is at the southern edge. Multiple new restaurants and retail are opening at the ground level of new towers. The vibe is younger and more casual than Brickell — think athleisure over business casual.",
+    priceRange: { low: "$350K", high: "$8M", median: "$620K" },
+    stats: {
+      medianPrice: "$620,000",
+      avgDom: "55",
+      pricePerSqft: "$550",
+      activeInventory: "650+",
+    },
+    faqs: [
+      {
+        question: "Is Edgewater a good investment in 2026?",
+        answer:
+          "Edgewater is arguably Miami's best value-to-upside ratio right now. Prices remain 15-25% below comparable Brickell units, yet the neighborhood shares the same bay views and is closer to Wynwood and the Design District. Multiple new luxury towers (Missoni Baia, Elysee, Aria Reserve) have delivered, establishing a higher price floor. Pre-construction projects continue to sell well. The neighborhood is still mid-transformation, which means appreciation potential remains as amenities and retail fill in.",
+      },
+      {
+        question: "What are the best buildings in Edgewater?",
+        answer:
+          "Top Edgewater buildings include Aria Reserve (two 60-story towers, the tallest waterfront residential twin towers in the U.S.), Missoni Baia (57 stories, interiors by the Italian fashion house), Elysee (57 stories, boutique with only 100 units), and Biscayne Beach (a completed luxury tower with resort-style amenities). For value, older renovated buildings like 1800 Biscayne Plaza offer lower price points with bay views.",
+      },
+      {
+        question: "What's the difference between Edgewater and Brickell?",
+        answer:
+          "Edgewater is more residential and emerging — fewer restaurants and retail at street level, but direct bay views and newer construction. Brickell is more established with dense retail (Brickell City Centre), corporate offices, and nightlife. Edgewater prices are 15-25% lower for comparable units. Edgewater is better positioned for Wynwood and the Design District; Brickell is better for the financial district and Coral Gables. Edgewater feels quieter and less congested.",
+      },
+      {
+        question: "Is Edgewater walkable?",
+        answer:
+          "Edgewater is becoming more walkable as new developments add ground-floor retail, but it's not yet at Brickell's level. Margaret Pace Park and the bayfront are excellent for walking and cycling. Biscayne Boulevard provides a commercial corridor. However, some blocks between towers are still undeveloped. The neighborhood is very bikeable and well-connected by rideshare. The Metromover doesn't reach Edgewater, but it's a short ride to Downtown stations.",
+      },
+      {
+        question: "What is the new construction pipeline in Edgewater?",
+        answer:
+          "Edgewater has one of the most active new construction pipelines in Miami. Major recent and upcoming projects include Aria Reserve (completed 2024, 782 units across two towers), Casa Bella by B&B Italia (completed 2024), Lofty Brickell (under construction), and multiple pre-construction projects along Biscayne Boulevard. The pipeline suggests continued densification and a maturing neighborhood with more amenities.",
+      },
+    ],
+    highlights: [
+      "Direct Biscayne Bay views at 15-25% below Brickell prices",
+      "Aria Reserve — tallest waterfront twin towers in the U.S.",
+      "Missoni Baia — luxury interiors by Italian fashion house",
+      "Margaret Pace Park — bayfront green space",
+      "Walking distance to Wynwood and Design District",
+      "Active new construction pipeline",
+    ],
+    zipCodes: ["33137", "33132"],
+  },
 ];
 
 export function getNeighborhoodBySlug(

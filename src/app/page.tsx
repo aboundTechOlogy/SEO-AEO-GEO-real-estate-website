@@ -16,7 +16,7 @@ const NEIGHBORHOODS = [
   { name: "Sunny Isles", tagline: "Florida's Riviera", slug: "sunny-isles" },
   { name: "Aventura", tagline: "Luxury Meets Convenience", slug: "aventura" },
   { name: "Wynwood", tagline: "Art & Culture District", slug: "wynwood" },
-  { name: "Coconut Creek", tagline: "Hidden Gem", slug: "coconut-creek" },
+  { name: "Edgewater", tagline: "Bayfront Rising", slug: "edgewater" },
 ];
 
 const FEATURED_DEVELOPMENTS = [
@@ -122,7 +122,7 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {NEIGHBORHOODS.map((n) => {
-              const hasPage = ["brickell", "coconut-grove", "miami-beach", "coral-gables", "key-biscayne", "downtown-miami"].includes(n.slug);
+              const hasPage = ["brickell", "coconut-grove", "miami-beach", "coral-gables", "key-biscayne", "downtown-miami", "edgewater"].includes(n.slug);
               const Wrapper = hasPage ? "a" : "div";
               const linkProps = hasPage ? { href: `/neighborhoods/${n.slug}` } : {};
               return (
