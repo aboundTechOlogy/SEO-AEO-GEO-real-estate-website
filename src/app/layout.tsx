@@ -38,8 +38,14 @@ export default function RootLayout({
       <body className="bg-neutral-950 text-white antialiased font-sans">
         <header className="fixed top-0 w-full z-50 bg-neutral-950/80 backdrop-blur-md border-b border-white/5">
           <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-            <a href="/" className="font-playfair text-xl tracking-wide">
-              ANDREW WHALEN
+            <a href="/" className="flex items-center gap-3">
+              <span className="text-sm font-light tracking-[0.35em] uppercase" style={{ fontFamily: 'var(--font-inter)' }}>
+                AW
+              </span>
+              <span className="w-px h-5 bg-white/20" />
+              <span className="text-sm font-light tracking-[0.25em] uppercase" style={{ fontFamily: 'var(--font-inter)' }}>
+                Andrew Whalen
+              </span>
             </a>
             <div className="hidden md:flex items-center gap-8 text-sm tracking-wider uppercase text-neutral-400">
               <a href="/#neighborhoods" className="hover:text-white transition-colors">
@@ -70,7 +76,9 @@ export default function RootLayout({
           <div className="max-w-7xl mx-auto px-6 py-12">
             <div className="grid md:grid-cols-3 gap-8 mb-8">
               <div>
-                <h3 className="font-playfair text-lg mb-3">Andrew Whalen</h3>
+                <p className="text-sm font-light tracking-[0.25em] uppercase mb-3" style={{ fontFamily: 'var(--font-inter)' }}>
+                  Andrew Whalen
+                </p>
                 <p className="text-sm text-neutral-400 leading-relaxed">
                   South Florida luxury real estate specialist. Your insider to
                   Miami&apos;s most prestigious neighborhoods and lifestyle.

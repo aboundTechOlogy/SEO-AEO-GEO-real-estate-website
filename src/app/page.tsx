@@ -61,31 +61,27 @@ export default function HomePage() {
         <div className="absolute inset-0 hero-gradient" />
 
         <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
-          <div className="gold-line mx-auto mb-8" />
+          {/* Minimal logo mark */}
+          <p className="text-sm font-light tracking-[0.4em] uppercase text-neutral-500 mb-8" style={{ fontFamily: 'var(--font-inter)' }}>
+            Andrew Whalen
+          </p>
           <h1 className="font-playfair text-5xl md:text-7xl font-light tracking-tight mb-6">
             South Florida
             <br />
-            <span className="italic text-amber-500">Luxury Living</span>
+            Luxury Real Estate
           </h1>
-          <p className="text-lg md:text-xl text-neutral-300 font-light max-w-2xl mx-auto mb-10 leading-relaxed">
-            Your insider guide to Miami&apos;s most prestigious neighborhoods,
-            new developments, and the high-status lifestyle that defines South
-            Florida.
+          <p className="text-lg text-neutral-400 font-light max-w-xl mx-auto mb-12 leading-relaxed">
+            New developments. Neighborhood intelligence. Lifestyle expertise.
           </p>
 
-          {/* Search Bar — Visual Only (Phase 0) */}
-          <div className="max-w-2xl mx-auto">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search luxury properties, neighborhoods, developments..."
-                className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-sm text-white placeholder:text-neutral-500 focus:outline-none focus:border-amber-600/50 transition-colors"
-                disabled
-              />
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-neutral-600 uppercase tracking-wider">
-                Coming Soon
-              </div>
-            </div>
+          {/* Goal-based CTA — Phase 3 will route to AI concierge */}
+          <div className="flex flex-wrap justify-center gap-3">
+            <a href="#neighborhoods" className="px-6 py-3 border border-white/10 hover:border-white/30 text-sm tracking-[0.15em] uppercase text-neutral-300 hover:text-white transition-all">
+              Explore
+            </a>
+            <a href="mailto:andrew@iamandrewwhalen.com" className="px-6 py-3 bg-white text-neutral-950 text-sm tracking-[0.15em] uppercase hover:bg-neutral-200 transition-all">
+              Get in Touch
+            </a>
           </div>
         </div>
 
@@ -242,6 +238,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
               <div className="gold-line mb-6" />
+              <p className="text-sm font-light tracking-[0.25em] uppercase text-neutral-500 mb-2" style={{ fontFamily: 'var(--font-inter)' }}>About</p>
               <h2 className="font-playfair text-4xl mb-6">
                 Andrew Whalen
               </h2>
