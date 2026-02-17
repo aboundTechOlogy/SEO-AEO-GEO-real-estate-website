@@ -95,8 +95,9 @@ export default function RootLayout({
               </div>
             </div>
 
-            {/* MLS Compliance Footer — Required for Bridge API Approval */}
+            {/* MLS Compliance Footer — Required for Bridge API / Miami MLS Approval */}
             <div className="border-t border-white/5 pt-8 text-xs text-neutral-500 space-y-3">
+              {/* NAPW — Broker Name, Address, Phone */}
               <div className="flex items-start gap-3">
                 <div>
                   <p className="font-semibold text-neutral-400">
@@ -106,6 +107,18 @@ export default function RootLayout({
                   <p>Phone: (305) 420-6613</p>
                 </div>
               </div>
+
+              {/* SEFMLS Copyright — Exact language required by Schedule A §10 and Schedule C §3 */}
+              <p>
+                Copyright Southeast Florida MLS a/k/a SEFMLS ©{" "}
+                {new Date().getFullYear()}. Accuracy of listing information is
+                not guaranteed. Listing information is provided for personal
+                consumer, non-commercial use, solely to identify potential
+                properties for potential purchase. All other use is strictly
+                prohibited and may be a violation of federal and state law.
+              </p>
+
+              {/* MLS Disclaimer — Required by IDX agreement */}
               <p>
                 The data relating to real estate for sale on this website comes
                 in part from the participating associations of the Miami
@@ -115,6 +128,13 @@ export default function RootLayout({
                 than to identify prospective properties consumers may be
                 interested in purchasing. Powered by Bridge Interactive.
               </p>
+
+              {/* Data Reliability Notice — Schedule C §2 */}
+              <p>
+                MLS data is deemed reliable but is not guaranteed accurate by
+                MIAMI REALTORS®.
+              </p>
+
               <p>
                 © {new Date().getFullYear()} Andrew Whalen | LoKation Real
                 Estate. All rights reserved.
@@ -125,6 +145,12 @@ export default function RootLayout({
                   className="hover:text-neutral-300 transition-colors"
                 >
                   Privacy Policy
+                </a>
+                <a
+                  href="/dmca"
+                  className="hover:text-neutral-300 transition-colors"
+                >
+                  DMCA
                 </a>
                 <a
                   href="/terms"

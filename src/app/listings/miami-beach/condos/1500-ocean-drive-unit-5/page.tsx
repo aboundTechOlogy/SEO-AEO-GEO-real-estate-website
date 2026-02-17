@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { mockProperty } from "./mockData";
+import { mockProperty, OUR_BROKERAGE } from "./mockData";
 
 export const metadata: Metadata = {
   title: `${mockProperty.UnparsedAddress} | $${mockProperty.ListPrice.toLocaleString()} | Andrew Whalen`,
@@ -44,6 +44,17 @@ export default function PropertyDetailPage() {
               </p>
             </div>
           </div>
+
+          {/* Brokerage Attribution — Required by Schedule A §9 for non-LoKation listings */}
+          {p.ListOfficeName !== OUR_BROKERAGE && (
+            <div className="mb-6 p-3 border border-white/5 bg-white/[0.02] rounded-sm text-sm text-neutral-300">
+              This listing is courtesy of{" "}
+              <span className="text-white font-medium">{p.ListOfficeName}</span>
+              {p.ListOfficePhone && (
+                <span className="text-neutral-400"> · {p.ListOfficePhone}</span>
+              )}
+            </div>
+          )}
 
           {/* Image Gallery Placeholder */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-12">

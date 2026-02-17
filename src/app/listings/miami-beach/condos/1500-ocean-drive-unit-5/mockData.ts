@@ -74,9 +74,12 @@ export const mockProperty = {
     },
   ],
 
-  // Listing Agent (Andrew)
-  ListAgentFullName: "Andrew Whalen",
-  ListAgentEmail: "andrew@iamandrewwhalen.com",
-  ListOfficeName: "LoKation Real Estate",
-  ListOfficePhone: "305-420-6613",
+  // Listing Agent (NOT our brokerage — demonstrates courtesy attribution)
+  ListAgentFullName: "Jane Smith",
+  ListAgentEmail: "jane@otherbrokerage.com",
+  ListOfficeName: "Prestige Realty Group",
+  ListOfficePhone: "305-555-0100",
 };
+
+// Our brokerage name — used for attribution logic
+export const OUR_BROKERAGE = "LoKation Real Estate";
