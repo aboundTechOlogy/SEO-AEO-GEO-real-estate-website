@@ -45,17 +45,6 @@ export default function PropertyDetailPage() {
             </div>
           </div>
 
-          {/* Brokerage Attribution — Required by Schedule A §9 for non-LoKation listings */}
-          {p.ListOfficeName !== OUR_BROKERAGE && (
-            <div className="mb-6 p-3 border border-white/5 bg-white/[0.02] rounded-sm text-sm text-neutral-300">
-              This listing is courtesy of{" "}
-              <span className="text-white font-medium">{p.ListOfficeName}</span>
-              {p.ListOfficePhone && (
-                <span className="text-neutral-400"> · {p.ListOfficePhone}</span>
-              )}
-            </div>
-          )}
-
           {/* Image Gallery Placeholder */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-12">
             {p.Media.map((m, i) => (
@@ -164,6 +153,20 @@ export default function PropertyDetailPage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Listing-specific MLS disclaimer with listing agent attribution */}
+      <section className="px-6 pb-8">
+        <div className="max-w-7xl mx-auto border-t border-white/5 pt-6">
+          <p className="text-xs text-neutral-600 leading-relaxed">
+            The multiple listing information is provided by the Miami Association of Realtors® from a copyrighted compilation of listings. The compilation of listings and each individual listing are © 2023–present Miami Association of Realtors®. All Rights Reserved. The information provided is for consumers&apos; personal, noncommercial use and may not be used for any purpose other than to identify prospective properties consumers may be interested in purchasing. All properties are subject to prior sale or withdrawal. All information provided is deemed reliable but is not guaranteed accurate, and should be independently verified.
+            {p.ListOfficeName !== OUR_BROKERAGE && (
+              <> Listing courtesy of: {p.ListOfficeName}
+                {p.ListOfficePhone && <>, tel: {p.ListOfficePhone}</>}.
+              </>
+            )}
+          </p>
         </div>
       </section>
 
