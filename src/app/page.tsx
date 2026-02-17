@@ -74,14 +74,23 @@ export default function HomePage() {
             New developments. Neighborhood intelligence. Lifestyle expertise.
           </p>
 
-          {/* Goal-based CTA — Phase 3 will route to AI concierge */}
+          {/* Goal Selection — Routes to AI concierge in Phase 3 */}
+          <p className="text-sm text-neutral-500 mb-4">
+            Start your AI-guided journey by selecting your real estate goal.
+          </p>
           <div className="flex flex-wrap justify-center gap-3">
-            <a href="#neighborhoods" className="px-6 py-3 border border-white/10 hover:border-white/30 text-sm tracking-[0.15em] uppercase text-neutral-300 hover:text-white transition-all">
-              Explore
-            </a>
-            <a href="mailto:andrew@iamandrewwhalen.com" className="px-6 py-3 bg-white text-neutral-950 text-sm tracking-[0.15em] uppercase hover:bg-neutral-200 transition-all">
-              Get in Touch
-            </a>
+            <button className="px-8 py-3 border border-white/20 hover:border-white/50 text-sm tracking-[0.15em] uppercase text-neutral-300 hover:text-white hover:bg-white/5 transition-all">
+              Buy
+            </button>
+            <button className="px-8 py-3 border border-white/20 hover:border-white/50 text-sm tracking-[0.15em] uppercase text-neutral-300 hover:text-white hover:bg-white/5 transition-all">
+              Sell
+            </button>
+            <button className="px-8 py-3 border border-white/20 hover:border-white/50 text-sm tracking-[0.15em] uppercase text-neutral-300 hover:text-white hover:bg-white/5 transition-all">
+              Sell & Buy
+            </button>
+            <button className="px-8 py-3 border border-white/20 hover:border-white/50 text-sm tracking-[0.15em] uppercase text-neutral-300 hover:text-white hover:bg-white/5 transition-all">
+              Invest
+            </button>
           </div>
         </div>
 
