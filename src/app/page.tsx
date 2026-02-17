@@ -134,14 +134,14 @@ export default function HomePage() {
                 <Wrapper
                   key={n.name}
                   {...linkProps}
-                  className="group p-6 border border-white/5 hover:border-amber-600/30 bg-white/[0.02] hover:bg-white/[0.04] transition-all cursor-pointer rounded-sm block"
+                  className="group p-6 border border-white/5 hover:border-white/20 bg-white/[0.02] hover:bg-white/[0.04] transition-all cursor-pointer rounded-sm block"
                 >
-                  <h3 className="font-playfair text-xl mb-1 group-hover:text-amber-500 transition-colors">
+                  <h3 className="font-playfair text-xl mb-1 group-hover:text-white transition-colors">
                     {n.name}
                   </h3>
                   <p className="text-sm text-neutral-500">{n.tagline}</p>
                   {hasPage && (
-                    <p className="text-xs text-amber-600/60 mt-2 uppercase tracking-wider">
+                    <p className="text-xs text-neutral-500 mt-2 uppercase tracking-wider">
                       View Guide →
                     </p>
                   )}
@@ -171,7 +171,7 @@ export default function HomePage() {
             {FEATURED_DEVELOPMENTS.map((d) => (
               <div
                 key={d.name}
-                className="group p-8 border border-white/5 hover:border-amber-600/20 bg-neutral-950 transition-all rounded-sm"
+                className="group p-8 border border-white/5 hover:border-white/20 bg-neutral-950 transition-all rounded-sm"
               >
                 {/* Placeholder for development image */}
                 <div className="w-full h-48 bg-neutral-800 rounded-sm mb-6 flex items-center justify-center">
@@ -181,12 +181,12 @@ export default function HomePage() {
                 </div>
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <h3 className="font-playfair text-2xl group-hover:text-amber-500 transition-colors">
+                    <h3 className="font-playfair text-2xl group-hover:text-white transition-colors">
                       {d.name}
                     </h3>
                     <p className="text-sm text-neutral-500">{d.location}</p>
                   </div>
-                  <span className="text-xs uppercase tracking-wider text-amber-600 bg-amber-600/10 px-3 py-1 rounded-full">
+                  <span className="text-xs uppercase tracking-wider text-neutral-400 bg-white/5 px-3 py-1 rounded-full">
                     {d.status}
                   </span>
                 </div>
@@ -231,7 +231,7 @@ export default function HomePage() {
                 <p className="text-sm text-neutral-500 uppercase tracking-wider mb-2">
                   {stat.label}
                 </p>
-                <p className="font-playfair text-4xl text-amber-500 mb-1">
+                <p className="font-playfair text-4xl text-white mb-1">
                   {stat.value}
                 </p>
                 <p className="text-sm text-neutral-400">{stat.change}</p>
@@ -293,7 +293,7 @@ export default function HomePage() {
           </p>
           <a
             href="mailto:andrew@iamandrewwhalen.com"
-            className="inline-block px-8 py-3 bg-amber-600 hover:bg-amber-500 text-white transition-colors rounded-sm tracking-wider uppercase text-sm"
+            className="inline-block px-8 py-3 bg-white hover:bg-neutral-200 text-neutral-950 transition-colors rounded-sm tracking-wider uppercase text-sm"
           >
             Get in Touch
           </a>

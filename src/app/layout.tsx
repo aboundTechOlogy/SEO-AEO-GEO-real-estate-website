@@ -62,7 +62,7 @@ export default function RootLayout({
               </a>
               <a
                 href="/#contact"
-                className="px-5 py-2 bg-amber-600 text-white hover:bg-amber-500 transition-colors rounded-sm"
+                className="px-5 py-2 bg-white text-neutral-950 hover:bg-neutral-200 transition-colors rounded-sm"
               >
                 Contact
               </a>

@@ -24,7 +24,7 @@ export default function PropertyDetailPage() {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
             <div>
-              <p className="text-amber-500 text-sm uppercase tracking-wider mb-2">
+              <p className="text-white text-sm uppercase tracking-wider mb-2">
                 {p.PropertySubType} · {p.City}
               </p>
               <h1 className="font-playfair text-4xl md:text-5xl mb-2">
@@ -36,7 +36,7 @@ export default function PropertyDetailPage() {
               </p>
             </div>
             <div className="text-right">
-              <p className="font-playfair text-4xl text-amber-500">
+              <p className="font-playfair text-4xl text-white">
                 {formatPrice(p.ListPrice)}
               </p>
               <p className="text-sm text-neutral-500">
@@ -88,7 +88,7 @@ export default function PropertyDetailPage() {
                   { label: "Year Built", value: p.YearBuilt },
                 ].map((s) => (
                   <div key={s.label} className="text-center">
-                    <p className="font-playfair text-2xl text-amber-500">
+                    <p className="font-playfair text-2xl text-white">
                       {s.value}
                     </p>
                     <p className="text-xs text-neutral-500 uppercase tracking-wider">
@@ -154,7 +154,7 @@ export default function PropertyDetailPage() {
                 </div>
                 <a
                   href={`mailto:${p.ListAgentEmail}?subject=Inquiry: ${p.UnparsedAddress}`}
-                  className="block w-full text-center px-6 py-3 bg-amber-600 hover:bg-amber-500 text-white transition-colors rounded-sm text-sm uppercase tracking-wider"
+                  className="block w-full text-center px-6 py-3 bg-white hover:bg-neutral-200 text-neutral-950 transition-colors rounded-sm text-sm uppercase tracking-wider"
                 >
                   Schedule a Viewing
                 </a>

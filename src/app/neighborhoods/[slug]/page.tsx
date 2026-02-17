@@ -39,7 +39,7 @@ export default async function NeighborhoodPage({ params }: Props) {
       <section className="px-6 py-16 border-b border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="gold-line mb-6" />
-          <p className="text-amber-500 text-sm uppercase tracking-wider mb-3">
+          <p className="text-neutral-500 text-sm uppercase tracking-wider mb-3">
             Neighborhood Guide
           </p>
           <h1 className="font-playfair text-5xl md:text-6xl mb-3">
@@ -76,7 +76,7 @@ export default async function NeighborhoodPage({ params }: Props) {
             <tbody className="text-neutral-200">
               <tr className="border-b border-white/5">
                 <td className="py-3">Median Price</td>
-                <td className="py-3 text-right font-medium text-amber-500">
+                <td className="py-3 text-right font-medium text-white">
                   {n.stats.medianPrice}
                 </td>
               </tr>
@@ -190,7 +190,7 @@ export default async function NeighborhoodPage({ params }: Props) {
           </p>
           <a
             href={`mailto:andrew@iamandrewwhalen.com?subject=Interested in ${n.name} Real Estate`}
-            className="inline-block px-8 py-3 bg-amber-600 hover:bg-amber-500 text-white transition-colors rounded-sm tracking-wider uppercase text-sm"
+            className="inline-block px-8 py-3 bg-white hover:bg-neutral-200 text-neutral-950 transition-colors rounded-sm tracking-wider uppercase text-sm"
           >
             Get in Touch
           </a>

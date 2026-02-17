@@ -47,9 +47,9 @@ html {
   );
 }
 
-/* Gold accent line */
+/* Accent line */
 .gold-line {
   width: 60px;
-  height: 2px;
-  background: linear-gradient(90deg, #d97706, #b45309);
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
 }
