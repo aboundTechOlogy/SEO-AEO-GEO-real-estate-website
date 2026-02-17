@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { mockProperty, OUR_BROKERAGE } from "./mockData";
+import { mockProperty, OUR_BROKERAGE, SITE_AGENT } from "./mockData";
 
 export const metadata: Metadata = {
   title: `${mockProperty.UnparsedAddress} | $${mockProperty.ListPrice.toLocaleString()} | Andrew Whalen`,
@@ -139,21 +139,24 @@ export default function PropertyDetailPage() {
               </div>
             </div>
 
-            {/* Sidebar — Agent Card */}
+            {/* Sidebar — Your Agent Card (all inquiries route to Andrew) */}
             <div>
               <div className="sticky top-24 p-6 border border-white/5 bg-white/[0.02] rounded-sm">
+                <p className="text-xs text-neutral-500 uppercase tracking-wider mb-3">
+                  Your Agent
+                </p>
                 <h3 className="font-playfair text-xl mb-1">
-                  {p.ListAgentFullName}
+                  {SITE_AGENT.name}
                 </h3>
                 <p className="text-sm text-neutral-500 mb-4">
-                  {p.ListOfficeName}
+                  {SITE_AGENT.title} · {SITE_AGENT.brokerage}
                 </p>
                 <div className="space-y-2 text-sm text-neutral-400 mb-6">
-                  <p>{p.ListAgentEmail}</p>
-                  <p>{p.ListOfficePhone}</p>
+                  <p>{SITE_AGENT.email}</p>
+                  <p>{SITE_AGENT.phone}</p>
                 </div>
                 <a
-                  href={`mailto:${p.ListAgentEmail}?subject=Inquiry: ${p.UnparsedAddress}`}
+                  href={`mailto:${SITE_AGENT.email}?subject=Inquiry: ${p.UnparsedAddress}`}
                   className="block w-full text-center px-6 py-3 bg-white hover:bg-neutral-200 text-neutral-950 transition-colors rounded-sm text-sm uppercase tracking-wider"
                 >
                   Schedule a Viewing

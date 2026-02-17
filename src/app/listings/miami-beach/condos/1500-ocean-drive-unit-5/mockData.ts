@@ -83,3 +83,12 @@ export const mockProperty = {
 
 // Our brokerage name — used for attribution logic
 export const OUR_BROKERAGE = "LoKation Real Estate";
+
+// Site agent — all inquiries route to Andrew
+export const SITE_AGENT = {
+  name: "Andrew Whalen",
+  title: "Realtor®",
+  brokerage: "LoKation Real Estate",
+  email: "andrew@iamandrewwhalen.com",
+  phone: "(305) 420-6613",
+};
