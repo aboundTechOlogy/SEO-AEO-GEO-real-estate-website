@@ -111,7 +111,7 @@ export default function RootLayout({
                 <img
                   src="/lokation-logo-white.png"
                   alt="LoKation Real Estate"
-                  className="h-6 w-auto opacity-70 mt-0.5"
+                  className="h-8 w-auto opacity-80"
                 />
                 <div>
                   <p>1900 N Bayshore Dr, Suite 120, Miami, FL 33132</p>
