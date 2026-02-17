@@ -107,11 +107,13 @@ export default function RootLayout({
             {/* MLS Compliance Footer — Required for Bridge API / Miami MLS Approval */}
             <div className="border-t border-white/5 pt-8 text-xs text-neutral-500 space-y-3">
               {/* NAPW — Broker Name, Address, Phone */}
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-4">
+                <img
+                  src="/lokation-logo-white.png"
+                  alt="LoKation Real Estate"
+                  className="h-6 w-auto opacity-70 mt-0.5"
+                />
                 <div>
-                  <p className="font-semibold text-neutral-400">
-                    LoKation Real Estate
-                  </p>
                   <p>1900 N Bayshore Dr, Suite 120, Miami, FL 33132</p>
                   <p>Phone: (305) 420-6613</p>
                 </div>
