@@ -79,12 +79,13 @@ export default function RootLayout({
               <div>
                 <h3 className="font-playfair text-lg mb-3">Neighborhoods</h3>
                 <ul className="text-sm text-neutral-400 space-y-1">
-                  <li>Downtown Miami</li>
-                  <li>Coconut Grove</li>
-                  <li>Brickell</li>
-                  <li>Miami Beach</li>
-                  <li>Coral Gables</li>
-                  <li>Key Biscayne</li>
+                  <li><a href="/neighborhoods/downtown-miami" className="hover:text-white transition-colors">Downtown Miami</a></li>
+                  <li><a href="/neighborhoods/coconut-grove" className="hover:text-white transition-colors">Coconut Grove</a></li>
+                  <li><a href="/neighborhoods/brickell" className="hover:text-white transition-colors">Brickell</a></li>
+                  <li><a href="/neighborhoods/miami-beach" className="hover:text-white transition-colors">Miami Beach</a></li>
+                  <li><a href="/neighborhoods/coral-gables" className="hover:text-white transition-colors">Coral Gables</a></li>
+                  <li><a href="/neighborhoods/key-biscayne" className="hover:text-white transition-colors">Key Biscayne</a></li>
+                  <li><a href="/neighborhoods/edgewater" className="hover:text-white transition-colors">Edgewater</a></li>
                 </ul>
               </div>
               <div>
