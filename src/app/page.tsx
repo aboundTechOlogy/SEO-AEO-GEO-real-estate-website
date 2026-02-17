@@ -7,16 +7,16 @@ export const metadata: Metadata = {
 };
 
 const NEIGHBORHOODS = [
-  { name: "Downtown Miami", tagline: "The New Urban Core" },
-  { name: "Coconut Grove", tagline: "Bohemian Meets Bayfront" },
-  { name: "Brickell", tagline: "Manhattan of the South" },
-  { name: "Miami Beach", tagline: "Iconic Oceanfront Living" },
-  { name: "Coral Gables", tagline: "The City Beautiful" },
-  { name: "Key Biscayne", tagline: "Island Paradise" },
-  { name: "Sunny Isles", tagline: "Florida's Riviera" },
-  { name: "Aventura", tagline: "Luxury Meets Convenience" },
-  { name: "Wynwood", tagline: "Art & Culture District" },
-  { name: "Coconut Creek", tagline: "Hidden Gem" },
+  { name: "Downtown Miami", tagline: "The New Urban Core", slug: "downtown-miami" },
+  { name: "Coconut Grove", tagline: "Bohemian Meets Bayfront", slug: "coconut-grove" },
+  { name: "Brickell", tagline: "Manhattan of the South", slug: "brickell" },
+  { name: "Miami Beach", tagline: "Iconic Oceanfront Living", slug: "miami-beach" },
+  { name: "Coral Gables", tagline: "The City Beautiful", slug: "coral-gables" },
+  { name: "Key Biscayne", tagline: "Island Paradise", slug: "key-biscayne" },
+  { name: "Sunny Isles", tagline: "Florida's Riviera", slug: "sunny-isles" },
+  { name: "Aventura", tagline: "Luxury Meets Convenience", slug: "aventura" },
+  { name: "Wynwood", tagline: "Art & Culture District", slug: "wynwood" },
+  { name: "Coconut Creek", tagline: "Hidden Gem", slug: "coconut-creek" },
 ];
 
 const FEATURED_DEVELOPMENTS = [
@@ -121,17 +121,28 @@ export default function HomePage() {
           </p>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {NEIGHBORHOODS.map((n) => (
-              <div
-                key={n.name}
-                className="group p-6 border border-white/5 hover:border-amber-600/30 bg-white/[0.02] hover:bg-white/[0.04] transition-all cursor-pointer rounded-sm"
-              >
-                <h3 className="font-playfair text-xl mb-1 group-hover:text-amber-500 transition-colors">
-                  {n.name}
-                </h3>
-                <p className="text-sm text-neutral-500">{n.tagline}</p>
-              </div>
-            ))}
+            {NEIGHBORHOODS.map((n) => {
+              const hasPage = ["brickell", "coconut-grove", "miami-beach", "coral-gables", "key-biscayne", "downtown-miami"].includes(n.slug);
+              const Wrapper = hasPage ? "a" : "div";
+              const linkProps = hasPage ? { href: `/neighborhoods/${n.slug}` } : {};
+              return (
+                <Wrapper
+                  key={n.name}
+                  {...linkProps}
+                  className="group p-6 border border-white/5 hover:border-amber-600/30 bg-white/[0.02] hover:bg-white/[0.04] transition-all cursor-pointer rounded-sm block"
+                >
+                  <h3 className="font-playfair text-xl mb-1 group-hover:text-amber-500 transition-colors">
+                    {n.name}
+                  </h3>
+                  <p className="text-sm text-neutral-500">{n.tagline}</p>
+                  {hasPage && (
+                    <p className="text-xs text-amber-600/60 mt-2 uppercase tracking-wider">
+                      View Guide →
+                    </p>
+                  )}
+                </Wrapper>
+              );
+            })}
           </div>
         </div>
       </section>
