@@ -54,8 +54,8 @@ export default function RootLayout({
               <a href="/#developments" className="hover:text-white transition-colors">
                 New Developments
               </a>
-              <a href="/#market" className="hover:text-white transition-colors">
-                Market Insights
+              <a href="/blog" className="hover:text-white transition-colors">
+                Insights
               </a>
               <a href="/#about" className="hover:text-white transition-colors">
                 About
