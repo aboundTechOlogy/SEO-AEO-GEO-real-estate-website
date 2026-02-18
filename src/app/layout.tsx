@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
+import NavDropdown from "@/components/NavDropdown";
+import MobileMenu from "@/components/MobileMenu";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -28,6 +30,25 @@ export const metadata: Metadata = {
   },
 };
 
+const CONDO_NEIGHBORHOODS = [
+  { label: "Brickell", href: "/luxury-condos/brickell/" },
+  { label: "Miami Beach", href: "/luxury-condos/miami-beach/" },
+  { label: "Coconut Grove", href: "/luxury-condos/coconut-grove/" },
+  { label: "Coral Gables", href: "/luxury-condos/coral-gables/" },
+  { label: "Sunny Isles", href: "/luxury-condos/sunny-isles/" },
+  { label: "Edgewater", href: "/luxury-condos/edgewater/" },
+];
+
+const NEIGHBORHOOD_GUIDES = [
+  { label: "Brickell", href: "/neighborhoods/brickell/" },
+  { label: "Miami Beach", href: "/neighborhoods/miami-beach/" },
+  { label: "Coconut Grove", href: "/neighborhoods/coconut-grove/" },
+  { label: "Coral Gables", href: "/neighborhoods/coral-gables/" },
+  { label: "Key Biscayne", href: "/neighborhoods/key-biscayne/" },
+  { label: "Downtown Miami", href: "/neighborhoods/downtown-miami/" },
+  { label: "Edgewater", href: "/neighborhoods/edgewater/" },
+];
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -36,9 +57,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <body className="bg-neutral-950 text-white antialiased font-sans">
-        <header className="fixed top-0 w-full z-50 bg-neutral-950/80 backdrop-blur-md border-b border-white/5">
+        <header className="fixed top-0 w-full z-50 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-white/5">
           <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-            <a href="/" className="flex items-center gap-3">
+            {/* Left: Logo */}
+            <a href="/" className="flex items-center gap-3 shrink-0">
               <span className="text-sm font-light tracking-[0.35em] uppercase" style={{ fontFamily: 'var(--font-inter)' }}>
                 AW
               </span>
@@ -47,25 +69,46 @@ export default function RootLayout({
                 Andrew Whalen
               </span>
             </a>
-            <div className="hidden md:flex items-center gap-8 text-sm tracking-wider uppercase text-neutral-400">
-              <a href="/#neighborhoods" className="hover:text-white transition-colors">
-                Neighborhoods
+
+            {/* Center: Nav Links */}
+            <div className="hidden md:flex items-center gap-7 text-sm tracking-wider uppercase">
+              <NavDropdown
+                label="Luxury Condos"
+                items={CONDO_NEIGHBORHOODS}
+                allLabel="All Buildings"
+                allHref="/luxury-condos/"
+              />
+              <NavDropdown
+                label="Neighborhoods"
+                items={NEIGHBORHOOD_GUIDES}
+                allLabel="All Neighborhoods"
+                allHref="/neighborhoods/"
+              />
+              <a href="/new-construction/" className="text-neutral-400 hover:text-white transition-colors">
+                New Construction
               </a>
-              <a href="/#developments" className="hover:text-white transition-colors">
-                New Developments
-              </a>
-              <a href="/blog" className="hover:text-white transition-colors">
-                Insights
-              </a>
-              <a href="/#about" className="hover:text-white transition-colors">
+              <a href="/about/" className="text-neutral-400 hover:text-white transition-colors">
                 About
               </a>
-              <a
-                href="/#contact"
-                className="px-5 py-2 bg-white text-neutral-950 hover:bg-neutral-200 transition-colors rounded-sm"
-              >
+              <a href="/contact/" className="text-neutral-400 hover:text-white transition-colors">
                 Contact
               </a>
+            </div>
+
+            {/* Right: Search + LoKation + Mobile */}
+            <div className="flex items-center gap-4 shrink-0">
+              <a href="/search/" className="hidden md:block text-neutral-400 hover:text-white transition-colors" aria-label="Search">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                </svg>
+              </a>
+              <span className="hidden md:block w-px h-5 bg-white/10" />
+              <img
+                src="/lokation-logo-white.png"
+                alt="LoKation Real Estate"
+                className="hidden md:block h-5 w-auto opacity-60"
+              />
+              <MobileMenu />
             </div>
           </nav>
         </header>
@@ -73,34 +116,45 @@ export default function RootLayout({
         <main className="min-h-screen">{children}</main>
 
         <footer className="bg-neutral-900 border-t border-white/5">
-          <div className="max-w-7xl mx-auto px-6 py-12">
-            <div className="grid md:grid-cols-3 gap-8 mb-8">
+          <div className="max-w-7xl mx-auto px-6 py-16">
+            {/* 4-Column Footer */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
               <div>
-                <p className="text-sm font-light tracking-[0.25em] uppercase mb-3" style={{ fontFamily: 'var(--font-inter)' }}>
-                  Andrew Whalen
-                </p>
-                <p className="text-sm text-neutral-400 leading-relaxed">
-                  South Florida luxury real estate specialist. Your insider to
-                  Miami&apos;s most prestigious neighborhoods and lifestyle.
-                </p>
-              </div>
-              <div>
-                <h3 className="font-playfair text-lg mb-3">Neighborhoods</h3>
-                <ul className="text-sm text-neutral-400 space-y-1">
-                  <li><a href="/neighborhoods/downtown-miami" className="hover:text-white transition-colors">Downtown Miami</a></li>
-                  <li><a href="/neighborhoods/coconut-grove" className="hover:text-white transition-colors">Coconut Grove</a></li>
-                  <li><a href="/neighborhoods/brickell" className="hover:text-white transition-colors">Brickell</a></li>
-                  <li><a href="/neighborhoods/miami-beach" className="hover:text-white transition-colors">Miami Beach</a></li>
-                  <li><a href="/neighborhoods/coral-gables" className="hover:text-white transition-colors">Coral Gables</a></li>
-                  <li><a href="/neighborhoods/key-biscayne" className="hover:text-white transition-colors">Key Biscayne</a></li>
-                  <li><a href="/neighborhoods/edgewater" className="hover:text-white transition-colors">Edgewater</a></li>
+                <h3 className="text-sm uppercase tracking-wider text-neutral-500 mb-4">Explore</h3>
+                <ul className="text-sm text-neutral-400 space-y-2">
+                  <li><a href="/luxury-condos/" className="hover:text-white transition-colors">Luxury Condos</a></li>
+                  <li><a href="/new-construction/" className="hover:text-white transition-colors">New Construction</a></li>
+                  <li><a href="/search/" className="hover:text-white transition-colors">Search Properties</a></li>
+                  <li><a href="/blog/" className="hover:text-white transition-colors">Market Insights</a></li>
                 </ul>
               </div>
               <div>
-                <h3 className="font-playfair text-lg mb-3">Contact</h3>
-                <p className="text-sm text-neutral-400">
-                  andrew@iamandrewwhalen.com
-                </p>
+                <h3 className="text-sm uppercase tracking-wider text-neutral-500 mb-4">Neighborhoods</h3>
+                <ul className="text-sm text-neutral-400 space-y-2">
+                  <li><a href="/neighborhoods/brickell/" className="hover:text-white transition-colors">Brickell</a></li>
+                  <li><a href="/neighborhoods/miami-beach/" className="hover:text-white transition-colors">Miami Beach</a></li>
+                  <li><a href="/neighborhoods/coconut-grove/" className="hover:text-white transition-colors">Coconut Grove</a></li>
+                  <li><a href="/neighborhoods/coral-gables/" className="hover:text-white transition-colors">Coral Gables</a></li>
+                  <li><a href="/neighborhoods/key-biscayne/" className="hover:text-white transition-colors">Key Biscayne</a></li>
+                  <li><a href="/neighborhoods/downtown-miami/" className="hover:text-white transition-colors">Downtown Miami</a></li>
+                  <li><a href="/neighborhoods/edgewater/" className="hover:text-white transition-colors">Edgewater</a></li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-sm uppercase tracking-wider text-neutral-500 mb-4">Company</h3>
+                <ul className="text-sm text-neutral-400 space-y-2">
+                  <li><a href="/about/" className="hover:text-white transition-colors">About</a></li>
+                  <li><a href="/contact/" className="hover:text-white transition-colors">Contact</a></li>
+                  <li><a href="/blog/" className="hover:text-white transition-colors">Insights</a></li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-sm uppercase tracking-wider text-neutral-500 mb-4">Legal</h3>
+                <ul className="text-sm text-neutral-400 space-y-2">
+                  <li><a href="/privacy/" className="hover:text-white transition-colors">Privacy Policy</a></li>
+                  <li><a href="/terms/" className="hover:text-white transition-colors">Terms</a></li>
+                  <li><a href="/dmca/" className="hover:text-white transition-colors">DMCA</a></li>
+                </ul>
               </div>
             </div>
 

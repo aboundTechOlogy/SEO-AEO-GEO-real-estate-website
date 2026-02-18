@@ -16,6 +16,7 @@ export interface NeighborhoodData {
   faqs: { question: string; answer: string }[];
   highlights: string[];
   zipCodes: string[];
+  hasGuidePage?: boolean;
 }
 
 export const neighborhoods: NeighborhoodData[] = [
@@ -74,6 +75,7 @@ export const neighborhoods: NeighborhoodData[] = [
       "Mandarin Oriental on Brickell Key",
     ],
     zipCodes: ["33129", "33130", "33131"],
+    hasGuidePage: true,
   },
   {
     slug: "coconut-grove",
@@ -126,6 +128,7 @@ export const neighborhoods: NeighborhoodData[] = [
       "Annual Coconut Grove Arts Festival",
     ],
     zipCodes: ["33133"],
+    hasGuidePage: true,
   },
   {
     slug: "miami-beach",
@@ -177,6 +180,7 @@ export const neighborhoods: NeighborhoodData[] = [
       "No state income tax",
     ],
     zipCodes: ["33139", "33140", "33141", "33154"],
+    hasGuidePage: true,
   },
   {
     slug: "coral-gables",
@@ -223,6 +227,7 @@ export const neighborhoods: NeighborhoodData[] = [
       "Shops at Merrick Park — luxury retail",
     ],
     zipCodes: ["33134", "33143", "33146"],
+    hasGuidePage: true,
   },
   {
     slug: "key-biscayne",
@@ -269,6 +274,7 @@ export const neighborhoods: NeighborhoodData[] = [
       "Former home of the Miami Open tennis tournament",
     ],
     zipCodes: ["33149"],
+    hasGuidePage: true,
   },
   {
     slug: "downtown-miami",
@@ -310,6 +316,7 @@ export const neighborhoods: NeighborhoodData[] = [
       "Free Metromover transit connecting to Brickell",
     ],
     zipCodes: ["33128", "33130", "33132"],
+    hasGuidePage: true,
   },
   {
     slug: "edgewater",
@@ -366,6 +373,217 @@ export const neighborhoods: NeighborhoodData[] = [
       "Active new construction pipeline",
     ],
     zipCodes: ["33137", "33132"],
+    hasGuidePage: true,
+  },
+  {
+    slug: "aventura",
+    name: "Aventura",
+    tagline: "Luxury Meets Convenience",
+    heroDescription:
+      "A master-planned city in northeast Miami-Dade known for Aventura Mall, top-rated schools, and a growing collection of luxury waterfront towers along the Intracoastal.",
+    overview:
+      "Aventura is a city of roughly 40,000 residents centered around Aventura Mall — one of the largest and highest-grossing shopping centers in the U.S. The city offers a mix of luxury high-rise condos along the Intracoastal Waterway, single-family gated communities, and newer mixed-use developments. Its location between Miami Beach and Fort Lauderdale provides easy access to both cities.",
+    buyerProfile:
+      "Families seeking top-rated public schools (Aventura City of Excellence), retirees wanting walkable luxury living, and international buyers — particularly from Latin America and Europe — attracted to the Aventura Mall lifestyle and proximity to Sunny Isles Beach.",
+    lifestyle:
+      "Shopping at Aventura Mall (300+ stores), dining along Biscayne Boulevard, walking and cycling the Aventura Circle trail, and quick access to Sunny Isles and Bal Harbour beaches. The Aventura Arts & Cultural Center hosts performances and events year-round.",
+    priceRange: { low: "$300K", high: "$8M", median: "$580K" },
+    stats: {
+      medianPrice: "$580,000",
+      avgDom: "70",
+      pricePerSqft: "$450",
+      activeInventory: "800+",
+    },
+    faqs: [],
+    highlights: [
+      "Aventura Mall — one of the largest in the U.S.",
+      "Top-rated public schools",
+      "Intracoastal Waterway living",
+      "Aventura Circle — 3-mile walking/cycling trail",
+      "Between Miami Beach and Fort Lauderdale",
+      "Growing luxury condo market",
+    ],
+    zipCodes: ["33160", "33180"],
+  },
+  {
+    slug: "sunny-isles",
+    name: "Sunny Isles Beach",
+    tagline: "Florida's Riviera",
+    heroDescription:
+      "A barrier island city on the Atlantic Ocean known for its collection of ultra-luxury branded residences — from Porsche Design Tower to the Ritz-Carlton and the upcoming St. Regis.",
+    overview:
+      "Sunny Isles Beach is a narrow barrier island between the Atlantic Ocean and the Intracoastal Waterway, located north of Bal Harbour and south of Golden Beach. Once a mid-century motel strip, it has been completely transformed by a wave of ultra-luxury condo towers. The skyline now features some of the most architecturally striking buildings in South Florida, including Porsche Design Tower (with car elevators), Turnberry Ocean Club, and the Ritz-Carlton Residences.",
+    buyerProfile:
+      "International ultra-high-net-worth buyers — particularly from Russia, Latin America, and the Middle East — seeking branded luxury residences with full-service amenities. Investors looking for appreciation in a supply-constrained oceanfront market. Seasonal residents maintaining a South Florida winter base.",
+    lifestyle:
+      "Oceanfront living with resort-level amenities in every building. The beach is the centerpiece — wide, clean, and less crowded than Miami Beach. Dining options are growing rapidly. Bal Harbour Shops is minutes away for luxury retail. The Intracoastal provides boating and yacht access.",
+    priceRange: { low: "$400K", high: "$35M", median: "$850K" },
+    stats: {
+      medianPrice: "$850,000",
+      avgDom: "78",
+      pricePerSqft: "$700",
+      activeInventory: "600+",
+    },
+    faqs: [],
+    highlights: [
+      "Porsche Design Tower — car elevators to your unit",
+      "Turnberry Ocean Club — 54-story oceanfront",
+      "St. Regis Residences — under construction",
+      "Wide Atlantic Ocean beaches",
+      "Minutes from Bal Harbour Shops",
+      "Branded luxury residences corridor",
+    ],
+    zipCodes: ["33160"],
+  },
+  {
+    slug: "south-of-fifth",
+    name: "South of Fifth",
+    tagline: "Miami Beach's Most Exclusive Enclave",
+    heroDescription:
+      "The southernmost tip of Miami Beach, South of Fifth (SoFi) is a quiet, ultra-luxury residential enclave surrounded by ocean, bay, and South Pointe Park — widely considered the most desirable address on Miami Beach.",
+    overview:
+      "South of Fifth occupies the area south of Fifth Street on Miami Beach, a small neighborhood of roughly 20 square blocks. It offers a rare combination: oceanfront living, Biscayne Bay views, South Pointe Park, and a walkable village feel with world-class restaurants (Joe's Stone Crab, Juvia, Prime Italian). The neighborhood is predominantly residential with strict zoning that keeps it quieter than the rest of South Beach.",
+    buyerProfile:
+      "Ultra-high-net-worth buyers seeking trophy addresses. Many residents are seasonal, splitting time between SoFi and New York, London, or São Paulo. Cash purchases dominate above $5M. The neighborhood attracts buyers who want South Beach proximity without the noise.",
+    lifestyle:
+      "South Pointe Park for morning walks with cruise ship views, Joe's Stone Crab for dinner, and some of the best sunrises and sunsets in Miami. The beach is pristine and less crowded than mid-Beach. Government Cut provides a front-row seat to mega-yachts and cruise ships. The vibe is sophisticated and understated.",
+    priceRange: { low: "$800K", high: "$60M", median: "$2.2M" },
+    stats: {
+      medianPrice: "$2,200,000",
+      avgDom: "95",
+      pricePerSqft: "$1,200",
+      activeInventory: "120+",
+    },
+    faqs: [],
+    highlights: [
+      "South Pointe Park — bayfront and oceanfront",
+      "Joe's Stone Crab & world-class dining",
+      "Quiet residential enclave on South Beach",
+      "Continuum, Apogee, Glass — ultra-luxury towers",
+      "Government Cut views",
+      "Walk Score: 90+",
+    ],
+    zipCodes: ["33139"],
+  },
+  {
+    slug: "bal-harbour",
+    name: "Bal Harbour",
+    tagline: "Oceanfront Elegance",
+    heroDescription:
+      "An exclusive oceanfront village known for Bal Harbour Shops and some of South Florida's most prestigious residential addresses. Just 0.3 square miles of pure luxury.",
+    overview:
+      "Bal Harbour is a tiny, affluent village on the northern tip of Miami Beach's barrier island. Despite its small size, it punches well above its weight in luxury real estate and retail. Bal Harbour Shops — an open-air luxury mall featuring Chanel, Gucci, and Prada — is the village's commercial anchor. The residential market is split between grand oceanfront condos (The St. Regis, Oceana, Ritz-Carlton) and a small number of single-family homes along the bay.",
+    buyerProfile:
+      "International ultra-high-net-worth buyers seeking a quiet, exclusive oceanfront address. Many residents are seasonal, with primary homes in New York, Toronto, or South America. The village has a significant Jewish community and is home to several synagogues.",
+    lifestyle:
+      "Shopping at Bal Harbour Shops, beach days on pristine sand, dining at Carpaccio or Makoto, and a quiet residential atmosphere that feels separate from the energy of Miami Beach. Haulover Park is adjacent for boating and outdoor activities.",
+    priceRange: { low: "$500K", high: "$40M", median: "$1.8M" },
+    stats: {
+      medianPrice: "$1,800,000",
+      avgDom: "90",
+      pricePerSqft: "$900",
+      activeInventory: "150+",
+    },
+    faqs: [],
+    highlights: [
+      "Bal Harbour Shops — premier luxury retail",
+      "Pristine oceanfront beaches",
+      "The St. Regis, Oceana, Ritz-Carlton residences",
+      "Exclusive 0.3 sq mi village",
+      "Adjacent to Haulover Park",
+      "Quiet residential atmosphere",
+    ],
+    zipCodes: ["33154"],
+  },
+  {
+    slug: "surfside",
+    name: "Surfside",
+    tagline: "Small-Town Beach Living",
+    heroDescription:
+      "A charming beachside town of just one square mile, nestled between Bal Harbour and Miami Beach. Surfside offers a family-friendly atmosphere with direct ocean access and a walkable downtown.",
+    overview:
+      "Surfside is a small, tight-knit oceanfront community between Bal Harbour (to the north) and Miami Beach (to the south). The town has a walkable downtown along Harding Avenue with local shops, restaurants, and cafés. The beach is wide and uncrowded. The Four Seasons Surf Club, a landmark hotel and residential complex, anchors the luxury market. The community has undergone significant transformation following the Champlain Towers tragedy, with new safety standards reshaping the condo market.",
+    buyerProfile:
+      "Families seeking a quiet beach town with good schools, Orthodox Jewish community members, and buyers who want oceanfront living without the intensity of Miami Beach. International buyers from Latin America and Canada are also active.",
+    lifestyle:
+      "Morning beach walks, cycling along Collins Avenue, family dinners on Harding Avenue, and a genuine small-town community feel. The Four Seasons Surf Club provides world-class dining and spa access. Bal Harbour Shops is walking distance for luxury retail.",
+    priceRange: { low: "$400K", high: "$25M", median: "$950K" },
+    stats: {
+      medianPrice: "$950,000",
+      avgDom: "75",
+      pricePerSqft: "$750",
+      activeInventory: "100+",
+    },
+    faqs: [],
+    highlights: [
+      "Four Seasons Surf Club — landmark hotel and residences",
+      "Wide, uncrowded Atlantic Ocean beach",
+      "Walkable Harding Avenue downtown",
+      "Family-friendly community",
+      "Walking distance to Bal Harbour Shops",
+      "Just 1 square mile — intimate scale",
+    ],
+    zipCodes: ["33154"],
+  },
+  {
+    slug: "wynwood-midtown",
+    name: "Wynwood / Midtown",
+    tagline: "Art, Culture & Urban Energy",
+    heroDescription:
+      "Miami's creative epicenter. Wynwood and Midtown offer a dynamic blend of street art, galleries, restaurants, and a growing residential scene that attracts creative professionals and investors alike.",
+    overview:
+      "Wynwood transformed from a warehouse district into one of America's most vibrant arts neighborhoods. The Wynwood Walls — a curated outdoor museum of street art — put the area on the global map. Today, Wynwood and adjacent Midtown offer galleries, breweries, restaurants, boutiques, and a growing number of residential developments. Midtown provides a more residential, mixed-use environment with shops and dining at Midtown Miami and the Design District nearby.",
+    buyerProfile:
+      "Creative professionals, tech workers, young entrepreneurs, and investors betting on continued appreciation. Wynwood attracts buyers who value culture and walkability over waterfront views. Midtown draws residents wanting urban convenience at prices below Brickell and Edgewater.",
+    lifestyle:
+      "Gallery walks during Art Walk (second Saturday of each month), craft cocktails at Wynwood bars, weekend brunch at one of dozens of restaurants, and browsing the Design District's luxury flagships. The neighborhood is one of Miami's most walkable and bikeable.",
+    priceRange: { low: "$350K", high: "$5M", median: "$550K" },
+    stats: {
+      medianPrice: "$550,000",
+      avgDom: "60",
+      pricePerSqft: "$520",
+      activeInventory: "350+",
+    },
+    faqs: [],
+    highlights: [
+      "Wynwood Walls — world-famous street art",
+      "Art Walk — monthly gallery event",
+      "Design District — luxury retail and dining",
+      "Growing residential development pipeline",
+      "One of Miami's most walkable neighborhoods",
+      "Thriving restaurant and bar scene",
+    ],
+    zipCodes: ["33127", "33137"],
+  },
+  {
+    slug: "fisher-island",
+    name: "Fisher Island",
+    tagline: "Accessible Only by Ferry",
+    heroDescription:
+      "The most exclusive residential community in Miami — a private island accessible only by ferry or yacht, with the highest per-capita income of any zip code in the United States.",
+    overview:
+      "Fisher Island is a 216-acre private island in Biscayne Bay, accessible only by private ferry from the MacArthur Causeway terminal. Originally the winter estate of the Vanderbilt family, it's now a members-only residential community with a championship golf course, private beach club, deep-water marina, spa, and multiple restaurants. The island has roughly 750 residences ranging from condos to lavish estates.",
+    buyerProfile:
+      "Ultra-high-net-worth individuals and families seeking total privacy and security. Residents include CEOs, hedge fund managers, retired athletes, and international billionaires. The community is gated with its own security force — visitors must be pre-approved. Membership in the Fisher Island Club is required.",
+    lifestyle:
+      "Private beach on the southern tip with views of the Port of Miami and South Beach, 9-hole championship golf course, world-class tennis courts, deep-water marina for mega-yachts, multiple restaurants and bars, a full-service spa, and a private K-8 school. The island operates like a self-contained luxury resort.",
+    priceRange: { low: "$2M", high: "$90M", median: "$6.5M" },
+    stats: {
+      medianPrice: "$6,500,000",
+      avgDom: "120",
+      pricePerSqft: "$1,500",
+      activeInventory: "40+",
+    },
+    faqs: [],
+    highlights: [
+      "Private ferry-only access",
+      "Highest per-capita income zip code in the U.S.",
+      "Championship golf course",
+      "Deep-water marina",
+      "Former Vanderbilt estate",
+      "Private beach club and K-8 school",
+    ],
+    zipCodes: ["33109"],
   },
 ];
 
