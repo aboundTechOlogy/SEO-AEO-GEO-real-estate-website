@@ -27,9 +27,18 @@ export default function HomePage() {
     <>
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        {/* Replace hero-placeholder with actual Miami aerial/skyline photo */}
-        <div className="absolute inset-0 hero-bg bg-cover bg-center" />
-        <div className="absolute inset-0 bg-gradient-to-b from-neutral-800/30 via-neutral-900/60 to-neutral-950" />
+        {/* Background: image now, replace with <video> later for aerial Miami footage */}
+        {/* To switch to video: replace the img tag with:
+            <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover">
+              <source src="/hero-video.mp4" type="video/mp4" />
+            </video>
+        */}
+        <img
+          src="/hero-miami.jpg"
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-[#0a0a0a]" />
 
         <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
           <p className="text-sm font-light tracking-[0.4em] uppercase text-neutral-500 mb-8" style={{ fontFamily: 'var(--font-inter)' }}>
