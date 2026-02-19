@@ -20,7 +20,9 @@ const NAV_LINKS = [
   { label: "Edgewater", href: "/neighborhoods/edgewater/", indent: true },
   { label: "New Construction", href: "/new-construction/" },
   { label: "About", href: "/about/" },
+  { label: "Insights", href: "/blog/" },
   { label: "Contact", href: "/contact/" },
+  { label: "Sign In", href: "/login/" },
   { label: "Search", href: "/search/" },
 ];
 

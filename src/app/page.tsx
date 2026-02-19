@@ -27,9 +27,9 @@ export default function HomePage() {
     <>
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-neutral-900 via-neutral-950 to-neutral-950" />
-        <div className="absolute inset-0 opacity-20 bg-[url('/hero-placeholder.jpg')] bg-cover bg-center" />
-        <div className="absolute inset-0 hero-gradient" />
+        {/* Replace hero-placeholder with actual Miami aerial/skyline photo */}
+        <div className="absolute inset-0 hero-bg bg-cover bg-center" />
+        <div className="absolute inset-0 bg-gradient-to-b from-neutral-800/30 via-neutral-900/60 to-neutral-950" />
 
         <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
           <p className="text-sm font-light tracking-[0.4em] uppercase text-neutral-500 mb-8" style={{ fontFamily: 'var(--font-inter)' }}>
@@ -66,6 +66,33 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Property Search Section */}
+      <section className="py-10 px-6 bg-neutral-900 border-y border-white/5">
+        <div className="max-w-2xl mx-auto text-center">
+          <p className="text-xs uppercase tracking-wider text-neutral-500 mb-4">
+            Property Search
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <input
+                type="text"
+                placeholder="Search by address, neighborhood, or building..."
+                className="w-full bg-white/5 border border-white/10 text-white placeholder-neutral-600 px-6 py-4 text-lg pr-12 focus:outline-none focus:border-white/30 transition-colors"
+              />
+              <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+              </svg>
+            </div>
+            <a
+              href="/search/"
+              className="bg-amber-600 hover:bg-amber-500 text-white px-8 py-4 text-sm uppercase tracking-wider transition-colors text-center shrink-0"
+            >
+              Search
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Neighborhoods Section */}
       <section id="neighborhoods" className="py-24 px-6">
         <div className="max-w-7xl mx-auto">
@@ -76,21 +103,47 @@ export default function HomePage() {
             Market data, lifestyle insights, and the developments reshaping each area.
           </p>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {NEIGHBORHOODS.map((n) => (
-              <a
+              <div
                 key={n.name}
-                href={n.hasGuide ? `/neighborhoods/${n.slug}/` : `/neighborhoods/`}
-                className="group p-6 border border-white/5 hover:border-white/20 bg-white/[0.02] hover:bg-white/[0.04] transition-all cursor-pointer rounded-sm block"
+                className="group border border-white/5 hover:border-white/20 bg-white/[0.02] hover:bg-white/[0.04] transition-all rounded-sm overflow-hidden"
               >
-                <h3 className="font-playfair text-xl mb-1 group-hover:text-white transition-colors">
-                  {n.name}
-                </h3>
-                <p className="text-sm text-neutral-500">{n.tagline}</p>
-                <p className="text-xs text-neutral-500 mt-2 uppercase tracking-wider">
-                  View Guide →
-                </p>
-              </a>
+                {/* Image placeholder */}
+                <div className="h-40 bg-neutral-800/50 flex items-center justify-center relative">
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-900/40" />
+                  <svg className="w-6 h-6 text-neutral-600 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                  </svg>
+                </div>
+                <div className="p-6">
+                  <h3 className="font-playfair text-xl mb-1 group-hover:text-white transition-colors">
+                    {n.name}
+                  </h3>
+                  <p className="text-sm text-neutral-500 mb-3">{n.tagline}</p>
+                  <a
+                    href={n.hasGuide ? `/neighborhoods/${n.slug}/` : `/neighborhoods/`}
+                    className="text-xs text-neutral-500 uppercase tracking-wider hover:text-white transition-colors"
+                  >
+                    View Guide →
+                  </a>
+                  <div className="flex gap-3 mt-4">
+                    <a
+                      href={n.hasGuide ? `/neighborhoods/${n.slug}/` : `/neighborhoods/`}
+                      className="flex-1 text-center py-2 text-xs uppercase tracking-wider border border-white/10 hover:border-white/30 text-neutral-400 hover:text-white transition-all"
+                    >
+                      Homes
+                    </a>
+                    <a
+                      href={n.hasGuide ? `/neighborhoods/${n.slug}/` : `/neighborhoods/`}
+                      className="flex-1 text-center py-2 text-xs uppercase tracking-wider border border-white/10 hover:border-white/30 text-neutral-400 hover:text-white transition-all"
+                    >
+                      Condos
+                    </a>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -112,8 +165,11 @@ export default function HomePage() {
                 key={d.name}
                 className="group p-8 border border-white/5 hover:border-white/20 bg-neutral-950 transition-all rounded-sm"
               >
-                <div className="w-full h-48 bg-neutral-800 rounded-sm mb-6 flex items-center justify-center">
-                  <span className="text-neutral-600 text-sm">Rendering Coming Soon</span>
+                <div className="w-full h-48 bg-gradient-to-br from-neutral-700/30 to-neutral-800 rounded-sm mb-6 flex flex-col items-center justify-center gap-3">
+                  <svg className="w-8 h-8 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
+                  </svg>
+                  <span className="text-neutral-600 text-[10px] uppercase tracking-widest">{d.status}</span>
                 </div>
                 <div className="flex items-start justify-between mb-3">
                   <div>
@@ -146,7 +202,7 @@ export default function HomePage() {
       </section>
 
       {/* Market Insights Section */}
-      <section id="market" className="py-24 px-6">
+      <section id="market" className="py-24 px-6 bg-gradient-to-r from-neutral-900 via-neutral-950 to-neutral-900">
         <div className="max-w-7xl mx-auto">
           <div className="gold-line mb-6" />
           <h2 className="font-playfair text-4xl mb-4">Market Insights</h2>
@@ -157,21 +213,24 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { label: "Median Luxury Price", value: "$2.4M", change: "+8.2%" },
-              { label: "Avg Days on Market", value: "67", change: "-12%" },
-              { label: "New Developments", value: "50+", change: "Active" },
+              { label: "Median Luxury Price", value: "$2.4M", change: "+8.2%", positive: true },
+              { label: "Avg Days on Market", value: "67", change: "-12%", positive: true },
+              { label: "New Developments", value: "50+", change: "Active", positive: false },
             ].map((stat) => (
               <div
                 key={stat.label}
                 className="p-8 border border-white/5 bg-white/[0.02] rounded-sm text-center"
               >
-                <p className="text-sm text-neutral-500 uppercase tracking-wider mb-2">
+                <div className="w-12 h-0.5 bg-amber-600/50 mx-auto mb-4" />
+                <p className="text-sm text-neutral-500 uppercase tracking-wider mb-3">
                   {stat.label}
                 </p>
-                <p className="font-playfair text-4xl text-white mb-1">
+                <p className="font-playfair text-5xl md:text-6xl text-white mb-2">
                   {stat.value}
                 </p>
-                <p className="text-sm text-neutral-400">{stat.change}</p>
+                <p className={`text-sm ${stat.positive ? "text-emerald-500/70" : "text-neutral-400"}`}>
+                  {stat.change}
+                </p>
               </div>
             ))}
           </div>
@@ -179,46 +238,49 @@ export default function HomePage() {
       </section>
 
       {/* How I Work Section */}
-      <section className="py-24 px-6 bg-neutral-900/50">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-24 px-6 bg-neutral-900/50 relative overflow-hidden">
+        {/* AW watermark */}
+        <div className="watermark top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-light" style={{ fontFamily: 'var(--font-inter)' }}>
+          AW
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="gold-line mb-6" />
-          <h2 className="font-playfair text-4xl mb-12">How I Work</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-8 border border-white/5 bg-white/[0.02] rounded-sm">
-              <div className="w-12 h-12 border border-white/10 rounded-sm flex items-center justify-center mb-6">
-                <svg className="w-6 h-6 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-                </svg>
+          <h2 className="font-playfair text-4xl mb-16">How I Work</h2>
+
+          <div className="flex flex-col md:flex-row gap-16 md:gap-12">
+            {[
+              {
+                num: "01",
+                title: "Market Intelligence",
+                desc: "Real-time market data and neighborhood analytics power every conversation. I track pricing trends, absorption rates, and inventory shifts across Miami-Dade so you never rely on guesswork or outdated comps.",
+              },
+              {
+                num: "02",
+                title: "Instant Response",
+                desc: "An AI-powered concierge handles your questions 24/7 — property details, market comparisons, and neighborhood insights on demand. You get answers in seconds, not days, whether it\u2019s midnight or midday.",
+              },
+              {
+                num: "03",
+                title: "Data-Driven Decisions",
+                desc: "Every recommendation is backed by comps, price-per-square-foot analysis, and trend data. No pressure tactics, no emotional selling — just clear numbers that help you make confident moves.",
+              },
+            ].map((item) => (
+              <div key={item.num} className="flex-1 relative">
+                <span className="font-playfair text-6xl text-white/5 absolute -top-4 -left-2">
+                  {item.num}
+                </span>
+                <div className="pt-10">
+                  <h3 className="font-playfair text-xl mb-3">{item.title}</h3>
+                  <p className="text-neutral-400 text-sm leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
               </div>
-              <h3 className="font-playfair text-xl mb-3">Market Intelligence</h3>
-              <p className="text-neutral-400 text-sm leading-relaxed">
-                Real-time market data and neighborhood analytics — not guesswork.
-              </p>
-            </div>
-            <div className="p-8 border border-white/5 bg-white/[0.02] rounded-sm">
-              <div className="w-12 h-12 border border-white/10 rounded-sm flex items-center justify-center mb-6">
-                <svg className="w-6 h-6 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-                </svg>
-              </div>
-              <h3 className="font-playfair text-xl mb-3">Instant Response</h3>
-              <p className="text-neutral-400 text-sm leading-relaxed">
-                AI-powered concierge available 24/7 for any property or market question.
-              </p>
-            </div>
-            <div className="p-8 border border-white/5 bg-white/[0.02] rounded-sm">
-              <div className="w-12 h-12 border border-white/10 rounded-sm flex items-center justify-center mb-6">
-                <svg className="w-6 h-6 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
-                </svg>
-              </div>
-              <h3 className="font-playfair text-xl mb-3">Data-Driven Decisions</h3>
-              <p className="text-neutral-400 text-sm leading-relaxed">
-                Every recommendation backed by comps, price-per-sqft, and trend data.
-              </p>
-            </div>
+            ))}
           </div>
-          <div className="mt-8 text-center">
+
+          <div className="mt-12 text-center">
             <a
               href="/about/"
               className="inline-block px-6 py-2 text-sm uppercase tracking-wider border border-white/20 text-neutral-400 hover:text-white hover:border-white/40 transition-all"

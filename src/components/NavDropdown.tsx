@@ -42,7 +42,7 @@ export default function NavDropdown({ label, items, allLabel, allHref }: NavDrop
       onMouseLeave={handleLeave}
     >
       <button
-        className="flex items-center gap-1 text-neutral-400 hover:text-white transition-colors"
+        className="flex items-center gap-1 text-xs uppercase tracking-wider text-neutral-400 hover:text-white transition-colors"
         onClick={() => setOpen(!open)}
       >
         {label}

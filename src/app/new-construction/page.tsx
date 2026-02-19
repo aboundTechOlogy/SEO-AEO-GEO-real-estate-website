@@ -59,10 +59,11 @@ export default function NewConstructionPage() {
                 className="group p-8 border border-white/5 hover:border-white/20 bg-white/[0.02] hover:bg-white/[0.04] transition-all rounded-sm"
               >
                 {/* Placeholder image */}
-                <div className="w-full h-48 bg-neutral-800 rounded-sm mb-6 flex items-center justify-center">
-                  <span className="text-neutral-600 text-sm">
-                    Rendering Coming Soon
-                  </span>
+                <div className="w-full h-48 bg-gradient-to-br from-neutral-700/30 to-neutral-800 rounded-sm mb-6 flex flex-col items-center justify-center gap-3">
+                  <svg className="w-8 h-8 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
+                  </svg>
+                  <span className="text-neutral-600 text-[10px] uppercase tracking-widest">{d.status}</span>
                 </div>
 
                 <div className="flex items-start justify-between mb-3">

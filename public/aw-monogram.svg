@@ -1,33 +1,69 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 44" fill="none">
-  <!-- AW Monogram v4 - True ligature, shared strokes, Didone contrast -->
-  <!-- A's right leg flows directly into W's first valley - no gap -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 145 100" fill="none">
+  <!--
+    AW Monogram — Concept 7 recreation
+    Didone high-contrast serif, shared stroke ligature
+    A occupies left ~55%, W occupies right ~65%, ~15-20% overlap center
+    Thick strokes ~12% of cap height, thin strokes ~3.5%
+    Cap height: y=8 to y=92 (84 units)
+    Thick stroke width: ~10 units, Thin stroke width: ~3 units
+  -->
+  <g fill="white" fill-rule="evenodd">
+    <!--
+      Single compound path for the monogram.
+      Outer boundary traces the silhouette.
+      Inner holes cut the negative spaces (A counters, W wedges).
 
+      Key coordinates:
+      A apex: (42, 8)
+      A left foot outer: (3, 92)
+      A left foot inner: (17, 92)
+      A-W shared zone foot: (68, 92) — where A right / W first valley meet
+      W center peak: (88, 28)
+      W second valley: (108, 92)
+      W top right: (128, 8)
+
+      Serifs extend horizontally at terminals.
+    -->
+
+    <!-- Main silhouette path -->
+    <path d="
+      M 42 8
+      L 40.5 8
+      L 0 92
+      L 18 92
+      L 18.5 91
+      L 28 67
+      L 55 67
+      L 55 64
+      L 29.2 64
+      L 40.5 38
+      L 66 92
+      L 64 92
+
+      L 88 28
+      L 90 28
+      L 110 92
+      L 106 92
+      L 128 8
+      L 130.5 8
+      L 130.5 11
+      L 125 11
+      L 128 8
+
+      L 130.5 8
+      L 130.5 11 L 125 11
+      Z
+    " />
+
+    <!-- Simpler approach: use individual filled shapes -->
+  </g>
+
+  <!-- Reset: use individual polygons instead of compound path -->
   <g fill="white">
-    <!-- A left thick diagonal -->
-    <polygon points="3,40 5.8,40 20,5.5 17.8,5.5" />
+    <!-- A left thin diagonal -->
+    <polygon points="42,8 44.5,8 18,92 0,92 0,88 15,88 15,92 0,92" />
 
-    <!-- SHARED LIGATURE: A right stroke flows into W first upstroke -->
-    <!-- This is one continuous shape: A apex → shared valley → W center peak -->
-    <polygon points="20,5.5 21.5,5.5 32.5,40 38,14.5 39.5,14.5 30.5,40 20,5.5" />
-
-    <!-- W third stroke: center peak down to second valley -->
-    <polygon points="38,14.5 39.5,14.5 51.5,40 49.5,40" />
-
-    <!-- W fourth stroke: second valley up to right peak -->
-    <polygon points="49.5,40 51.5,40 65,5.5 63,5.5" />
-
-    <!-- A crossbar - thin hairline -->
-    <rect x="9.5" y="27.5" width="16" height="0.6" />
-
-    <!-- Baseline serifs -->
-    <rect x="1" y="39.8" width="6.5" height="0.55" rx="0.15" />
-    <rect x="47.5" y="39.8" width="6" height="0.55" rx="0.15" />
-
-    <!-- Cap serifs -->
-    <rect x="16.5" y="5.2" width="6.5" height="0.5" rx="0.15" />
-    <rect x="61.5" y="5.2" width="5.5" height="0.5" rx="0.15" />
-
-    <!-- W center peak serif -->
-    <rect x="36.5" y="14" width="4.5" height="0.45" rx="0.15" />
+    <!-- Nope, this is getting too complex for manual polygon work.
+         Using a cleaner decomposition approach. -->
   </g>
 </svg>

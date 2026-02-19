@@ -48,9 +48,12 @@ Luxury real estate website for **Andrew Whalen, Realtor®** (iamandrewwhalen.com
 - Responsive: mobile-first, `md:` tablet, `lg:` desktop
 
 ### Logo
-- **AW** monogram: Inter Light 300, tracking-[0.35em], uppercase
-- **ANDREW WHALEN** wordmark: Inter Light 300, tracking-[0.25em], uppercase
+- **AW monogram icon:** `/aw-monogram.png` (transparent PNG, white Didone serif interlocking AW mark). Use this as the icon/mark in the nav center. Size it at `h-6` or `h-7` in the nav.
+- **AW icon sizes:** `/aw-icon-48.png`, `/aw-icon-96.png`, `/aw-icon-192.png` (square, transparent, for favicon/PWA)
+- **ANDREW WHALEN** wordmark: Inter Light 300, tracking-[0.25em], uppercase (text, not image)
+- **LoKation logo:** `/lokation-logo-white.png`
 - Logo is ALWAYS white on dark or dark on light — **never amber**
+- **Nav lockup pattern:** [AW icon] ANDREW WHALEN | [LoKation logo] — all centered in nav
 
 ## File Structure
 ```

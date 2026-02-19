@@ -58,59 +58,70 @@ export default function NeighborhoodsPage() {
               return (
                 <div
                   key={n.slug}
-                  className="group p-8 border border-white/5 hover:border-white/20 bg-white/[0.02] hover:bg-white/[0.04] transition-all rounded-sm"
+                  className="group border border-white/5 hover:border-white/20 bg-white/[0.02] hover:bg-white/[0.04] transition-all rounded-sm overflow-hidden"
                 >
-                  <div className="flex items-start justify-between mb-1">
-                    {hasGuide ? (
+                  {/* Image placeholder */}
+                  <div className="h-40 bg-neutral-800/50 flex items-center justify-center relative">
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-900/40" />
+                    <svg className="w-6 h-6 text-neutral-600 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                    </svg>
+                  </div>
+
+                  <div className="p-8">
+                    <div className="flex items-start justify-between mb-1">
+                      {hasGuide ? (
+                        <a
+                          href={`/neighborhoods/${n.slug}/`}
+                          className="font-playfair text-xl hover:text-white transition-colors"
+                        >
+                          {n.name}
+                        </a>
+                      ) : (
+                        <span className="font-playfair text-xl">{n.name}</span>
+                      )}
+                      {!hasGuide && (
+                        <span className="text-[10px] uppercase tracking-wider text-neutral-600 bg-white/5 px-2 py-0.5 rounded-full shrink-0">
+                          Coming Soon
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-neutral-500 mb-6">{n.tagline}</p>
+
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                      <div>
+                        <p className="text-xs text-neutral-500 uppercase tracking-wider mb-1">
+                          Median
+                        </p>
+                        <p className="text-sm text-neutral-300">
+                          {n.stats.medianPrice}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-neutral-500 uppercase tracking-wider mb-1">
+                          Avg DOM
+                        </p>
+                        <p className="text-sm text-neutral-300">
+                          {n.stats.avgDom} days
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3">
                       <a
-                        href={`/neighborhoods/${n.slug}/`}
-                        className="font-playfair text-xl hover:text-white transition-colors"
+                        href={hasGuide ? `/neighborhoods/${n.slug}/` : `/neighborhoods/`}
+                        className="flex-1 text-center py-2 text-xs uppercase tracking-wider border border-white/10 hover:border-white/30 text-neutral-400 hover:text-white transition-all"
                       >
-                        {n.name}
+                        Homes
                       </a>
-                    ) : (
-                      <span className="font-playfair text-xl">{n.name}</span>
-                    )}
-                    {!hasGuide && (
-                      <span className="text-[10px] uppercase tracking-wider text-neutral-600 bg-white/5 px-2 py-0.5 rounded-full shrink-0">
-                        Coming Soon
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-sm text-neutral-500 mb-6">{n.tagline}</p>
-
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div>
-                      <p className="text-xs text-neutral-500 uppercase tracking-wider mb-1">
-                        Median
-                      </p>
-                      <p className="text-sm text-neutral-300">
-                        {n.stats.medianPrice}
-                      </p>
+                      <a
+                        href={hasGuide ? `/neighborhoods/${n.slug}/` : `/neighborhoods/`}
+                        className="flex-1 text-center py-2 text-xs uppercase tracking-wider border border-white/10 hover:border-white/30 text-neutral-400 hover:text-white transition-all"
+                      >
+                        Condos
+                      </a>
                     </div>
-                    <div>
-                      <p className="text-xs text-neutral-500 uppercase tracking-wider mb-1">
-                        Avg DOM
-                      </p>
-                      <p className="text-sm text-neutral-300">
-                        {n.stats.avgDom} days
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-3">
-                    <a
-                      href={hasGuide ? `/neighborhoods/${n.slug}/` : `/neighborhoods/`}
-                      className="flex-1 text-center py-2 text-xs uppercase tracking-wider border border-white/10 hover:border-white/30 text-neutral-400 hover:text-white transition-all"
-                    >
-                      Homes
-                    </a>
-                    <a
-                      href={hasGuide ? `/neighborhoods/${n.slug}/` : `/neighborhoods/`}
-                      className="flex-1 text-center py-2 text-xs uppercase tracking-wider border border-white/10 hover:border-white/30 text-neutral-400 hover:text-white transition-all"
-                    >
-                      Condos
-                    </a>
                   </div>
                 </div>
               );
