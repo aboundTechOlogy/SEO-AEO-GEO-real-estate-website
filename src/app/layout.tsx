@@ -60,9 +60,9 @@ export default function RootLayout({
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <body className="bg-neutral-950 text-white antialiased font-sans">
         <header className="fixed top-0 w-full z-50 bg-black/20 backdrop-blur-sm">
-          <nav className="max-w-[1440px] mx-auto px-8 py-4 flex items-center justify-between">
+          <nav className="w-full px-10 py-4 flex items-center">
             {/* Left: Primary Nav Links */}
-            <div className="hidden lg:flex items-center gap-10 flex-1">
+            <div className="hidden lg:flex items-center gap-10 shrink-0">
               <NavDropdown
                 label="Luxury Condos"
                 items={CONDO_NEIGHBORHOODS}
@@ -77,44 +77,46 @@ export default function RootLayout({
               />
             </div>
 
-            {/* Center: Logo Lockup */}
-            <a href="/" className="flex items-center gap-3 shrink-0">
-              <img
-                src="/aw-monogram.png"
-                alt="AW"
-                className="h-8 w-auto"
-              />
-              <span className="hidden md:block text-[15px] font-light tracking-[0.2em] uppercase" style={{ fontFamily: 'var(--font-inter)' }}>
-                Andrew Whalen
-              </span>
-              <span className="hidden md:block w-px h-6 bg-white/30 mx-2" />
-              <img
-                src="/lokation-logo.png"
-                alt="LoKation"
-                className="hidden md:block h-4 w-auto brightness-0 invert opacity-90"
-              />
-            </a>
+            {/* Center: Logo Lockup — pushed to true center */}
+            <div className="flex-1 flex justify-center">
+              <a href="/" className="flex items-center gap-2 shrink-0">
+                <img
+                  src="/aw-monogram.png"
+                  alt="AW"
+                  className="h-7 w-auto"
+                />
+                <span className="hidden md:block text-[15px] font-light tracking-[0.2em] uppercase whitespace-nowrap" style={{ fontFamily: 'var(--font-inter)' }}>
+                  Andrew Whalen
+                </span>
+                <span className="hidden md:block w-px h-5 bg-white/30 mx-2" />
+                <img
+                  src="/lokation-logo.png"
+                  alt="LoKation"
+                  className="hidden md:block h-3 w-auto brightness-0 invert opacity-80"
+                />
+              </a>
+            </div>
 
             {/* Right: Secondary Nav + Actions */}
-            <div className="hidden lg:flex items-center gap-8 flex-1 justify-end">
-              <a href="/about/" className="text-[13px] uppercase tracking-[0.15em] text-white hover:text-neutral-300 transition-colors">
+            <div className="hidden lg:flex items-center gap-7 shrink-0">
+              <a href="/about/" className="text-[13px] uppercase tracking-[0.12em] text-white hover:text-neutral-300 transition-colors whitespace-nowrap">
                 About Us
               </a>
-              <a href="/blog/" className="text-[13px] uppercase tracking-[0.15em] text-white hover:text-neutral-300 transition-colors">
+              <a href="/blog/" className="text-[13px] uppercase tracking-[0.12em] text-white hover:text-neutral-300 transition-colors">
                 Insights
               </a>
               <a
                 href="/contact/"
-                className="border border-white/50 rounded-full px-6 py-2 text-[13px] uppercase tracking-[0.15em] text-white hover:bg-white/10 transition-all"
+                className="border border-white/50 rounded-full px-6 py-2 text-[13px] uppercase tracking-[0.12em] text-white hover:bg-white/10 transition-all whitespace-nowrap"
               >
                 Contact Us
               </a>
               {/* Login icon — circle outline around person, matching Carroll */}
               <a href="/login/" className="text-white hover:text-neutral-300 transition-colors" aria-label="Sign in">
-                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1}>
-                  <circle cx="12" cy="12" r="11" />
-                  <path d="M17.5 19.5c0-2.5-2.5-4-5.5-4s-5.5 1.5-5.5 4" />
-                  <circle cx="12" cy="9" r="2.5" />
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.2}>
+                  <circle cx="12" cy="12" r="10.5" />
+                  <path d="M17 19c0-2.2-2.2-3.5-5-3.5S7 16.8 7 19" />
+                  <circle cx="12" cy="9.5" r="2.5" />
                 </svg>
               </a>
               {/* Hamburger — visible on desktop, opens mega menu slide-out */}
