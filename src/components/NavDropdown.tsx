@@ -42,36 +42,28 @@ export default function NavDropdown({ label, items, allLabel, allHref }: NavDrop
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
     >
-      <button
-        className="flex items-center gap-1 text-xs uppercase tracking-wider text-neutral-400 hover:text-white transition-colors"
-        onClick={() => setOpen(!open)}
+      <a
+        href={allHref}
+        className="text-sm uppercase tracking-wider text-white hover:text-neutral-300 transition-colors"
       >
         {label}
-        <svg
-          className={`w-3 h-3 transition-transform ${open ? "rotate-180" : ""}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
+      </a>
 
       {open && (
-        <div className="absolute top-full left-0 mt-3 w-56 bg-neutral-950 border border-white/10 rounded-sm shadow-2xl py-2 z-50">
+        <div className="absolute top-full left-0 mt-4 w-56 bg-white rounded shadow-xl py-3 z-50">
           <a
             href={allHref}
-            className="block px-4 py-2 text-sm text-neutral-300 hover:text-white hover:bg-white/5 transition-colors"
+            className="block px-5 py-2 text-sm text-neutral-800 font-medium hover:bg-neutral-100 transition-colors uppercase tracking-wider"
           >
             {allLabel}
           </a>
-          <div className="border-t border-white/5 my-1" />
+          <div className="border-t border-neutral-200 my-2 mx-4" />
           {items.map((item) => (
             <div key={item.href}>
-              {item.dividerBefore && <div className="border-t border-white/5 my-1" />}
+              {item.dividerBefore && <div className="border-t border-neutral-200 my-2 mx-4" />}
               <a
                 href={item.href}
-                className="block px-4 py-2 text-sm text-neutral-400 hover:text-white hover:bg-white/5 transition-colors"
+                className="block px-5 py-2 text-sm text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 transition-colors uppercase tracking-wider"
               >
                 {item.label}
               </a>

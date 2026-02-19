@@ -58,10 +58,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <body className="bg-neutral-950 text-white antialiased font-sans">
-        <header className="fixed top-0 w-full z-50 backdrop-blur-sm border-b border-white/5">
-          <nav className="max-w-[1400px] mx-auto px-6 py-4 flex items-center justify-between">
+        <header className="fixed top-0 w-full z-50 bg-black border-b border-white/10">
+          <nav className="max-w-[1400px] mx-auto px-6 py-3 flex items-center justify-between">
             {/* Left: Primary Nav Links */}
-            <div className="hidden md:flex items-center gap-6 flex-1">
+            <div className="hidden lg:flex items-center gap-8 flex-1">
               <NavDropdown
                 label="Luxury Condos"
                 items={CONDO_NEIGHBORHOODS}
@@ -77,42 +77,49 @@ export default function RootLayout({
             </div>
 
             {/* Center: Logo Lockup */}
-            <a href="/" className="flex items-center gap-2.5 shrink-0">
+            <a href="/" className="flex items-center gap-2 shrink-0">
               <img
                 src="/aw-monogram.png"
                 alt="AW"
-                className="h-8 w-auto"
+                className="h-9 w-auto"
               />
-              <span className="hidden md:block text-base font-light tracking-[0.25em] uppercase" style={{ fontFamily: 'var(--font-inter)' }}>
+              <span className="hidden md:block text-lg font-light tracking-[0.2em] uppercase" style={{ fontFamily: 'var(--font-inter)' }}>
                 Andrew Whalen
               </span>
-              <span className="hidden md:block w-px h-6 bg-white/20" />
+              <span className="hidden md:block w-px h-7 bg-white/30 mx-1" />
               <img
                 src="/lokation-logo.png"
                 alt="LoKation"
-                className="hidden md:block h-5 w-auto brightness-0 invert"
+                className="hidden md:block h-6 w-auto brightness-0 invert"
               />
             </a>
 
             {/* Right: Secondary Nav + Actions */}
-            <div className="hidden md:flex items-center gap-6 flex-1 justify-end">
-              <a href="/about/" className="text-xs uppercase tracking-wider text-neutral-400 hover:text-white transition-colors">
-                About
+            <div className="hidden lg:flex items-center gap-7 flex-1 justify-end">
+              <a href="/about/" className="text-sm uppercase tracking-wider text-white hover:text-neutral-300 transition-colors">
+                About Us
               </a>
-              <a href="/blog/" className="text-xs uppercase tracking-wider text-neutral-400 hover:text-white transition-colors">
+              <a href="/blog/" className="text-sm uppercase tracking-wider text-white hover:text-neutral-300 transition-colors">
                 Insights
               </a>
               <a
                 href="/contact/"
-                className="border border-white/20 px-4 py-1.5 text-xs uppercase tracking-wider text-neutral-400 hover:border-white/50 hover:text-white transition-all"
+                className="border border-white/40 rounded-full px-5 py-1.5 text-sm uppercase tracking-wider text-white hover:bg-white/10 transition-all"
               >
-                Contact
+                Contact Us
               </a>
-              <a href="/login/" className="text-neutral-400 hover:text-white transition-colors" aria-label="Sign in">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+              <a href="/login/" className="text-white hover:text-neutral-300 transition-colors" aria-label="Sign in">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.2}>
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
                 </svg>
               </a>
+              {/* Hamburger — visible on desktop too, like Carroll */}
+              <button className="text-white hover:text-neutral-300 transition-colors" aria-label="Menu">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.2}>
+                  <path d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
             </div>
 
             {/* Mobile: AW monogram + hamburger */}
