@@ -77,22 +77,22 @@ export default function RootLayout({
               />
             </div>
 
-            {/* Center: Logo Lockup — pushed to true center */}
-            <div className="flex-1 flex justify-center">
+            {/* Logo Lockup — centered on desktop, left-aligned on mobile */}
+            <div className="flex-1 lg:flex lg:justify-center">
               <a href="/" className="flex items-center gap-2 shrink-0">
                 <img
                   src="/aw-monogram.png"
                   alt="AW"
                   className="h-7 w-auto"
                 />
-                <span className="hidden md:block text-[15px] font-light tracking-[0.2em] uppercase whitespace-nowrap" style={{ fontFamily: 'var(--font-inter)' }}>
+                <span className="hidden sm:block text-[15px] font-light tracking-[0.2em] uppercase whitespace-nowrap" style={{ fontFamily: 'var(--font-inter)' }}>
                   Andrew Whalen
                 </span>
-                <span className="hidden md:block w-px h-5 bg-white/30 mx-2" />
+                <span className="hidden sm:block w-px h-5 bg-white/30 mx-2" />
                 <img
                   src="/lokation-logo.png"
                   alt="LoKation"
-                  className="hidden md:block h-3 w-auto brightness-0 invert opacity-80"
+                  className="hidden sm:block h-3 w-auto brightness-0 invert opacity-80"
                 />
               </a>
             </div>
@@ -123,8 +123,17 @@ export default function RootLayout({
               <MegaMenu />
             </div>
 
-            {/* Mobile: AW monogram + hamburger */}
-            <MobileMenu />
+            {/* Mobile nav: logo left, login + hamburger right */}
+            <div className="flex lg:hidden items-center gap-4 ml-auto">
+              <a href="/login/" className="text-white" aria-label="Sign in">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.2}>
+                  <circle cx="12" cy="12" r="10.5" />
+                  <path d="M17 19c0-2.2-2.2-3.5-5-3.5S7 16.8 7 19" />
+                  <circle cx="12" cy="9.5" r="2.5" />
+                </svg>
+              </a>
+              <MobileMenu />
+            </div>
           </nav>
         </header>
 

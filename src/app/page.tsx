@@ -56,11 +56,11 @@ export default function HomePage() {
           <p className="text-base text-white tracking-wide mb-5">
             Start your AI-guided journey by selecting your real estate goal.
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-lg md:max-w-none mx-auto">
             {["Buy", "Sell", "Sell & Buy", "Invest"].map((goal) => (
               <button
                 key={goal}
-                className="px-8 py-3 border border-white/30 hover:border-white/70 text-sm tracking-[0.15em] uppercase text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 border border-white/30 hover:border-white/70 text-sm tracking-[0.15em] uppercase text-white hover:bg-white/10 transition-all"
               >
                 {goal}
               </button>
