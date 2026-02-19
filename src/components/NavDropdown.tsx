@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react";
 interface NavItem {
   label: string;
   href: string;
+  dividerBefore?: boolean;
 }
 
 interface NavDropdownProps {
@@ -66,13 +67,15 @@ export default function NavDropdown({ label, items, allLabel, allHref }: NavDrop
           </a>
           <div className="border-t border-white/5 my-1" />
           {items.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="block px-4 py-2 text-sm text-neutral-400 hover:text-white hover:bg-white/5 transition-colors"
-            >
-              {item.label}
-            </a>
+            <div key={item.href}>
+              {item.dividerBefore && <div className="border-t border-white/5 my-1" />}
+              <a
+                href={item.href}
+                className="block px-4 py-2 text-sm text-neutral-400 hover:text-white hover:bg-white/5 transition-colors"
+              >
+                {item.label}
+              </a>
+            </div>
           ))}
         </div>
       )}

@@ -37,6 +37,7 @@ const CONDO_NEIGHBORHOODS = [
   { label: "Coral Gables", href: "/luxury-condos/coral-gables/" },
   { label: "Sunny Isles", href: "/luxury-condos/sunny-isles/" },
   { label: "Edgewater", href: "/luxury-condos/edgewater/" },
+  { label: "New Construction", href: "/new-construction/", dividerBefore: true },
 ];
 
 const NEIGHBORHOOD_GUIDES = [
@@ -73,24 +74,23 @@ export default function RootLayout({
                 allLabel="All Neighborhoods"
                 allHref="/neighborhoods/"
               />
-              <a href="/new-construction/" className="text-xs uppercase tracking-wider text-neutral-400 hover:text-white transition-colors">
-                New Construction
-              </a>
             </div>
 
             {/* Center: Logo Lockup */}
             <a href="/" className="flex items-center gap-3 shrink-0">
-              <span className="text-sm font-light tracking-[0.35em] uppercase" style={{ fontFamily: 'var(--font-inter)' }}>
-                AW
-              </span>
+              <img
+                src="/aw-monogram.png"
+                alt="AW"
+                className="h-7 w-auto"
+              />
               <span className="hidden md:block w-px h-5 bg-white/20" />
               <span className="hidden md:block text-sm font-light tracking-[0.25em] uppercase" style={{ fontFamily: 'var(--font-inter)' }}>
                 Andrew Whalen
               </span>
               <span className="hidden md:block w-px h-5 bg-white/20" />
               <img
-                src="/lokation-logo-white.png"
-                alt="LoKation Real Estate"
+                src="/lokation-logo.png"
+                alt="LoKation"
                 className="hidden md:block h-5 w-auto opacity-60"
               />
             </a>
