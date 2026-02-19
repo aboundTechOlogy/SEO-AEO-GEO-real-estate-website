@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import NavDropdown from "@/components/NavDropdown";
 import MobileMenu from "@/components/MobileMenu";
+import MegaMenu from "@/components/MegaMenu";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -114,12 +115,8 @@ export default function RootLayout({
                   <circle cx="12" cy="7" r="4" />
                 </svg>
               </a>
-              {/* Hamburger — visible on desktop too, like Carroll */}
-              <button className="text-white hover:text-neutral-300 transition-colors" aria-label="Menu">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.2}>
-                  <path d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
+              {/* Hamburger — visible on desktop, opens mega menu slide-out */}
+              <MegaMenu />
             </div>
 
             {/* Mobile: AW monogram + hamburger */}
