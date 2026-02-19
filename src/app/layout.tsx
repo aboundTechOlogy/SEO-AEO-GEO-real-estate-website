@@ -58,7 +58,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <body className="bg-neutral-950 text-white antialiased font-sans">
-        <header className="fixed top-0 w-full z-50 bg-[#0a0a0a]/90 backdrop-blur-md border-b border-white/5">
+        <header className="fixed top-0 w-full z-50 backdrop-blur-sm border-b border-white/5">
           <nav className="max-w-[1400px] mx-auto px-6 py-4 flex items-center justify-between">
             {/* Left: Primary Nav Links */}
             <div className="hidden md:flex items-center gap-6 flex-1">
@@ -77,21 +77,20 @@ export default function RootLayout({
             </div>
 
             {/* Center: Logo Lockup */}
-            <a href="/" className="flex items-center gap-3 shrink-0">
+            <a href="/" className="flex items-center gap-2.5 shrink-0">
               <img
                 src="/aw-monogram.png"
                 alt="AW"
-                className="h-7 w-auto"
+                className="h-8 w-auto"
               />
-              <span className="hidden md:block w-px h-5 bg-white/20" />
-              <span className="hidden md:block text-sm font-light tracking-[0.25em] uppercase" style={{ fontFamily: 'var(--font-inter)' }}>
+              <span className="hidden md:block text-base font-light tracking-[0.25em] uppercase" style={{ fontFamily: 'var(--font-inter)' }}>
                 Andrew Whalen
               </span>
-              <span className="hidden md:block w-px h-5 bg-white/20" />
+              <span className="hidden md:block w-px h-6 bg-white/20" />
               <img
                 src="/lokation-logo.png"
                 alt="LoKation"
-                className="hidden md:block h-5 w-auto opacity-60"
+                className="hidden md:block h-5 w-auto brightness-0 invert"
               />
             </a>
 
