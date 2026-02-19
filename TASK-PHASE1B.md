@@ -20,7 +20,7 @@ CONDOS | NEIGHBORHOODS
 **Our nav should be:**
 ```
 LEFT NAV LINKS                              CENTER LOGO LOCKUP                        RIGHT NAV + ACTIONS
-LUXURY CONDOS ▾ | NEIGHBORHOODS ▾ |        [AW] ANDREW WHALEN | LoKation            ABOUT | [CONTACT] | 🔍 | ☰
+LUXURY CONDOS ▾ | NEIGHBORHOODS ▾ |        [AW] ANDREW WHALEN | LoKation            ABOUT | INSIGHTS | [CONTACT] | 👤 | ☰
 NEW CONSTRUCTION
 ```
 
@@ -43,8 +43,9 @@ NEW CONSTRUCTION
 
 **Right section** — Secondary nav + actions, right-aligned:
 - `ABOUT` link (same text style as left nav)
+- `INSIGHTS` link (same text style, links to `/blog/`) — this is our equivalent of Carroll's "PRESS" slot. When Andrew gets press coverage, this becomes PRESS or we add a separate PRESS link.
 - `CONTACT` link — **outlined button style**: `border border-white/20 px-4 py-1.5 text-xs uppercase tracking-wider hover:border-white/50 hover:text-white transition-all`
-- Search icon (magnifying glass SVG, links to `/search/`)
+- User/login icon (person silhouette SVG) — links to `/login/` for now. This mirrors Carroll's user account icon for saved searches, favorites, and email alerts. Create a simple placeholder page at `src/app/login/page.tsx` with heading "Sign In", a note "Account features coming soon — save searches, favorite listings, and get email alerts", and a simple email/password form (non-functional, console.log on submit). Phase 2 will implement real auth.
 - On mobile: hamburger icon replaces all nav (keep existing MobileMenu component)
 
 **Overall nav styling:**
@@ -56,7 +57,7 @@ NEW CONSTRUCTION
 - Max width: `max-w-[1400px]` (slightly wider than current 7xl to give room for the three-section layout)
 - The left and right nav sections should be roughly equal width to keep the center logo truly centered. Use `flex-1` on both.
 
-**Hide on mobile (below md:):** Left nav links, center logo text (show only AW monogram), ABOUT link, search icon. Show only: AW monogram + hamburger.
+**Hide on mobile (below md:):** Left nav links, center logo text (show only AW monogram), ABOUT/INSIGHTS links, user icon. Show only: AW monogram + hamburger.
 
 ### Dropdowns (keep existing NavDropdown component, same items):
 - LUXURY CONDOS: All Buildings → /luxury-condos/, then by neighborhood
@@ -155,7 +156,12 @@ Carroll has a prominent property search bar below the hero. We need one too.
   - YouTube (link to #)
   - LinkedIn (link to #)
 - Use simple SVG icons, text-neutral-500, hover:text-white
+- Add "Sign In" to the Company column (links to /login/)
 - Keep everything else the same (4 columns + MLS compliance)
+
+Also update the MobileMenu component (src/components/MobileMenu.tsx):
+- Add "Insights" link (to /blog/) and "Sign In" link (to /login/) to the flat nav list
+- Keep all existing links
 
 ---
 

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 44" fill="none">
+  <!-- AW Monogram v4 - True ligature, shared strokes, Didone contrast -->
+  <!-- A's right leg flows directly into W's first valley - no gap -->
+
+  <g fill="white">
+    <!-- A left thick diagonal -->
+    <polygon points="3,40 5.8,40 20,5.5 17.8,5.5" />
+
+    <!-- SHARED LIGATURE: A right stroke flows into W first upstroke -->
+    <!-- This is one continuous shape: A apex → shared valley → W center peak -->
+    <polygon points="20,5.5 21.5,5.5 32.5,40 38,14.5 39.5,14.5 30.5,40 20,5.5" />
+
+    <!-- W third stroke: center peak down to second valley -->
+    <polygon points="38,14.5 39.5,14.5 51.5,40 49.5,40" />
+
+    <!-- W fourth stroke: second valley up to right peak -->
+    <polygon points="49.5,40 51.5,40 65,5.5 63,5.5" />
+
+    <!-- A crossbar - thin hairline -->
+    <rect x="9.5" y="27.5" width="16" height="0.6" />
+
+    <!-- Baseline serifs -->
+    <rect x="1" y="39.8" width="6.5" height="0.55" rx="0.15" />
+    <rect x="47.5" y="39.8" width="6" height="0.55" rx="0.15" />
+
+    <!-- Cap serifs -->
+    <rect x="16.5" y="5.2" width="6.5" height="0.5" rx="0.15" />
+    <rect x="61.5" y="5.2" width="5.5" height="0.5" rx="0.15" />
+
+    <!-- W center peak serif -->
+    <rect x="36.5" y="14" width="4.5" height="0.45" rx="0.15" />
+  </g>
+</svg>
