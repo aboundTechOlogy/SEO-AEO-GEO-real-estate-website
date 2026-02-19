@@ -59,7 +59,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <body className="bg-neutral-950 text-white antialiased font-sans">
-        <header className="fixed top-0 w-full z-50 bg-black border-b border-white/10">
+        <header className="fixed top-0 w-full z-50 bg-black/40 backdrop-blur-md border-b border-white/10">
           <nav className="max-w-[1400px] mx-auto px-6 py-3 flex items-center justify-between">
             {/* Left: Primary Nav Links */}
             <div className="hidden lg:flex items-center gap-8 flex-1">
