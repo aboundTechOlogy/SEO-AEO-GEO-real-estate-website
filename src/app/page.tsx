@@ -41,26 +41,26 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-[#0a0a0a]" />
 
         <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
-          <p className="text-sm font-light tracking-[0.4em] uppercase text-neutral-500 mb-8" style={{ fontFamily: 'var(--font-inter)' }}>
+          <p className="text-sm font-light tracking-[0.4em] uppercase text-white/80 mb-8" style={{ fontFamily: 'var(--font-inter)' }}>
             Andrew Whalen
           </p>
-          <h1 className="font-playfair text-5xl md:text-7xl font-light tracking-tight mb-6">
+          <h1 className="font-playfair text-5xl md:text-7xl font-light tracking-tight mb-6 text-white">
             South Florida
             <br />
             Luxury Real Estate
           </h1>
-          <p className="text-lg text-neutral-400 font-light max-w-xl mx-auto mb-12 leading-relaxed">
+          <p className="text-lg text-white/80 font-light max-w-xl mx-auto mb-12 leading-relaxed">
             New developments. Neighborhood intelligence. Lifestyle expertise.
           </p>
 
-          <p className="text-sm text-neutral-500 mb-4">
+          <p className="text-base text-white tracking-wide mb-5">
             Start your AI-guided journey by selecting your real estate goal.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             {["Buy", "Sell", "Sell & Buy", "Invest"].map((goal) => (
               <button
                 key={goal}
-                className="px-8 py-3 border border-white/20 hover:border-white/50 text-sm tracking-[0.15em] uppercase text-neutral-300 hover:text-white hover:bg-white/5 transition-all"
+                className="px-8 py-3 border border-white/30 hover:border-white/70 text-sm tracking-[0.15em] uppercase text-white hover:bg-white/10 transition-all"
               >
                 {goal}
               </button>
