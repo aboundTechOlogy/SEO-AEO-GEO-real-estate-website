@@ -59,10 +59,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <body className="bg-neutral-950 text-white antialiased font-sans">
-        <header className="fixed top-0 w-full z-50 bg-black/40 backdrop-blur-md border-b border-white/10">
-          <nav className="max-w-[1400px] mx-auto px-6 py-3 flex items-center justify-between">
+        <header className="fixed top-0 w-full z-50 bg-black/20 backdrop-blur-sm">
+          <nav className="max-w-[1440px] mx-auto px-8 py-4 flex items-center justify-between">
             {/* Left: Primary Nav Links */}
-            <div className="hidden lg:flex items-center gap-8 flex-1">
+            <div className="hidden lg:flex items-center gap-10 flex-1">
               <NavDropdown
                 label="Luxury Condos"
                 items={CONDO_NEIGHBORHOODS}
@@ -78,41 +78,43 @@ export default function RootLayout({
             </div>
 
             {/* Center: Logo Lockup */}
-            <a href="/" className="flex items-center gap-2 shrink-0">
+            <a href="/" className="flex items-center gap-3 shrink-0">
               <img
                 src="/aw-monogram.png"
                 alt="AW"
-                className="h-9 w-auto"
+                className="h-8 w-auto"
               />
-              <span className="hidden md:block text-lg font-light tracking-[0.2em] uppercase" style={{ fontFamily: 'var(--font-inter)' }}>
+              <span className="hidden md:block text-[15px] font-light tracking-[0.2em] uppercase" style={{ fontFamily: 'var(--font-inter)' }}>
                 Andrew Whalen
               </span>
-              <span className="hidden md:block w-px h-7 bg-white/30 mx-1" />
+              <span className="hidden md:block w-px h-6 bg-white/30 mx-2" />
               <img
                 src="/lokation-logo.png"
                 alt="LoKation"
-                className="hidden md:block h-6 w-auto brightness-0 invert"
+                className="hidden md:block h-4 w-auto brightness-0 invert opacity-90"
               />
             </a>
 
             {/* Right: Secondary Nav + Actions */}
-            <div className="hidden lg:flex items-center gap-7 flex-1 justify-end">
-              <a href="/about/" className="text-sm uppercase tracking-wider text-white hover:text-neutral-300 transition-colors">
+            <div className="hidden lg:flex items-center gap-8 flex-1 justify-end">
+              <a href="/about/" className="text-[13px] uppercase tracking-[0.15em] text-white hover:text-neutral-300 transition-colors">
                 About Us
               </a>
-              <a href="/blog/" className="text-sm uppercase tracking-wider text-white hover:text-neutral-300 transition-colors">
+              <a href="/blog/" className="text-[13px] uppercase tracking-[0.15em] text-white hover:text-neutral-300 transition-colors">
                 Insights
               </a>
               <a
                 href="/contact/"
-                className="border border-white/40 rounded-full px-5 py-1.5 text-sm uppercase tracking-wider text-white hover:bg-white/10 transition-all"
+                className="border border-white/50 rounded-full px-6 py-2 text-[13px] uppercase tracking-[0.15em] text-white hover:bg-white/10 transition-all"
               >
                 Contact Us
               </a>
+              {/* Login icon — circle outline around person, matching Carroll */}
               <a href="/login/" className="text-white hover:text-neutral-300 transition-colors" aria-label="Sign in">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.2}>
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
+                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1}>
+                  <circle cx="12" cy="12" r="11" />
+                  <path d="M17.5 19.5c0-2.5-2.5-4-5.5-4s-5.5 1.5-5.5 4" />
+                  <circle cx="12" cy="9" r="2.5" />
                 </svg>
               </a>
               {/* Hamburger — visible on desktop, opens mega menu slide-out */}
