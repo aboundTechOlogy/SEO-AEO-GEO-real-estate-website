@@ -79,20 +79,22 @@ export default function RootLayout({
 
             {/* Logo Lockup — centered on desktop, left-aligned on mobile */}
             <div className="flex-1 lg:flex lg:justify-center">
-              <a href="/" className="flex items-center gap-1.5 md:gap-2 shrink-0">
+              <a href="/" className="flex items-center gap-2 md:gap-3 shrink-0">
                 <img
-                  src="/aw-monogram.png"
-                  alt="AW"
-                  className="h-6 md:h-7 w-auto"
+                  src="/w-icon-logo.png"
+                  alt="W"
+                  className="h-7 md:h-8 w-auto"
                 />
-                <span className="text-[11px] md:text-[15px] font-light tracking-[0.15em] md:tracking-[0.2em] uppercase whitespace-nowrap" style={{ fontFamily: 'var(--font-inter)' }}>
-                  Andrew Whalen
-                </span>
-                <span className="w-px h-4 md:h-5 bg-white/30 mx-1 md:mx-2" />
+                <img
+                  src="/aw-name-logo.png"
+                  alt="Andrew Whalen"
+                  className="h-3 md:h-3.5 w-auto"
+                />
+                <span className="w-px h-5 md:h-6 bg-white/30 mx-1 md:mx-2" />
                 <img
                   src="/lokation-logo.png"
                   alt="LoKation"
-                  className="h-2.5 md:h-3 w-auto brightness-0 invert opacity-80"
+                  className="hidden sm:block h-2 md:h-2.5 w-auto brightness-0 invert opacity-80"
                 />
               </a>
             </div>

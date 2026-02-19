@@ -96,13 +96,11 @@ export default function MegaMenu() {
             <div className="relative z-10">
               {/* Header: Logo + Close */}
               <div className="flex items-center justify-between px-8 py-6 border-b border-white/10">
-                <a href="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
-                  <img src="/aw-monogram.png" alt="AW" className="h-8 w-auto" />
-                  <span className="text-lg font-light tracking-[0.2em] uppercase" style={{ fontFamily: 'var(--font-inter)' }}>
-                    Andrew Whalen
-                  </span>
-                  <span className="w-px h-7 bg-white/30 mx-1" />
-                  <img src="/lokation-logo.png" alt="LoKation" className="h-5 w-auto brightness-0 invert" />
+                <a href="/" className="flex items-center gap-3" onClick={() => setOpen(false)}>
+                  <img src="/w-icon-logo.png" alt="W" className="h-8 w-auto" />
+                  <img src="/aw-name-logo.png" alt="Andrew Whalen" className="h-4 w-auto" />
+                  <span className="w-px h-6 bg-white/30 mx-2" />
+                  <img src="/lokation-logo.png" alt="LoKation" className="h-2.5 w-auto brightness-0 invert" />
                 </a>
                 <button
                   onClick={() => setOpen(false)}
