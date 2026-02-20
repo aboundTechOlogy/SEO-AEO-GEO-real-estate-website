@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { developments } from "@/data/developments";
+import FadeInView from "@/components/FadeInView";
 
 export const metadata: Metadata = {
   title: "Andrew Whalen | Miami Luxury Real Estate",
@@ -61,30 +62,64 @@ export default function HomePage() {
       </section>
 
       {/* Property Search Section */}
-      <section className="py-10 px-6 bg-neutral-900 border-y border-white/5">
-        <div className="max-w-2xl mx-auto text-center">
-          <p className="text-xs uppercase tracking-wider text-neutral-500 mb-4">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <img
+          src="/hero-miami.jpg"
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/70" />
+
+        {/* AW watermark */}
+        <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[20rem] font-playfair text-white/[0.03] select-none pointer-events-none leading-none">
+          AW
+        </span>
+
+        <FadeInView className="relative z-10 w-full max-w-4xl mx-auto px-6 text-center">
+          <h2 className="font-playfair text-4xl md:text-6xl uppercase tracking-[0.15em] text-white mb-12">
             Property Search
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <input
-                type="text"
-                placeholder="Search by address, neighborhood, or building..."
-                className="w-full bg-white/5 border border-white/10 text-white placeholder-neutral-600 px-6 py-4 text-lg pr-12 focus:outline-none focus:border-white/30 transition-colors"
-              />
-              <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+          </h2>
+
+          {/* Search bar */}
+          <div className="flex flex-col md:flex-row gap-3">
+            {/* For Sale dropdown */}
+            <div className="relative shrink-0">
+              <select
+                className="appearance-none bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-4 pr-12 text-white text-sm uppercase tracking-wider w-full md:w-auto cursor-pointer focus:outline-none focus:border-white/40 transition-colors"
+                defaultValue="sale"
+              >
+                <option value="sale" className="bg-neutral-900">For Sale</option>
+                <option value="rent" className="bg-neutral-900">For Rent</option>
+                <option value="sold" className="bg-neutral-900">Sold</option>
+              </select>
+              <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </div>
+
+            {/* Search input */}
+            <input
+              type="text"
+              placeholder="Enter an address, city, zip code or MLS number"
+              className="flex-1 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-8 py-4 text-white placeholder-neutral-500 focus:outline-none focus:border-white/40 transition-colors"
+            />
+
+            {/* Find Now button */}
             <a
               href="/search/"
-              className="border border-white/30 text-white px-8 py-4 text-sm uppercase tracking-wider hover:bg-white/10 transition-all text-center shrink-0"
+              className="bg-white text-black font-medium rounded-full px-10 py-4 uppercase tracking-wider text-sm hover:bg-neutral-200 transition-colors text-center shrink-0"
             >
-              Search
+              Find Now!
             </a>
           </div>
-        </div>
+
+          {/* Advanced search link */}
+          <p className="mt-4">
+            <a href="/search/" className="text-white/70 text-sm tracking-wider hover:text-white transition-colors">
+              + Advanced search options
+            </a>
+          </p>
+        </FadeInView>
       </section>
 
       {/* Stats Section */}
