@@ -131,16 +131,16 @@ export default function SearchPage() {
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/10">
-                  <th className="py-3 px-4 w-10"></th>
-                  <th className="py-3 px-4 text-left font-medium text-neutral-300">Address</th>
-                  <th className="py-3 px-4 text-right font-medium text-neutral-300">Price</th>
-                  <th className="py-3 px-4 text-center font-medium text-neutral-300">% / $</th>
-                  <th className="py-3 px-4 text-center font-medium text-neutral-300">Beds</th>
-                  <th className="py-3 px-4 text-center font-medium text-neutral-300">Baths</th>
-                  <th className="py-3 px-4 text-right font-medium text-neutral-300">Living Size</th>
-                  <th className="py-3 px-4 text-right font-medium text-neutral-300">Price / Sq.Ft.</th>
-                  <th className="py-3 px-4 text-left font-medium text-neutral-300">Development / Subdivision</th>
+                <tr className="bg-white/[0.06] border-y border-white/10">
+                  <th className="py-3.5 px-4 w-10"></th>
+                  <th className="py-3.5 px-4 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">Address</th>
+                  <th className="py-3.5 px-4 text-right text-xs font-medium text-neutral-300 uppercase tracking-wider">Price</th>
+                  <th className="py-3.5 px-4 text-center text-xs font-medium text-neutral-300 uppercase tracking-wider">% / $</th>
+                  <th className="py-3.5 px-4 text-center text-xs font-medium text-neutral-300 uppercase tracking-wider">Beds</th>
+                  <th className="py-3.5 px-4 text-center text-xs font-medium text-neutral-300 uppercase tracking-wider">Baths</th>
+                  <th className="py-3.5 px-4 text-right text-xs font-medium text-neutral-300 uppercase tracking-wider">Living Size</th>
+                  <th className="py-3.5 px-4 text-right text-xs font-medium text-neutral-300 uppercase tracking-wider">Price / Sq.Ft.</th>
+                  <th className="py-3.5 px-4 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">Development / Subdivision</th>
                 </tr>
               </thead>
               <tbody>
