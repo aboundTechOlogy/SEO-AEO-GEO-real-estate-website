@@ -6,6 +6,18 @@ import { MOCK_SEARCH } from "@/data/mockListings";
 
 type ViewMode = "grid" | "map" | "list";
 
+const SORT_OPTIONS = [
+  "Newest Listings",
+  "Modified Listings",
+  "Highest Price",
+  "Lowest Price",
+  "Highest Sq.Ft",
+  "Lowest Sq.Ft",
+  "Just Reduced",
+  "Highest Price/Sq.Ft",
+  "Lowest Price/Sq.Ft",
+];
+
 function parsePrice(p: string): number {
   return Number(p.replace(/[^0-9.]/g, ""));
 }
@@ -23,9 +35,7 @@ function ResultsHeader() {
       <div className="flex items-center gap-2 text-sm text-neutral-400">
         <span className="hidden md:inline">Sort by:</span>
         <select className="bg-transparent text-white text-sm focus:outline-none cursor-pointer">
-          <option>Newest Listings</option>
-          <option>Price: High–Low</option>
-          <option>Price: Low–High</option>
+          {SORT_OPTIONS.map((o) => <option key={o}>{o}</option>)}
         </select>
       </div>
     </div>
@@ -131,9 +141,7 @@ export default function SearchPage() {
             <div className="flex items-center gap-2 text-sm text-neutral-400">
               <span>Sort by:</span>
               <select className="bg-transparent text-white text-sm focus:outline-none cursor-pointer">
-                <option>Newest Listings</option>
-                <option>Price: High–Low</option>
-                <option>Price: Low–High</option>
+                {SORT_OPTIONS.map((o) => <option key={o}>{o}</option>)}
               </select>
             </div>
           </div>
