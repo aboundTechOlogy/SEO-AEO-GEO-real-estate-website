@@ -20,7 +20,7 @@ export default function StatsSection() {
             src="/andrew-stats-v3.png"
             alt="Andrew Whalen"
             className="absolute inset-0 w-full h-full object-cover"
-            style={{ objectPosition: '35% top' }}
+            style={{ objectPosition: '45% top' }}
           />
           <div className="absolute inset-0 bg-black/20" />
         </div>
