@@ -84,7 +84,7 @@ function SortDropdown() {
 /* ── Sort/count row — shared across all three views ── */
 function SorterRow({ count }: { count: number }) {
   return (
-    <div className="h-10 flex items-center justify-between px-[15px] bg-white border-b border-gray-200 shrink-0 sticky top-[128px] md:top-[136px] z-[4]">
+    <div className="h-10 flex items-center justify-between px-[15px] bg-white border-b border-gray-200 shrink-0">
       <p className="text-[13px] text-gray-600">{count.toLocaleString()} Properties</p>
       <SortDropdown />
     </div>
