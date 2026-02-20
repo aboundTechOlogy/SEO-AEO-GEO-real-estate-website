@@ -67,7 +67,7 @@ export default function Header() {
             <img
               src="/logo-lockup.png"
               alt="Andrew Whalen | LoKation"
-              className="h-9 w-auto"
+              className="h-8 w-auto"
             />
           </a>
         </div>
@@ -106,7 +106,7 @@ export default function Header() {
           <img
             src="/logo-lockup.png"
             alt="Andrew Whalen | LoKation"
-            className="h-7 sm:h-8 w-auto"
+            className="h-5 sm:h-6 w-auto"
           />
         </a>
 
