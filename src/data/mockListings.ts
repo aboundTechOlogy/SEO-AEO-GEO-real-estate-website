@@ -50,5 +50,4 @@ export const MOCK_SEARCH: ListingData[] = [
   { price: "$3,850,000", address: "1 N Fort Lauderdale Beach Blvd #2102", city: "Fort Lauderdale", state: "FL", zip: "33304", beds: 3, baths: 3.5, sqft: 2900, href: "#" },
   { price: "$2,400,000", address: "9705 Collins Ave #1405N", city: "Bal Harbour", state: "FL", zip: "33154", beds: 3, baths: 3, sqft: 2500, href: "#" },
   { price: "$1,800,000", address: "701 N Fort Lauderdale Blvd #PH5", city: "Fort Lauderdale", state: "FL", zip: "33304", beds: 3, baths: 2.5, sqft: 2100, status: "Price Reduced", href: "#" },
-  { price: "$950,000", address: "100 S Birch Rd #2504", city: "Fort Lauderdale", state: "FL", zip: "33316", beds: 2, baths: 2, sqft: 1200, href: "#" },
 ];
