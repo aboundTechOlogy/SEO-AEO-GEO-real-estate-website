@@ -8,39 +8,10 @@ const COUNTY_TABS = [
   { id: "palm-beach", label: "Palm Beach" },
 ];
 
-// Add a few placeholder Broward/Palm Beach neighborhoods
-const BROWARD_PLACEHOLDER = [
-  { slug: "fort-lauderdale", name: "Fort Lauderdale", tagline: "Venice of America", county: "broward" as const, propertyTypes: ["HOMES" as const, "CONDOS" as const] },
-  { slug: "las-olas", name: "Las Olas", tagline: "Dining & Waterfront Living", county: "broward" as const, propertyTypes: ["HOMES" as const, "CONDOS" as const] },
-  { slug: "hallandale-beach", name: "Hallandale Beach", tagline: "Oceanfront Value", county: "broward" as const, propertyTypes: ["CONDOS" as const] },
-  { slug: "hollywood", name: "Hollywood Beach", tagline: "Boardwalk Lifestyle", county: "broward" as const, propertyTypes: ["HOMES" as const, "CONDOS" as const] },
-];
-
-const PALM_BEACH_PLACEHOLDER = [
-  { slug: "palm-beach", name: "Palm Beach", tagline: "The Ultimate Address", county: "palm-beach" as const, propertyTypes: ["HOMES" as const, "CONDOS" as const] },
-  { slug: "west-palm-beach", name: "West Palm Beach", tagline: "Waterfront Renaissance", county: "palm-beach" as const, propertyTypes: ["HOMES" as const, "CONDOS" as const] },
-  { slug: "boca-raton", name: "Boca Raton", tagline: "Planned Luxury Living", county: "palm-beach" as const, propertyTypes: ["HOMES" as const, "CONDOS" as const] },
-  { slug: "delray-beach", name: "Delray Beach", tagline: "Downtown by the Beach", county: "palm-beach" as const, propertyTypes: ["HOMES" as const, "CONDOS" as const] },
-];
-
-type NeighborhoodItem = {
-  slug: string;
-  name: string;
-  tagline?: string;
-  county: "miami-dade" | "broward" | "palm-beach";
-  propertyTypes: ("HOMES" | "CONDOS")[];
-};
-
 export default function NeighborhoodsPage() {
   const [activeCounty, setActiveCounty] = useState<"miami-dade" | "broward" | "palm-beach">("miami-dade");
 
-  const allNeighborhoods: NeighborhoodItem[] = [
-    ...neighborhoods.map(n => ({ slug: n.slug, name: n.name, tagline: n.tagline, county: n.county, propertyTypes: n.propertyTypes })),
-    ...BROWARD_PLACEHOLDER,
-    ...PALM_BEACH_PLACEHOLDER,
-  ];
-
-  const filtered = allNeighborhoods.filter(n => n.county === activeCounty);
+  const filtered = neighborhoods.filter(n => n.county === activeCounty);
 
   return (
     <>

@@ -131,4 +131,59 @@ export const buildings: Building[] = [
     description:
       "A waterfront luxury tower on the Intracoastal in West Palm Beach, offering panoramic views across Lake Worth to Palm Beach island.",
   },
+  {
+    slug: "auberge-beach-residences",
+    name: "Auberge Beach Residences & Spa",
+    neighborhood: "Fort Lauderdale",
+    yearBuilt: "2018",
+    units: 171,
+    floors: 29,
+    county: "broward",
+    description:
+      "Ultra-luxury oceanfront residences on Fort Lauderdale Beach offering full Auberge resort services, private beach, and spa.",
+  },
+  {
+    slug: "paramount-fort-lauderdale",
+    name: "Paramount Fort Lauderdale",
+    neighborhood: "Fort Lauderdale",
+    yearBuilt: "2018",
+    units: 95,
+    floors: 18,
+    county: "broward",
+    description:
+      "Iconic luxury oceanfront tower on Fort Lauderdale Beach featuring oversized residences and resort-style amenities directly on the Atlantic.",
+  },
+  {
+    slug: "ritz-carlton-pompano-beach",
+    name: "The Ritz-Carlton Residences, Pompano Beach",
+    neighborhood: "Pompano Beach",
+    yearBuilt: "2024",
+    units: 92,
+    floors: 24,
+    county: "broward",
+    description:
+      "Branded luxury oceanfront residences in Pompano Beach offering full Ritz-Carlton services, private beach club, and marina access.",
+  },
+  {
+    slug: "the-bristol",
+    name: "The Bristol",
+    neighborhood: "West Palm Beach",
+    yearBuilt: "2019",
+    units: 69,
+    floors: 25,
+    county: "palm-beach",
+    description:
+      "Ultra-luxury waterfront condominium on the Intracoastal in West Palm Beach, widely regarded as the most prestigious address in Palm Beach County.",
+  },
+  {
+    slug: "via-mizner",
+    name: "Via Mizner",
+    neighborhood: "Boca Raton",
+    yearBuilt: "2023",
+    units: 274,
+    floors: 27,
+    county: "palm-beach",
+    description:
+      "Luxury residences adjacent to the Boca Raton Resort & Club on Camino Real, featuring resort amenities and walkable access to Mizner Park.",
+  },
 ];

@@ -14,14 +14,14 @@ const COUNTIES = [
     id: "broward",
     name: "Broward",
     tagline: "Fort Lauderdale & Beyond",
-    href: "/neighborhoods/#broward",
+    href: "/neighborhoods/broward/",
     gradient: "from-emerald-950/90 to-teal-950/70",
   },
   {
     id: "palm-beach",
     name: "Palm Beach",
     tagline: "The Gold Coast",
-    href: "/neighborhoods/#palm-beach",
+    href: "/neighborhoods/palm-beach/",
     gradient: "from-amber-950/80 to-orange-950/70",
   },
 ];
