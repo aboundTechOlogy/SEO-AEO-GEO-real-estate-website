@@ -40,7 +40,7 @@ export default function HomePage() {
               {["Buy", "Sell", "Sell & Buy", "Invest"].map((goal) => (
                 <button
                   key={goal}
-                  className="min-w-[160px] md:min-w-[180px] px-8 py-3.5 border border-white/30 hover:border-white/70 text-sm tracking-[0.15em] uppercase text-white hover:bg-white/10 transition-all"
+                  className="min-w-[160px] md:min-w-[180px] px-8 py-3.5 border-2 border-white/30 hover:border-white/70 text-sm tracking-[0.15em] uppercase text-white hover:bg-white/10 transition-all"
                 >
                   {goal}
                 </button>
@@ -64,7 +64,7 @@ export default function HomePage() {
               {["Buy", "Sell", "Sell & Buy", "Invest"].map((goal) => (
                 <button
                   key={goal}
-                  className="min-w-[160px] px-8 py-3.5 border border-white/30 hover:border-white/70 text-sm tracking-[0.15em] uppercase text-white hover:bg-white/10 transition-all"
+                  className="min-w-[160px] px-8 py-3.5 border-2 border-white/30 hover:border-white/70 text-sm tracking-[0.15em] uppercase text-white hover:bg-white/10 transition-all"
                 >
                   {goal}
                 </button>
