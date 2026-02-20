@@ -41,9 +41,6 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-[#0a0a0a]" />
 
         <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
-          <p className="text-sm font-light tracking-[0.4em] uppercase text-white/80 mb-8" style={{ fontFamily: 'var(--font-inter)' }}>
-            Andrew Whalen
-          </p>
           <h1 className="font-playfair text-5xl md:text-7xl font-light tracking-tight mb-6 text-white">
             South Florida
             <br />
