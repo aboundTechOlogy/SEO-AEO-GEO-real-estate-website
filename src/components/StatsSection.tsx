@@ -17,9 +17,10 @@ export default function StatsSection() {
         {/* Sticky photo background */}
         <div className="sticky top-0 h-screen w-full overflow-hidden">
           <img
-            src="/andrew-stats-v2.png"
+            src="/andrew-stats-v3.png"
             alt="Andrew Whalen"
-            className="absolute inset-0 w-full h-full object-cover stats-image"
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ objectPosition: '35% top' }}
           />
           <div className="absolute inset-0 bg-black/20" />
         </div>
@@ -46,9 +47,10 @@ export default function StatsSection() {
       {/* Desktop: stats photo background with stat grid on right */}
       <section className="relative hidden md:block h-[550px] md:h-[600px] min-h-[550px] md:min-h-[600px] overflow-hidden">
         <img
-          src="/andrew-stats-v2.png"
+          src="/andrew-stats-v3.png"
           alt="Andrew Whalen"
-          className="absolute inset-0 w-full h-full object-cover stats-image"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ objectPosition: 'left top' }}
         />
         <div className="absolute inset-0 bg-black/20" />
 
