@@ -19,8 +19,7 @@ export default function StatsSection() {
           <img
             src="/andrew-stats-v3.png"
             alt="Andrew Whalen"
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ objectPosition: '45% top' }}
+            className="absolute inset-0 w-full h-full object-cover stats-image-mobile"
           />
           <div className="absolute inset-0 bg-black/20" />
         </div>
@@ -49,8 +48,7 @@ export default function StatsSection() {
         <img
           src="/andrew-stats-v3.png"
           alt="Andrew Whalen"
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ objectPosition: 'left top' }}
+          className="absolute inset-0 w-full h-full object-cover stats-image-desktop"
         />
         <div className="absolute inset-0 bg-black/20" />
 
