@@ -1,83 +1,10 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import PropertyCard from "@/components/PropertyCard";
+import { DesktopSearchBar, MobileSearchBar } from "@/components/SearchFilters";
 import { MOCK_SEARCH } from "@/data/mockListings";
 
-const PRICE_RANGES = ["Any Price", "Under $500K", "$500K–$1M", "$1M–$2M", "$2M–$5M", "$5M+"];
-const BED_OPTIONS = ["Any Beds", "1+", "2+", "3+", "4+", "5+"];
-const STATUS_OPTIONS = ["For Sale", "Sold", "For Rent"];
-const TYPE_OPTIONS = ["Any Type", "House", "Condo", "Townhouse", "Multi-Family", "Land"];
-
 type ViewMode = "grid" | "map" | "list";
-
-const VIEW_ICONS: Record<ViewMode, { label: string; icon: React.ReactNode }> = {
-  grid: {
-    label: "Grid",
-    icon: (
-      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M3 3h7v7H3V3zm11 0h7v7h-7V3zM3 14h7v7H3v-7zm11 0h7v7h-7v-7z" />
-      </svg>
-    ),
-  },
-  map: {
-    label: "Map",
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-        <path d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-        <path d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 0 1 15 0Z" />
-      </svg>
-    ),
-  },
-  list: {
-    label: "List",
-    icon: (
-      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z" />
-      </svg>
-    ),
-  },
-};
-
-function ViewToggle({ view, setView }: { view: ViewMode; setView: (v: ViewMode) => void }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, []);
-
-  return (
-    <div className="relative shrink-0" ref={ref}>
-      <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 border border-white/20 rounded-full px-4 py-2.5 text-white hover:border-white/40 transition-colors"
-      >
-        {VIEW_ICONS[view].icon}
-        <span className="text-sm font-medium">{VIEW_ICONS[view].label}</span>
-      </button>
-      {open && (
-        <div className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-xl z-50 overflow-hidden min-w-[120px]">
-          {(["grid", "map", "list"] as ViewMode[]).map((v) => (
-            <button
-              key={v}
-              onClick={() => { setView(v); setOpen(false); }}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
-                view === v ? "bg-neutral-100 text-black font-medium" : "text-neutral-600 hover:bg-neutral-50"
-              }`}
-            >
-              <span className="text-neutral-400">{VIEW_ICONS[v].icon}</span>
-              {VIEW_ICONS[v].label}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 function parsePrice(p: string): number {
   return Number(p.replace(/[^0-9.]/g, ""));
@@ -151,94 +78,13 @@ export default function SearchPage() {
 
   return (
     <>
-      {/* ==================== FILTER BAR ==================== */}
+      {/* Filter bar */}
       <div className="sticky top-[72px] md:top-[80px] z-30 bg-neutral-950 border-b border-white/5">
-
-        {/* DESKTOP: Single row — search + filters + Save Search + view toggle */}
-        <div className="hidden md:flex items-center gap-3 px-6 py-3">
-          <div className="relative min-w-[220px] max-w-[280px]">
-            <input
-              type="text"
-              placeholder="Enter Address, City, Zip Code, Subdivision"
-              className="w-full bg-transparent border border-white/20 rounded-full px-4 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white/40 transition-colors"
-            />
-          </div>
-
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="shrink-0 bg-neutral-900 border border-white/20 rounded-full px-4 py-2.5 text-sm text-white focus:outline-none focus:border-white/40"
-          >
-            {STATUS_OPTIONS.map((o) => <option key={o}>{o}</option>)}
-          </select>
-
-          <select className="shrink-0 bg-neutral-900 border border-white/20 rounded-full px-4 py-2.5 text-sm text-white focus:outline-none focus:border-white/40">
-            {PRICE_RANGES.map((r) => <option key={r}>{r}</option>)}
-          </select>
-
-          <select className="shrink-0 bg-neutral-900 border border-white/20 rounded-full px-4 py-2.5 text-sm text-white focus:outline-none focus:border-white/40">
-            {BED_OPTIONS.map((b) => <option key={b}>{b}</option>)}
-          </select>
-
-          <select className="shrink-0 bg-neutral-900 border border-white/20 rounded-full px-4 py-2.5 text-sm text-white focus:outline-none focus:border-white/40">
-            {TYPE_OPTIONS.map((t) => <option key={t}>{t}</option>)}
-          </select>
-
-          <div className="ml-auto flex items-center gap-3">
-            <button className="shrink-0 bg-white text-black rounded-full px-5 py-2.5 text-sm font-medium hover:bg-neutral-200 transition-colors">
-              Save Search
-            </button>
-            <ViewToggle view={view} setView={setView} />
-          </div>
-        </div>
-
-        {/* MOBILE: Two rows */}
-        <div className="md:hidden px-4">
-          {/* Row 1: Search + view toggle */}
-          <div className="flex items-center gap-3 py-3">
-            <div className="relative flex-1">
-              <input
-                type="text"
-                placeholder="Enter Address, City, Zip Code, Subdivision"
-                className="w-full bg-transparent border border-white/20 rounded-full px-4 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white/40 transition-colors"
-              />
-            </div>
-            <ViewToggle view={view} setView={setView} />
-          </div>
-
-          {/* Row 2: Filter pills (scrollable) */}
-          <div className="flex items-center gap-2 pb-3 overflow-x-auto no-scrollbar">
-            <button className="shrink-0 flex items-center gap-1.5 bg-neutral-900 border border-white/20 rounded-full px-4 py-2 text-sm text-white">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                <path d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
-              </svg>
-              Filters
-            </button>
-
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="shrink-0 bg-neutral-900 border border-white/20 rounded-full px-4 py-2 text-sm text-white focus:outline-none"
-            >
-              {STATUS_OPTIONS.map((o) => <option key={o}>{o}</option>)}
-            </select>
-
-            <select className="shrink-0 bg-neutral-900 border border-white/20 rounded-full px-4 py-2 text-sm text-white focus:outline-none">
-              {PRICE_RANGES.map((r) => <option key={r}>{r}</option>)}
-            </select>
-
-            <select className="shrink-0 bg-neutral-900 border border-white/20 rounded-full px-4 py-2 text-sm text-white focus:outline-none">
-              {BED_OPTIONS.map((b) => <option key={b}>{b}</option>)}
-            </select>
-
-            <select className="shrink-0 bg-neutral-900 border border-white/20 rounded-full px-4 py-2 text-sm text-white focus:outline-none">
-              {TYPE_OPTIONS.map((t) => <option key={t}>{t}</option>)}
-            </select>
-          </div>
-        </div>
+        <DesktopSearchBar status={status} onStatusChange={setStatus} view={view} onViewChange={setView} />
+        <MobileSearchBar status={status} onStatusChange={setStatus} view={view} onViewChange={setView} />
       </div>
 
-      {/* ==================== VIEW: GRID — full-width 3-col cards ==================== */}
+      {/* ==================== VIEW: GRID ==================== */}
       {view === "grid" && (
         <div className="bg-[#0a0a0a] min-h-[calc(100vh-72px-60px)]">
           <ResultsHeader />
@@ -251,7 +97,7 @@ export default function SearchPage() {
         </div>
       )}
 
-      {/* ==================== VIEW: MAP — 50/50 split ==================== */}
+      {/* ==================== VIEW: MAP ==================== */}
       {view === "map" && (
         <div className="flex bg-[#0a0a0a]" style={{ height: "calc(100vh - 72px - 60px)" }}>
           <div className="w-full lg:w-1/2 bg-neutral-900 border-r border-white/5 flex items-center justify-center">
@@ -264,7 +110,6 @@ export default function SearchPage() {
               <p className="text-neutral-600 text-xs">Map integration coming soon</p>
             </div>
           </div>
-
           <div className="hidden lg:block flex-1 overflow-y-auto">
             <ResultsHeader />
             <div className="grid grid-cols-2 gap-4 p-4 md:p-6">
@@ -277,12 +122,12 @@ export default function SearchPage() {
         </div>
       )}
 
-      {/* ==================== VIEW: LIST — data table ==================== */}
+      {/* ==================== VIEW: LIST ==================== */}
       {view === "list" && (
         <div className="bg-[#0a0a0a] min-h-[calc(100vh-72px-60px)]">
           <ResultsHeader />
 
-          {/* Desktop: Full data table matching Carroll */}
+          {/* Desktop: Data table */}
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -300,10 +145,7 @@ export default function SearchPage() {
               </thead>
               <tbody>
                 {MOCK_SEARCH.map((listing, i) => (
-                  <tr
-                    key={i}
-                    className="border-b border-white/5 hover:bg-white/[0.03] transition-colors cursor-pointer"
-                  >
+                  <tr key={i} className="border-b border-white/5 hover:bg-white/[0.03] transition-colors cursor-pointer">
                     <td className="py-4 px-4">
                       <button className="text-neutral-500 hover:text-white transition-colors">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -311,33 +153,21 @@ export default function SearchPage() {
                         </svg>
                       </button>
                     </td>
-                    <td className="py-4 px-4 text-white">
-                      {listing.address}, {listing.city}, {listing.state} {listing.zip}
-                    </td>
-                    <td className="py-4 px-4 text-right text-white font-semibold whitespace-nowrap">
-                      {listing.price}
-                    </td>
-                    <td className="py-4 px-4 text-center text-neutral-400">
-                      —
-                    </td>
+                    <td className="py-4 px-4 text-white">{listing.address}, {listing.city}, {listing.state} {listing.zip}</td>
+                    <td className="py-4 px-4 text-right text-white font-semibold whitespace-nowrap">{listing.price}</td>
+                    <td className="py-4 px-4 text-center text-neutral-400">—</td>
                     <td className="py-4 px-4 text-center text-neutral-300">{listing.beds}</td>
                     <td className="py-4 px-4 text-center text-neutral-300">{listing.baths}</td>
-                    <td className="py-4 px-4 text-right text-neutral-300 whitespace-nowrap">
-                      {listing.sqft ? `${listing.sqft.toLocaleString()} Sq.Ft` : "—"}
-                    </td>
-                    <td className="py-4 px-4 text-right text-neutral-300 whitespace-nowrap">
-                      {formatPriceSqft(listing.price, listing.sqft)}
-                    </td>
-                    <td className="py-4 px-4 text-neutral-400 whitespace-nowrap">
-                      —
-                    </td>
+                    <td className="py-4 px-4 text-right text-neutral-300 whitespace-nowrap">{listing.sqft ? `${listing.sqft.toLocaleString()} Sq.Ft` : "—"}</td>
+                    <td className="py-4 px-4 text-right text-neutral-300 whitespace-nowrap">{formatPriceSqft(listing.price, listing.sqft)}</td>
+                    <td className="py-4 px-4 text-neutral-400 whitespace-nowrap">—</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
 
-          {/* Mobile: Card-style list */}
+          {/* Mobile: Card list */}
           <div className="md:hidden px-4 py-4 space-y-3">
             {MOCK_SEARCH.map((listing, i) => (
               <MobileListCard key={i} listing={listing} />
