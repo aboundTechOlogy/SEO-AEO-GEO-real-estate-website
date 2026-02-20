@@ -31,24 +31,18 @@ export const metadata: Metadata = {
   },
 };
 
-const CONDO_NEIGHBORHOODS = [
-  { label: "Brickell", href: "/luxury-condos/brickell/" },
-  { label: "Miami Beach", href: "/luxury-condos/miami-beach/" },
-  { label: "Coconut Grove", href: "/luxury-condos/coconut-grove/" },
-  { label: "Coral Gables", href: "/luxury-condos/coral-gables/" },
-  { label: "Sunny Isles", href: "/luxury-condos/sunny-isles/" },
-  { label: "Edgewater", href: "/luxury-condos/edgewater/" },
+const CONDO_ITEMS = [
+  { label: "Miami-Dade County", href: "/luxury-condos/" },
+  { label: "Broward County", href: "/luxury-condos/broward/" },
+  { label: "Palm Beach County", href: "/luxury-condos/palm-beach/" },
   { label: "New Construction", href: "/new-construction/", dividerBefore: true },
 ];
 
-const NEIGHBORHOOD_GUIDES = [
-  { label: "Brickell", href: "/neighborhoods/brickell/" },
-  { label: "Miami Beach", href: "/neighborhoods/miami-beach/" },
-  { label: "Coconut Grove", href: "/neighborhoods/coconut-grove/" },
-  { label: "Coral Gables", href: "/neighborhoods/coral-gables/" },
-  { label: "Key Biscayne", href: "/neighborhoods/key-biscayne/" },
-  { label: "Downtown Miami", href: "/neighborhoods/downtown-miami/" },
-  { label: "Edgewater", href: "/neighborhoods/edgewater/" },
+const NEIGHBORHOOD_ITEMS = [
+  { label: "Miami-Dade County", href: "/neighborhoods/" },
+  { label: "Broward County", href: "/neighborhoods/broward/" },
+  { label: "Palm Beach County", href: "/neighborhoods/palm-beach/" },
+  { label: "Search Properties", href: "/search/", dividerBefore: true },
 ];
 
 export default function RootLayout({
@@ -65,13 +59,13 @@ export default function RootLayout({
             <div className="hidden lg:flex items-center gap-10 shrink-0">
               <NavDropdown
                 label="Luxury Condos"
-                items={CONDO_NEIGHBORHOODS}
-                allLabel="All Buildings"
+                items={CONDO_ITEMS}
+                allLabel="All Condos"
                 allHref="/luxury-condos/"
               />
               <NavDropdown
                 label="Neighborhoods"
-                items={NEIGHBORHOOD_GUIDES}
+                items={NEIGHBORHOOD_ITEMS}
                 allLabel="All Neighborhoods"
                 allHref="/neighborhoods/"
               />
