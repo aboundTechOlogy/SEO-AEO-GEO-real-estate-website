@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import PropertyCard from "@/components/PropertyCard";
 import { DesktopSearchBar, MobileSearchBar } from "@/components/SearchFilters";
 import { MOCK_SEARCH } from "@/data/mockListings";
@@ -38,6 +38,52 @@ function ResultsHeader() {
           {SORT_OPTIONS.map((o) => <option key={o}>{o}</option>)}
         </select>
       </div>
+    </div>
+  );
+}
+
+function SortDropdown() {
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState("Newest Listings");
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-1.5 text-sm text-neutral-300 hover:text-white transition-colors"
+      >
+        <span>Sort by:</span>
+        <span className="text-white">{selected}</span>
+        <svg className="w-3.5 h-3.5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+          <path d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-xl py-1 z-50 min-w-[200px]">
+          {SORT_OPTIONS.map((option) => (
+            <button
+              key={option}
+              onClick={() => { setSelected(option); setOpen(false); }}
+              className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
+                selected === option
+                  ? "bg-blue-50 text-blue-600 font-medium"
+                  : "text-gray-700 hover:bg-gray-100"
+              }`}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -135,37 +181,32 @@ export default function SearchPage() {
       {/* ==================== VIEW: LIST ==================== */}
       {view === "list" && (
         <div className="bg-[#0a0a0a] min-h-[calc(100vh-72px-60px)]">
-          {/* Results count + sort */}
-          <div className="flex items-center justify-between px-6 py-3 border-b border-white/5">
-            <p className="text-neutral-400 text-sm">{MOCK_SEARCH.length} Properties</p>
-            <div className="flex items-center gap-2 text-sm text-neutral-400">
-              <span>Sort by:</span>
-              <select className="bg-transparent text-white text-sm focus:outline-none cursor-pointer">
-                {SORT_OPTIONS.map((o) => <option key={o}>{o}</option>)}
-              </select>
-            </div>
+          {/* Sort row — right-aligned, matches Carroll placement */}
+          <div className="flex items-center justify-end px-6 py-2">
+            <SortDropdown />
           </div>
 
-          {/* Desktop: Data table */}
-          <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="sticky top-[140px] z-20 bg-neutral-800">
-                <tr className="border-b border-white/10">
+          {/* Desktop: Data table — NO overflow wrapper to preserve sticky */}
+          <div className="hidden md:block">
+            <table className="w-full text-sm table-fixed">
+              {/* Column header row — light gray bg like Carroll */}
+              <thead>
+                <tr className="bg-neutral-700/50 border-y border-white/10">
                   <th className="py-3 px-4 w-10"></th>
                   <th className="py-3 px-4 text-left text-sm font-normal text-neutral-300">Address</th>
-                  <th className="py-3 px-4 text-right text-sm font-normal text-neutral-300">Price</th>
-                  <th className="py-3 px-4 text-center text-sm font-normal text-neutral-300">% / $</th>
-                  <th className="py-3 px-4 text-center text-sm font-normal text-neutral-300">Beds</th>
-                  <th className="py-3 px-4 text-center text-sm font-normal text-neutral-300">Baths</th>
-                  <th className="py-3 px-4 text-right text-sm font-normal text-neutral-300">Living Size</th>
-                  <th className="py-3 px-4 text-right text-sm font-normal text-neutral-300">Price / Sq.Ft.</th>
+                  <th className="py-3 px-4 text-right text-sm font-normal text-neutral-300 w-[140px]">Price</th>
+                  <th className="py-3 px-4 text-center text-sm font-normal text-neutral-300 w-[70px]">% / $</th>
+                  <th className="py-3 px-4 text-center text-sm font-normal text-neutral-300 w-[60px]">Beds</th>
+                  <th className="py-3 px-4 text-center text-sm font-normal text-neutral-300 w-[60px]">Baths</th>
+                  <th className="py-3 px-4 text-right text-sm font-normal text-neutral-300 w-[120px]">Living Size</th>
+                  <th className="py-3 px-4 text-right text-sm font-normal text-neutral-300 w-[120px]">Price / Sq.Ft.</th>
                   <th className="py-3 px-4 text-left text-sm font-normal text-neutral-300">Development / Subdivision</th>
                 </tr>
               </thead>
               <tbody>
                 {MOCK_SEARCH.map((listing, i) => (
                   <tr key={i} className="border-b border-white/5 hover:bg-white/[0.03] transition-colors cursor-pointer">
-                    <td className="py-4 px-4">
+                    <td className="py-4 px-4 w-10">
                       <button className="text-neutral-500 hover:text-white transition-colors">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                           <path d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" />
