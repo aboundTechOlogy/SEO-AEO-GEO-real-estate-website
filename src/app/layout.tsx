@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
-import NavDropdown from "@/components/NavDropdown";
-import MobileMenu from "@/components/MobileMenu";
-import MegaMenu from "@/components/MegaMenu";
+import Header from "@/components/Header";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -39,19 +37,6 @@ export const metadata: Metadata = {
   },
 };
 
-const CONDO_ITEMS = [
-  { label: "Miami-Dade County", href: "/luxury-condos/" },
-  { label: "Broward County", href: "/luxury-condos/broward/" },
-  { label: "Palm Beach County", href: "/luxury-condos/palm-beach/" },
-  { label: "New Construction", href: "/new-construction/", dividerBefore: true },
-];
-
-const NEIGHBORHOOD_ITEMS = [
-  { label: "Miami-Dade County", href: "/neighborhoods/" },
-  { label: "Broward County", href: "/neighborhoods/broward/" },
-  { label: "Palm Beach County", href: "/neighborhoods/palm-beach/" },
-  { label: "Search Properties", href: "/search/", dividerBefore: true },
-];
 
 export default function RootLayout({
   children,
@@ -61,74 +46,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <body className="bg-neutral-950 text-white antialiased font-sans">
-        <header className="fixed top-0 w-full z-50 bg-black/20 backdrop-blur-sm">
-          <nav className="w-full px-10 py-4 flex items-center">
-            {/* Left: Primary Nav Links */}
-            <div className="hidden lg:flex items-center gap-10 shrink-0">
-              <NavDropdown
-                label="Luxury Condos"
-                items={CONDO_ITEMS}
-                allLabel="All Condos"
-                allHref="/luxury-condos/"
-              />
-              <NavDropdown
-                label="Neighborhoods"
-                items={NEIGHBORHOOD_ITEMS}
-                allLabel="All Neighborhoods"
-                allHref="/neighborhoods/"
-              />
-            </div>
-
-            {/* Logo Lockup — centered on desktop, left-aligned on mobile */}
-            <div className="flex-1 lg:flex lg:justify-center">
-              <a href="/" className="shrink-0">
-                <img
-                  src="/logo-lockup.png"
-                  alt="Andrew Whalen | LoKation"
-                  className="h-6 sm:h-7 md:h-8 w-auto"
-                />
-              </a>
-            </div>
-
-            {/* Right: Secondary Nav + Actions */}
-            <div className="hidden lg:flex items-center gap-7 shrink-0">
-              <a href="/about/" className="text-[13px] uppercase tracking-[0.12em] text-white hover:text-neutral-300 transition-colors whitespace-nowrap">
-                About Us
-              </a>
-              <a href="/blog/" className="text-[13px] uppercase tracking-[0.12em] text-white hover:text-neutral-300 transition-colors">
-                Insights
-              </a>
-              <a
-                href="/contact/"
-                className="border border-white/50 rounded-full px-6 py-2 text-[13px] uppercase tracking-[0.12em] text-white hover:bg-white/10 transition-all whitespace-nowrap"
-              >
-                Contact Us
-              </a>
-              {/* Login icon — circle outline around person, matching Carroll */}
-              <a href="/login/" className="text-white hover:text-neutral-300 transition-colors" aria-label="Sign in">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.2}>
-                  <circle cx="12" cy="12" r="10.5" />
-                  <path d="M17 19c0-2.2-2.2-3.5-5-3.5S7 16.8 7 19" />
-                  <circle cx="12" cy="9.5" r="2.5" />
-                </svg>
-              </a>
-              {/* Hamburger — visible on desktop, opens mega menu slide-out */}
-              <MegaMenu />
-            </div>
-
-            {/* Mobile nav: logo left, login + hamburger right */}
-            <div className="flex lg:hidden items-center gap-4 ml-auto">
-              <a href="/login/" className="text-white" aria-label="Sign in">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.2}>
-                  <circle cx="12" cy="12" r="10.5" />
-                  <path d="M17 19c0-2.2-2.2-3.5-5-3.5S7 16.8 7 19" />
-                  <circle cx="12" cy="9.5" r="2.5" />
-                </svg>
-              </a>
-              <MobileMenu />
-            </div>
-          </nav>
-        </header>
+        <Header />
 
         <main className="min-h-screen">{children}</main>
 
