@@ -1,6 +1,5 @@
 "use client";
-import { useState, useRef, useEffect, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
 import PropertyCard from "@/components/PropertyCard";
 import { DesktopSearchBar, MobileSearchBar } from "@/components/SearchFilters";
 import { MOCK_SEARCH } from "@/data/mockListings";
@@ -130,31 +129,20 @@ function MobileListCard({ listing }: { listing: typeof MOCK_SEARCH[0] }) {
 }
 
 export default function SearchPage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-[#0a0a0a]" />}>
-      <SearchPageInner />
-    </Suspense>
-  );
-}
-
-function SearchPageInner() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
   const [status, setStatus] = useState("For Sale");
+  const [view, setViewState] = useState<ViewMode>("grid");
 
-  // Read view from URL ?view=grid|map|list, default to grid
-  const urlView = searchParams.get("view") as ViewMode | null;
-  const validViews: ViewMode[] = ["grid", "map", "list"];
-  const [view, setViewState] = useState<ViewMode>(
-    urlView && validViews.includes(urlView) ? urlView : "grid"
-  );
+  // Persist view in URL hash and restore on load
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "") as ViewMode;
+    if (["grid", "map", "list"].includes(hash)) {
+      setViewState(hash);
+    }
+  }, []);
 
-  // When view changes, update URL
   const setView = (newView: ViewMode) => {
     setViewState(newView);
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("view", newView);
-    router.replace(`/search?${params.toString()}`, { scroll: false });
+    window.history.replaceState(null, "", `/search#${newView}`);
   };
 
   return (
