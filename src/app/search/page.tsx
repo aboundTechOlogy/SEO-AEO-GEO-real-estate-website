@@ -59,10 +59,10 @@ function SortDropdown() {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 text-sm text-neutral-300 hover:text-white transition-colors"
+        className="flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-800 transition-colors"
       >
         <span>Sort by:</span>
-        <span className="text-white">{selected}</span>
+        <span className="text-neutral-800 font-medium">{selected}</span>
         <svg className="w-3.5 h-3.5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
           <path d="M19 9l-7 7-7-7" />
         </svg>
@@ -181,26 +181,32 @@ export default function SearchPage() {
       {/* ==================== VIEW: LIST ==================== */}
       {view === "list" && (
         <div className="bg-[#0a0a0a] min-h-[calc(100vh-72px-60px)]">
-          {/* Sort row — right-aligned, matches Carroll placement */}
-          <div className="flex items-center justify-end px-6 py-2">
+          {/* Count + Sort row — light bg band like Carroll */}
+          <div className="hidden md:flex items-center justify-between px-4 py-2 bg-neutral-200 text-neutral-700 border-b border-neutral-300">
+            <p className="text-sm">{MOCK_SEARCH.length.toLocaleString()} Properties</p>
+            <SortDropdown />
+          </div>
+          {/* Mobile count + sort */}
+          <div className="md:hidden flex items-center justify-between px-4 py-2 bg-neutral-200 text-neutral-700">
+            <p className="text-sm">{MOCK_SEARCH.length.toLocaleString()} Properties</p>
             <SortDropdown />
           </div>
 
-          {/* Desktop: Data table — NO overflow wrapper to preserve sticky */}
+          {/* Desktop: Data table */}
           <div className="hidden md:block">
             <table className="w-full text-sm table-fixed">
-              {/* Column header row — light gray bg like Carroll */}
+              {/* Column header row — light gray bg matching Carroll */}
               <thead>
-                <tr className="bg-neutral-700/50 border-y border-white/10">
+                <tr className="bg-neutral-200 text-neutral-600 border-b border-neutral-300">
                   <th className="py-3 px-4 w-10"></th>
-                  <th className="py-3 px-4 text-left text-sm font-normal text-neutral-300">Address</th>
-                  <th className="py-3 px-4 text-right text-sm font-normal text-neutral-300 w-[140px]">Price</th>
-                  <th className="py-3 px-4 text-center text-sm font-normal text-neutral-300 w-[70px]">% / $</th>
-                  <th className="py-3 px-4 text-center text-sm font-normal text-neutral-300 w-[60px]">Beds</th>
-                  <th className="py-3 px-4 text-center text-sm font-normal text-neutral-300 w-[60px]">Baths</th>
-                  <th className="py-3 px-4 text-right text-sm font-normal text-neutral-300 w-[120px]">Living Size</th>
-                  <th className="py-3 px-4 text-right text-sm font-normal text-neutral-300 w-[120px]">Price / Sq.Ft.</th>
-                  <th className="py-3 px-4 text-left text-sm font-normal text-neutral-300">Development / Subdivision</th>
+                  <th className="py-3 px-4 text-left text-sm font-normal text-neutral-500">Address</th>
+                  <th className="py-3 px-4 text-right text-sm font-normal text-neutral-500 w-[140px]">Price</th>
+                  <th className="py-3 px-4 text-center text-sm font-normal text-neutral-500 w-[70px]">% / $</th>
+                  <th className="py-3 px-4 text-center text-sm font-normal text-neutral-500 w-[60px]">Beds</th>
+                  <th className="py-3 px-4 text-center text-sm font-normal text-neutral-500 w-[60px]">Baths</th>
+                  <th className="py-3 px-4 text-right text-sm font-normal text-neutral-500 w-[120px]">Living Size</th>
+                  <th className="py-3 px-4 text-right text-sm font-normal text-neutral-500 w-[120px]">Price / Sq.Ft.</th>
+                  <th className="py-3 px-4 text-left text-sm font-normal text-neutral-500">Development / Subdivision</th>
                 </tr>
               </thead>
               <tbody>
