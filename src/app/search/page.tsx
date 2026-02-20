@@ -290,41 +290,40 @@ export default function SearchPage() {
               className="w-full max-w-full border-collapse border border-gray-200 bg-white"
               style={{ borderSpacing: 0 }}
             >
-              {/* Sticky header — offset = nav (72-80px) + filter (~56px) + sorter (40px) */}
-              <thead className="sticky top-[168px] z-[3]">
+              <thead>
                 <tr>
                   {/* Fave */}
-                  <th className="w-10 px-2 py-[15px] text-[14px] font-medium text-left text-gray-700 bg-gray-100 border border-gray-200" />
+                  <th className="w-10 px-2 py-[15px] text-[14px] font-semibold text-left text-gray-700 bg-[#f5f5f5] border border-gray-200" />
                   {/* Address */}
-                  <th className="px-2 py-[15px] text-[14px] font-medium text-left text-gray-700 bg-gray-100 border border-gray-200">
+                  <th className="px-2 py-[15px] text-[14px] font-semibold text-left text-gray-700 bg-[#f5f5f5] border border-gray-200">
                     Address
                   </th>
                   {/* Price */}
-                  <th className="w-[140px] px-2 py-[15px] text-[14px] font-medium text-right text-gray-700 bg-gray-100 border border-gray-200">
+                  <th className="w-[140px] px-2 py-[15px] text-[14px] font-semibold text-right text-gray-700 bg-[#f5f5f5] border border-gray-200">
                     Price
                   </th>
                   {/* % / $ */}
-                  <th className="w-[70px] px-2 py-[15px] text-[14px] font-medium text-center text-gray-700 bg-gray-100 border border-gray-200">
+                  <th className="w-[70px] px-2 py-[15px] text-[14px] font-semibold text-center text-gray-700 bg-[#f5f5f5] border border-gray-200">
                     % / $
                   </th>
                   {/* Beds */}
-                  <th className="w-[60px] px-2 py-[15px] text-[14px] font-medium text-center text-gray-700 bg-gray-100 border border-gray-200">
+                  <th className="w-[60px] px-2 py-[15px] text-[14px] font-semibold text-center text-gray-700 bg-[#f5f5f5] border border-gray-200">
                     Beds
                   </th>
                   {/* Baths */}
-                  <th className="w-[60px] px-2 py-[15px] text-[14px] font-medium text-center text-gray-700 bg-gray-100 border border-gray-200">
+                  <th className="w-[60px] px-2 py-[15px] text-[14px] font-semibold text-center text-gray-700 bg-[#f5f5f5] border border-gray-200">
                     Baths
                   </th>
                   {/* Living Size — hidden below lg (1024px ≈ Carroll's 990px) */}
-                  <th className="w-[120px] px-2 py-[15px] text-[14px] font-medium text-right text-gray-700 bg-gray-100 border border-gray-200 hidden lg:table-cell">
+                  <th className="w-[120px] px-2 py-[15px] text-[14px] font-semibold text-right text-gray-700 bg-[#f5f5f5] border border-gray-200 hidden lg:table-cell">
                     Living Size
                   </th>
                   {/* Price/Sq.Ft — hidden below xl (1280px ≈ Carroll's 1300px) */}
-                  <th className="w-[120px] px-2 py-[15px] text-[14px] font-medium text-right text-gray-700 bg-gray-100 border border-gray-200 hidden xl:table-cell">
+                  <th className="w-[120px] px-2 py-[15px] text-[14px] font-semibold text-right text-gray-700 bg-[#f5f5f5] border border-gray-200 hidden xl:table-cell">
                     Price / Sq.Ft.
                   </th>
                   {/* Development — hidden below 2xl (1536px ≈ Carroll's 1500px) */}
-                  <th className="px-2 py-[15px] text-[14px] font-medium text-left text-gray-700 bg-gray-100 border border-gray-200 hidden 2xl:table-cell">
+                  <th className="px-2 py-[15px] text-[14px] font-semibold text-left text-gray-700 bg-[#f5f5f5] border border-gray-200 hidden 2xl:table-cell">
                     Development / Subdivision
                   </th>
                 </tr>
