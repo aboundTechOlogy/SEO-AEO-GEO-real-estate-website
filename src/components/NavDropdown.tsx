@@ -51,13 +51,6 @@ export default function NavDropdown({ label, items, allLabel, allHref }: NavDrop
 
       {open && (
         <div className="absolute top-full left-0 mt-4 w-56 bg-white rounded shadow-xl py-3 z-50">
-          <a
-            href={allHref}
-            className="block px-5 py-2 text-sm text-neutral-800 font-medium hover:bg-neutral-100 transition-colors uppercase tracking-wider"
-          >
-            {allLabel}
-          </a>
-          <div className="border-t border-neutral-200 my-2 mx-4" />
           {items.map((item) => (
             <div key={item.href}>
               {item.dividerBefore && <div className="border-t border-neutral-200 my-2 mx-4" />}
