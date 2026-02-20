@@ -43,9 +43,10 @@ export default function Header() {
 
   return (
     <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${bg} ${border}`}>
-      <nav className="w-full px-4 md:px-6 lg:px-8 py-5 md:py-6 flex items-center">
-        {/* Left: Primary Nav Links */}
-        <div className="hidden lg:flex items-center gap-10 shrink-0">
+      {/* Desktop nav */}
+      <nav className="hidden lg:block relative w-full px-4 md:px-6 lg:px-8 py-5 md:py-6">
+        {/* Left: Primary Nav Links — absolute left */}
+        <div className="absolute left-4 md:left-6 lg:left-8 top-1/2 -translate-y-1/2 flex items-center gap-8">
           <NavDropdown
             label="Luxury Condos"
             items={CONDO_ITEMS}
@@ -60,19 +61,19 @@ export default function Header() {
           />
         </div>
 
-        {/* Logo Lockup — centered on desktop, left-aligned on mobile */}
-        <div className="flex-1 lg:flex lg:justify-center">
+        {/* Center: Logo — absolute center */}
+        <div className="flex justify-center">
           <a href="/" className="shrink-0">
             <img
               src="/logo-lockup.png"
               alt="Andrew Whalen | LoKation"
-              className="h-7 sm:h-8 md:h-9 w-auto"
+              className="h-9 w-auto"
             />
           </a>
         </div>
 
-        {/* Right: Secondary Nav + Actions */}
-        <div className="hidden lg:flex items-center gap-7 shrink-0">
+        {/* Right: Secondary Nav + Actions — absolute right */}
+        <div className="absolute right-4 md:right-6 lg:right-8 top-1/2 -translate-y-1/2 flex items-center gap-6">
           <a href="/about/" className="text-[13px] uppercase tracking-[0.12em] text-white hover:text-neutral-300 transition-colors whitespace-nowrap">
             About Us
           </a>
@@ -85,7 +86,7 @@ export default function Header() {
           >
             Contact Us
           </a>
-          {/* Login icon — desktop only */}
+          {/* Login icon */}
           <a href="/login/" className="text-white hover:text-neutral-300 transition-colors" aria-label="Sign in">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.2}>
               <circle cx="12" cy="12" r="10.5" />
@@ -93,12 +94,31 @@ export default function Header() {
               <circle cx="12" cy="9.5" r="2.5" />
             </svg>
           </a>
-          {/* Hamburger — opens mega menu slide-out */}
+          {/* Hamburger */}
           <MegaMenu />
         </div>
+      </nav>
 
-        {/* Mobile nav: hamburger only (no login icon) */}
-        <div className="flex lg:hidden items-center ml-auto">
+      {/* Mobile nav */}
+      <nav className="lg:hidden w-full px-4 py-5 flex items-center">
+        {/* Logo left */}
+        <a href="/" className="shrink-0">
+          <img
+            src="/logo-lockup.png"
+            alt="Andrew Whalen | LoKation"
+            className="h-7 sm:h-8 w-auto"
+          />
+        </a>
+
+        {/* Login + Hamburger right */}
+        <div className="ml-auto flex items-center gap-4">
+          <a href="/login/" className="text-white" aria-label="Sign in">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.2}>
+              <circle cx="12" cy="12" r="10.5" />
+              <path d="M17 19c0-2.2-2.2-3.5-5-3.5S7 16.8 7 19" />
+              <circle cx="12" cy="9.5" r="2.5" />
+            </svg>
+          </a>
           <MobileMenu />
         </div>
       </nav>
