@@ -112,49 +112,57 @@ function Pagination() {
   );
 }
 
-/* ── Mobile list card — white bg, dark text ── */
+/* ── Mobile list card — matches Carroll's rounded card layout ── */
 function MobileListCard({ listing }: { listing: (typeof MOCK_SEARCH)[0] }) {
   return (
-    <div className="flex gap-3 p-4 bg-white hover:bg-gray-50 transition-colors cursor-pointer">
-      <div className="w-20 h-20 shrink-0 bg-gray-100 flex items-center justify-center">
-        <svg
-          className="w-5 h-5 text-gray-400"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0 0 22.5 18.75V5.25A2.25 2.25 0 0 0 20.25 3H3.75A2.25 2.25 0 0 0 1.5 5.25v13.5A2.25 2.25 0 0 0 3.75 21Z"
-          />
-        </svg>
-      </div>
+    <div className="mx-4 mb-3 flex gap-3 p-3 bg-white rounded-xl border border-gray-200 shadow-sm cursor-pointer">
+      {/* Thumbnail */}
+      {listing.image ? (
+        <img
+          src={listing.image}
+          alt={listing.address}
+          className="w-20 h-20 shrink-0 rounded-md object-cover"
+        />
+      ) : (
+        <div className="w-20 h-20 shrink-0 rounded-md bg-gray-200 flex items-center justify-center">
+          <svg
+            className="w-6 h-6 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0 0 22.5 18.75V5.25A2.25 2.25 0 0 0 20.25 3H3.75A2.25 2.25 0 0 0 1.5 5.25v13.5A2.25 2.25 0 0 0 3.75 21Z"
+            />
+          </svg>
+        </div>
+      )}
+      {/* Details */}
       <div className="flex-1 min-w-0">
-        <p className="text-gray-900 text-sm truncate">
+        <p className="text-gray-900 text-sm leading-snug truncate">
           {listing.address}, {listing.city}, {listing.state} {listing.zip}
         </p>
-        <p className="text-gray-900 text-base font-semibold mt-0.5">{listing.price}</p>
-        <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
-          <span>{listing.beds} Beds</span>
-          <span className="text-gray-300">·</span>
-          <span>{listing.baths} Baths</span>
-          <span className="text-gray-300">·</span>
-          <span>{listing.sqft?.toLocaleString()} Sq.Ft</span>
+        <p className="text-gray-900 text-base font-bold mt-1">{listing.price}</p>
+        <div className="flex items-center gap-1 text-[13px] text-gray-700 mt-1">
+          <span className="font-semibold">{listing.beds}</span>
+          <span className="text-gray-400">Beds</span>
+          <span className="text-gray-300 mx-0.5">•</span>
+          <span className="font-semibold">{listing.baths}</span>
+          <span className="text-gray-400">Baths</span>
+          <span className="text-gray-300 mx-0.5">•</span>
+          <span className="font-semibold">{listing.sqft?.toLocaleString() ?? "—"}</span>
+          <span className="text-gray-400">Sq.Ft</span>
         </div>
       </div>
+      {/* Favorite star */}
       <button
         className="shrink-0 self-start text-gray-400 hover:text-gray-700 transition-colors p-1"
         aria-label="Save listing"
       >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
-          />
-        </svg>
+        <StarIcon />
       </button>
     </div>
   );
@@ -386,7 +394,7 @@ export default function SearchPage() {
           </div>
 
           {/* Mobile: card list */}
-          <div className="md:hidden divide-y divide-gray-200">
+          <div className="md:hidden pt-3 pb-3 bg-gray-50">
             {MOCK_SEARCH.map((listing, i) => (
               <MobileListCard key={i} listing={listing} />
             ))}
