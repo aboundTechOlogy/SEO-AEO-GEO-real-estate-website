@@ -119,6 +119,40 @@ src/
     └── blog.ts
 ```
 
+## Carroll Source Code Reference
+The `reference/` directory contains Carroll's actual HTML (656KB) and CSS (192KB). **READ THESE** when implementing any section — do not guess at layout or animation behavior.
+
+### Carroll's Animation System
+- Every section has class `ms-section ms-st-animate`
+- When scrolled into view, class `star-animate` is toggled on
+- Animations are CSS transitions: `opacity`, `transform`, `clip-path`, `width`
+- Easing: `cubic-bezier(0.4, 0, 0.2, 1)` — equivalent to GSAP `power2.out`
+- Staggered children via `transition-delay: 0.1s, 0.2s, 0.3s...`
+- Letter-by-letter reveals: each letter in `<span>`, staggered `transition-delay`
+- Clip-path photo reveal: `polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%)` → `polygon(0 0, 100% 0, 100% 100%, 0 100%)`
+- Floating bars: `width: 0` → `width: 100%` with staggered delays
+
+### Carroll's Homepage Sections (in order)
+1. `#introVideo` — Hero (full-screen video + letter-by-letter title)
+2. `#welcome` — Property Search (video bg + search bar)
+3. `#listings` — Exclusive Listings (Swiper carousel)
+4. `#new_videos` — Exclusive Videos (Swiper carousel)
+5. `#animate_text` — Text animation interstitial
+6. `#about_cover` — Agent photo + floating bars + stats (letter-by-letter)
+7. `#about_records` — Mobile-only stats
+8. `#about_description` — Meet Chad bio (two-column: text + photos)
+9. `#neighborhoods_collection` — 3 county blades with video backgrounds
+10. `#solds` — Recently Sold (Swiper carousel)
+11. `#new_team` — Team carousel (SKIP — solo agent)
+12. `#new_testimonials` — Testimonials (Swiper + quotation marks + stars)
+13. `#new_media` — In The News (Swiper press cards)
+14. `#instagram_content` — Instagram feed (4-column grid)
+15. `#new_contact_form` — Contact form + video background
+16. `#footer` — Footer columns + social + legal
+
+### Our Equivalents
+We use GSAP ScrollTrigger (not ScrollMagic) and Swiper (same as Carroll). Our `ScrollReveal` component replaces Carroll's `star-animate` class toggling.
+
 ## Critical Rules
 1. **Do NOT modify MLS compliance footer text** — legally required verbatim
 2. **Do NOT remove existing JSON-LD structured data** — add to it

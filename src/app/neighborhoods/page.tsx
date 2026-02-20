@@ -1,176 +1,133 @@
-import { Metadata } from "next";
+"use client";
+import { useState } from "react";
 import { neighborhoods } from "@/data/neighborhoods";
 
-export const metadata: Metadata = {
-  title: "Miami Luxury Neighborhoods | Andrew Whalen",
-  description:
-    "Explore Miami's most prestigious luxury neighborhoods. Market data, lifestyle insights, and expert guides for Brickell, Miami Beach, Coconut Grove, Coral Gables, and more.",
-  openGraph: {
-    title: "Miami Luxury Neighborhoods | Andrew Whalen",
-    description:
-      "Insider knowledge on Miami-Dade's most sought-after neighborhoods.",
-    type: "website",
-    url: "https://iamandrewwhalen.com/neighborhoods",
-  },
+const COUNTY_TABS = [
+  { id: "miami-dade", label: "Miami-Dade" },
+  { id: "broward", label: "Broward" },
+  { id: "palm-beach", label: "Palm Beach" },
+];
+
+// Add a few placeholder Broward/Palm Beach neighborhoods
+const BROWARD_PLACEHOLDER = [
+  { slug: "fort-lauderdale", name: "Fort Lauderdale", tagline: "Venice of America", county: "broward" as const, propertyTypes: ["HOMES" as const, "CONDOS" as const] },
+  { slug: "las-olas", name: "Las Olas", tagline: "Dining & Waterfront Living", county: "broward" as const, propertyTypes: ["HOMES" as const, "CONDOS" as const] },
+  { slug: "hallandale-beach", name: "Hallandale Beach", tagline: "Oceanfront Value", county: "broward" as const, propertyTypes: ["CONDOS" as const] },
+  { slug: "hollywood", name: "Hollywood Beach", tagline: "Boardwalk Lifestyle", county: "broward" as const, propertyTypes: ["HOMES" as const, "CONDOS" as const] },
+];
+
+const PALM_BEACH_PLACEHOLDER = [
+  { slug: "palm-beach", name: "Palm Beach", tagline: "The Ultimate Address", county: "palm-beach" as const, propertyTypes: ["HOMES" as const, "CONDOS" as const] },
+  { slug: "west-palm-beach", name: "West Palm Beach", tagline: "Waterfront Renaissance", county: "palm-beach" as const, propertyTypes: ["HOMES" as const, "CONDOS" as const] },
+  { slug: "boca-raton", name: "Boca Raton", tagline: "Planned Luxury Living", county: "palm-beach" as const, propertyTypes: ["HOMES" as const, "CONDOS" as const] },
+  { slug: "delray-beach", name: "Delray Beach", tagline: "Downtown by the Beach", county: "palm-beach" as const, propertyTypes: ["HOMES" as const, "CONDOS" as const] },
+];
+
+type NeighborhoodItem = {
+  slug: string;
+  name: string;
+  tagline?: string;
+  county: "miami-dade" | "broward" | "palm-beach";
+  propertyTypes: ("HOMES" | "CONDOS")[];
 };
 
 export default function NeighborhoodsPage() {
+  const [activeCounty, setActiveCounty] = useState<"miami-dade" | "broward" | "palm-beach">("miami-dade");
+
+  const allNeighborhoods: NeighborhoodItem[] = [
+    ...neighborhoods.map(n => ({ slug: n.slug, name: n.name, tagline: n.tagline, county: n.county, propertyTypes: n.propertyTypes })),
+    ...BROWARD_PLACEHOLDER,
+    ...PALM_BEACH_PLACEHOLDER,
+  ];
+
+  const filtered = allNeighborhoods.filter(n => n.county === activeCounty);
+
   return (
     <>
       {/* Hero */}
-      <section className="pt-32 pb-16 px-6">
-        <div className="max-w-7xl mx-auto">
-          <p
-            className="text-sm font-light tracking-[0.25em] uppercase text-neutral-500 mb-4"
-            style={{ fontFamily: "var(--font-inter)" }}
-          >
-            Neighborhood Guides
-          </p>
-          <h1 className="font-playfair text-5xl md:text-6xl font-light mb-4">
-            Miami&apos;s Luxury Neighborhoods
-          </h1>
-          <p className="text-neutral-400 max-w-2xl text-lg">
-            Insider knowledge on Miami-Dade&apos;s most sought-after
-            neighborhoods. Market data, lifestyle insights, and the developments
-            reshaping each area.
-          </p>
-        </div>
-      </section>
-
-      {/* Map Placeholder */}
-      <section className="px-6 pb-16">
-        <div className="max-w-7xl mx-auto">
-          <div className="w-full h-64 bg-neutral-900 border border-white/5 rounded-sm flex items-center justify-center">
-            <span className="text-neutral-600 text-sm">
-              Interactive Map Coming Soon
-            </span>
+      <section className="relative h-[45vh] min-h-[300px] overflow-hidden">
+        <img src="/hero-miami.jpg" alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/60 to-black/85" />
+        <div className="absolute inset-0 flex items-center justify-center text-center px-6 pt-16">
+          <div>
+            <p className="text-neutral-400 text-sm uppercase tracking-[0.3em] mb-4">Andrew Whalen</p>
+            <h1 className="font-playfair text-5xl md:text-6xl font-light text-white">Neighborhoods</h1>
           </div>
         </div>
       </section>
 
-      {/* Neighborhoods Grid */}
-      <section className="py-16 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {neighborhoods.map((n) => {
-              const hasGuide = n.hasGuidePage === true;
-              return (
-                <div
-                  key={n.slug}
-                  className="group border border-white/5 hover:border-white/20 bg-white/[0.02] hover:bg-white/[0.04] transition-all rounded-sm overflow-hidden"
-                >
-                  {/* Image placeholder */}
-                  <div className="h-40 bg-neutral-800/50 flex items-center justify-center relative">
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-900/40" />
-                    <svg className="w-6 h-6 text-neutral-600 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                    </svg>
-                  </div>
+      {/* County tabs */}
+      <section className="bg-neutral-900 border-b border-white/5 sticky top-16 z-30">
+        <div className="max-w-7xl mx-auto px-6 flex gap-0">
+          {COUNTY_TABS.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveCounty(tab.id as "miami-dade" | "broward" | "palm-beach")}
+              className={`px-6 py-4 text-xs uppercase tracking-widest transition-colors ${
+                activeCounty === tab.id
+                  ? "text-white border-b-2 border-white"
+                  : "text-neutral-500 hover:text-neutral-300"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </section>
 
-                  <div className="p-8">
-                    <div className="flex items-start justify-between mb-1">
-                      {hasGuide ? (
-                        <a
-                          href={`/neighborhoods/${n.slug}/`}
-                          className="font-playfair text-xl hover:text-white transition-colors"
-                        >
-                          {n.name}
-                        </a>
-                      ) : (
-                        <span className="font-playfair text-xl">{n.name}</span>
-                      )}
-                      {!hasGuide && (
-                        <span className="text-[10px] uppercase tracking-wider text-neutral-600 bg-white/5 px-2 py-0.5 rounded-full shrink-0">
-                          Coming Soon
+      {/* Split panel */}
+      <section className="bg-[#0a0a0a]">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col lg:flex-row">
+            {/* Map placeholder — desktop left */}
+            <div className="hidden lg:flex lg:w-[40%] min-h-[600px] bg-neutral-900 border-r border-white/5 items-center justify-center sticky top-32 self-start h-[calc(100vh-8rem)]">
+              <div className="text-center px-6">
+                <p className="text-neutral-600 text-sm uppercase tracking-widest mb-2">Interactive Map</p>
+                <p className="text-neutral-700 text-xs">Coming Soon</p>
+              </div>
+            </div>
+
+            {/* Neighborhood grid — right */}
+            <div className="lg:w-[60%] px-6 py-12">
+              <p className="text-neutral-500 text-sm uppercase tracking-[0.2em] mb-8">
+                {filtered.length} Neighborhoods in {COUNTY_TABS.find(t => t.id === activeCounty)?.label}
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {filtered.map((n) => (
+                  <a
+                    key={n.slug}
+                    href={`/neighborhoods/${n.slug}/`}
+                    className="group relative bg-neutral-900 border border-white/5 hover:border-white/20 transition-all p-6"
+                  >
+                    {/* Placeholder thumbnail */}
+                    <div className="aspect-video bg-gradient-to-br from-neutral-800 to-neutral-950 mb-4 flex items-center justify-center">
+                      <span className="text-neutral-700 text-xs uppercase tracking-widest">{n.name}</span>
+                    </div>
+                    <h3 className="font-playfair text-xl text-white mb-1">{n.name}</h3>
+                    {n.tagline && <p className="text-neutral-500 text-xs uppercase tracking-wider mb-4">{n.tagline}</p>}
+                    <div className="flex gap-2">
+                      {n.propertyTypes.map((t) => (
+                        <span key={t} className="bg-neutral-800 px-3 py-1 text-xs uppercase tracking-wider text-neutral-400">
+                          {t}
                         </span>
-                      )}
+                      ))}
                     </div>
-                    <p className="text-sm text-neutral-500 mb-6">{n.tagline}</p>
-
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                      <div>
-                        <p className="text-xs text-neutral-500 uppercase tracking-wider mb-1">
-                          Median
-                        </p>
-                        <p className="text-sm text-neutral-300">
-                          {n.stats.medianPrice}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-neutral-500 uppercase tracking-wider mb-1">
-                          Avg DOM
-                        </p>
-                        <p className="text-sm text-neutral-300">
-                          {n.stats.avgDom} days
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex gap-3">
-                      <a
-                        href={hasGuide ? `/neighborhoods/${n.slug}/` : `/neighborhoods/`}
-                        className="flex-1 text-center py-2 text-xs uppercase tracking-wider border border-white/10 hover:border-white/30 text-neutral-400 hover:text-white transition-all"
-                      >
-                        Homes
-                      </a>
-                      <a
-                        href={hasGuide ? `/neighborhoods/${n.slug}/` : `/neighborhoods/`}
-                        className="flex-1 text-center py-2 text-xs uppercase tracking-wider border border-white/10 hover:border-white/30 text-neutral-400 hover:text-white transition-all"
-                      >
-                        Condos
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+                  </a>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-24 px-6 bg-neutral-900/50">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="font-playfair text-4xl mb-4">
-            Not Sure Which Neighborhood?
-          </h2>
-          <p className="text-neutral-400 mb-10">
-            I&apos;ll help you find the right fit based on your lifestyle,
-            budget, and goals.
-          </p>
-          <a
-            href="/contact/"
-            className="inline-block px-8 py-3 border border-white/30 text-white hover:bg-white/10 transition-all rounded-sm tracking-wider uppercase text-sm"
-          >
-            Let&apos;s Talk
-          </a>
-        </div>
-      </section>
-
-      {/* Structured data — static hardcoded content, safe for dangerouslySetInnerHTML */}
       <script
         type="application/ld+json"
-        /* eslint-disable-next-line -- static trusted JSON-LD, no user input */
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "ItemList",
-            name: "Miami Luxury Neighborhoods",
-            description:
-              "Guide to Miami's most prestigious luxury neighborhoods.",
+            "@type": "CollectionPage",
+            name: "South Florida Neighborhoods | Andrew Whalen",
             url: "https://iamandrewwhalen.com/neighborhoods",
-            numberOfItems: neighborhoods.length,
-            itemListElement: neighborhoods.map((n, i) => ({
-              "@type": "ListItem",
-              position: i + 1,
-              item: {
-                "@type": "Place",
-                name: n.name,
-                description: n.heroDescription,
-                url: `https://iamandrewwhalen.com/neighborhoods/${n.slug}`,
-              },
-            })),
           }),
         }}
       />

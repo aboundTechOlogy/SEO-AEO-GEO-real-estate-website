@@ -8,6 +8,7 @@ export interface Development {
   completionYear: string;
   developer: string;
   description: string;
+  county: "miami-dade" | "broward" | "palm-beach";
 }
 
 export const developments: Development[] = [
@@ -20,6 +21,7 @@ export const developments: Development[] = [
     status: "Pre-Construction",
     completionYear: "2027",
     developer: "Mast Capital",
+    county: "miami-dade",
     description:
       "A boutique oceanfront tower on Millionaire's Row, designed by OMA with interiors by Tara Bernerd. One of the last undeveloped oceanfront parcels in Miami Beach.",
   },
@@ -32,6 +34,7 @@ export const developments: Development[] = [
     status: "Under Construction",
     completionYear: "2027",
     developer: "Midtown Development",
+    county: "miami-dade",
     description:
       "The Standard's first branded residential tower, bringing its iconic hospitality DNA to Brickell's waterfront with wellness-focused amenities.",
   },
@@ -44,6 +47,7 @@ export const developments: Development[] = [
     status: "Under Construction",
     completionYear: "2026",
     developer: "NR Investments",
+    county: "miami-dade",
     description:
       "A 400-unit bayfront tower in Edgewater with direct Biscayne Bay views, resort-style pool deck, and proximity to the Design District.",
   },
@@ -56,6 +60,7 @@ export const developments: Development[] = [
     status: "Pre-Construction",
     completionYear: "2028",
     developer: "Two Roads Development",
+    county: "miami-dade",
     description:
       "A mid-rise boutique development in North Beach offering spacious layouts and private outdoor terraces in a quieter pocket of Miami Beach.",
   },
@@ -68,6 +73,7 @@ export const developments: Development[] = [
     status: "Recently Completed",
     completionYear: "2025",
     developer: "Aria Development",
+    county: "miami-dade",
     description:
       "A recently delivered luxury tower on Collins Avenue in North Beach, featuring expansive layouts and a 2-acre park designed by West 8.",
   },
@@ -80,6 +86,7 @@ export const developments: Development[] = [
     status: "Under Construction",
     completionYear: "2027",
     developer: "Ytech",
+    county: "miami-dade",
     description:
       "A supertall tower rising 70+ stories on Brickell Avenue, featuring interiors by Yoo Studio and panoramic bay views from every residence.",
   },
@@ -92,6 +99,7 @@ export const developments: Development[] = [
     status: "Recently Completed",
     completionYear: "2025",
     developer: "Terra / GFO",
+    county: "miami-dade",
     description:
       "Designed by Arquitectonica, this 48-story tower anchors the south end of Miami Beach with sweeping ocean and bay views and a canopy park by West 8.",
   },
@@ -104,6 +112,7 @@ export const developments: Development[] = [
     status: "Pre-Construction",
     completionYear: "2028",
     developer: "Vlad Doronin / OKO Group",
+    county: "miami-dade",
     description:
       "Aman's first branded residences in Florida — an ultra-exclusive oceanfront enclave with only 23 residences and full Aman resort services.",
   },
@@ -116,6 +125,7 @@ export const developments: Development[] = [
     status: "Under Construction",
     completionYear: "2027",
     developer: "Fortune International",
+    county: "miami-dade",
     description:
       "A 62-story oceanfront tower bringing the St. Regis brand to Sunny Isles Beach, with butler service, private beach, and marina access.",
   },
@@ -128,7 +138,34 @@ export const developments: Development[] = [
     status: "Recently Completed",
     completionYear: "2024",
     developer: "Related Group",
+    county: "miami-dade",
     description:
       "A boutique 57-unit tower in Edgewater fully furnished by B&B Italia — the first residential project from the iconic Italian furniture brand.",
+  },
+  {
+    slug: "the-wave-fort-lauderdale",
+    name: "The Wave on Bayshore",
+    location: "Fort Lauderdale",
+    priceFrom: "$900K",
+    units: "75 Residences",
+    status: "Pre-Construction",
+    completionYear: "2027",
+    developer: "Ocean Land Investments",
+    county: "broward",
+    description:
+      "A boutique bayfront tower on the Fort Lauderdale Intracoastal, offering private boat docks and resort-style amenities.",
+  },
+  {
+    slug: "south-flagler-house",
+    name: "South Flagler House",
+    location: "West Palm Beach",
+    priceFrom: "$5M",
+    units: "108 Residences",
+    status: "Pre-Construction",
+    completionYear: "2028",
+    developer: "Related Ross",
+    county: "palm-beach",
+    description:
+      "A landmark twin-tower development on the Intracoastal in West Palm Beach, delivering ultra-luxury residences with direct water views to Palm Beach island.",
   },
 ];

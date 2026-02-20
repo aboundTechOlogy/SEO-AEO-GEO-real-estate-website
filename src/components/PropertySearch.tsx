@@ -1,6 +1,6 @@
 "use client";
 
-import FadeInOnScroll from "@/components/FadeInOnScroll";
+import ScrollReveal from "@/components/ScrollReveal";
 
 // TODO: Replace with looping video — slow aerial of Biscayne Bay at dusk
 
@@ -21,7 +21,7 @@ export default function PropertySearch() {
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[400px] opacity-[0.04] select-none pointer-events-none"
       />
 
-      <FadeInOnScroll className="relative z-10 w-full max-w-6xl mx-auto px-6 text-center">
+      <ScrollReveal className="relative z-10 w-full max-w-6xl mx-auto px-6 text-center">
         <h2 className="font-playfair text-5xl md:text-6xl uppercase tracking-[0.15em] text-white mb-10">
           Property Search
         </h2>
@@ -65,7 +65,7 @@ export default function PropertySearch() {
             + Advanced search options
           </a>
         </p>
-      </FadeInOnScroll>
+      </ScrollReveal>
     </section>
   );
 }

@@ -1,229 +1,156 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "About Andrew Whalen | Miami Luxury Real Estate Specialist",
+  title: "About Andrew Whalen | South Florida Luxury Real Estate Specialist",
   description:
-    "1,300+ transactions, 20+ years of experience. Andrew Whalen is a South Florida luxury real estate specialist serving Miami's most prestigious neighborhoods.",
+    "1,300+ transactions, 21+ years of experience. Andrew Whalen is a South Florida luxury real estate specialist serving Miami-Dade, Broward, and Palm Beach counties.",
   openGraph: {
-    title: "About Andrew Whalen | Miami Luxury Real Estate Specialist",
+    title: "About Andrew Whalen | South Florida Luxury Real Estate Specialist",
     description:
-      "1,300+ transactions, 20+ years of experience. South Florida luxury real estate specialist.",
+      "1,300+ transactions, 21+ years of experience. South Florida luxury real estate specialist.",
     type: "profile",
     url: "https://iamandrewwhalen.com/about",
   },
 };
 
+const STATS = [
+  { value: "1,300+", label: "Transactions Closed" },
+  { value: "21+", label: "Years Experience" },
+  { value: "$500M+", label: "Career Sales Volume" },
+  { value: "40+", label: "Neighborhoods Served" },
+];
+
 export default function AboutPage() {
   return (
     <>
-      {/* Hero */}
-      <section className="relative pt-24">
-        <div className="relative h-96 bg-neutral-800 flex items-center justify-center">
-          <span className="absolute text-neutral-700 text-sm">Lifestyle Photo</span>
-          <div className="relative z-10 text-center px-6">
-            <p
-              className="text-sm font-light tracking-[0.25em] uppercase text-neutral-500 mb-4"
-              style={{ fontFamily: "var(--font-inter)" }}
-            >
-              About
-            </p>
-            <h1 className="font-playfair text-5xl font-light mb-3">
-              Andrew Whalen
-            </h1>
-            <p className="text-lg text-neutral-400">
-              Realtor&reg; &middot; South Florida Luxury Specialist
-            </p>
+      {/* Hero banner */}
+      <section className="relative h-[60vh] min-h-[400px] overflow-hidden">
+        <img
+          src="/hero-miami.jpg"
+          alt="South Florida Luxury Real Estate"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/60 to-black/80" />
+        <div className="absolute inset-0 flex items-center justify-center text-center px-6 pt-16">
+          <div>
+            <p className="text-neutral-400 text-sm uppercase tracking-[0.3em] mb-4">LoKation Real Estate</p>
+            <h1 className="font-playfair text-5xl md:text-7xl font-light text-white">Meet Andrew</h1>
           </div>
         </div>
       </section>
 
-      {/* Stats Banner */}
-      <section className="py-12 px-6 bg-neutral-900/50 border-y border-white/5">
-        <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-3 gap-6 text-center">
-            <div>
-              <p className="font-playfair text-4xl text-white mb-2">1,300+</p>
-              <p className="text-sm text-neutral-500 uppercase tracking-wider">
-                Transactions
-              </p>
+      {/* Photo + Bio */}
+      <section className="bg-[#0a0a0a] py-20 md:py-28">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
+            {/* Photo */}
+            <div className="lg:w-[45%] relative min-h-[500px]">
+              <img
+                src="/andrew-headshot.png"
+                alt="Andrew Whalen"
+                className="w-full h-full object-cover object-top"
+                style={{ minHeight: "500px" }}
+              />
             </div>
-            <div>
-              <p className="font-playfair text-4xl text-white mb-2">20+</p>
-              <p className="text-sm text-neutral-500 uppercase tracking-wider">
-                Years Experience
-              </p>
-            </div>
-            <div>
-              <p className="font-playfair text-4xl text-white mb-2">Miami</p>
-              <p className="text-sm text-neutral-500 uppercase tracking-wider">
-                Luxury Specialist
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Bio — Two Column */}
-      <section className="py-24 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-16 items-start">
-            <div>
-              <h2 className="font-playfair text-4xl mb-8">My Story</h2>
-              <div className="space-y-6 text-neutral-300 leading-relaxed">
-                <p>
-                  I moved to Miami from New York City over two decades ago, drawn
-                  by the energy of a market that was just beginning to realize its
-                  potential as a global luxury destination. What I found was a city
-                  in the middle of a transformation — and I&apos;ve been part of
-                  it ever since.
-                </p>
-                <p>
-                  Over 1,300 closed transactions later, I&apos;ve built my career
-                  on deep neighborhood knowledge, honest market analysis, and a
-                  relentless focus on getting my clients the best possible
-                  outcome. I&apos;ve helped first-time buyers navigate
-                  Brickell&apos;s condo market, guided investors through
-                  pre-construction opportunities in Edgewater and Miami Beach, and
-                  represented sellers of waterfront estates in Coconut Grove and
-                  Key Biscayne.
-                </p>
-                <p>
-                  My approach is straightforward: know the market better than
-                  anyone, respond faster than anyone, and let the data drive
-                  decisions — not emotions. Whether you&apos;re buying a $500K
-                  condo or a $50M estate, you get the same level of dedication and
-                  market intelligence.
-                </p>
+            {/* Bio */}
+            <div className="lg:w-[55%] lg:py-8">
+              <p className="text-neutral-500 text-sm uppercase tracking-[0.2em] mb-2">LoKation Real Estate</p>
+              <h2 className="font-playfair text-4xl md:text-5xl uppercase tracking-wide text-white mt-2 mb-6">Andrew Whalen</h2>
+              <p className="text-xs uppercase tracking-[0.2em] text-neutral-400 mb-10">
+                Serving Miami, Fort Lauderdale and Palm Beach.
+              </p>
+
+              <p className="text-neutral-300 leading-relaxed mb-6">
+                Andrew Whalen has built a reputation as one of South Florida&apos;s most dedicated and
+                knowledgeable real estate professionals. With over 1,300 transactions closed and 21+ years
+                of experience across Miami-Dade&apos;s most competitive neighborhoods, Andrew combines deep
+                market expertise with a data-driven approach that consistently delivers results for his clients.
+              </p>
+              <p className="text-neutral-300 leading-relaxed mb-6">
+                With a career spanning over two decades, Andrew delivers a comprehensive level of
+                concierge-style service with extensive experience across every level of real estate —
+                including investment analysis, negotiation, new development sales, and marketing.
+                Leveraging cutting-edge technology and AI-powered market intelligence, Andrew provides
+                his clients with unmatched insights and exposure in South Florida&apos;s luxury market.
+              </p>
+              <p className="text-neutral-300 leading-relaxed mb-10">
+                Licensed with LoKation Real Estate, Andrew brings a boutique-level commitment to every
+                client relationship while leveraging the resources and technology of a modern, AI-forward
+                brokerage. Whether you&apos;re buying a first investment property or selling a multi-million
+                dollar waterfront estate, Andrew approaches every transaction with the same dedication to
+                excellence.
+              </p>
+
+              <div className="border-t border-white/10 pt-8">
+                <h3 className="text-white text-xs uppercase tracking-widest mb-4">Specialties</h3>
+                <div className="flex flex-wrap gap-2">
+                  {["Luxury Condos", "Waterfront Estates", "New Construction", "Investment Properties", "Pre-Construction", "International Buyers", "Relocations"].map((s) => (
+                    <span key={s} className="border border-white/20 px-3 py-1 text-xs uppercase tracking-wider text-neutral-400">
+                      {s}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
-            {/* Photo placeholder */}
-            <div className="w-full h-96 bg-neutral-800 rounded-sm flex items-center justify-center">
-              <span className="text-neutral-600 text-sm">
-                Professional Photo
-              </span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* How I Work */}
-      <section className="py-24 px-6 bg-neutral-900/50">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="font-playfair text-4xl mb-12">How I Work</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-8 border border-white/5 bg-white/[0.02] rounded-sm">
-              <div className="w-12 h-12 border border-white/10 rounded-sm flex items-center justify-center mb-6">
-                <svg className="w-6 h-6 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-                </svg>
+      {/* Stats strip */}
+      <section className="bg-neutral-900 py-16">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {STATS.map((s) => (
+              <div key={s.label}>
+                <p className="font-playfair text-4xl md:text-5xl text-white mb-2">{s.value}</p>
+                <p className="text-neutral-500 text-xs uppercase tracking-widest">{s.label}</p>
               </div>
-              <h3 className="font-playfair text-xl mb-3">Market Intelligence</h3>
-              <p className="text-neutral-400 text-sm leading-relaxed">
-                Real-time market data, price trends, and neighborhood analytics. Not guesswork — data.
-              </p>
-            </div>
-            <div className="p-8 border border-white/5 bg-white/[0.02] rounded-sm">
-              <div className="w-12 h-12 border border-white/10 rounded-sm flex items-center justify-center mb-6">
-                <svg className="w-6 h-6 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-                </svg>
-              </div>
-              <h3 className="font-playfair text-xl mb-3">Instant Response</h3>
-              <p className="text-neutral-400 text-sm leading-relaxed">
-                AI-powered concierge available 24/7. Get answers about any property, neighborhood, or market question immediately.
-              </p>
-            </div>
-            <div className="p-8 border border-white/5 bg-white/[0.02] rounded-sm">
-              <div className="w-12 h-12 border border-white/10 rounded-sm flex items-center justify-center mb-6">
-                <svg className="w-6 h-6 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
-                </svg>
-              </div>
-              <h3 className="font-playfair text-xl mb-3">Data-Driven Decisions</h3>
-              <p className="text-neutral-400 text-sm leading-relaxed">
-                Every recommendation backed by comparable sales, price-per-square-foot analysis, and trend data.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-24 px-6 bg-neutral-900/50">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="font-playfair text-4xl mb-4">
-            Ready to Get Started?
-          </h2>
-          <p className="text-neutral-400 mb-10">
-            Whether you&apos;re buying, selling, or investing in Miami luxury
-            real estate — I&apos;m here to help.
-          </p>
-          <a
-            href="/contact/"
-            className="inline-block px-8 py-3 border border-white/30 text-white hover:bg-white/10 transition-all rounded-sm tracking-wider uppercase text-sm"
-          >
-            Let&apos;s Talk
-          </a>
-        </div>
+      {/* Contact CTA */}
+      <section className="bg-[#0a0a0a] py-24 px-6 text-center">
+        <p className="text-neutral-500 text-sm uppercase tracking-[0.2em] mb-4">Andrew Whalen</p>
+        <h2 className="font-playfair text-4xl md:text-5xl text-white mb-6">Let&apos;s Connect</h2>
+        <p className="text-neutral-400 max-w-xl mx-auto mb-10">
+          Ready to explore South Florida&apos;s luxury market? Whether you&apos;re buying, selling, or
+          investing — let&apos;s talk.
+        </p>
+        <a
+          href="/contact/"
+          className="inline-block border border-white/30 rounded-full px-10 py-4 text-sm uppercase tracking-wider text-white hover:bg-white/10 transition-all"
+        >
+          Contact Andrew
+        </a>
       </section>
 
-      {/* JSON-LD: Static trusted content for structured data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify([
-            {
-              "@context": "https://schema.org",
-              "@type": "RealEstateAgent",
-              name: "Andrew Whalen",
-              description:
-                "South Florida luxury real estate specialist with 1,300+ transactions and 20+ years of experience serving Miami's most prestigious neighborhoods.",
-              url: "https://iamandrewwhalen.com/about",
-              telephone: "+1-305-420-6613",
-              email: "andrew@iamandrewwhalen.com",
-              address: {
-                "@type": "PostalAddress",
-                streetAddress: "1900 N Bayshore Dr, Suite 120",
-                addressLocality: "Miami",
-                addressRegion: "FL",
-                postalCode: "33132",
-                addressCountry: "US",
-              },
-              worksFor: {
-                "@type": "RealEstateAgent",
-                name: "LoKation Real Estate",
-              },
-              areaServed: [
-                "Brickell",
-                "Miami Beach",
-                "Coconut Grove",
-                "Coral Gables",
-                "Key Biscayne",
-                "Downtown Miami",
-                "Edgewater",
-                "Sunny Isles Beach",
-                "Aventura",
-              ],
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            name: "Andrew Whalen",
+            jobTitle: "Luxury Real Estate Specialist",
+            worksFor: { "@type": "Organization", name: "LoKation Real Estate" },
+            url: "https://iamandrewwhalen.com/about",
+            telephone: "+1-305-420-6613",
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: "1900 N Bayshore Dr, Suite 120",
+              addressLocality: "Miami",
+              addressRegion: "FL",
+              postalCode: "33132",
+              addressCountry: "US",
             },
-            {
-              "@context": "https://schema.org",
-              "@type": "Person",
-              name: "Andrew Whalen",
-              jobTitle: "Realtor",
-              url: "https://iamandrewwhalen.com/about",
-              worksFor: {
-                "@type": "Organization",
-                name: "LoKation Real Estate",
-              },
-              knowsAbout: [
-                "Luxury Real Estate",
-                "Miami Real Estate",
-                "Pre-Construction",
-                "Investment Properties",
-                "South Florida Market Analysis",
-              ],
-            },
-          ]),
+            sameAs: [
+              "https://www.instagram.com/iamandrewwhalen/",
+              "https://www.linkedin.com/in/iamandrewwhalen/",
+            ],
+          }),
         }}
       />
     </>
