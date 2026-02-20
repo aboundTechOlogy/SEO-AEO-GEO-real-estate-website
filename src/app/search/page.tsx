@@ -168,7 +168,11 @@ function SearchPageInner() {
       {/* ==================== VIEW: GRID ==================== */}
       {view === "grid" && (
         <div className="bg-[#0a0a0a] min-h-[calc(100vh-72px-60px)]">
-          <ResultsHeader />
+          {/* Count + Sort row — white bg like Carroll grid view */}
+          <div className="flex items-center justify-between px-4 md:px-6 py-2 bg-white border-b border-neutral-200">
+            <p className="text-sm text-neutral-600">{MOCK_SEARCH.length.toLocaleString()} Properties</p>
+            <SortDropdown />
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4 md:p-6">
             {MOCK_SEARCH.map((listing, i) => (
               <PropertyCard key={i} {...listing} />
@@ -192,7 +196,10 @@ function SearchPageInner() {
             </div>
           </div>
           <div className="hidden lg:block flex-1 overflow-y-auto">
-            <ResultsHeader />
+            <div className="flex items-center justify-between px-4 py-2 bg-white border-b border-neutral-200">
+              <p className="text-sm text-neutral-600">{MOCK_SEARCH.length.toLocaleString()} Properties</p>
+              <SortDropdown />
+            </div>
             <div className="grid grid-cols-2 gap-4 p-4 md:p-6">
               {MOCK_SEARCH.map((listing, i) => (
                 <PropertyCard key={i} {...listing} />
