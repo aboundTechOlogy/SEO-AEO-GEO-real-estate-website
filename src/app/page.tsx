@@ -33,14 +33,14 @@ export default function HomePage() {
               <br />
               Luxury Real Estate
             </h1>
-            <p className="text-base md:text-lg text-white/70 font-light mt-4 mb-8">
+            <p className="text-base md:text-lg text-white font-light mt-4 mb-8">
               Select your goal. Our AI concierge handles the rest.
             </p>
             <div className="inline-flex gap-4">
               {["Buy", "Sell", "Sell & Buy", "Invest"].map((goal) => (
                 <button
                   key={goal}
-                  className="min-w-[160px] md:min-w-[180px] px-8 py-3.5 border-2 border-white/30 hover:border-white/70 text-sm tracking-[0.15em] uppercase text-white hover:bg-white/10 transition-all"
+                  className="min-w-[160px] md:min-w-[180px] px-8 py-3.5 border-2 border-white/40 hover:border-white/70 text-sm tracking-[0.15em] uppercase text-white hover:bg-white/10 transition-all"
                 >
                   {goal}
                 </button>
@@ -57,14 +57,14 @@ export default function HomePage() {
               <br />
               Luxury Real Estate
             </h1>
-            <p className="text-base text-white/70 font-light max-w-xs mx-auto mt-4 mb-8">
+            <p className="text-base text-white font-light max-w-xs mx-auto mt-4 mb-8">
               Select your goal. Our AI concierge handles the rest.
             </p>
             <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto mb-10">
               {["Buy", "Sell", "Sell & Buy", "Invest"].map((goal) => (
                 <button
                   key={goal}
-                  className="min-w-[160px] px-8 py-3.5 border-2 border-white/30 hover:border-white/70 text-sm tracking-[0.15em] uppercase text-white hover:bg-white/10 transition-all"
+                  className="min-w-[160px] px-8 py-3.5 border-2 border-white/40 hover:border-white/70 text-sm tracking-[0.15em] uppercase text-white hover:bg-white/10 transition-all"
                 >
                   {goal}
                 </button>
@@ -76,14 +76,14 @@ export default function HomePage() {
               <input
                 type="text"
                 placeholder="Enter an address, city, zip code or MLS number"
-                className="w-full bg-white/10 border border-white/20 rounded-full px-5 py-3.5 pr-12 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white/40 transition-colors"
+                className="w-full bg-transparent border-2 border-white/40 rounded-full px-5 py-3.5 pr-12 text-sm text-white placeholder-white/70 focus:outline-none focus:border-white/60 transition-colors"
               />
-              <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
               </svg>
             </div>
             <p className="mt-3">
-              <a href="/search/" className="text-white/50 text-xs tracking-wider hover:text-white transition-colors">
+              <a href="/search/" className="text-white/80 text-sm tracking-wider hover:text-white transition-colors">
                 + Advanced search options
               </a>
             </p>
