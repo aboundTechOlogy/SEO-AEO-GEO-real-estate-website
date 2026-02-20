@@ -20,7 +20,6 @@ export default function LuxuryCondosPage() {
       {/* Hero */}
       <section className="pt-32 pb-16 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="gold-line mb-6" />
           <p
             className="text-sm font-light tracking-[0.25em] uppercase text-neutral-500 mb-4"
             style={{ fontFamily: "var(--font-inter)" }}

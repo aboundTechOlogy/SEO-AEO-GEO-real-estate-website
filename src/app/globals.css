@@ -47,34 +47,16 @@ html {
   );
 }
 
-/* Hero background — Replace hero-placeholder with actual Miami aerial/skyline photo */
+/* Hero background */
 .hero-bg {
   background-image: url('/hero-miami.jpg');
   background-color: #171717;
-}
-
-/* Accent line */
-.gold-line {
-  width: 60px;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.2);
 }
 
 /* Subtle background pattern for sections that need texture */
 .bg-texture {
   background-image: radial-gradient(circle at 25% 25%, rgba(255,255,255,0.02) 1px, transparent 1px);
   background-size: 40px 40px;
-}
-
-/* Watermark text utility */
-.watermark {
-  position: absolute;
-  font-size: 200px;
-  font-weight: 300;
-  color: rgba(255,255,255,0.015);
-  pointer-events: none;
-  user-select: none;
-  white-space: nowrap;
 }
 
 /* Frosted glass effect for overlays */

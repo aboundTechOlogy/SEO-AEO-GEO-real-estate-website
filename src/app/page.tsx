@@ -2,22 +2,25 @@ import { Metadata } from "next";
 import { developments } from "@/data/developments";
 
 export const metadata: Metadata = {
-  title: "Andrew Whalen | South Florida Luxury Real Estate",
+  title: "Andrew Whalen | Miami Luxury Real Estate",
   description:
     "Luxury real estate specialist serving Miami's most prestigious neighborhoods. New developments, market insights, and lifestyle expertise.",
 };
 
 const NEIGHBORHOODS = [
-  { name: "Downtown Miami", tagline: "The New Urban Core", slug: "downtown-miami", hasGuide: true },
-  { name: "Coconut Grove", tagline: "Bohemian Meets Bayfront", slug: "coconut-grove", hasGuide: true },
-  { name: "Brickell", tagline: "Manhattan of the South", slug: "brickell", hasGuide: true },
-  { name: "Miami Beach", tagline: "Iconic Oceanfront Living", slug: "miami-beach", hasGuide: true },
-  { name: "Coral Gables", tagline: "The City Beautiful", slug: "coral-gables", hasGuide: true },
-  { name: "Key Biscayne", tagline: "Island Paradise", slug: "key-biscayne", hasGuide: true },
-  { name: "Sunny Isles", tagline: "Florida's Riviera", slug: "sunny-isles", hasGuide: false },
-  { name: "Aventura", tagline: "Luxury Meets Convenience", slug: "aventura", hasGuide: false },
-  { name: "Wynwood", tagline: "Art & Culture District", slug: "wynwood-midtown", hasGuide: false },
-  { name: "Edgewater", tagline: "Bayfront Rising", slug: "edgewater", hasGuide: true },
+  { name: "Brickell", slug: "brickell", gradient: "from-blue-900/60 to-cyan-900/40" },
+  { name: "Miami Beach", slug: "miami-beach", gradient: "from-sky-800/60 to-blue-900/40" },
+  { name: "Coconut Grove", slug: "coconut-grove", gradient: "from-green-900/60 to-emerald-900/40" },
+  { name: "Coral Gables", slug: "coral-gables", gradient: "from-orange-900/40 to-amber-950/40" },
+  { name: "Downtown Miami", slug: "downtown-miami", gradient: "from-indigo-900/60 to-purple-900/40" },
+  { name: "Key Biscayne", slug: "key-biscayne", gradient: "from-teal-900/60 to-cyan-950/40" },
+];
+
+const DEV_GRADIENTS = [
+  "from-slate-800/60 to-neutral-900/40",
+  "from-zinc-800/50 to-stone-900/40",
+  "from-gray-800/50 to-neutral-900/40",
+  "from-neutral-700/40 to-zinc-900/40",
 ];
 
 const homepageDevelopments = developments.slice(0, 4);
@@ -27,12 +30,6 @@ export default function HomePage() {
     <>
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        {/* Background: image now, replace with <video> later for aerial Miami footage */}
-        {/* To switch to video: replace the img tag with:
-            <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover">
-              <source src="/hero-video.mp4" type="video/mp4" />
-            </video>
-        */}
         <img
           src="/hero-miami.jpg"
           alt=""
@@ -40,35 +37,20 @@ export default function HomePage() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-[#0a0a0a]" />
 
-        <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
-          <h1 className="font-playfair text-5xl md:text-7xl font-light tracking-tight mb-6 text-white">
-            South Florida
+        <div className="relative z-10 text-center max-w-5xl mx-auto px-6">
+          <h1 className="font-playfair text-6xl md:text-8xl lg:text-9xl font-light tracking-tight text-white">
+            Miami
             <br />
             Luxury Real Estate
           </h1>
-          <p className="text-lg text-white/80 font-light max-w-xl mx-auto mb-12 leading-relaxed">
-            New developments. Neighborhood intelligence. Lifestyle expertise.
-          </p>
-
-          <p className="text-base text-white tracking-wide mb-5">
-            Start your AI-guided journey by selecting your real estate goal.
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-lg md:max-w-none mx-auto">
-            {["Buy", "Sell", "Sell & Buy", "Invest"].map((goal) => (
-              <button
-                key={goal}
-                className="px-6 py-3 border border-white/30 hover:border-white/70 text-sm tracking-[0.15em] uppercase text-white hover:bg-white/10 transition-all"
-              >
-                {goal}
-              </button>
-            ))}
+          <div className="mt-12">
+            <a
+              href="/neighborhoods/"
+              className="border border-white/30 px-10 py-4 text-sm uppercase tracking-[0.2em] text-white hover:bg-white/10 transition-all inline-block"
+            >
+              Explore Neighborhoods
+            </a>
           </div>
-        </div>
-
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-          <svg className="w-5 h-5 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-          </svg>
         </div>
       </section>
 
@@ -91,7 +73,7 @@ export default function HomePage() {
             </div>
             <a
               href="/search/"
-              className="bg-amber-600 hover:bg-amber-500 text-white px-8 py-4 text-sm uppercase tracking-wider transition-colors text-center shrink-0"
+              className="border border-white/30 text-white px-8 py-4 text-sm uppercase tracking-wider hover:bg-white/10 transition-all text-center shrink-0"
             >
               Search
             </a>
@@ -102,97 +84,67 @@ export default function HomePage() {
       {/* Neighborhoods Section */}
       <section id="neighborhoods" className="py-24 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="gold-line mb-6" />
-          <h2 className="font-playfair text-4xl mb-4">Neighborhood Guides</h2>
-          <p className="text-neutral-400 mb-12 max-w-xl">
-            Insider knowledge on Miami&apos;s most sought-after neighborhoods.
-            Market data, lifestyle insights, and the developments reshaping each area.
-          </p>
+          <h2 className="font-playfair text-4xl md:text-5xl mb-12">Neighborhoods</h2>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {NEIGHBORHOODS.map((n) => (
-              <div
+              <a
                 key={n.name}
-                className="group border border-white/5 hover:border-white/20 bg-white/[0.02] hover:bg-white/[0.04] transition-all rounded-sm overflow-hidden"
+                href={`/neighborhoods/${n.slug}/`}
+                className="group relative h-80 md:h-96 overflow-hidden hover:scale-[1.02] transition-transform duration-300"
               >
-                {/* Image placeholder */}
-                <div className="h-40 bg-neutral-800/50 flex items-center justify-center relative">
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-900/40" />
-                  <svg className="w-6 h-6 text-neutral-600 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                  </svg>
-                </div>
-                <div className="p-6">
-                  <h3 className="font-playfair text-xl mb-1 group-hover:text-white transition-colors">
-                    {n.name}
-                  </h3>
-                  <p className="text-sm text-neutral-500 mb-3">{n.tagline}</p>
-                  <a
-                    href={n.hasGuide ? `/neighborhoods/${n.slug}/` : `/neighborhoods/`}
-                    className="text-xs text-neutral-500 uppercase tracking-wider hover:text-white transition-colors"
-                  >
-                    View Guide →
-                  </a>
-                  <div className="flex gap-3 mt-4">
-                    <a
-                      href={n.hasGuide ? `/neighborhoods/${n.slug}/` : `/neighborhoods/`}
-                      className="flex-1 text-center py-2 text-xs uppercase tracking-wider border border-white/10 hover:border-white/30 text-neutral-400 hover:text-white transition-all"
-                    >
+                <div className={`absolute inset-0 bg-gradient-to-br ${n.gradient}`} />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <h3 className="font-playfair text-2xl md:text-3xl text-white mb-4">{n.name}</h3>
+                  <div className="flex gap-3">
+                    <span className="px-4 py-2 text-xs uppercase tracking-wider border border-white/30 text-white group-hover:bg-white/10 transition-all">
                       Homes
-                    </a>
-                    <a
-                      href={n.hasGuide ? `/neighborhoods/${n.slug}/` : `/neighborhoods/`}
-                      className="flex-1 text-center py-2 text-xs uppercase tracking-wider border border-white/10 hover:border-white/30 text-neutral-400 hover:text-white transition-all"
-                    >
+                    </span>
+                    <span className="px-4 py-2 text-xs uppercase tracking-wider border border-white/30 text-white group-hover:bg-white/10 transition-all">
                       Condos
-                    </a>
+                    </span>
                   </div>
                 </div>
-              </div>
+              </a>
             ))}
+          </div>
+
+          <div className="mt-10 text-center">
+            <a href="/neighborhoods/" className="text-sm uppercase tracking-[0.15em] text-neutral-400 hover:text-white transition-colors">
+              View All Neighborhoods →
+            </a>
           </div>
         </div>
       </section>
 
       {/* Featured Developments Section */}
-      <section id="developments" className="py-24 px-6 bg-neutral-900/50">
+      <section id="developments" className="py-24 px-6 bg-neutral-900">
         <div className="max-w-7xl mx-auto">
-          <div className="gold-line mb-6" />
-          <h2 className="font-playfair text-4xl mb-4">New Developments</h2>
-          <p className="text-neutral-400 mb-12 max-w-xl">
-            The latest luxury developments transforming Miami&apos;s skyline.
-            Pricing, floor plans, developer insights, and investment analysis.
-          </p>
+          <h2 className="font-playfair text-4xl md:text-5xl mb-12">New Developments</h2>
 
           <div className="grid md:grid-cols-2 gap-6">
-            {homepageDevelopments.map((d) => (
-              <div
+            {homepageDevelopments.map((d, i) => (
+              <a
                 key={d.name}
-                className="group p-8 border border-white/5 hover:border-white/20 bg-neutral-950 transition-all rounded-sm"
+                href={`/new-construction/`}
+                className="group relative h-72 md:h-80 overflow-hidden hover:scale-[1.02] transition-transform duration-300"
               >
-                <div className="w-full h-48 bg-gradient-to-br from-neutral-700/30 to-neutral-800 rounded-sm mb-6 flex flex-col items-center justify-center gap-3">
-                  <svg className="w-8 h-8 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
-                  </svg>
-                  <span className="text-neutral-600 text-[10px] uppercase tracking-widest">{d.status}</span>
-                </div>
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h3 className="font-playfair text-2xl group-hover:text-white transition-colors">
-                      {d.name}
-                    </h3>
-                    <p className="text-sm text-neutral-500">{d.location}</p>
+                <div className={`absolute inset-0 bg-gradient-to-br ${DEV_GRADIENTS[i % DEV_GRADIENTS.length]}`} />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <h3 className="font-playfair text-2xl md:text-3xl text-white mb-1 group-hover:text-white transition-colors">
+                    {d.name}
+                  </h3>
+                  <p className="text-sm text-neutral-400 mb-3">{d.location}</p>
+                  <div className="flex gap-4 text-sm text-neutral-300">
+                    <span>From {d.priceFrom}</span>
+                    <span className="text-neutral-500">{d.status}</span>
                   </div>
-                  <span className="text-xs uppercase tracking-wider text-neutral-400 bg-white/5 px-3 py-1 rounded-full">
-                    {d.status}
-                  </span>
                 </div>
-                <div className="flex gap-6 text-sm text-neutral-400">
-                  <span>From {d.priceFrom}</span>
-                  <span>{d.units}</span>
-                </div>
-              </div>
+              </a>
             ))}
           </div>
 
@@ -207,101 +159,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Market Insights Section */}
-      <section id="market" className="py-24 px-6 bg-gradient-to-r from-neutral-900 via-neutral-950 to-neutral-900">
-        <div className="max-w-7xl mx-auto">
-          <div className="gold-line mb-6" />
-          <h2 className="font-playfair text-4xl mb-4">Market Insights</h2>
-          <p className="text-neutral-400 mb-12 max-w-xl">
-            Data-driven analysis of South Florida&apos;s luxury real estate market.
-            Pricing trends, absorption rates, and investment opportunities.
-          </p>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { label: "Median Luxury Price", value: "$2.4M", change: "+8.2%", positive: true },
-              { label: "Avg Days on Market", value: "67", change: "-12%", positive: true },
-              { label: "New Developments", value: "50+", change: "Active", positive: false },
-            ].map((stat) => (
-              <div
-                key={stat.label}
-                className="p-8 border border-white/5 bg-white/[0.02] rounded-sm text-center"
-              >
-                <div className="w-12 h-0.5 bg-amber-600/50 mx-auto mb-4" />
-                <p className="text-sm text-neutral-500 uppercase tracking-wider mb-3">
-                  {stat.label}
-                </p>
-                <p className="font-playfair text-5xl md:text-6xl text-white mb-2">
-                  {stat.value}
-                </p>
-                <p className={`text-sm ${stat.positive ? "text-emerald-500/70" : "text-neutral-400"}`}>
-                  {stat.change}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How I Work Section */}
-      <section className="py-24 px-6 bg-neutral-900/50 relative overflow-hidden">
-        {/* AW watermark */}
-        <div className="watermark top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-light" style={{ fontFamily: 'var(--font-inter)' }}>
-          AW
-        </div>
-
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="gold-line mb-6" />
-          <h2 className="font-playfair text-4xl mb-16">How I Work</h2>
-
-          <div className="flex flex-col md:flex-row gap-16 md:gap-12">
-            {[
-              {
-                num: "01",
-                title: "Market Intelligence",
-                desc: "Real-time market data and neighborhood analytics power every conversation. I track pricing trends, absorption rates, and inventory shifts across Miami-Dade so you never rely on guesswork or outdated comps.",
-              },
-              {
-                num: "02",
-                title: "Instant Response",
-                desc: "An AI-powered concierge handles your questions 24/7 — property details, market comparisons, and neighborhood insights on demand. You get answers in seconds, not days, whether it\u2019s midnight or midday.",
-              },
-              {
-                num: "03",
-                title: "Data-Driven Decisions",
-                desc: "Every recommendation is backed by comps, price-per-square-foot analysis, and trend data. No pressure tactics, no emotional selling — just clear numbers that help you make confident moves.",
-              },
-            ].map((item) => (
-              <div key={item.num} className="flex-1 relative">
-                <span className="font-playfair text-6xl text-white/5 absolute -top-4 -left-2">
-                  {item.num}
-                </span>
-                <div className="pt-10">
-                  <h3 className="font-playfair text-xl mb-3">{item.title}</h3>
-                  <p className="text-neutral-400 text-sm leading-relaxed">
-                    {item.desc}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-12 text-center">
-            <a
-              href="/about/"
-              className="inline-block px-6 py-2 text-sm uppercase tracking-wider border border-white/20 text-neutral-400 hover:text-white hover:border-white/40 transition-all"
-            >
-              Learn More →
-            </a>
-          </div>
-        </div>
-      </section>
-
       {/* Let's Connect CTA */}
       <section className="py-24 px-6">
         <div className="max-w-2xl mx-auto text-center">
-          <div className="gold-line mx-auto mb-6" />
-          <h2 className="font-playfair text-4xl mb-4">
+          <h2 className="font-playfair text-4xl md:text-5xl mb-4">
             Let&apos;s Connect
           </h2>
           <p className="text-neutral-400 mb-10">
@@ -311,7 +172,7 @@ export default function HomePage() {
           </p>
           <a
             href="/contact/"
-            className="inline-block px-8 py-3 bg-amber-600 hover:bg-amber-500 text-white transition-colors rounded-sm tracking-wider uppercase text-sm"
+            className="inline-block px-8 py-3 bg-amber-600 hover:bg-amber-500 text-white transition-colors tracking-wider uppercase text-sm"
           >
             Get in Touch
           </a>
@@ -327,7 +188,7 @@ export default function HomePage() {
             "@type": "RealEstateAgent",
             name: "Andrew Whalen",
             description:
-              "South Florida luxury real estate specialist serving Miami's most prestigious neighborhoods.",
+              "Miami luxury real estate specialist serving Miami's most prestigious neighborhoods.",
             url: "https://iamandrewwhalen.com",
             telephone: "+1-305-420-6613",
             address: {
@@ -339,9 +200,12 @@ export default function HomePage() {
               addressCountry: "US",
             },
             sameAs: [
-              "https://www.linkedin.com/in/andrewwhalen",
-              "https://www.youtube.com/@andrewwhalen",
-              "https://www.instagram.com/andrewwhalen",
+              "https://www.instagram.com/iamandrewwhalen/",
+              "https://www.tiktok.com/@iamandrewwhalen",
+              "https://x.com/iamandrewwhalen",
+              "https://www.facebook.com/ImAndrewWhalen",
+              "https://www.youtube.com/@andrewwhalen11",
+              "https://www.linkedin.com/in/iamandrewwhalen/",
             ],
             worksFor: {
               "@type": "RealEstateAgent",

@@ -10,7 +10,6 @@ export default function DMCAPage() {
   return (
     <div className="pt-24 pb-16 px-6">
       <div className="max-w-3xl mx-auto">
-        <div className="gold-line mb-8" />
         <h1 className="font-playfair text-4xl mb-8">DMCA Policy</h1>
         <p className="text-neutral-400 text-sm mb-8">
           Last updated: February 17, 2026

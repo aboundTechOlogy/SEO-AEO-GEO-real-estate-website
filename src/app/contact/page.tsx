@@ -22,7 +22,6 @@ export default function ContactPage() {
           <div className="grid md:grid-cols-5 gap-16">
             {/* Form — 3 columns */}
             <div className="md:col-span-3">
-              <div className="gold-line mb-6" />
               <h1 className="font-playfair text-4xl md:text-5xl font-light mb-4">
                 Let&apos;s Talk
               </h1>

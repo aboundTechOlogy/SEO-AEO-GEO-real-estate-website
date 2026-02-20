@@ -68,7 +68,6 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-16 items-start">
             <div>
-              <div className="gold-line mb-6" />
               <h2 className="font-playfair text-4xl mb-8">My Story</h2>
               <div className="space-y-6 text-neutral-300 leading-relaxed">
                 <p>
@@ -110,7 +109,6 @@ export default function AboutPage() {
       {/* How I Work */}
       <section className="py-24 px-6 bg-neutral-900/50">
         <div className="max-w-7xl mx-auto">
-          <div className="gold-line mb-6" />
           <h2 className="font-playfair text-4xl mb-12">How I Work</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="p-8 border border-white/5 bg-white/[0.02] rounded-sm">

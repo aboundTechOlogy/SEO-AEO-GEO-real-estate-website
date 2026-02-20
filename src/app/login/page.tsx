@@ -13,7 +13,6 @@ export default function LoginPage() {
     <>
       <section className="pt-32 pb-24 px-6">
         <div className="max-w-md mx-auto">
-          <div className="gold-line mb-6" />
           <h1 className="font-playfair text-4xl mb-4">Sign In</h1>
           <p className="text-neutral-400 mb-10">
             Account features coming soon — save searches, favorite listings, and

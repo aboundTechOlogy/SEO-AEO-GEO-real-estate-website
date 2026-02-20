@@ -38,7 +38,6 @@ export default async function NeighborhoodPage({ params }: Props) {
       {/* Hero */}
       <section className="px-6 py-16 border-b border-white/5">
         <div className="max-w-7xl mx-auto">
-          <div className="gold-line mb-6" />
           <p className="text-neutral-500 text-sm uppercase tracking-wider mb-3">
             Neighborhood Guide
           </p>
@@ -180,7 +179,6 @@ export default async function NeighborhoodPage({ params }: Props) {
       {/* CTA */}
       <section className="px-6 py-16">
         <div className="max-w-2xl mx-auto text-center">
-          <div className="gold-line mx-auto mb-6" />
           <h2 className="font-playfair text-3xl mb-4">
             Explore {n.name}
           </h2>
