@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import Header from "@/components/Header";
+import FooterAccordion from "@/components/FooterAccordion";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -96,8 +97,8 @@ export default function RootLayout({
               </div>
             </div>
 
-            {/* Single row of nav links */}
-            <div className="flex flex-wrap justify-center gap-6 text-sm text-neutral-500 mb-12">
+            {/* Desktop: single row of nav links */}
+            <div className="hidden md:flex flex-wrap justify-center gap-6 text-sm text-neutral-500 mb-12">
               <a href="/neighborhoods/" className="hover:text-white transition-colors">Neighborhoods</a>
               <a href="/luxury-condos/" className="hover:text-white transition-colors">Luxury Condos</a>
               <a href="/new-construction/" className="hover:text-white transition-colors">New Construction</a>
@@ -106,6 +107,11 @@ export default function RootLayout({
               <a href="/blog/" className="hover:text-white transition-colors">Insights</a>
               <a href="/privacy/" className="hover:text-white transition-colors">Privacy</a>
               <a href="/terms/" className="hover:text-white transition-colors">Terms</a>
+            </div>
+
+            {/* Mobile: accordion nav */}
+            <div className="mb-8 md:mb-0">
+              <FooterAccordion />
             </div>
 
             {/* MLS Compliance Footer — Required for Bridge API / Miami MLS Approval */}

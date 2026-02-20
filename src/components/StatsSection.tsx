@@ -1,5 +1,7 @@
 "use client";
 
+import FadeInOnScroll from "@/components/FadeInOnScroll";
+
 const STATS = [
   { value: "1,300+", label: "Transactions Closed" },
   { value: "21+", label: "Years of Experience" },
@@ -30,7 +32,7 @@ export default function StatsSection() {
           {STATS.map((stat) => (
             <div
               key={stat.label}
-              className="bg-black/60 backdrop-blur-sm py-12 px-6 text-center"
+              className="bg-black/60 backdrop-blur-sm py-16 px-6 text-center"
             >
               <p className="font-playfair text-5xl text-white mb-3">{stat.value}</p>
               <p className="text-sm uppercase tracking-wider text-neutral-300">{stat.label}</p>
@@ -39,31 +41,27 @@ export default function StatsSection() {
         </div>
       </section>
 
-      {/* Desktop: side-by-side layout */}
-      <section className="relative hidden md:block h-[600px] overflow-hidden">
-        <div className="absolute inset-0 bg-neutral-900" />
-        <div className="relative h-full max-w-7xl mx-auto flex flex-row items-stretch">
-          {/* Photo — left 40% */}
-          <div className="relative w-[40%] h-full shrink-0">
-            <img
-              src="/andrew-fullbody.png"
-              alt="Andrew Whalen"
-              className="absolute inset-0 w-full h-full object-cover object-top"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-neutral-900" />
-          </div>
+      {/* Desktop: fullbody photo background with overlay stat grid */}
+      <section className="relative hidden md:block h-[700px] overflow-hidden">
+        <img
+          src="/andrew-fullbody.png"
+          alt="Andrew Whalen"
+          className="absolute inset-0 w-full h-full object-cover object-top"
+        />
+        <div className="absolute inset-0 bg-black/30" />
 
-          {/* Stats grid — right 60% */}
-          <div className="flex-1 flex items-center justify-center px-12">
-            <div className="grid grid-cols-2 gap-4 w-full max-w-lg">
+        {/* Stat grid overlaid on right 60% */}
+        <div className="absolute inset-0 flex items-center justify-end">
+          <FadeInOnScroll scale className="w-[60%] pr-12 lg:pr-20">
+            <div className="grid grid-cols-2 gap-4">
               {STATS.map((stat) => (
-                <div key={stat.label} className="bg-white/[0.04] backdrop-blur-sm p-8 text-center">
-                  <p className="font-playfair text-5xl text-white mb-2">{stat.value}</p>
-                  <p className="text-sm text-neutral-500 uppercase tracking-wider">{stat.label}</p>
+                <div key={stat.label} className="bg-black/50 backdrop-blur-sm p-8 md:p-12 text-center">
+                  <p className="font-playfair text-5xl md:text-6xl text-white">{stat.value}</p>
+                  <p className="text-sm uppercase tracking-wider text-neutral-300 mt-2">{stat.label}</p>
                 </div>
               ))}
             </div>
-          </div>
+          </FadeInOnScroll>
         </div>
       </section>
     </>

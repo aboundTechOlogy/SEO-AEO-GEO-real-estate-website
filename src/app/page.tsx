@@ -1,7 +1,8 @@
 import { Metadata } from "next";
-import { developments } from "@/data/developments";
-import FadeInView from "@/components/FadeInView";
+import FadeInOnScroll from "@/components/FadeInOnScroll";
+import PropertySearch from "@/components/PropertySearch";
 import StatsSection from "@/components/StatsSection";
+import NeighborhoodBlades from "@/components/NeighborhoodBlades";
 
 export const metadata: Metadata = {
   title: "Andrew Whalen | Miami Luxury Real Estate",
@@ -9,303 +10,241 @@ export const metadata: Metadata = {
     "Luxury real estate specialist serving Miami's most prestigious neighborhoods. New developments, market insights, and lifestyle expertise.",
 };
 
-const NEIGHBORHOODS = [
-  { name: "Brickell", slug: "brickell", gradient: "from-blue-900/60 to-cyan-900/40" },
-  { name: "Miami Beach", slug: "miami-beach", gradient: "from-sky-800/60 to-blue-900/40" },
-  { name: "Coconut Grove", slug: "coconut-grove", gradient: "from-green-900/60 to-emerald-900/40" },
-  { name: "Coral Gables", slug: "coral-gables", gradient: "from-orange-900/40 to-amber-950/40" },
-  { name: "Downtown Miami", slug: "downtown-miami", gradient: "from-indigo-900/60 to-purple-900/40" },
-  { name: "Key Biscayne", slug: "key-biscayne", gradient: "from-teal-900/60 to-cyan-950/40" },
-];
-
-const DEV_GRADIENTS = [
-  "from-slate-800/60 to-neutral-900/40",
-  "from-zinc-800/50 to-stone-900/40",
-  "from-gray-800/50 to-neutral-900/40",
-  "from-neutral-700/40 to-zinc-900/40",
-];
-
-const homepageDevelopments = developments.slice(0, 4);
-
 export default function HomePage() {
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+      {/* ============================================
+          SECTION 1: Hero
+          Future: swap img for video element
+          ============================================ */}
+      <section className="relative h-screen overflow-hidden">
         <img
           src="/hero-miami.jpg"
           alt=""
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover hero-parallax"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-[#0a0a0a]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/80" />
 
-        <div className="relative z-10 text-center max-w-5xl mx-auto px-6">
-          <h1 className="font-playfair text-5xl md:text-7xl lg:text-8xl font-light tracking-tight text-white">
-            South Florida
-            <br />
-            Luxury Real Estate
-          </h1>
-          <p className="mt-10 text-base text-white/70 tracking-wide">
-            Select your goal below and AI will take it from there.
-          </p>
-          <div className="mt-5 grid grid-cols-2 md:grid-cols-4 gap-3 max-w-lg md:max-w-none mx-auto">
-            {["Buy", "Sell", "Sell & Buy", "Invest"].map((goal) => (
-              <button
-                key={goal}
-                className="px-6 py-3 border border-white/30 hover:border-white/70 text-sm tracking-[0.15em] uppercase text-white hover:bg-white/10 transition-all"
-              >
-                {goal}
-              </button>
-            ))}
+        {/* Desktop: bottom-left aligned */}
+        <div className="hidden md:flex absolute inset-0 items-end pb-32 pl-10">
+          <div className="hero-animate">
+            <h1 className="font-playfair text-6xl md:text-7xl lg:text-8xl font-light text-white leading-tight">
+              South Florida
+              <br />
+              Luxury Real Estate
+            </h1>
+            <div className="mt-8 inline-flex gap-3">
+              {["Buy", "Sell", "Sell & Buy", "Invest"].map((goal) => (
+                <button
+                  key={goal}
+                  className="px-6 py-3 border border-white/30 hover:border-white/70 text-sm tracking-[0.15em] uppercase text-white hover:bg-white/10 transition-all"
+                >
+                  {goal}
+                </button>
+              ))}
+            </div>
           </div>
-
         </div>
-      </section>
 
-      {/* Property Search Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <img
-          src="/hero-miami.jpg"
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/70" />
+        {/* Mobile: centered vertically */}
+        <div className="flex md:hidden absolute inset-0 items-center justify-center">
+          <div className="hero-animate text-center px-6 w-full">
+            <h1 className="font-playfair text-4xl sm:text-5xl font-light text-white leading-tight">
+              South Florida
+              <br />
+              Luxury Real Estate
+            </h1>
+            <p className="text-sm text-white/70 max-w-xs mx-auto mt-4 mb-8">
+              Luxury real estate expertise across Miami-Dade, Broward, and Palm Beach
+            </p>
+            <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto mb-10">
+              {["Buy", "Sell", "Sell & Buy", "Invest"].map((goal) => (
+                <button
+                  key={goal}
+                  className="px-4 py-3 border border-white/30 hover:border-white/70 text-sm tracking-[0.15em] uppercase text-white hover:bg-white/10 transition-all"
+                >
+                  {goal}
+                </button>
+              ))}
+            </div>
 
-        {/* AW watermark */}
-        <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[20rem] font-playfair text-white/[0.03] select-none pointer-events-none leading-none">
-          AW
-        </span>
-
-        <FadeInView className="relative z-10 w-full max-w-4xl mx-auto px-6 text-center">
-          <h2 className="font-playfair text-4xl md:text-6xl uppercase tracking-[0.15em] text-white mb-12">
-            Property Search
-          </h2>
-
-          {/* Search bar */}
-          <div className="flex flex-col md:flex-row gap-3">
-            {/* For Sale dropdown */}
-            <div className="relative shrink-0">
-              <select
-                className="appearance-none bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-4 pr-12 text-white text-sm uppercase tracking-wider w-full md:w-auto cursor-pointer focus:outline-none focus:border-white/40 transition-colors"
-                defaultValue="sale"
-              >
-                <option value="sale" className="bg-neutral-900">For Sale</option>
-                <option value="rent" className="bg-neutral-900">For Rent</option>
-                <option value="sold" className="bg-neutral-900">Sold</option>
-              </select>
-              <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            {/* Mobile search bar */}
+            <div className="relative max-w-sm mx-auto">
+              <input
+                type="text"
+                placeholder="Enter an address, city, zip code or MLS number"
+                className="w-full bg-white/10 border border-white/20 rounded-full px-5 py-3.5 pr-12 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white/40 transition-colors"
+              />
+              <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
               </svg>
             </div>
-
-            {/* Search input */}
-            <input
-              type="text"
-              placeholder="Enter an address, city, zip code or MLS number"
-              className="flex-1 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-8 py-4 text-white placeholder-neutral-500 focus:outline-none focus:border-white/40 transition-colors"
-            />
-
-            {/* Find Now button */}
-            <a
-              href="/search/"
-              className="bg-white text-black font-medium rounded-full px-10 py-4 uppercase tracking-wider text-sm hover:bg-neutral-200 transition-colors text-center shrink-0"
-            >
-              Find Now!
-            </a>
+            <p className="mt-3">
+              <a href="/search/" className="text-white/50 text-xs tracking-wider hover:text-white transition-colors">
+                + Advanced search options
+              </a>
+            </p>
           </div>
-
-          {/* Advanced search link */}
-          <p className="mt-4">
-            <a href="/search/" className="text-white/70 text-sm tracking-wider hover:text-white transition-colors">
-              + Advanced search options
-            </a>
-          </p>
-        </FadeInView>
+        </div>
       </section>
 
-      {/* Stats Section */}
+      {/* ============================================
+          SECTION 2: Property Search (desktop only)
+          ============================================ */}
+      <PropertySearch />
+
+      {/* ============================================
+          SECTION 3: Stats
+          ============================================ */}
       <StatsSection />
 
-      {/* Meet Andrew Section */}
-      <section className="bg-[#0a0a0a] py-20 md:py-28">
+      {/* ============================================
+          SECTION 4: Meet Andrew
+          ============================================ */}
+      <section className="bg-[#0a0a0a] py-16 md:py-28">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row md:items-stretch md:gap-0">
-            {/* Text — left ~55% */}
-            <div className="md:w-[55%] md:pr-16 md:py-8">
-              <p className="font-playfair italic text-lg text-neutral-400">LoKation Real Estate</p>
-              <h2 className="font-playfair text-5xl md:text-6xl uppercase tracking-wide text-white mt-2 mb-4">
-                Meet Andrew
-              </h2>
-              <p className="text-sm uppercase tracking-[0.15em] text-neutral-400 mb-8">
-                Serving Miami, Fort Lauderdale and Palm Beach.
-              </p>
-              <p className="text-neutral-300 leading-relaxed text-base mb-6">
-                Andrew Whalen has built a reputation as one of South Florida&apos;s
-                most dedicated and knowledgeable real estate professionals. With over
-                1,300 transactions closed and 21+ years of experience across
-                Miami-Dade&apos;s most competitive neighborhoods, Andrew combines deep
-                market expertise with a data-driven approach that consistently
-                delivers results for his clients.
-              </p>
-              <p className="text-neutral-300 leading-relaxed text-base mb-8">
-                With a career spanning over two decades, Andrew delivers a
-                comprehensive level of concierge-style service with extensive
-                experience across every level of real estate — including investment
-                analysis, negotiation, new development sales, and marketing.
-                Leveraging cutting-edge technology and AI-powered market intelligence,
-                Andrew provides his clients with unmatched insights and exposure in
-                South Florida&apos;s luxury market.
-              </p>
-              <a
-                href="/about/"
-                className="text-sm uppercase tracking-wider text-white hover:text-neutral-300 transition-colors"
-              >
-                Learn More →
-              </a>
-            </div>
+          <FadeInOnScroll>
+            <div className="flex flex-col md:flex-row md:items-stretch md:gap-0">
+              {/* Text — left ~55% */}
+              <div className="md:w-[55%] md:pr-16 md:py-8">
+                <p className="font-playfair italic text-lg text-neutral-400">LoKation Real Estate</p>
+                <h2 className="font-playfair text-5xl md:text-6xl uppercase tracking-wide text-white mt-2 mb-4">
+                  Meet Andrew
+                </h2>
+                <p className="text-xs uppercase tracking-[0.2em] text-neutral-400 mb-10">
+                  Serving Miami, Fort Lauderdale and Palm Beach.
+                </p>
+                <p className="text-neutral-300 leading-relaxed text-base mb-6">
+                  Andrew Whalen has built a reputation as one of South Florida&apos;s
+                  most dedicated and knowledgeable real estate professionals. With over
+                  1,300 transactions closed and 21+ years of experience across
+                  Miami-Dade&apos;s most competitive neighborhoods, Andrew combines deep
+                  market expertise with a data-driven approach that consistently
+                  delivers results for his clients.
+                </p>
+                <p className="text-neutral-300 leading-relaxed text-base mb-8">
+                  With a career spanning over two decades, Andrew delivers a
+                  comprehensive level of concierge-style service with extensive
+                  experience across every level of real estate — including investment
+                  analysis, negotiation, new development sales, and marketing.
+                  Leveraging cutting-edge technology and AI-powered market intelligence,
+                  Andrew provides his clients with unmatched insights and exposure in
+                  South Florida&apos;s luxury market.
+                </p>
+                {/* Desktop: text link */}
+                <a
+                  href="/about/"
+                  className="hidden md:inline-block text-sm uppercase tracking-wider text-white hover:text-neutral-300 transition-colors"
+                >
+                  Learn More →
+                </a>
+                {/* Mobile: pill button */}
+                <div className="md:hidden mt-2">
+                  <a
+                    href="/about/"
+                    className="inline-block border border-white/30 rounded-full px-8 py-3 text-sm uppercase tracking-wider text-white hover:bg-white/10 transition-all"
+                  >
+                    Meet Andrew
+                  </a>
+                </div>
+              </div>
 
-            {/* Photo — right ~45% */}
-            <div className="hidden md:block md:w-[45%] relative min-h-[500px]">
-              <img
-                src="/andrew-headshot.png"
-                alt="Andrew Whalen"
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-transparent to-transparent w-1/3" />
+              {/* Photo — right ~45% (desktop only) */}
+              <div className="hidden md:block md:w-[45%] relative min-h-[500px]">
+                <img
+                  src="/andrew-headshot.png"
+                  alt="Andrew Whalen"
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-transparent to-transparent w-1/3" />
+              </div>
             </div>
-          </div>
+          </FadeInOnScroll>
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="py-24 px-6 bg-[#0a0a0a]">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="font-playfair text-4xl md:text-5xl text-center mb-16">What Clients Say</h2>
+      {/* ============================================
+          SECTION 5: Testimonials
+          ============================================ */}
+      <section className="py-20 md:py-28 px-6 bg-[#0a0a0a]">
+        <FadeInOnScroll className="max-w-6xl mx-auto">
+          <h2 className="font-playfair text-4xl md:text-5xl uppercase tracking-wide text-center mb-16">
+            Testimonials
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-8 bg-white/[0.02] hover:bg-white/[0.04] transition-all">
-              <p className="italic text-neutral-300 leading-relaxed mb-6">
-                &ldquo;Andrew made the entire process seamless. His market knowledge
-                in Brickell is unmatched — we closed in under 30 days at a price
-                we didn&apos;t think was possible.&rdquo;
+            <div className="p-8">
+              <div className="flex gap-1 text-amber-500 mb-6">
+                {"★★★★★".split("").map((s, i) => <span key={i}>{s}</span>)}
+              </div>
+              <p className="font-playfair italic text-lg text-neutral-300 leading-relaxed mb-6">
+                &ldquo;Andrew&apos;s market knowledge and responsiveness made our home
+                purchase seamless. He knew Brickell inside and out and found us exactly
+                what we were looking for.&rdquo;
               </p>
-              <p className="text-white text-sm font-medium">— Client Name</p>
-              <p className="text-neutral-500 text-xs uppercase tracking-wider mt-1">Brickell Condo Purchase</p>
+              <p className="text-white font-medium text-sm uppercase tracking-wider">Placeholder Client</p>
+              <p className="text-neutral-500 text-xs mt-1">Buyer, Brickell</p>
             </div>
-            <div className="p-8 bg-white/[0.02] hover:bg-white/[0.04] transition-all">
-              <p className="italic text-neutral-300 leading-relaxed mb-6">
-                &ldquo;We interviewed several agents before choosing Andrew. His
-                data-driven approach and responsiveness set him apart. He sold our
-                home above asking in two weeks.&rdquo;
+
+            <div className="p-8">
+              <div className="flex gap-1 text-amber-500 mb-6">
+                {"★★★★★".split("").map((s, i) => <span key={i}>{s}</span>)}
+              </div>
+              <p className="font-playfair italic text-lg text-neutral-300 leading-relaxed mb-6">
+                &ldquo;We sold our Coral Gables home in under two weeks at above asking
+                price. Andrew&apos;s pricing strategy and marketing approach were
+                exceptional.&rdquo;
               </p>
-              <p className="text-white text-sm font-medium">— Client Name</p>
-              <p className="text-neutral-500 text-xs uppercase tracking-wider mt-1">Coconut Grove Home Sale</p>
+              <p className="text-white font-medium text-sm uppercase tracking-wider">Placeholder Client</p>
+              <p className="text-neutral-500 text-xs mt-1">Seller, Coral Gables</p>
             </div>
-            <div className="p-8 bg-white/[0.02] hover:bg-white/[0.04] transition-all">
-              <p className="italic text-neutral-300 leading-relaxed mb-6">
-                &ldquo;As an out-of-state investor, I needed someone I could trust
-                to guide me through Miami&apos;s pre-construction market. Andrew
-                delivered — professional, transparent, and always available.&rdquo;
+
+            <div className="p-8">
+              <div className="flex gap-1 text-amber-500 mb-6">
+                {"★★★★★".split("").map((s, i) => <span key={i}>{s}</span>)}
+              </div>
+              <p className="font-playfair italic text-lg text-neutral-300 leading-relaxed mb-6">
+                &ldquo;As an investor, I need data-driven advice I can trust. Andrew
+                delivers every time with detailed market analysis and honest
+                assessments.&rdquo;
               </p>
-              <p className="text-white text-sm font-medium">— Client Name</p>
-              <p className="text-neutral-500 text-xs uppercase tracking-wider mt-1">Pre-Construction Investment</p>
+              <p className="text-white font-medium text-sm uppercase tracking-wider">Placeholder Client</p>
+              <p className="text-neutral-500 text-xs mt-1">Investor, Miami Beach</p>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Neighborhoods Section */}
-      <section id="neighborhoods" className="py-24 px-6">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="font-playfair text-4xl md:text-5xl mb-12">Neighborhoods</h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {NEIGHBORHOODS.map((n) => (
-              <a
-                key={n.name}
-                href={`/neighborhoods/${n.slug}/`}
-                className="group relative h-80 md:h-96 overflow-hidden hover:scale-[1.02] transition-transform duration-300"
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${n.gradient}`} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <h3 className="font-playfair text-2xl md:text-3xl text-white mb-4">{n.name}</h3>
-                  <div className="flex gap-3">
-                    <span className="px-4 py-2 text-xs uppercase tracking-wider border border-white/30 text-white group-hover:bg-white/10 transition-all">
-                      Homes
-                    </span>
-                    <span className="px-4 py-2 text-xs uppercase tracking-wider border border-white/30 text-white group-hover:bg-white/10 transition-all">
-                      Condos
-                    </span>
-                  </div>
-                </div>
-              </a>
-            ))}
-          </div>
-
-          <div className="mt-10 text-center">
-            <a href="/neighborhoods/" className="text-sm uppercase tracking-[0.15em] text-neutral-400 hover:text-white transition-colors">
-              View All Neighborhoods →
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Developments Section */}
-      <section id="developments" className="py-24 px-6 bg-neutral-900">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="font-playfair text-4xl md:text-5xl mb-12">New Developments</h2>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            {homepageDevelopments.map((d, i) => (
-              <a
-                key={d.name}
-                href={`/new-construction/`}
-                className="group relative h-72 md:h-80 overflow-hidden hover:scale-[1.02] transition-transform duration-300"
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${DEV_GRADIENTS[i % DEV_GRADIENTS.length]}`} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <h3 className="font-playfair text-2xl md:text-3xl text-white mb-1 group-hover:text-white transition-colors">
-                    {d.name}
-                  </h3>
-                  <p className="text-sm text-neutral-400 mb-3">{d.location}</p>
-                  <div className="flex gap-4 text-sm text-neutral-300">
-                    <span>From {d.priceFrom}</span>
-                    <span className="text-neutral-500">{d.status}</span>
-                  </div>
-                </div>
-              </a>
-            ))}
-          </div>
-
-          <div className="mt-8 text-center">
+          {/* Mobile: view more button */}
+          <div className="mt-10 text-center md:hidden">
             <a
-              href="/new-construction/"
-              className="inline-block px-6 py-2 text-sm uppercase tracking-wider border border-white/20 text-neutral-400 hover:text-white hover:border-white/40 transition-all"
+              href="/about/"
+              className="inline-block border border-white/30 rounded-full px-8 py-3 text-sm uppercase tracking-wider text-white hover:bg-white/10 transition-all"
             >
-              View All Developments →
+              View More Testimonials
             </a>
           </div>
-        </div>
+        </FadeInOnScroll>
       </section>
 
-      {/* Let's Connect CTA */}
-      <section className="py-24 px-6">
+      {/* ============================================
+          SECTION 6: Neighborhoods
+          ============================================ */}
+      <NeighborhoodBlades />
+
+      {/* ============================================
+          SECTION 7: CTA
+          ============================================ */}
+      <section className="py-24 px-6 bg-[#0a0a0a]">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="font-playfair text-4xl md:text-5xl mb-4">
+          <h2 className="font-playfair text-4xl md:text-5xl mb-6">
             Let&apos;s Connect
           </h2>
-          <p className="text-neutral-400 mb-10">
-            Ready to explore Miami&apos;s luxury market? Whether you&apos;re
-            buying, investing, or just curious about a neighborhood — I&apos;m
-            here to help.
+          <p className="text-neutral-400 max-w-xl mx-auto mb-10">
+            Ready to explore South Florida&apos;s luxury market? Whether you&apos;re
+            buying, selling, or investing — let&apos;s talk.
           </p>
           <a
             href="/contact/"
-            className="inline-block px-8 py-3 border border-white/30 text-white hover:bg-white/10 transition-all tracking-wider uppercase text-sm"
+            className="inline-block bg-amber-600 hover:bg-amber-500 text-white rounded-sm px-10 py-4 uppercase tracking-wider text-sm transition-colors"
           >
             Get in Touch
           </a>

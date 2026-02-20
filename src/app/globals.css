@@ -37,6 +37,29 @@ html {
   border-radius: 3px;
 }
 
+/* Hero parallax — desktop only */
+@media (min-width: 768px) {
+  .hero-parallax {
+    background-attachment: fixed;
+  }
+}
+
+/* Hero load animation */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-animate {
+  animation: fadeSlideUp 1s ease-out forwards;
+}
+
 /* Hero gradient overlay */
 .hero-gradient {
   background: linear-gradient(
