@@ -29,11 +29,11 @@ export default function StatsSection() {
           {/* Spacer so first box starts near bottom of viewport */}
           <div className="h-[60vh]" />
 
-          <div className="space-y-4">
+          <div className="space-y-6">
             {STATS.map((stat) => (
               <div
                 key={stat.label}
-                className="bg-black/60 backdrop-blur-sm py-14 px-6 text-center mx-4"
+                className="bg-black/60 backdrop-blur-sm py-14 px-6 text-center mx-8"
               >
                 <p className="font-playfair text-5xl text-white mb-3">{stat.value}</p>
                 <p className="text-sm uppercase tracking-wider text-neutral-300">{stat.label}</p>
