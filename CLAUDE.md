@@ -153,6 +153,16 @@ The `reference/` directory contains Carroll's actual HTML (656KB) and CSS (192KB
 ### Our Equivalents
 We use GSAP ScrollTrigger (not ScrollMagic) and Swiper (same as Carroll). Our `ScrollReveal` component replaces Carroll's `star-animate` class toggling.
 
+## Search Page — Carroll's Exact Implementation
+Carroll's search results area is **WHITE background** — NOT dark. The filter bar (header) is the only dark element. Everything below it is white:
+- **`.ms-sf-wrapper-sorter`** — 40px height, flex, space-between, padding 0 15px. Left: "{count} Properties" (13px). Right: "Sort by: {value}" (13px, value bold). White bg.
+- **`.ms-sf-table`** — width 100%, border-collapse, white bg, 1px light gray borders. `thead` is sticky z-3, `th` has light gray bg (#f5f5f5), 15px 8px padding, 14px font. `td` has 12px padding, 15px font, white bg. `tr:hover td` gets light gray bg.
+- **Responsive column hiding:** `-development` hidden <1500px, `-price-sqft` hidden <1300px, `-living-size` hidden <990px
+- **Mobile list (<768px):** Table becomes card layout — thead hidden, each tr is a flex card with image left + details right
+- **Grid cards:** 2-col ≥768, 3-col ≥1200, 4-col ≥1600, with 10px container padding
+- **Map layout:** ≥1024 = 60/40 split (map fixed left, cards scroll right), ≥1400 = 50/50
+- **Text colors on white:** dark gray for all text, bold for prices, gray-500 for secondary
+
 ## Critical Rules
 1. **Do NOT modify MLS compliance footer text** — legally required verbatim
 2. **Do NOT remove existing JSON-LD structured data** — add to it
