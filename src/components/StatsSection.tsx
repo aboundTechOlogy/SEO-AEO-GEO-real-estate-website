@@ -27,7 +27,7 @@ export default function StatsSection() {
         {/* Stat boxes scroll over the photo — separate boxes with gaps so photo shows through */}
         <div className="relative" style={{ marginTop: "-100vh" }}>
           {/* Spacer so first box starts near bottom of viewport */}
-          <div className="h-[60vh]" />
+          <div className="h-[75vh]" />
 
           <div className="space-y-6">
             {STATS.map((stat) => (
