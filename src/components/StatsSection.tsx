@@ -17,9 +17,9 @@ export default function StatsSection() {
         {/* Sticky photo background */}
         <div className="sticky top-0 h-screen w-full overflow-hidden">
           <img
-            src="/andrew-fullbody.png"
+            src="/andrew-stats.png"
             alt="Andrew Whalen"
-            className="absolute inset-0 w-full h-full object-cover object-top"
+            className="absolute inset-0 w-full h-full object-cover object-center"
           />
           <div className="absolute inset-0 bg-black/20" />
         </div>
@@ -41,18 +41,18 @@ export default function StatsSection() {
         </div>
       </section>
 
-      {/* Desktop: fullbody photo background with overlay stat grid */}
-      <section className="relative hidden md:block h-[700px] overflow-hidden">
+      {/* Desktop: stats photo background with stat grid on right */}
+      <section className="relative hidden md:block h-[550px] md:h-[600px] overflow-hidden">
         <img
-          src="/andrew-fullbody.png"
+          src="/andrew-stats.png"
           alt="Andrew Whalen"
-          className="absolute inset-0 w-full h-full object-cover object-top"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-black/20" />
 
-        {/* Stat grid overlaid on right 60% */}
-        <div className="absolute inset-0 flex items-center justify-end">
-          <FadeInOnScroll scale className="w-[60%] pr-12 lg:pr-20">
+        {/* Stat grid pinned to right side where background is clean */}
+        <div className="absolute inset-y-0 right-0 flex items-center pr-12 lg:pr-20">
+          <FadeInOnScroll scale>
             <div className="grid grid-cols-2 gap-4">
               {STATS.map((stat) => (
                 <div key={stat.label} className="bg-black/50 backdrop-blur-sm p-8 md:p-12 text-center">
