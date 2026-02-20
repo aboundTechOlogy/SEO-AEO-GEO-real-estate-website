@@ -47,13 +47,13 @@ export default function PropertySearch() {
           <input
             type="text"
             placeholder="Enter an address, city, zip code or MLS number"
-            className="flex-1 bg-transparent border-2 border-white/40 rounded-full px-8 py-4 text-white placeholder-neutral-500 focus:outline-none focus:border-white/60 transition-colors"
+            className="flex-1 bg-transparent border-2 border-white/40 rounded-full px-8 py-4 text-white placeholder-white/70 focus:outline-none focus:border-white/60 transition-colors"
           />
 
           {/* Find Now button */}
           <a
             href="/search/"
-            className="w-[200px] shrink-0 bg-neutral-200 text-black font-medium rounded-full px-12 py-4 uppercase tracking-wider text-sm hover:bg-white transition-colors text-center"
+            className="w-[200px] shrink-0 bg-neutral-200 text-black font-medium rounded-full px-12 py-4 uppercase tracking-wider text-sm hover:bg-white transition-colors flex items-center justify-center"
           >
             Find Now!
           </a>
