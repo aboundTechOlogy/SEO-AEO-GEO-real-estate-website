@@ -104,7 +104,7 @@ export default function HomePage() {
       {/* ============================================
           SECTION 4: Meet Andrew
           ============================================ */}
-      <section className="bg-[#0a0a0a] py-16 md:py-28">
+      <section className="hidden lg:block bg-[#0a0a0a] py-16 md:py-28">
         <div className="max-w-7xl mx-auto px-6">
           <FadeInOnScroll>
             <div className="flex flex-col md:flex-row md:items-stretch md:gap-0">
