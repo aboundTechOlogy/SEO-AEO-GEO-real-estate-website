@@ -176,6 +176,21 @@ function StarIcon() {
 export default function SearchPage() {
   const [status, setStatus] = useState("For Sale");
   const [view, setViewState] = useState<ViewMode>("grid");
+  const filterBarRef = useRef<HTMLDivElement>(null);
+  const [theadTop, setTheadTop] = useState(136); // fallback
+
+  // Measure filter bar to compute sticky thead offset
+  useEffect(() => {
+    const measure = () => {
+      if (filterBarRef.current) {
+        const top = parseFloat(getComputedStyle(filterBarRef.current).top) || 0;
+        setTheadTop(top + filterBarRef.current.offsetHeight);
+      }
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
 
   // Persist view in URL hash and restore on load
   useEffect(() => {
@@ -196,7 +211,7 @@ export default function SearchPage() {
       <div className="h-[72px] md:h-[80px]" />
 
       {/* Filter bar — ONLY dark element on this page */}
-      <div className="sticky top-[72px] md:top-[80px] z-30 bg-neutral-950 border-b border-white/5">
+      <div ref={filterBarRef} className="sticky top-[72px] md:top-[80px] z-30 bg-neutral-950 border-b border-white/5">
         <DesktopSearchBar
           status={status}
           onStatusChange={setStatus}
@@ -290,7 +305,7 @@ export default function SearchPage() {
               className="w-full max-w-full border-collapse border border-gray-200 bg-white"
               style={{ borderSpacing: 0 }}
             >
-              <thead>
+              <thead className="sticky z-[3]" style={{ top: theadTop }}>
                 <tr>
                   {/* Fave */}
                   <th className="w-10 px-2 py-[15px] text-[14px] font-semibold text-left text-gray-700 bg-[#f5f5f5] border border-gray-200" />
