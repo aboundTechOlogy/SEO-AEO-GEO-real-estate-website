@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { developments } from "@/data/developments";
 import FadeInView from "@/components/FadeInView";
+import StatsSection from "@/components/StatsSection";
 
 export const metadata: Metadata = {
   title: "Andrew Whalen | Miami Luxury Real Estate",
@@ -123,43 +124,7 @@ export default function HomePage() {
       </section>
 
       {/* Stats Section */}
-      <section className="relative h-[500px] md:h-[600px] overflow-hidden">
-        <div className="absolute inset-0 bg-neutral-900" />
-        <div className="relative h-full max-w-7xl mx-auto flex flex-col md:flex-row items-stretch">
-          {/* Photo — left 40% */}
-          <div className="relative w-full md:w-[40%] h-64 md:h-full shrink-0">
-            <img
-              src="/andrew-fullbody.png"
-              alt="Andrew Whalen"
-              className="absolute inset-0 w-full h-full object-cover object-top"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-neutral-900 hidden md:block" />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-900 md:hidden" />
-          </div>
-
-          {/* Stats grid — right 60% */}
-          <div className="flex-1 flex items-center justify-center px-6 md:px-12 py-10 md:py-0">
-            <div className="grid grid-cols-2 gap-4 w-full max-w-lg">
-              <div className="bg-white/[0.04] backdrop-blur-sm p-8 text-center">
-                <p className="font-playfair text-4xl md:text-5xl text-white mb-2">1,300+</p>
-                <p className="text-sm text-neutral-500 uppercase tracking-wider">Transactions Closed</p>
-              </div>
-              <div className="bg-white/[0.04] backdrop-blur-sm p-8 text-center">
-                <p className="font-playfair text-4xl md:text-5xl text-white mb-2">21+</p>
-                <p className="text-sm text-neutral-500 uppercase tracking-wider">Years of Experience</p>
-              </div>
-              <div className="bg-white/[0.04] backdrop-blur-sm p-8 text-center">
-                <p className="font-playfair text-4xl md:text-5xl text-white mb-2">$500M+</p>
-                <p className="text-sm text-neutral-500 uppercase tracking-wider">Career Sales Volume</p>
-              </div>
-              <div className="bg-white/[0.04] backdrop-blur-sm p-8 text-center">
-                <p className="font-playfair text-4xl md:text-5xl text-white mb-2">40+</p>
-                <p className="text-sm text-neutral-500 uppercase tracking-wider">Neighborhoods Served</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <StatsSection />
 
       {/* Testimonials Section */}
       <section className="py-24 px-6 bg-[#0a0a0a]">
