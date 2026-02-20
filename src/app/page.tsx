@@ -25,19 +25,22 @@ export default function HomePage() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/80" />
 
-        {/* Desktop: bottom-left aligned */}
-        <div className="hidden md:flex absolute inset-0 items-end pb-32 pl-10">
-          <div className="hero-animate">
-            <h1 className="font-playfair text-6xl md:text-7xl lg:text-8xl font-light text-white leading-tight">
+        {/* Desktop: vertically centered, left-aligned */}
+        <div className="hidden md:flex absolute inset-0 items-center pl-6 md:pl-12 lg:pl-16">
+          <div className="hero-animate max-w-3xl">
+            <h1 className="font-playfair text-5xl md:text-6xl lg:text-7xl font-light text-white leading-tight">
               South Florida
               <br />
               Luxury Real Estate
             </h1>
-            <div className="mt-8 inline-flex gap-3">
+            <p className="text-base md:text-lg text-white/70 font-light mt-4 mb-8">
+              Select your goal. Our AI concierge handles the rest.
+            </p>
+            <div className="inline-flex gap-4">
               {["Buy", "Sell", "Sell & Buy", "Invest"].map((goal) => (
                 <button
                   key={goal}
-                  className="px-6 py-3 border border-white/30 hover:border-white/70 text-sm tracking-[0.15em] uppercase text-white hover:bg-white/10 transition-all"
+                  className="min-w-[160px] md:min-w-[180px] px-8 py-3.5 border border-white/30 hover:border-white/70 text-sm tracking-[0.15em] uppercase text-white hover:bg-white/10 transition-all"
                 >
                   {goal}
                 </button>
@@ -46,7 +49,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Mobile: centered vertically */}
+        {/* Mobile: centered */}
         <div className="flex md:hidden absolute inset-0 items-center justify-center">
           <div className="hero-animate text-center px-6 w-full">
             <h1 className="font-playfair text-4xl sm:text-5xl font-light text-white leading-tight">
@@ -54,14 +57,14 @@ export default function HomePage() {
               <br />
               Luxury Real Estate
             </h1>
-            <p className="text-sm text-white/70 max-w-xs mx-auto mt-4 mb-8">
-              Luxury real estate expertise across Miami-Dade, Broward, and Palm Beach
+            <p className="text-base text-white/70 font-light max-w-xs mx-auto mt-4 mb-8">
+              Select your goal. Our AI concierge handles the rest.
             </p>
-            <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto mb-10">
+            <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto mb-10">
               {["Buy", "Sell", "Sell & Buy", "Invest"].map((goal) => (
                 <button
                   key={goal}
-                  className="px-4 py-3 border border-white/30 hover:border-white/70 text-sm tracking-[0.15em] uppercase text-white hover:bg-white/10 transition-all"
+                  className="min-w-[160px] px-8 py-3.5 border border-white/30 hover:border-white/70 text-sm tracking-[0.15em] uppercase text-white hover:bg-white/10 transition-all"
                 >
                   {goal}
                 </button>
