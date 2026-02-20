@@ -366,26 +366,191 @@ function PropertyTypeFilter({ open, onToggle }: { open: boolean; onToggle: () =>
 }
 
 /* ==================== MORE FILTER (MEGA) ==================== */
-const MORE_SECTIONS = [
-  { key: "keyword", label: "Keyword Search", defaultOpen: true },
-  { key: "garage", label: "Garage", defaultOpen: false },
-  { key: "livingSize", label: "Living Size", defaultOpen: false },
-  { key: "landSize", label: "Land Size", defaultOpen: false },
-  { key: "yearBuilt", label: "Year Built", defaultOpen: false },
-  { key: "waterfront", label: "Waterfront Description", defaultOpen: false },
-  { key: "features", label: "Features", defaultOpen: false },
-  { key: "dom", label: "Days On Market", defaultOpen: false },
+const KEYWORD_SUGGESTIONS = ["Pool", "Waterfront", "Basement", "Gated", "Pond"];
+
+const WATERFRONT_OPTIONS = [
+  "Any", "Bay", "Canal", "Creek", "Fixed Bridge", "Intracoastal",
+  "Lake", "Lake Front", "Ocean Access", "Oceanfront", "Point Lot",
+  "River", "River Front", "River Frontage", "Water Access",
 ];
 
-const KEYWORD_SUGGESTIONS = ["Pool", "Waterfront", "Basement", "Gated", "Pond", "Ocean View", "Golf", "Corner Unit"];
+const FEATURE_OPTIONS = [
+  "Any", "Boat Dock", "Foreclosures", "Furnished", "Gated Community",
+  "Golf Course", "Penthouse", "Pets", "Swimming Pool", "Short Sales",
+  "Tennis Courts", "Waterfront",
+];
+
+const GARAGE_OPTIONS = ["Any", "1", "2", "3", "4", "5", "5+"];
+const DOM_OPTIONS = ["Any", "Today", "7", "14", "21", "30"];
+
+/* Reusable accordion header */
+function AccordionRow({
+  label,
+  rightLabel,
+  expanded,
+  onToggle,
+}: {
+  label: string;
+  rightLabel?: string;
+  expanded: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      onClick={onToggle}
+      className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-neutral-50 transition-colors border-b border-neutral-100"
+    >
+      <span className="text-sm font-semibold text-neutral-900">{label}</span>
+      <div className="flex items-center gap-2">
+        {rightLabel && !expanded && (
+          <span className="text-sm text-neutral-400">{rightLabel}</span>
+        )}
+        <svg
+          className={`w-4 h-4 text-neutral-400 transition-transform ${expanded ? "rotate-180" : ""}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+        >
+          <path d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+        </svg>
+      </div>
+    </button>
+  );
+}
+
+/* Min/Max range input pair */
+function MinMaxInputs() {
+  return (
+    <div className="flex items-center gap-3 px-5 pb-4">
+      <div className="flex-1">
+        <input
+          type="text"
+          placeholder="Any"
+          className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400 transition-colors"
+        />
+        <p className="text-xs text-neutral-400 mt-1 ml-1">Minimum</p>
+      </div>
+      <span className="text-neutral-400 text-sm mt-[-16px]">to</span>
+      <div className="flex-1">
+        <input
+          type="text"
+          placeholder="Any"
+          className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400 transition-colors"
+        />
+        <p className="text-xs text-neutral-400 mt-1 ml-1">Maximum</p>
+      </div>
+    </div>
+  );
+}
+
+/* Segmented button row (Garage, Days On Market) */
+function SegmentedButtons({
+  options,
+  value,
+  onChange,
+}: {
+  options: string[];
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="flex items-center gap-0 px-5 pb-4">
+      {options.map((opt) => (
+        <button
+          key={opt}
+          onClick={() => onChange(opt)}
+          className={`flex-1 py-2 text-sm font-medium border transition-colors ${
+            value === opt
+              ? "bg-black text-white border-black"
+              : "bg-white text-neutral-700 border-neutral-200 hover:bg-neutral-50"
+          } ${opt === options[0] ? "rounded-l-lg" : ""} ${opt === options[options.length - 1] ? "rounded-r-lg" : ""} ${opt !== options[0] ? "-ml-px" : ""}`}
+        >
+          {opt}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/* Radio list (Waterfront Description) */
+function RadioList({
+  options,
+  value,
+  onChange,
+}: {
+  options: string[];
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="px-5 pb-4 space-y-2.5 max-h-[250px] overflow-y-auto">
+      {options.map((opt) => (
+        <label key={opt} className="flex items-center gap-3 cursor-pointer group">
+          <div
+            onClick={() => onChange(opt)}
+            className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+              value === opt ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
+            }`}
+          >
+            {value === opt && <div className="w-2.5 h-2.5 rounded-full bg-black" />}
+          </div>
+          <span className={`text-sm ${value === opt ? "text-neutral-900 font-medium" : "text-neutral-600"}`}>
+            {opt}
+          </span>
+        </label>
+      ))}
+    </div>
+  );
+}
+
+/* Checkbox list (Features) */
+function CheckboxList({
+  options,
+  selected,
+  onToggle,
+}: {
+  options: string[];
+  selected: string[];
+  onToggle: (v: string) => void;
+}) {
+  return (
+    <div className="px-5 pb-4 space-y-2.5 max-h-[250px] overflow-y-auto">
+      {options.map((opt) => (
+        <label key={opt} className="flex items-center gap-3 cursor-pointer group">
+          <div
+            onClick={() => onToggle(opt)}
+            className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+              selected.includes(opt) ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
+            }`}
+          >
+            {selected.includes(opt) && (
+              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                <path d="M4.5 12.75l6 6 9-13.5" />
+              </svg>
+            )}
+          </div>
+          <span className="text-sm text-neutral-700">{opt}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
 
 function MoreFilter({ open, onToggle }: { open: boolean; onToggle: () => void }) {
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({ keyword: true });
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [keyword, setKeyword] = useState("");
+  const [searchType, setSearchType] = useState("For Sale");
+  const [garage, setGarage] = useState("Any");
+  const [dom, setDom] = useState("Any");
+  const [waterfront, setWaterfront] = useState("Any");
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(["Single Family Homes", "Condominiums"]);
+  const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
+  const [hidePending, setHidePending] = useState(false);
 
-  const toggleSection = (key: string) => {
-    setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
+  const toggle = (key: string) => setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
+  const toggleType = (t: string) => setSelectedTypes((p) => p.includes(t) ? p.filter((x) => x !== t) : [...p, t]);
+  const toggleFeature = (f: string) => setSelectedFeatures((p) => p.includes(f) ? p.filter((x) => x !== f) : [...p, f]);
 
   return (
     <FilterDropdown
@@ -400,112 +565,205 @@ function MoreFilter({ open, onToggle }: { open: boolean; onToggle: () => void })
           More
         </>
       }
-      width="w-[380px]"
+      width="w-[420px]"
     >
-      <div className="max-h-[60vh] overflow-y-auto">
-        {/* Summary rows */}
-        <div className="border-b border-neutral-100">
-          <div className="flex items-center justify-between px-5 py-3.5 hover:bg-neutral-50 transition-colors">
-            <span className="text-sm font-medium text-neutral-900">Property Search</span>
-            <span className="text-sm text-neutral-400">For Sale</span>
+      <div className="max-h-[65vh] overflow-y-auto">
+        {/* 1. Property Search */}
+        <AccordionRow label="Property Search" rightLabel={`${searchType}`} expanded={!!expanded.search} onToggle={() => toggle("search")} />
+        {expanded.search && (
+          <div className="px-5 pb-4 pt-1 space-y-2.5">
+            {["For Sale", "For Rent", "Sold"].map((opt) => (
+              <label key={opt} className="flex items-center gap-3 cursor-pointer group">
+                <div
+                  onClick={() => setSearchType(opt)}
+                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                    searchType === opt ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                  }`}
+                >
+                  {searchType === opt && <div className="w-2.5 h-2.5 rounded-full bg-black" />}
+                </div>
+                <span className={`text-sm ${searchType === opt ? "text-neutral-900 font-medium" : "text-neutral-600"}`}>
+                  {opt}
+                </span>
+              </label>
+            ))}
           </div>
-          <div className="flex items-center justify-between px-5 py-3.5 hover:bg-neutral-50 transition-colors">
-            <span className="text-sm font-medium text-neutral-900">Price</span>
-            <span className="text-sm text-neutral-400">$800K - Any Price</span>
+        )}
+
+        {/* 2. Price */}
+        <AccordionRow label="Price" rightLabel="$800K - Any Price" expanded={!!expanded.price} onToggle={() => toggle("price")} />
+        {expanded.price && (
+          <div className="flex items-center gap-3 px-5 pb-4 pt-1">
+            <div className="flex-1">
+              <div className="flex items-center border border-neutral-200 rounded-lg px-3 py-2.5">
+                <span className="text-neutral-400 text-sm mr-1">$</span>
+                <input type="text" defaultValue="800,000" placeholder="Any" className="w-full text-sm text-neutral-900 focus:outline-none bg-transparent" />
+              </div>
+              <p className="text-xs text-neutral-400 mt-1 ml-1">Minimum</p>
+            </div>
+            <span className="text-neutral-400 text-sm mt-[-16px]">to</span>
+            <div className="flex-1">
+              <div className="flex items-center border border-neutral-200 rounded-lg px-3 py-2.5">
+                <span className="text-neutral-400 text-sm mr-1">$</span>
+                <input type="text" placeholder="Any" className="w-full text-sm text-neutral-900 focus:outline-none bg-transparent" />
+              </div>
+              <p className="text-xs text-neutral-400 mt-1 ml-1">Maximum</p>
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Expandable sections */}
-        {MORE_SECTIONS.map((section) => (
-          <div key={section.key} className="border-b border-neutral-100">
-            <button
-              onClick={() => toggleSection(section.key)}
-              className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-neutral-50 transition-colors"
-            >
-              <span className="text-sm font-medium text-neutral-900">{section.label}</span>
-              <svg
-                className={`w-4 h-4 text-neutral-400 transition-transform ${expanded[section.key] ? "rotate-180" : ""}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-              >
-                <path d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-              </svg>
-            </button>
+        {/* 3. Rooms */}
+        <AccordionRow label="Rooms" expanded={!!expanded.rooms} onToggle={() => toggle("rooms")} />
+        {expanded.rooms && (
+          <div className="px-5 pb-4 pt-1 space-y-5">
+            <div>
+              <p className="text-sm font-medium text-neutral-700 mb-2">Bedrooms</p>
+              <div className="flex items-center gap-3">
+                <div className="flex-1">
+                  <input type="text" placeholder="Any" className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400" />
+                  <p className="text-xs text-neutral-400 mt-1 ml-1">Minimum</p>
+                </div>
+                <span className="text-neutral-400 text-sm mt-[-16px]">to</span>
+                <div className="flex-1">
+                  <input type="text" placeholder="Any" className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400" />
+                  <p className="text-xs text-neutral-400 mt-1 ml-1">Maximum</p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-neutral-700 mb-2">Bathrooms</p>
+              <div className="flex items-center gap-3">
+                <div className="flex-1">
+                  <input type="text" placeholder="Any" className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400" />
+                  <p className="text-xs text-neutral-400 mt-1 ml-1">Minimum</p>
+                </div>
+                <span className="text-neutral-400 text-sm mt-[-16px]">to</span>
+                <div className="flex-1">
+                  <input type="text" placeholder="Any" className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400" />
+                  <p className="text-xs text-neutral-400 mt-1 ml-1">Maximum</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
-            {expanded[section.key] && section.key === "keyword" && (
-              <div className="px-5 pb-4">
-                <div className="flex items-center border border-neutral-200 rounded-lg px-3 py-2.5 mb-3">
-                  <input
-                    type="text"
-                    value={keyword}
-                    onChange={(e) => setKeyword(e.target.value)}
-                    placeholder="Select a keyword below or type here..."
-                    className="flex-1 text-sm text-neutral-900 focus:outline-none bg-transparent placeholder-neutral-400"
-                  />
-                  {keyword && (
-                    <button onClick={() => setKeyword("")} className="text-neutral-400 hover:text-neutral-600">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                        <path d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
+        {/* 4. Property Type */}
+        <AccordionRow label="Property Type" expanded={!!expanded.type} onToggle={() => toggle("type")} />
+        {expanded.type && (
+          <div className="px-5 pb-4 pt-1 space-y-2.5">
+            {PROPERTY_TYPES.map((type) => (
+              <label key={type} className="flex items-center gap-3 cursor-pointer group">
+                <div
+                  onClick={() => toggleType(type)}
+                  className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                    selectedTypes.includes(type) ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                  }`}
+                >
+                  {selectedTypes.includes(type) && (
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                      <path d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
                   )}
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {KEYWORD_SUGGESTIONS.map((kw) => (
-                    <button
-                      key={kw}
-                      onClick={() => setKeyword(kw)}
-                      className="flex items-center gap-1 px-3 py-1.5 border border-neutral-200 rounded-full text-xs text-neutral-700 hover:bg-neutral-50 transition-colors"
-                    >
-                      <span className="text-neutral-400">+</span> {kw}
-                    </button>
-                  ))}
+                <span className="text-sm text-neutral-700">{type}</span>
+              </label>
+            ))}
+            <div className="border-t border-neutral-100 pt-3 mt-3">
+              <label className="flex items-center gap-3 cursor-pointer group">
+                <div
+                  onClick={() => setHidePending(!hidePending)}
+                  className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                    hidePending ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                  }`}
+                >
+                  {hidePending && (
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                      <path d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                  )}
                 </div>
-                <p className="text-[11px] text-neutral-400 mt-3 leading-relaxed">
-                  Note: To increase accuracy, the keyword filter suggests the most commonly searched terms. Results may vary.
-                </p>
-              </div>
-            )}
-
-            {expanded[section.key] && section.key !== "keyword" && (
-              <div className="px-5 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex-1">
-                    <input
-                      type="text"
-                      placeholder="Any"
-                      className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400 transition-colors"
-                    />
-                    <p className="text-xs text-neutral-400 mt-1 ml-1">Minimum</p>
-                  </div>
-                  <span className="text-neutral-400 text-sm mt-[-16px]">to</span>
-                  <div className="flex-1">
-                    <input
-                      type="text"
-                      placeholder="Any"
-                      className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400 transition-colors"
-                    />
-                    <p className="text-xs text-neutral-400 mt-1 ml-1">Maximum</p>
-                  </div>
-                </div>
-              </div>
-            )}
+                <span className="text-sm text-neutral-700">Hide Pending / Contingent</span>
+              </label>
+            </div>
           </div>
-        ))}
+        )}
+
+        {/* 5. Keyword Search */}
+        <AccordionRow label="Keyword Search" expanded={!!expanded.keyword} onToggle={() => toggle("keyword")} />
+        {expanded.keyword && (
+          <div className="px-5 pb-4 pt-1">
+            <div className="flex items-center border border-neutral-200 rounded-lg px-3 py-2.5 mb-3">
+              <input
+                type="text"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                placeholder="Select a keyword below or type here..."
+                className="flex-1 text-sm text-neutral-900 focus:outline-none bg-transparent placeholder-neutral-400"
+              />
+              {keyword && (
+                <button onClick={() => setKeyword("")} className="text-neutral-400 hover:text-neutral-600">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {KEYWORD_SUGGESTIONS.map((kw) => (
+                <button
+                  key={kw}
+                  onClick={() => setKeyword(kw)}
+                  className="flex items-center gap-1 px-3 py-1.5 border border-neutral-200 rounded-full text-xs text-neutral-700 hover:bg-neutral-50 transition-colors"
+                >
+                  <span className="text-neutral-400">+</span> {kw}
+                </button>
+              ))}
+            </div>
+            <p className="text-[11px] text-neutral-400 mt-3 leading-relaxed">
+              Note: To increase accuracy, the keyword filter suggests the most commonly searched terms. Results may vary.
+            </p>
+          </div>
+        )}
+
+        {/* 6. Garage */}
+        <AccordionRow label="Garage" expanded={!!expanded.garage} onToggle={() => toggle("garage")} />
+        {expanded.garage && <SegmentedButtons options={GARAGE_OPTIONS} value={garage} onChange={setGarage} />}
+
+        {/* 7. Living Size */}
+        <AccordionRow label="Living Size" expanded={!!expanded.livingSize} onToggle={() => toggle("livingSize")} />
+        {expanded.livingSize && <MinMaxInputs />}
+
+        {/* 8. Land Size */}
+        <AccordionRow label="Land Size" expanded={!!expanded.landSize} onToggle={() => toggle("landSize")} />
+        {expanded.landSize && <MinMaxInputs />}
+
+        {/* 9. Year Built */}
+        <AccordionRow label="Year Built" expanded={!!expanded.yearBuilt} onToggle={() => toggle("yearBuilt")} />
+        {expanded.yearBuilt && <MinMaxInputs />}
+
+        {/* 10. Waterfront Description */}
+        <AccordionRow label="Waterfront Description" expanded={!!expanded.waterfront} onToggle={() => toggle("waterfront")} />
+        {expanded.waterfront && <RadioList options={WATERFRONT_OPTIONS} value={waterfront} onChange={setWaterfront} />}
+
+        {/* 11. Features */}
+        <AccordionRow label="Features" expanded={!!expanded.features} onToggle={() => toggle("features")} />
+        {expanded.features && <CheckboxList options={FEATURE_OPTIONS} selected={selectedFeatures} onToggle={toggleFeature} />}
+
+        {/* 12. Days On Market */}
+        <AccordionRow label="Days On Market" expanded={!!expanded.dom} onToggle={() => toggle("dom")} />
+        {expanded.dom && <SegmentedButtons options={DOM_OPTIONS} value={dom} onChange={setDom} />}
       </div>
 
       {/* Sticky footer */}
       <div className="flex items-center gap-3 px-5 py-4 border-t border-neutral-100 bg-white">
-        <button className="text-sm text-neutral-500 hover:text-neutral-800 transition-colors">
+        <button className="text-sm text-neutral-500 hover:text-neutral-800 transition-colors px-4 py-2.5 border border-neutral-200 rounded-full">
           Clear Filters
         </button>
         <button
           onClick={onToggle}
           className="flex-1 bg-black text-white text-sm font-medium py-3 rounded-full hover:bg-neutral-800 transition-colors"
         >
-          View Properties
+          View 10K Properties
         </button>
       </div>
     </FilterDropdown>
