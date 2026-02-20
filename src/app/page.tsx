@@ -126,6 +126,57 @@ export default function HomePage() {
       {/* Stats Section */}
       <StatsSection />
 
+      {/* Meet Andrew Section */}
+      <section className="bg-[#0a0a0a] py-20 md:py-28">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row md:items-stretch md:gap-0">
+            {/* Text — left ~55% */}
+            <div className="md:w-[55%] md:pr-16 md:py-8">
+              <p className="font-playfair italic text-lg text-neutral-400">LoKation Real Estate</p>
+              <h2 className="font-playfair text-5xl md:text-6xl uppercase tracking-wide text-white mt-2 mb-4">
+                Meet Andrew
+              </h2>
+              <p className="text-sm uppercase tracking-[0.15em] text-neutral-400 mb-8">
+                Serving Miami, Fort Lauderdale and Palm Beach.
+              </p>
+              <p className="text-neutral-300 leading-relaxed text-base mb-6">
+                Andrew Whalen has built a reputation as one of South Florida&apos;s
+                most dedicated and knowledgeable real estate professionals. With over
+                1,300 transactions closed and 21+ years of experience across
+                Miami-Dade&apos;s most competitive neighborhoods, Andrew combines deep
+                market expertise with a data-driven approach that consistently
+                delivers results for his clients.
+              </p>
+              <p className="text-neutral-300 leading-relaxed text-base mb-8">
+                With a career spanning over two decades, Andrew delivers a
+                comprehensive level of concierge-style service with extensive
+                experience across every level of real estate — including investment
+                analysis, negotiation, new development sales, and marketing.
+                Leveraging cutting-edge technology and AI-powered market intelligence,
+                Andrew provides his clients with unmatched insights and exposure in
+                South Florida&apos;s luxury market.
+              </p>
+              <a
+                href="/about/"
+                className="text-sm uppercase tracking-wider text-white hover:text-neutral-300 transition-colors"
+              >
+                Learn More →
+              </a>
+            </div>
+
+            {/* Photo — right ~45% */}
+            <div className="hidden md:block md:w-[45%] relative min-h-[500px]">
+              <img
+                src="/andrew-headshot.png"
+                alt="Andrew Whalen"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-transparent to-transparent w-1/3" />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
       <section className="py-24 px-6 bg-[#0a0a0a]">
         <div className="max-w-7xl mx-auto">
