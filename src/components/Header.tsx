@@ -44,9 +44,9 @@ export default function Header() {
   return (
     <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${bg} ${border}`}>
       {/* Desktop nav */}
-      <nav className="hidden lg:block relative w-full px-4 md:px-6 lg:px-8 py-5 md:py-6">
+      <nav className="hidden lg:block relative w-full px-4 lg:px-6 py-5 md:py-6">
         {/* Left: Primary Nav Links — absolute left */}
-        <div className="absolute left-4 md:left-6 lg:left-8 top-1/2 -translate-y-1/2 flex items-center gap-8">
+        <div className="absolute left-4 lg:left-6 top-1/2 flex items-center gap-8" style={{ transform: "translateY(calc(-50% + 1px))" }}>
           <NavDropdown
             label="Luxury Condos"
             items={CONDO_ITEMS}
@@ -73,7 +73,7 @@ export default function Header() {
         </div>
 
         {/* Right: Secondary Nav + Actions — absolute right */}
-        <div className="absolute right-4 md:right-6 lg:right-8 top-1/2 -translate-y-1/2 flex items-center gap-6">
+        <div className="absolute right-4 lg:right-6 top-1/2 flex items-center gap-6" style={{ transform: "translateY(calc(-50% + 1px))" }}>
           <a href="/about/" className="text-[13px] uppercase tracking-[0.12em] text-white hover:text-neutral-300 transition-colors whitespace-nowrap">
             About Us
           </a>
