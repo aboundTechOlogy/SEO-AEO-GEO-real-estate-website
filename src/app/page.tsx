@@ -87,6 +87,82 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Stats Section */}
+      <section className="relative h-[500px] md:h-[600px] overflow-hidden">
+        <div className="absolute inset-0 bg-neutral-900" />
+        <div className="relative h-full max-w-7xl mx-auto flex flex-col md:flex-row items-stretch">
+          {/* Photo — left 40% */}
+          <div className="relative w-full md:w-[40%] h-64 md:h-full shrink-0">
+            <img
+              src="/andrew-fullbody.png"
+              alt="Andrew Whalen"
+              className="absolute inset-0 w-full h-full object-cover object-top"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-neutral-900 hidden md:block" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-900 md:hidden" />
+          </div>
+
+          {/* Stats grid — right 60% */}
+          <div className="flex-1 flex items-center justify-center px-6 md:px-12 py-10 md:py-0">
+            <div className="grid grid-cols-2 gap-4 w-full max-w-lg">
+              <div className="bg-white/[0.04] backdrop-blur-sm p-8 text-center">
+                <p className="font-playfair text-4xl md:text-5xl text-white mb-2">1,300+</p>
+                <p className="text-sm text-neutral-500 uppercase tracking-wider">Transactions Closed</p>
+              </div>
+              <div className="bg-white/[0.04] backdrop-blur-sm p-8 text-center">
+                <p className="font-playfair text-4xl md:text-5xl text-white mb-2">21+</p>
+                <p className="text-sm text-neutral-500 uppercase tracking-wider">Years of Experience</p>
+              </div>
+              <div className="bg-white/[0.04] backdrop-blur-sm p-8 text-center">
+                <p className="font-playfair text-4xl md:text-5xl text-white mb-2">$500M+</p>
+                <p className="text-sm text-neutral-500 uppercase tracking-wider">Career Sales Volume</p>
+              </div>
+              <div className="bg-white/[0.04] backdrop-blur-sm p-8 text-center">
+                <p className="font-playfair text-4xl md:text-5xl text-white mb-2">40+</p>
+                <p className="text-sm text-neutral-500 uppercase tracking-wider">Neighborhoods Served</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-24 px-6 bg-[#0a0a0a]">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="font-playfair text-4xl md:text-5xl text-center mb-16">What Clients Say</h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="p-8 bg-white/[0.02] hover:bg-white/[0.04] transition-all">
+              <p className="italic text-neutral-300 leading-relaxed mb-6">
+                &ldquo;Andrew made the entire process seamless. His market knowledge
+                in Brickell is unmatched — we closed in under 30 days at a price
+                we didn&apos;t think was possible.&rdquo;
+              </p>
+              <p className="text-white text-sm font-medium">— Client Name</p>
+              <p className="text-neutral-500 text-xs uppercase tracking-wider mt-1">Brickell Condo Purchase</p>
+            </div>
+            <div className="p-8 bg-white/[0.02] hover:bg-white/[0.04] transition-all">
+              <p className="italic text-neutral-300 leading-relaxed mb-6">
+                &ldquo;We interviewed several agents before choosing Andrew. His
+                data-driven approach and responsiveness set him apart. He sold our
+                home above asking in two weeks.&rdquo;
+              </p>
+              <p className="text-white text-sm font-medium">— Client Name</p>
+              <p className="text-neutral-500 text-xs uppercase tracking-wider mt-1">Coconut Grove Home Sale</p>
+            </div>
+            <div className="p-8 bg-white/[0.02] hover:bg-white/[0.04] transition-all">
+              <p className="italic text-neutral-300 leading-relaxed mb-6">
+                &ldquo;As an out-of-state investor, I needed someone I could trust
+                to guide me through Miami&apos;s pre-construction market. Andrew
+                delivered — professional, transparent, and always available.&rdquo;
+              </p>
+              <p className="text-white text-sm font-medium">— Client Name</p>
+              <p className="text-neutral-500 text-xs uppercase tracking-wider mt-1">Pre-Construction Investment</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Neighborhoods Section */}
       <section id="neighborhoods" className="py-24 px-6">
         <div className="max-w-7xl mx-auto">
