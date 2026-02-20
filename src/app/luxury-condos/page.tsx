@@ -91,7 +91,7 @@ export default function LuxuryCondosPage() {
           </p>
           <a
             href="/contact/"
-            className="inline-block px-8 py-3 bg-amber-600 hover:bg-amber-500 text-white transition-colors rounded-sm tracking-wider uppercase text-sm"
+            className="inline-block px-8 py-3 border border-white/30 text-white hover:bg-white/10 transition-all rounded-sm tracking-wider uppercase text-sm"
           >
             Get Building Details
           </a>

@@ -46,7 +46,7 @@ export default function ContactForm() {
               onClick={() => setSelectedGoal(selectedGoal === goal ? null : goal)}
               className={`px-5 py-2 text-sm uppercase tracking-wider border transition-all ${
                 selectedGoal === goal
-                  ? "border-amber-600 bg-amber-600/10 text-amber-500"
+                  ? "border-white bg-white/10 text-white"
                   : "border-white/10 text-neutral-400 hover:border-white/30 hover:text-white"
               }`}
             >
@@ -117,7 +117,7 @@ export default function ContactForm() {
       {/* Submit */}
       <button
         type="submit"
-        className="w-full px-8 py-3 bg-amber-600 hover:bg-amber-500 text-white text-sm uppercase tracking-wider transition-colors"
+        className="w-full px-8 py-3 border border-white/30 text-white hover:bg-white/10 text-sm uppercase tracking-wider transition-all"
       >
         Let&apos;s Talk
       </button>

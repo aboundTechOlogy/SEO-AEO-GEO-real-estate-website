@@ -148,24 +148,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* LoKation Affiliation */}
-      <section className="py-24 px-6">
-        <div className="max-w-3xl mx-auto text-center">
-          <img
-            src="/lokation-logo-white.png"
-            alt="LoKation Real Estate"
-            className="h-10 w-auto opacity-60 mx-auto mb-8"
-          />
-          <p className="text-neutral-400 leading-relaxed mb-4">
-            Proudly affiliated with LoKation Real Estate
-          </p>
-          <div className="text-sm text-neutral-500">
-            <p>1900 N Bayshore Dr, Suite 120, Miami, FL 33132</p>
-            <p>(305) 420-6613</p>
-          </div>
-        </div>
-      </section>
-
       {/* CTA */}
       <section className="py-24 px-6 bg-neutral-900/50">
         <div className="max-w-2xl mx-auto text-center">
@@ -178,7 +160,7 @@ export default function AboutPage() {
           </p>
           <a
             href="/contact/"
-            className="inline-block px-8 py-3 bg-amber-600 hover:bg-amber-500 text-white transition-colors rounded-sm tracking-wider uppercase text-sm"
+            className="inline-block px-8 py-3 border border-white/30 text-white hover:bg-white/10 transition-all rounded-sm tracking-wider uppercase text-sm"
           >
             Let&apos;s Talk
           </a>

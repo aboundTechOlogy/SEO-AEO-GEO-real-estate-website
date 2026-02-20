@@ -38,12 +38,15 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-[#0a0a0a]" />
 
         <div className="relative z-10 text-center max-w-5xl mx-auto px-6">
-          <h1 className="font-playfair text-6xl md:text-8xl lg:text-9xl font-light tracking-tight text-white">
-            Miami
+          <h1 className="font-playfair text-5xl md:text-7xl lg:text-8xl font-light tracking-tight text-white">
+            South Florida
             <br />
             Luxury Real Estate
           </h1>
-          <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-3 max-w-lg md:max-w-none mx-auto">
+          <p className="mt-10 text-base text-white/70 tracking-wide">
+            Select your goal below and AI will take it from there.
+          </p>
+          <div className="mt-5 grid grid-cols-2 md:grid-cols-4 gap-3 max-w-lg md:max-w-none mx-auto">
             {["Buy", "Sell", "Sell & Buy", "Invest"].map((goal) => (
               <button
                 key={goal}
@@ -175,7 +178,7 @@ export default function HomePage() {
           </p>
           <a
             href="/contact/"
-            className="inline-block px-8 py-3 bg-amber-600 hover:bg-amber-500 text-white transition-colors tracking-wider uppercase text-sm"
+            className="inline-block px-8 py-3 border border-white/30 text-white hover:bg-white/10 transition-all tracking-wider uppercase text-sm"
           >
             Get in Touch
           </a>

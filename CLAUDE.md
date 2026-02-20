@@ -3,9 +3,10 @@
 ## Project
 Luxury real estate website for **Andrew Whalen, Realtor®** (iamandrewwhalen.com)
 - **Brokerage:** LoKation Real Estate ($499/transaction)
-- **Market:** Miami-Dade luxury ($500K–$150M)
+- **Market:** South Florida luxury — Miami-Dade (active), Broward & Palm Beach (expanding)
 - **Solo agent** — no team pages
 - **Design reference:** thechadcarrollgroup.com (monochromatic cinematic luxury)
+- **IMPORTANT:** Always say "South Florida" not "Miami" when referring to the overall market. The site covers 3 counties.
 
 ## Tech Stack
 - Next.js 16, React 19, Tailwind 4, TypeScript

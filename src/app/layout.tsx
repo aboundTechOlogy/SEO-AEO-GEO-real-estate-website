@@ -23,9 +23,7 @@ export const metadata: Metadata = {
     "Luxury real estate specialist serving Downtown Miami, Coconut Grove, Brickell, Miami Beach, Coral Gables, and Miami's most prestigious neighborhoods.",
   icons: {
     icon: [
-      { url: "/w-icon-48.png", sizes: "48x48", type: "image/png" },
-      { url: "/w-icon-96.png", sizes: "96x96", type: "image/png" },
-      { url: "/w-icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/favicon.png", type: "image/png" },
     ],
     apple: [
       { url: "/w-icon-192.png", sizes: "192x192", type: "image/png" },
