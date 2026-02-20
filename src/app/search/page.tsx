@@ -216,7 +216,7 @@ export default function SearchPage() {
         <div className="bg-white min-h-[calc(100vh-72px-56px)]">
           <SorterRow count={MOCK_SEARCH.length} />
           <div className="px-[10px] pt-[10px]">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
               {MOCK_SEARCH.map((listing, i) => (
                 <div key={i} className="px-[5px] mb-[10px]">
                   <PropertyCard {...listing} />
