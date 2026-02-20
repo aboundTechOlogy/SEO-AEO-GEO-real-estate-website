@@ -12,14 +12,14 @@ const STATS = [
 export default function StatsSection() {
   return (
     <>
-      {/* Mobile: sticky photo + scrolling individual stat boxes */}
-      <section className="relative md:hidden">
+      {/* Mobile/Tablet: sticky photo + scrolling individual stat boxes */}
+      <section className="relative lg:hidden">
         {/* Sticky photo background */}
         <div className="sticky top-0 h-screen w-full overflow-hidden">
           <img
-            src="/andrew-stats-v3.png"
+            src="/andrew-stats-mobile.png"
             alt="Andrew Whalen"
-            className="absolute inset-0 w-full h-full object-cover stats-image-mobile"
+            className="absolute inset-0 w-full h-full object-cover object-center-top"
           />
           <div className="absolute inset-0 bg-black/20" />
         </div>
@@ -44,7 +44,7 @@ export default function StatsSection() {
       </section>
 
       {/* Desktop: stats photo background with stat grid on right */}
-      <section className="relative hidden md:block h-[550px] md:h-[600px] min-h-[550px] md:min-h-[600px] overflow-hidden">
+      <section className="relative hidden lg:block h-[550px] lg:h-[600px] min-h-[550px] lg:min-h-[600px] overflow-hidden">
         <img
           src="/andrew-stats-v3.png"
           alt="Andrew Whalen"
