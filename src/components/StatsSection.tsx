@@ -33,7 +33,7 @@ export default function StatsSection() {
             {STATS.map((stat) => (
               <div
                 key={stat.label}
-                className="bg-black/60 backdrop-blur-sm py-14 px-6 text-center mx-8"
+                className="bg-black/75 backdrop-blur-sm py-14 px-6 text-center mx-8"
               >
                 <p className="font-playfair text-5xl text-white mb-3">{stat.value}</p>
                 <p className="text-sm uppercase tracking-wider text-neutral-300">{stat.label}</p>
@@ -57,7 +57,7 @@ export default function StatsSection() {
           <FadeInOnScroll scale>
             <div className="grid grid-cols-2 gap-4">
               {STATS.map((stat) => (
-                <div key={stat.label} className="bg-black/50 backdrop-blur-sm p-8 md:p-12 text-center">
+                <div key={stat.label} className="bg-black/70 backdrop-blur-sm p-8 md:p-12 text-center">
                   <p className="font-playfair text-5xl md:text-6xl text-white">{stat.value}</p>
                   <p className="text-sm uppercase tracking-wider text-neutral-300 mt-2">{stat.label}</p>
                 </div>
