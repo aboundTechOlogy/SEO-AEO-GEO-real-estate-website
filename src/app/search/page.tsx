@@ -192,6 +192,9 @@ export default function SearchPage() {
 
   return (
     <>
+      {/* Spacer for fixed nav */}
+      <div className="h-[72px] md:h-[80px]" />
+
       {/* Filter bar — ONLY dark element on this page */}
       <div className="sticky top-[72px] md:top-[80px] z-30 bg-neutral-950 border-b border-white/5">
         <DesktopSearchBar
