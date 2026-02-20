@@ -44,7 +44,7 @@ export default function StatsSection() {
       </section>
 
       {/* Desktop: stats photo background with stat grid on right */}
-      <section className="relative hidden lg:block h-[550px] lg:h-[600px] min-h-[550px] lg:min-h-[600px] overflow-hidden">
+      <section className="relative hidden lg:block h-[85vh] overflow-hidden">
         <img
           src="/andrew-stats-v3.png"
           alt="Andrew Whalen"
