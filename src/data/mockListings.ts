@@ -50,4 +50,12 @@ export const MOCK_SEARCH: ListingData[] = [
   { price: "$3,850,000", address: "1 N Fort Lauderdale Beach Blvd #2102", city: "Fort Lauderdale", state: "FL", zip: "33304", beds: 3, baths: 3.5, sqft: 2900, href: "#" },
   { price: "$2,400,000", address: "9705 Collins Ave #1405N", city: "Bal Harbour", state: "FL", zip: "33154", beds: 3, baths: 3, sqft: 2500, href: "#" },
   { price: "$1,800,000", address: "701 N Fort Lauderdale Blvd #PH5", city: "Fort Lauderdale", state: "FL", zip: "33304", beds: 3, baths: 2.5, sqft: 2100, status: "Price Reduced", href: "#" },
+  { price: "$950,000", address: "100 S Birch Rd #2504", city: "Fort Lauderdale", state: "FL", zip: "33316", beds: 2, baths: 2, sqft: 1200, href: "#" },
+  { price: "$4,100,000", address: "18555 Collins Ave #3305", city: "Sunny Isles Beach", state: "FL", zip: "33160", beds: 3, baths: 4, sqft: 3400, status: "New", href: "#" },
+  { price: "$1,350,000", address: "350 SE 2nd St #1070", city: "Fort Lauderdale", state: "FL", zip: "33301", beds: 2, baths: 2.5, sqft: 1650, href: "#" },
+  { price: "$6,800,000", address: "10201 Collins Ave #PH-A", city: "Bal Harbour", state: "FL", zip: "33154", beds: 5, baths: 5.5, sqft: 5400, status: "New", href: "#" },
+  { price: "$2,250,000", address: "4779 Collins Ave #PH4308", city: "Miami Beach", state: "FL", zip: "33140", beds: 3, baths: 3, sqft: 2300, href: "#" },
+  { price: "$1,050,000", address: "2501 S Ocean Dr #1019", city: "Hollywood", state: "FL", zip: "33019", beds: 2, baths: 2, sqft: 1400, href: "#" },
+  { price: "$3,600,000", address: "300 S Biscayne Blvd #T-3608", city: "Miami", state: "FL", zip: "33131", beds: 4, baths: 4, sqft: 2850, status: "Price Reduced", href: "#" },
+  { price: "$1,575,000", address: "2821 N Ocean Blvd #904S", city: "Fort Lauderdale", state: "FL", zip: "33308", beds: 2, baths: 2.5, sqft: 1750, href: "#" },
 ];
