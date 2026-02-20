@@ -43,14 +43,17 @@ export default function HomePage() {
             <br />
             Luxury Real Estate
           </h1>
-          <div className="mt-12">
-            <a
-              href="/neighborhoods/"
-              className="border border-white/30 px-10 py-4 text-sm uppercase tracking-[0.2em] text-white hover:bg-white/10 transition-all inline-block"
-            >
-              Explore Neighborhoods
-            </a>
+          <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-3 max-w-lg md:max-w-none mx-auto">
+            {["Buy", "Sell", "Sell & Buy", "Invest"].map((goal) => (
+              <button
+                key={goal}
+                className="px-6 py-3 border border-white/30 hover:border-white/70 text-sm tracking-[0.15em] uppercase text-white hover:bg-white/10 transition-all"
+              >
+                {goal}
+              </button>
+            ))}
           </div>
+
         </div>
       </section>
 
