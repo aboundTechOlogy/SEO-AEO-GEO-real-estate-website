@@ -19,7 +19,7 @@ export default function StatsSection() {
           <img
             src="/andrew-stats.png"
             alt="Andrew Whalen"
-            className="absolute inset-0 w-full h-full object-cover object-[center_15%]"
+            className="absolute inset-0 w-full h-full object-cover object-[left_top]"
           />
           <div className="absolute inset-0 bg-black/20" />
         </div>
@@ -46,7 +46,7 @@ export default function StatsSection() {
         <img
           src="/andrew-stats.png"
           alt="Andrew Whalen"
-          className="absolute inset-0 w-full h-full object-cover object-[center_15%]"
+          className="absolute inset-0 w-full h-full object-cover object-[left_top]"
         />
         <div className="absolute inset-0 bg-black/20" />
 
