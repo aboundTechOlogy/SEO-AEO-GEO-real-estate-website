@@ -141,7 +141,7 @@ export default function MegaMenu() {
               <img
                 src="/hero-miami.jpg"
                 alt=""
-                className="w-full h-full object-cover opacity-15"
+                className="w-full h-full object-cover opacity-30"
               />
             </div>
 
