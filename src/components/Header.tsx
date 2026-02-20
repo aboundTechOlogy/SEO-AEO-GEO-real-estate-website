@@ -37,11 +37,13 @@ export default function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [isHome]);
 
-  const bg = !isHome || scrolled ? "bg-black" : "bg-transparent backdrop-blur-sm";
+  const transparent = isHome && !scrolled;
+  const bg = transparent ? "bg-transparent" : "bg-black";
+  const border = transparent ? "border-b border-white/10" : "border-b border-transparent";
 
   return (
-    <header className={`fixed top-0 w-full z-50 transition-colors duration-300 ${bg}`}>
-      <nav className="w-full px-10 py-5 md:py-6 flex items-center">
+    <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${bg} ${border}`}>
+      <nav className="w-full px-4 md:px-6 lg:px-8 py-5 md:py-6 flex items-center">
         {/* Left: Primary Nav Links */}
         <div className="hidden lg:flex items-center gap-10 shrink-0">
           <NavDropdown
@@ -83,7 +85,7 @@ export default function Header() {
           >
             Contact Us
           </a>
-          {/* Login icon */}
+          {/* Login icon — desktop only */}
           <a href="/login/" className="text-white hover:text-neutral-300 transition-colors" aria-label="Sign in">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.2}>
               <circle cx="12" cy="12" r="10.5" />
@@ -95,15 +97,8 @@ export default function Header() {
           <MegaMenu />
         </div>
 
-        {/* Mobile nav: login + hamburger right */}
-        <div className="flex lg:hidden items-center gap-4 ml-auto">
-          <a href="/login/" className="text-white" aria-label="Sign in">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.2}>
-              <circle cx="12" cy="12" r="10.5" />
-              <path d="M17 19c0-2.2-2.2-3.5-5-3.5S7 16.8 7 19" />
-              <circle cx="12" cy="9.5" r="2.5" />
-            </svg>
-          </a>
+        {/* Mobile nav: hamburger only (no login icon) */}
+        <div className="flex lg:hidden items-center ml-auto">
           <MobileMenu />
         </div>
       </nav>
