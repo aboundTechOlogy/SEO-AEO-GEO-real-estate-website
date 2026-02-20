@@ -12,32 +12,34 @@ const STATS = [
 export default function StatsSection() {
   return (
     <>
-      {/* Mobile: sticky photo + scrolling stat cards */}
+      {/* Mobile: sticky photo + scrolling individual stat boxes */}
       <section className="relative md:hidden">
         {/* Sticky photo background */}
         <div className="sticky top-0 h-screen w-full overflow-hidden">
           <img
             src="/andrew-stats.png"
             alt="Andrew Whalen"
-            className="absolute inset-0 w-full h-full object-cover object-[left_top]"
+            className="absolute inset-0 w-full h-full object-cover stats-image"
           />
           <div className="absolute inset-0 bg-black/20" />
         </div>
 
-        {/* Stat cards scroll over the photo */}
+        {/* Stat boxes scroll over the photo — separate boxes with gaps so photo shows through */}
         <div className="relative" style={{ marginTop: "-100vh" }}>
-          {/* Spacer so first card starts near bottom of viewport */}
+          {/* Spacer so first box starts near bottom of viewport */}
           <div className="h-[60vh]" />
 
-          {STATS.map((stat) => (
-            <div
-              key={stat.label}
-              className="bg-black/60 backdrop-blur-sm py-16 px-6 text-center"
-            >
-              <p className="font-playfair text-5xl text-white mb-3">{stat.value}</p>
-              <p className="text-sm uppercase tracking-wider text-neutral-300">{stat.label}</p>
-            </div>
-          ))}
+          <div className="space-y-4">
+            {STATS.map((stat) => (
+              <div
+                key={stat.label}
+                className="bg-black/60 backdrop-blur-sm py-14 px-6 text-center mx-4"
+              >
+                <p className="font-playfair text-5xl text-white mb-3">{stat.value}</p>
+                <p className="text-sm uppercase tracking-wider text-neutral-300">{stat.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -46,7 +48,7 @@ export default function StatsSection() {
         <img
           src="/andrew-stats.png"
           alt="Andrew Whalen"
-          className="absolute inset-0 w-full h-full object-cover object-[left_top]"
+          className="absolute inset-0 w-full h-full object-cover stats-image"
         />
         <div className="absolute inset-0 bg-black/20" />
 

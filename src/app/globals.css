@@ -82,6 +82,16 @@ html {
   background-size: 40px 40px;
 }
 
+/* Stats section image — center top on mobile, left top on desktop */
+.stats-image {
+  object-position: center top;
+}
+@media (min-width: 768px) {
+  .stats-image {
+    object-position: left top;
+  }
+}
+
 /* Frosted glass effect for overlays */
 .glass {
   background: rgba(10, 10, 10, 0.6);
