@@ -125,22 +125,33 @@ export default function SearchPage() {
       {/* ==================== VIEW: LIST ==================== */}
       {view === "list" && (
         <div className="bg-[#0a0a0a] min-h-[calc(100vh-72px-60px)]">
-          <ResultsHeader />
+          {/* Results count + sort */}
+          <div className="flex items-center justify-between px-6 py-3 border-b border-white/5">
+            <p className="text-neutral-400 text-sm">{MOCK_SEARCH.length} Properties</p>
+            <div className="flex items-center gap-2 text-sm text-neutral-400">
+              <span>Sort by:</span>
+              <select className="bg-transparent text-white text-sm focus:outline-none cursor-pointer">
+                <option>Newest Listings</option>
+                <option>Price: High–Low</option>
+                <option>Price: Low–High</option>
+              </select>
+            </div>
+          </div>
 
           {/* Desktop: Data table */}
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-white/[0.06] border-y border-white/10">
-                  <th className="py-3.5 px-4 w-10"></th>
-                  <th className="py-3.5 px-4 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">Address</th>
-                  <th className="py-3.5 px-4 text-right text-xs font-medium text-neutral-300 uppercase tracking-wider">Price</th>
-                  <th className="py-3.5 px-4 text-center text-xs font-medium text-neutral-300 uppercase tracking-wider">% / $</th>
-                  <th className="py-3.5 px-4 text-center text-xs font-medium text-neutral-300 uppercase tracking-wider">Beds</th>
-                  <th className="py-3.5 px-4 text-center text-xs font-medium text-neutral-300 uppercase tracking-wider">Baths</th>
-                  <th className="py-3.5 px-4 text-right text-xs font-medium text-neutral-300 uppercase tracking-wider">Living Size</th>
-                  <th className="py-3.5 px-4 text-right text-xs font-medium text-neutral-300 uppercase tracking-wider">Price / Sq.Ft.</th>
-                  <th className="py-3.5 px-4 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">Development / Subdivision</th>
+              <thead className="sticky top-[140px] z-20 bg-neutral-800">
+                <tr className="border-b border-white/10">
+                  <th className="py-3 px-4 w-10"></th>
+                  <th className="py-3 px-4 text-left text-sm font-normal text-neutral-300">Address</th>
+                  <th className="py-3 px-4 text-right text-sm font-normal text-neutral-300">Price</th>
+                  <th className="py-3 px-4 text-center text-sm font-normal text-neutral-300">% / $</th>
+                  <th className="py-3 px-4 text-center text-sm font-normal text-neutral-300">Beds</th>
+                  <th className="py-3 px-4 text-center text-sm font-normal text-neutral-300">Baths</th>
+                  <th className="py-3 px-4 text-right text-sm font-normal text-neutral-300">Living Size</th>
+                  <th className="py-3 px-4 text-right text-sm font-normal text-neutral-300">Price / Sq.Ft.</th>
+                  <th className="py-3 px-4 text-left text-sm font-normal text-neutral-300">Development / Subdivision</th>
                 </tr>
               </thead>
               <tbody>
