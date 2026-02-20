@@ -1,7 +1,5 @@
 "use client";
 
-import FadeInOnScroll from "@/components/FadeInOnScroll";
-
 const STATS = [
   { value: "1,300+", label: "Transactions Closed" },
   { value: "21+", label: "Years of Experience" },
@@ -53,34 +51,6 @@ export default function StatsSection() {
         </div>
       </section>
 
-      {/* Desktop: stats photo background with stat grid on right */}
-      <section className="relative hidden lg:block h-[85vh] overflow-hidden">
-        <img
-          src="/andrew-stats-v3.png"
-          alt="Andrew Whalen"
-          className="absolute inset-0 w-full h-full object-cover stats-image-desktop"
-        />
-        <div className="absolute inset-0 bg-black/20" />
-
-        {/* Stat grid — top-right */}
-        <div className="absolute top-0 right-0 pt-8 lg:pt-12 pr-4">
-          <FadeInOnScroll scale>
-            <div className="grid grid-cols-2 gap-4">
-              {STATS.map((stat) => (
-                <div key={stat.label} className="bg-black/70 backdrop-blur-sm p-8 md:p-12 text-center">
-                  <p className="font-playfair text-5xl md:text-6xl text-white">{stat.value}</p>
-                  <p className="text-sm uppercase tracking-wider text-neutral-300 mt-2">{stat.label}</p>
-                </div>
-              ))}
-            </div>
-          </FadeInOnScroll>
-        </div>
-
-        {/* Large name watermark at bottom */}
-        <p className="absolute bottom-0 left-0 right-0 font-playfair text-[8rem] lg:text-[10rem] uppercase text-black/15 leading-none whitespace-nowrap pointer-events-none select-none text-center overflow-hidden">
-          ANDREW WHALEN
-        </p>
-      </section>
     </>
   );
 }

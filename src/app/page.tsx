@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import FadeInOnScroll from "@/components/FadeInOnScroll";
 import PropertySearch from "@/components/PropertySearch";
 import StatsSection from "@/components/StatsSection";
+import StatsAnimation from "@/components/StatsAnimation";
 import NeighborhoodBlades from "@/components/NeighborhoodBlades";
 
 export const metadata: Metadata = {
@@ -97,9 +98,10 @@ export default function HomePage() {
       <PropertySearch />
 
       {/* ============================================
-          SECTION 3: Stats
+          SECTION 3: Stats (mobile/tablet) + animated desktop version
           ============================================ */}
       <StatsSection />
+      <StatsAnimation />
 
       {/* ============================================
           SECTION 4: Meet Andrew
