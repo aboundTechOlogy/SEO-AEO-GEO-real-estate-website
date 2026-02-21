@@ -79,8 +79,8 @@ export default function RootLayout({
               </div>
             </div>
 
-            {/* Desktop: 4-column nav */}
-            <div className="hidden md:grid md:grid-cols-4 gap-8 mb-14 text-sm">
+            {/* Desktop: 5-column nav */}
+            <div className="hidden md:grid md:grid-cols-5 gap-8 mb-14 text-sm">
               <div>
                 <h3 className="text-white text-xs uppercase tracking-widest mb-4">Our Listings</h3>
                 <ul className="space-y-2">
@@ -130,6 +130,17 @@ export default function RootLayout({
                   <li><a href="/testimonials/" className="text-neutral-500 hover:text-white transition-colors">Testimonials</a></li>
                   <li><a href="/blog/" className="text-neutral-500 hover:text-white transition-colors">Insights</a></li>
                   <li><a href="/about/ai/" className="text-neutral-500 hover:text-white transition-colors">How We Use AI</a></li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-white text-xs uppercase tracking-widest mb-4">Services</h3>
+                <ul className="space-y-2">
+                  <li><a href="/services/sellers/" className="text-neutral-500 hover:text-white transition-colors">Seller Services</a></li>
+                  <li><a href="/services/buyers/" className="text-neutral-500 hover:text-white transition-colors">Buyer Services</a></li>
+                  <li><a href="/services/investors/" className="text-neutral-500 hover:text-white transition-colors">Investor Services</a></li>
+                  <li><a href="/services/market-analysis/" className="text-neutral-500 hover:text-white transition-colors">Market Analysis</a></li>
+                  <li><a href="/services/investment-analysis/" className="text-neutral-500 hover:text-white transition-colors">Investment Analysis</a></li>
                 </ul>
               </div>
             </div>

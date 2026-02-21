@@ -33,6 +33,14 @@ const ABOUT_ITEMS = [
   { label: "How We Use AI", href: "/about/ai/" },
 ];
 
+const SERVICES_ITEMS = [
+  { label: "Seller Services", href: "/services/sellers/" },
+  { label: "Buyer Services", href: "/services/buyers/" },
+  { label: "Investor Services", href: "/services/investors/" },
+  { label: "Request a Market Analysis", href: "/services/market-analysis/", dividerBefore: true },
+  { label: "Request an Investment Analysis", href: "/services/investment-analysis/" },
+];
+
 export default function Header() {
   const pathname = usePathname();
   const isHome = pathname === "/";
@@ -98,6 +106,12 @@ export default function Header() {
             items={ABOUT_ITEMS}
             allLabel="About Andrew"
             allHref="/about/"
+          />
+          <NavDropdown
+            label="Services"
+            items={SERVICES_ITEMS}
+            allLabel="All Services"
+            allHref="/services/"
           />
           <a
             href="/contact/"

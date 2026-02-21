@@ -31,6 +31,16 @@ const SECTIONS = [
       { label: "How We Use AI", href: "/about/ai/" },
     ],
   },
+  {
+    title: "Services",
+    links: [
+      { label: "Seller Services", href: "/services/sellers/" },
+      { label: "Buyer Services", href: "/services/buyers/" },
+      { label: "Investor Services", href: "/services/investors/" },
+      { label: "Market Analysis", href: "/services/market-analysis/" },
+      { label: "Investment Analysis", href: "/services/investment-analysis/" },
+    ],
+  },
 ];
 
 export default function FooterAccordion() {

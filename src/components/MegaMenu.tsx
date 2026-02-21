@@ -42,6 +42,16 @@ const MENU_SECTIONS = [
       { label: "How We Use AI", href: "/about/ai/" },
     ],
   },
+  {
+    title: "Services",
+    links: [
+      { label: "Seller Services", href: "/services/sellers/" },
+      { label: "Buyer Services", href: "/services/buyers/" },
+      { label: "Investor Services", href: "/services/investors/" },
+      { label: "Request a Market Analysis", href: "/services/market-analysis/" },
+      { label: "Request an Investment Analysis", href: "/services/investment-analysis/" },
+    ],
+  },
 ];
 
 const SOCIAL_LINKS = [
@@ -208,8 +218,8 @@ export default function MegaMenu() {
                 {/* Divider */}
                 <div className="border-t border-white/10 mx-8" />
 
-                {/* Bottom: About */}
-                <div className="grid grid-cols-1 gap-8 px-8 py-10 max-w-[33%]">
+                {/* Bottom: About + Services */}
+                <div className="grid grid-cols-2 gap-8 px-8 py-10 max-w-[66%]">
                   {MENU_SECTIONS.slice(3).map((section) => (
                     <div key={section.title}>
                       <h3 className="font-playfair text-xl mb-5">{section.title}</h3>
