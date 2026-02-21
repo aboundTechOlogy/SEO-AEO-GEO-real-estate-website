@@ -43,7 +43,7 @@ export default function Header() {
   return (
     <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${bg} ${border}`}>
       {/* Desktop nav — grid layout, NO transforms (transforms break fixed positioning in children) */}
-      <nav className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-center w-full px-4 lg:px-6 py-5 min-[1440px]:py-6">
+      <nav className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-center w-full px-4 lg:px-6 py-4 min-[1440px]:py-5">
         {/* Left: Primary Nav Links */}
         <div className="flex items-center gap-8">
           <NavDropdown
@@ -73,15 +73,15 @@ export default function Header() {
 
         {/* Right: Secondary Nav + Actions */}
         <div className="flex items-center justify-end gap-6">
-          <a href="/about/" className="text-[13px] uppercase tracking-[0.12em] text-white hover:text-neutral-300 transition-colors whitespace-nowrap">
+          <a href="/about/" className="text-[12px] uppercase tracking-[0.08em] text-white hover:text-neutral-300 transition-colors whitespace-nowrap">
             About Us
           </a>
-          <a href="/blog/" className="text-[13px] uppercase tracking-[0.12em] text-white hover:text-neutral-300 transition-colors">
+          <a href="/blog/" className="text-[12px] uppercase tracking-[0.08em] text-white hover:text-neutral-300 transition-colors">
             Insights
           </a>
           <a
             href="/contact/"
-            className="border border-white/50 rounded-full px-6 py-2 text-[13px] uppercase tracking-[0.12em] text-white hover:bg-white/10 transition-all whitespace-nowrap"
+            className="border border-white/50 rounded-full px-6 py-2 text-[12px] uppercase tracking-[0.08em] text-white hover:bg-white/10 transition-all whitespace-nowrap"
           >
             Contact Us
           </a>
