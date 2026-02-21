@@ -216,10 +216,10 @@ export default function SearchPage() {
   return (
     <>
       {/* Spacer for fixed nav */}
-      <div className="h-[60px] lg:h-[80px] min-[1440px]:h-[90px]" />
+      <div className="h-[60px] lg:h-[72px] min-[1440px]:h-[80px]" />
 
       {/* Filter bar — ONLY dark element on this page */}
-      <div ref={filterBarRef} className="sticky top-[60px] lg:top-[80px] min-[1440px]:top-[90px] z-30 bg-white">
+      <div ref={filterBarRef} className="sticky top-[60px] lg:top-[72px] min-[1440px]:top-[80px] z-30 bg-white">
         <DesktopSearchBar
           status={status}
           onStatusChange={setStatus}

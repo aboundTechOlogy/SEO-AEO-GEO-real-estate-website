@@ -43,7 +43,7 @@ export default function Header() {
   return (
     <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${bg} ${border}`}>
       {/* Desktop nav — grid layout, NO transforms (transforms break fixed positioning in children) */}
-      <nav className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-center w-full px-4 lg:px-6 py-6 min-[1440px]:py-[29px]">
+      <nav className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-center w-full px-4 lg:px-6 py-5 min-[1440px]:py-6">
         {/* Left: Primary Nav Links */}
         <div className="flex items-center gap-8">
           <NavDropdown
