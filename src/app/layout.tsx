@@ -79,8 +79,8 @@ export default function RootLayout({
               </div>
             </div>
 
-            {/* Desktop: 5-column nav */}
-            <div className="hidden md:grid md:grid-cols-5 gap-8 mb-14 text-sm">
+            {/* Desktop: 3-column nav */}
+            <div className="hidden md:grid md:grid-cols-3 gap-8 mb-14 text-sm">
               <div>
                 <h3 className="text-white text-xs uppercase tracking-widest mb-4">Our Listings</h3>
                 <ul className="space-y-2">
@@ -123,34 +123,6 @@ export default function RootLayout({
                 </ul>
               </div>
 
-              <div>
-                <h3 className="text-white text-xs uppercase tracking-widest mb-4">Company</h3>
-                <ul className="space-y-2">
-                  {[
-                    { label: "About Us", href: "/about/" },
-                    { label: "Testimonials", href: "/testimonials/" },
-                    { label: "Insights", href: "/blog/" },
-                    { label: "Contact", href: "/contact/" },
-                  ].map((l) => (
-                    <li key={l.label}>
-                      <a href={l.href} className="text-neutral-500 hover:text-white transition-colors">{l.label}</a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="text-white text-xs uppercase tracking-widest mb-4">Connect</h3>
-                <ul className="space-y-2 text-neutral-500">
-                  <li><a href="tel:+13054206613" className="hover:text-white transition-colors">(305) 420-6613</a></li>
-                  <li><a href="mailto:andrew@iamandrewwhalen.com" className="hover:text-white transition-colors">Email Andrew</a></li>
-                  {SOCIAL_LINKS.slice(0, 4).map((s) => (
-                    <li key={s.label}>
-                      <a href={s.href} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">{s.label}</a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
             </div>
 
             {/* Mobile: accordion nav */}
