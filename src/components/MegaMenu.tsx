@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
+import { useState, useEffect } from "react";
 
 const MENU_SECTIONS = [
   {
@@ -102,11 +101,6 @@ function AccordionSection({ title, links, onNavigate }: { title: string; links: 
 
 export default function MegaMenu() {
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (open) {
@@ -134,8 +128,8 @@ export default function MegaMenu() {
         </svg>
       </button>
 
-      {/* Portal to escape transform containing block */}
-      {open && mounted && createPortal(
+      {/* Overlay + Panel */}
+      {open && (
         <div className="fixed inset-0 z-[100]">
           {/* Dark overlay */}
           <div className="absolute inset-0 bg-black/60" onClick={closeMenu} />
@@ -285,8 +279,7 @@ export default function MegaMenu() {
               </div>
             </div>
           </div>
-        </div>,
-        document.body
+        </div>
       )}
     </>
   );

@@ -43,10 +43,10 @@ export default function Header() {
 
   return (
     <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${bg} ${border}`}>
-      {/* Desktop nav */}
-      <nav className="hidden lg:block relative w-full px-4 lg:px-6 py-5 md:py-6">
-        {/* Left: Primary Nav Links — absolute left */}
-        <div className="absolute left-4 lg:left-6 top-1/2 flex items-center gap-8" style={{ transform: "translateY(calc(-50% + 1px))" }}>
+      {/* Desktop nav — grid layout, NO transforms (transforms break fixed positioning in children) */}
+      <nav className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-center w-full px-4 lg:px-6 py-5 md:py-6">
+        {/* Left: Primary Nav Links */}
+        <div className="flex items-center gap-8">
           <NavDropdown
             label="Luxury Condos"
             items={CONDO_ITEMS}
@@ -61,7 +61,7 @@ export default function Header() {
           />
         </div>
 
-        {/* Center: Logo — absolute center */}
+        {/* Center: Logo */}
         <div className="flex justify-center">
           <a href="/" className="shrink-0">
             <img
@@ -72,8 +72,8 @@ export default function Header() {
           </a>
         </div>
 
-        {/* Right: Secondary Nav + Actions — absolute right */}
-        <div className="absolute right-4 lg:right-6 top-1/2 flex items-center gap-6" style={{ transform: "translateY(calc(-50% + 1px))" }}>
+        {/* Right: Secondary Nav + Actions */}
+        <div className="flex items-center justify-end gap-6">
           <a href="/about/" className="text-[13px] uppercase tracking-[0.12em] text-white hover:text-neutral-300 transition-colors whitespace-nowrap">
             About Us
           </a>
