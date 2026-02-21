@@ -15,7 +15,7 @@ export default function ExclusiveListings() {
       <div className="max-w-7xl mx-auto px-6">
         <SectionHeader
           subtitle="Andrew Whalen"
-          title="Exclusive Listings"
+          title="Our Listings"
           align="left"
           className="mb-12"
         />
@@ -36,8 +36,8 @@ export default function ExclusiveListings() {
         </SwiperCarousel>
 
         <NavArrows
-          ctaText="View All Exclusive Listings"
-          ctaHref="/exclusive-listings/"
+          ctaText="View All Listings"
+          ctaHref="/our-listings/"
           onPrev={() => swiperRef.current?.slidePrev()}
           onNext={() => swiperRef.current?.slideNext()}
         />

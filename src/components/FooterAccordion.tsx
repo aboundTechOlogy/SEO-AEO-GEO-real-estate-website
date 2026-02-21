@@ -4,6 +4,16 @@ import { useState } from "react";
 
 const SECTIONS = [
   {
+    title: "Our Listings",
+    links: [
+      { label: "Miami-Dade", href: "/our-listings/" },
+      { label: "Broward", href: "/our-listings/" },
+      { label: "Palm Beach", href: "/our-listings/" },
+      { label: "Recently Sold", href: "/recent-sales/" },
+      { label: "View All", href: "/our-listings/" },
+    ],
+  },
+  {
     title: "Explore",
     links: [
       { label: "Neighborhoods", href: "/neighborhoods/" },

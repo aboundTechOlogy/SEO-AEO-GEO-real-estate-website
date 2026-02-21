@@ -79,8 +79,25 @@ export default function RootLayout({
               </div>
             </div>
 
-            {/* Desktop: 4-column nav */}
-            <div className="hidden md:grid md:grid-cols-4 gap-8 mb-14 text-sm">
+            {/* Desktop: 5-column nav */}
+            <div className="hidden md:grid md:grid-cols-5 gap-8 mb-14 text-sm">
+              <div>
+                <h3 className="text-white text-xs uppercase tracking-widest mb-4">Our Listings</h3>
+                <ul className="space-y-2">
+                  {[
+                    { label: "Miami-Dade", href: "/our-listings/" },
+                    { label: "Broward", href: "/our-listings/" },
+                    { label: "Palm Beach", href: "/our-listings/" },
+                    { label: "Recently Sold", href: "/recent-sales/" },
+                  ].map((l) => (
+                    <li key={l.label}>
+                      <a href={l.href} className="text-neutral-500 hover:text-white transition-colors">{l.label}</a>
+                    </li>
+                  ))}
+                  <li><a href="/our-listings/" className="text-neutral-500 hover:text-white transition-colors">View All</a></li>
+                </ul>
+              </div>
+
               <div>
                 <h3 className="text-white text-xs uppercase tracking-widest mb-4">Luxury Condos</h3>
                 <ul className="space-y-2">

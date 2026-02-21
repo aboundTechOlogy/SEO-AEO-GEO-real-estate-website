@@ -5,6 +5,13 @@ import { usePathname } from "next/navigation";
 import NavDropdown from "@/components/NavDropdown";
 import MegaMenu from "@/components/MegaMenu";
 
+const LISTING_ITEMS = [
+  { label: "Miami-Dade County", href: "/our-listings/" },
+  { label: "Broward County", href: "/our-listings/" },
+  { label: "Palm Beach County", href: "/our-listings/" },
+  { label: "Recently Sold", href: "/recent-sales/", dividerBefore: true },
+];
+
 const CONDO_ITEMS = [
   { label: "Miami-Dade County", href: "/luxury-condos/" },
   { label: "Broward County", href: "/luxury-condos/broward/" },
@@ -46,6 +53,12 @@ export default function Header() {
       <nav className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-center w-full px-4 lg:px-6 py-4 min-[1440px]:py-5">
         {/* Left: Primary Nav Links */}
         <div className="flex items-center gap-8">
+          <NavDropdown
+            label="Our Listings"
+            items={LISTING_ITEMS}
+            allLabel="View All"
+            allHref="/our-listings/"
+          />
           <NavDropdown
             label="Luxury Condos"
             items={CONDO_ITEMS}

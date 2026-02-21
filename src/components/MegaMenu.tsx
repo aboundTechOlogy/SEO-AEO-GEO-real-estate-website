@@ -6,11 +6,11 @@ const MENU_SECTIONS = [
   {
     title: "Our Listings",
     links: [
-      { label: "Miami-Dade County", href: "/exclusive-listings/" },
-      { label: "Broward County", href: "/exclusive-listings/" },
-      { label: "Palm Beach County", href: "/exclusive-listings/" },
-      { label: "Recent Sales", href: "/recent-sales/" },
-      { label: "View All", href: "/exclusive-listings/" },
+      { label: "Miami-Dade County", href: "/our-listings/" },
+      { label: "Broward County", href: "/our-listings/" },
+      { label: "Palm Beach County", href: "/our-listings/" },
+      { label: "Recently Sold", href: "/recent-sales/" },
+      { label: "View All", href: "/our-listings/" },
     ],
   },
   {

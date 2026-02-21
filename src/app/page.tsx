@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import HeroSection from "@/components/HeroSection";
 import PropertySearch from "@/components/PropertySearch";
-// import ExclusiveListings from "@/components/ExclusiveListings";
+import ExclusiveListings from "@/components/ExclusiveListings";
 // import ExclusiveVideos from "@/components/ExclusiveVideos";
 import AnimatedTextBanner from "@/components/AnimatedTextBanner";
 import AboutCover from "@/components/AboutCover";
@@ -32,7 +32,7 @@ export default function HomePage() {
     <>
       <HeroSection />
       <PropertySearch />
-      {/* <ExclusiveListings /> */}
+      <ExclusiveListings />
       {/* <ExclusiveVideos /> */}
       <AnimatedTextBanner />
       <AboutCover />
