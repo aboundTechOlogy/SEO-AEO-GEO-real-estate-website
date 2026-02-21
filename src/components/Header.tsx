@@ -99,20 +99,20 @@ export default function Header() {
       </nav>
 
       {/* Mobile nav */}
-      <nav className="lg:hidden w-full px-4 py-[14px] flex items-center">
+      <nav className="lg:hidden w-full px-4 py-[6px] flex items-center">
         {/* Logo left */}
         <a href="/" className="shrink-0">
           <img
             src="/logo-lockup.png"
             alt="Andrew Whalen | LoKation"
-            className="h-8 w-auto"
+            className="h-7 w-auto"
           />
         </a>
 
         {/* Login + Hamburger right */}
-        <div className="ml-auto flex items-center gap-4">
+        <div className="ml-auto flex items-center gap-3">
           <a href="/login/" className="text-white" aria-label="Sign in">
-            <svg className="w-[30px] h-[30px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.4}>
               <circle cx="12" cy="12" r="10.5" />
               <path d="M17 19c0-2.2-2.2-3.5-5-3.5S7 16.8 7 19" />
               <circle cx="12" cy="9.5" r="2.5" />
