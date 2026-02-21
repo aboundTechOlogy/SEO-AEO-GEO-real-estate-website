@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef, useEffect, ReactNode } from "react";
+import { createPortal } from "react-dom";
 
 /* ==================== GENERIC DROPDOWN WRAPPER ==================== */
 function FilterDropdown({
@@ -8,7 +9,7 @@ function FilterDropdown({
   open,
   onToggle,
   align = "left",
-  width = "w-[320px]",
+  width = "320px",
 }: {
   trigger: ReactNode;
   children: ReactNode;
@@ -17,12 +18,30 @@ function FilterDropdown({
   align?: "left" | "right";
   width?: string;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
+  const btnRef = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState<{ top: number; left?: number; right?: number } | null>(null);
+  const [mounted, setMounted] = useState(false);
 
+  useEffect(() => { setMounted(true); }, []);
+
+  // Recalculate position when opened
   useEffect(() => {
+    if (open && btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      if (align === "right") {
+        setPos({ top: rect.bottom + 8, right: window.innerWidth - rect.right });
+      } else {
+        setPos({ top: rect.bottom + 8, left: rect.left });
+      }
+    }
+  }, [open, align]);
+
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return;
     function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        if (open) onToggle();
+      if (btnRef.current && !btnRef.current.contains(e.target as Node)) {
+        onToggle();
       }
     }
     document.addEventListener("mousedown", handleClick);
@@ -30,7 +49,7 @@ function FilterDropdown({
   }, [open, onToggle]);
 
   return (
-    <div className="relative" ref={ref}>
+    <div className="relative" ref={btnRef}>
       <button
         onClick={onToggle}
         className="shrink-0 flex items-center gap-2 border border-gray-300 rounded-full px-4 py-2.5 text-sm text-gray-700 hover:border-gray-400 transition-colors whitespace-nowrap"
@@ -46,12 +65,21 @@ function FilterDropdown({
           <path d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
         </svg>
       </button>
-      {open && (
+      {open && mounted && pos && createPortal(
         <div
-          className={`absolute top-full mt-2 ${align === "right" ? "right-0" : "left-0"} ${width} bg-white rounded-xl shadow-2xl z-50 overflow-hidden`}
+          className="fixed bg-white rounded-xl shadow-2xl z-[200] overflow-hidden"
+          style={{
+            top: pos.top,
+            left: pos.left,
+            right: pos.right,
+            width,
+            maxHeight: "80vh",
+            overflowY: "auto",
+          }}
         >
           {children}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
@@ -116,7 +144,7 @@ function ForSaleFilter({
           For Sale
         </>
       }
-      width="w-[280px]"
+      width="280px"
     >
       <PanelHeader title="Property Search" onDone={onToggle} />
       <div className="px-5 py-4 space-y-3">
@@ -158,7 +186,7 @@ function PriceFilter({ open, onToggle }: { open: boolean; onToggle: () => void }
           $800K - Any Price
         </>
       }
-      width="w-[360px]"
+      width="360px"
     >
       <PanelHeader title="Price" onDone={onToggle} />
       <div className="px-5 py-5">
@@ -216,7 +244,7 @@ function BedBathFilter({ open, onToggle }: { open: boolean; onToggle: () => void
           Bed / Bath
         </>
       }
-      width="w-[380px]"
+      width="380px"
     >
       <PanelHeader title="Rooms" onDone={onToggle} />
       <div className="px-5 py-5 space-y-6">
@@ -316,7 +344,7 @@ function PropertyTypeFilter({ open, onToggle }: { open: boolean; onToggle: () =>
           Any Type
         </>
       }
-      width="w-[320px]"
+      width="320px"
     >
       <PanelHeader title="Property Type" onDone={onToggle} />
       <div className="px-5 py-4 space-y-3">
@@ -565,7 +593,7 @@ function MoreFilter({ open, onToggle }: { open: boolean; onToggle: () => void })
           More
         </>
       }
-      width="w-[420px]"
+      width="420px"
     >
       <div className="max-h-[65vh] overflow-y-auto">
         {/* 1. Property Search */}
