@@ -79,8 +79,8 @@ export default function RootLayout({
               </div>
             </div>
 
-            {/* Desktop: 3-column nav */}
-            <div className="hidden md:grid md:grid-cols-3 gap-8 mb-14 text-sm">
+            {/* Desktop: 4-column nav */}
+            <div className="hidden md:grid md:grid-cols-4 gap-8 mb-14 text-sm">
               <div>
                 <h3 className="text-white text-xs uppercase tracking-widest mb-4">Our Listings</h3>
                 <ul className="space-y-2">
@@ -123,6 +123,14 @@ export default function RootLayout({
                 </ul>
               </div>
 
+              <div>
+                <h3 className="text-white text-xs uppercase tracking-widest mb-4">About</h3>
+                <ul className="space-y-2">
+                  <li><a href="/about/" className="text-neutral-500 hover:text-white transition-colors">Meet Andrew</a></li>
+                  <li><a href="/testimonials/" className="text-neutral-500 hover:text-white transition-colors">Testimonials</a></li>
+                  <li><a href="/about/ai/" className="text-neutral-500 hover:text-white transition-colors">How We Use AI</a></li>
+                </ul>
+              </div>
             </div>
 
             {/* Mobile: accordion nav */}
