@@ -910,7 +910,7 @@ export function MobileSearchBar({
   return (
     <div className="md:hidden px-4">
       {/* Row 1: Search + view toggle */}
-      <div className="flex items-center gap-3 py-3">
+      <div className="flex items-center gap-3 py-4">
         <div className="relative flex-1">
           <input
             type="text"
@@ -922,7 +922,7 @@ export function MobileSearchBar({
       </div>
 
       {/* Row 2: Filter pills (scrollable) */}
-      <div className="flex items-center gap-2 pb-3 overflow-x-auto no-scrollbar">
+      <div className="flex items-center gap-2 pb-4 overflow-x-auto no-scrollbar">
         <ForSaleFilter value={status} onChange={onStatusChange} open={openFilter === "status"} onToggle={() => toggle("status")} />
         <PriceFilter open={openFilter === "price"} onToggle={() => toggle("price")} />
         <BedBathFilter open={openFilter === "bedbath"} onToggle={() => toggle("bedbath")} />
