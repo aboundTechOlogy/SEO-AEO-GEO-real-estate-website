@@ -118,8 +118,8 @@ export default function RootLayout({
                       <a href="/neighborhoods/" className="text-neutral-500 hover:text-white transition-colors">{l}</a>
                     </li>
                   ))}
-                  <li><a href="/neighborhoods/" className="text-neutral-500 hover:text-white transition-colors">View All</a></li>
                   <li><a href="/search/" className="text-neutral-500 hover:text-white transition-colors">Search Properties</a></li>
+                  <li><a href="/neighborhoods/" className="text-neutral-500 hover:text-white transition-colors">View All</a></li>
                 </ul>
               </div>
 
