@@ -910,7 +910,7 @@ export function DesktopSearchBar({
         <input
           type="text"
           placeholder="Enter Address, City, Zip Code, Subdivision"
-          className="w-full bg-transparent border border-gray-300 rounded-full px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-500 transition-colors"
+          className="w-full bg-white border border-gray-300 rounded-[6px] px-[15px] h-[50px] text-[15px] text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-500 transition-colors"
         />
       </div>
 
@@ -923,7 +923,7 @@ export function DesktopSearchBar({
 
       {/* Save Search + View Toggle */}
       <div className="ml-auto flex items-center gap-3">
-        <button className="shrink-0 bg-black text-white rounded-full px-5 py-2.5 text-sm font-medium hover:bg-neutral-800 transition-colors">
+        <button className="shrink-0 relative flex items-center gap-2 bg-white border border-gray-300 rounded-[10px] px-[15px] h-[50px] text-sm font-semibold text-gray-700 hover:border-gray-500 transition-colors whitespace-nowrap">
           Save Search
         </button>
         <ViewToggle view={view} setView={onViewChange} />
@@ -958,7 +958,7 @@ export function MobileSearchBar({
           <input
             type="text"
             placeholder="Enter Address, City, Zip Code, Subdivision"
-            className="w-full bg-transparent border border-gray-300 rounded-full px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-500 transition-colors"
+            className="w-full bg-white border border-gray-300 rounded-[6px] px-[15px] h-[35px] text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-500 transition-colors"
           />
         </div>
         <ViewToggle view={view} setView={onViewChange} />
