@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import PropertyCard from "@/components/PropertyCard";
+import SearchPropertyCard from "@/components/SearchPropertyCard";
 import { DesktopSearchBar, MobileSearchBar } from "@/components/SearchFilters";
 import { MOCK_SEARCH } from "@/data/mockListings";
 
@@ -242,7 +242,7 @@ export default function SearchPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
               {MOCK_SEARCH.map((listing, i) => (
                 <div key={i} className="px-[5px] mb-[10px]">
-                  <PropertyCard {...listing} />
+                  <SearchPropertyCard {...listing} />
                 </div>
               ))}
             </div>
@@ -292,7 +292,7 @@ export default function SearchPage() {
               <div className="grid grid-cols-1 xl:grid-cols-2">
                 {MOCK_SEARCH.map((listing, i) => (
                   <div key={i} className="px-[5px] mb-[10px]">
-                    <PropertyCard {...listing} />
+                    <SearchPropertyCard {...listing} />
                   </div>
                 ))}
               </div>
