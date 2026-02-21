@@ -136,14 +136,7 @@ function ForSaleFilter({
     <FilterDropdown
       open={open}
       onToggle={onToggle}
-      trigger={
-        <>
-          <svg className="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-            <path d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M15.75 21H8.25m6.75-18.545L12 1.5 2.25 7.5v13.5h6" />
-          </svg>
-          For Sale
-        </>
-      }
+      trigger="For Sale"
       width="280px"
     >
       <PanelHeader title="Property Search" onDone={onToggle} />
@@ -180,12 +173,7 @@ function PriceFilter({ open, onToggle }: { open: boolean; onToggle: () => void }
     <FilterDropdown
       open={open}
       onToggle={onToggle}
-      trigger={
-        <>
-          <span className="text-neutral-400">$</span>
-          $800K - Any Price
-        </>
-      }
+      trigger="$800K - Any Price"
       width="360px"
     >
       <PanelHeader title="Price" onDone={onToggle} />
@@ -236,14 +224,7 @@ function BedBathFilter({ open, onToggle }: { open: boolean; onToggle: () => void
     <FilterDropdown
       open={open}
       onToggle={onToggle}
-      trigger={
-        <>
-          <svg className="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-            <path d="M3 7v11m0-4h18m0 0V8a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v6h14Zm0 0v4M3 18h18M5 7V5a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v2" />
-          </svg>
-          Bed / Bath
-        </>
-      }
+      trigger="Bed / Bath"
       width="380px"
     >
       <PanelHeader title="Rooms" onDone={onToggle} />
@@ -336,14 +317,7 @@ function PropertyTypeFilter({ open, onToggle }: { open: boolean; onToggle: () =>
     <FilterDropdown
       open={open}
       onToggle={onToggle}
-      trigger={
-        <>
-          <svg className="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-            <path d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" />
-          </svg>
-          Any Type
-        </>
-      }
+      trigger="Any Type"
       width="320px"
     >
       <PanelHeader title="Property Type" onDone={onToggle} />
@@ -585,14 +559,7 @@ function MoreFilter({ open, onToggle }: { open: boolean; onToggle: () => void })
       open={open}
       onToggle={onToggle}
       align="right"
-      trigger={
-        <>
-          <svg className="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-            <path d="M6 13.5V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 9.75V10.5" />
-          </svg>
-          More
-        </>
-      }
+      trigger="More"
       width="420px"
     >
       <div className="max-h-[65vh] overflow-y-auto">
@@ -949,8 +916,18 @@ export function MobileSearchBar({
         <ViewToggle view={view} setView={onViewChange} />
       </div>
 
-      {/* Row 2: Filter pills (scrollable) */}
-      <div className="flex items-center gap-2 pb-4 flex-wrap">
+      {/* Row 2: Filter pills — scrollable, single row */}
+      <div className="flex items-center gap-2 pb-4 overflow-x-auto no-scrollbar">
+        {/* Filters button — first, matches Carroll's "≡ Filters" */}
+        <button
+          onClick={() => toggle("more")}
+          className="shrink-0 flex items-center gap-2 border border-gray-300 rounded-full px-4 py-2.5 text-sm text-gray-700 hover:border-gray-400 transition-colors whitespace-nowrap"
+        >
+          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
+          </svg>
+          Filters
+        </button>
         <ForSaleFilter value={status} onChange={onStatusChange} open={openFilter === "status"} onToggle={() => toggle("status")} />
         <PriceFilter open={openFilter === "price"} onToggle={() => toggle("price")} />
         <BedBathFilter open={openFilter === "bedbath"} onToggle={() => toggle("bedbath")} />
