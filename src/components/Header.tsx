@@ -99,13 +99,13 @@ export default function Header() {
       </nav>
 
       {/* Mobile nav */}
-      <nav className="lg:hidden w-full px-4 py-4 flex items-center">
+      <nav className="lg:hidden w-full px-4 py-3 flex items-center">
         {/* Logo left */}
         <a href="/" className="shrink-0">
           <img
             src="/logo-lockup.png"
             alt="Andrew Whalen | LoKation"
-            className="h-8 w-auto"
+            className="h-6 w-auto"
           />
         </a>
 

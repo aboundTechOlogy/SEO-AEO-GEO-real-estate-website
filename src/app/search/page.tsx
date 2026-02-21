@@ -219,7 +219,7 @@ export default function SearchPage() {
       <div className="h-[72px] md:h-[80px]" />
 
       {/* Filter bar — ONLY dark element on this page */}
-      <div ref={filterBarRef} className="sticky top-[64px] z-30 bg-white border-b border-gray-200">
+      <div ref={filterBarRef} className="sticky top-[48px] lg:top-[64px] z-30 bg-white border-b border-gray-200">
         <DesktopSearchBar
           status={status}
           onStatusChange={setStatus}
