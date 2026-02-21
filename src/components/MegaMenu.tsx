@@ -160,14 +160,14 @@ export default function MegaMenu() {
             </div>
 
             <div className="relative z-10">
-              {/* Header: Logo centered + Close */}
-              <div className="flex items-center justify-center px-6 py-6 border-b border-white/10 relative">
+              {/* Header: Logo left + Close right */}
+              <div className="flex items-center justify-between px-6 py-6 border-b border-white/10">
                 <a href="/" onClick={closeMenu}>
                   <img src="/logo-lockup.png" alt="Andrew Whalen | LoKation" className="h-7 md:h-8 w-auto" />
                 </a>
                 <button
                   onClick={closeMenu}
-                  className="absolute right-6 text-white hover:text-neutral-300 transition-colors p-1"
+                  className="text-white hover:text-neutral-300 transition-colors p-1"
                   aria-label="Close menu"
                 >
                   <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
