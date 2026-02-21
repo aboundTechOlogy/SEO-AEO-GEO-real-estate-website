@@ -38,7 +38,7 @@ export default function Header() {
 
   const transparent = isHome && !scrolled;
   const bg = transparent ? "bg-transparent" : "bg-black";
-  const border = transparent ? "border-b border-white/10" : "border-b border-transparent";
+  const border = transparent ? "border-b border-white/10" : "border-b border-black/20";
 
   return (
     <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${bg} ${border}`}>
