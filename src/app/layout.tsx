@@ -128,6 +128,7 @@ export default function RootLayout({
                 <ul className="space-y-2">
                   <li><a href="/about/" className="text-neutral-500 hover:text-white transition-colors">Meet Andrew</a></li>
                   <li><a href="/testimonials/" className="text-neutral-500 hover:text-white transition-colors">Testimonials</a></li>
+                  <li><a href="/blog/" className="text-neutral-500 hover:text-white transition-colors">Insights</a></li>
                   <li><a href="/about/ai/" className="text-neutral-500 hover:text-white transition-colors">How We Use AI</a></li>
                 </ul>
               </div>

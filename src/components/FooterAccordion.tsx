@@ -27,6 +27,7 @@ const SECTIONS = [
     links: [
       { label: "Meet Andrew", href: "/about/" },
       { label: "Testimonials", href: "/testimonials/" },
+      { label: "Insights", href: "/blog/" },
       { label: "How We Use AI", href: "/about/ai/" },
     ],
   },

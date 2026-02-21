@@ -26,6 +26,13 @@ const NEIGHBORHOOD_ITEMS = [
   { label: "Search Properties", href: "/search/", dividerBefore: true },
 ];
 
+const ABOUT_ITEMS = [
+  { label: "Meet Andrew", href: "/about/" },
+  { label: "Testimonials", href: "/testimonials/" },
+  { label: "Insights", href: "/blog/" },
+  { label: "How We Use AI", href: "/about/ai/" },
+];
+
 export default function Header() {
   const pathname = usePathname();
   const isHome = pathname === "/";
@@ -86,12 +93,12 @@ export default function Header() {
 
         {/* Right: Secondary Nav + Actions */}
         <div className="flex items-center justify-end gap-6">
-          <a href="/about/" className="text-[12px] uppercase tracking-[0.08em] text-white hover:text-neutral-300 transition-colors whitespace-nowrap">
-            About Us
-          </a>
-          <a href="/blog/" className="text-[12px] uppercase tracking-[0.08em] text-white hover:text-neutral-300 transition-colors">
-            Insights
-          </a>
+          <NavDropdown
+            label="About"
+            items={ABOUT_ITEMS}
+            allLabel="About Andrew"
+            allHref="/about/"
+          />
           <a
             href="/contact/"
             className="border border-white/50 rounded-full px-6 py-2 text-[12px] uppercase tracking-[0.08em] text-white hover:bg-white/10 transition-all whitespace-nowrap"
