@@ -23,20 +23,11 @@ const SECTIONS = [
     ],
   },
   {
-    title: "Company",
+    title: "About",
     links: [
-      { label: "About", href: "/about/" },
-      { label: "Contact", href: "/contact/" },
-      { label: "Insights", href: "/blog/" },
-      { label: "Sign In", href: "/login/" },
-    ],
-  },
-  {
-    title: "Legal",
-    links: [
-      { label: "Privacy", href: "/privacy/" },
-      { label: "Terms", href: "/terms/" },
-      { label: "DMCA", href: "/dmca/" },
+      { label: "Meet Andrew", href: "/about/" },
+      { label: "Testimonials", href: "/testimonials/" },
+      { label: "How We Use AI", href: "/about/ai/" },
     ],
   },
 ];

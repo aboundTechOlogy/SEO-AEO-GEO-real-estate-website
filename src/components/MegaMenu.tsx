@@ -34,20 +34,11 @@ const MENU_SECTIONS = [
     ],
   },
   {
-    title: "About Us",
+    title: "About",
     links: [
       { label: "Meet Andrew", href: "/about/" },
       { label: "Testimonials", href: "/testimonials/" },
-      { label: "Insights", href: "/blog/" },
-    ],
-  },
-  {
-    title: "Services",
-    links: [
-      { label: "Press", href: "/press/" },
-      { label: "Contact", href: "/contact/" },
-      { label: "Search Properties", href: "/search/" },
-      { label: "Accessibility", href: "/accessibility/" },
+      { label: "How We Use AI", href: "/about/ai/" },
     ],
   },
 ];
@@ -216,8 +207,8 @@ export default function MegaMenu() {
                 {/* Divider */}
                 <div className="border-t border-white/10 mx-8" />
 
-                {/* Bottom 2 columns: About Us, Services */}
-                <div className="grid grid-cols-2 gap-8 px-8 py-10 max-w-[66%]">
+                {/* Bottom: About */}
+                <div className="grid grid-cols-1 gap-8 px-8 py-10 max-w-[33%]">
                   {MENU_SECTIONS.slice(3).map((section) => (
                     <div key={section.title}>
                       <h3 className="font-playfair text-xl mb-5">{section.title}</h3>
