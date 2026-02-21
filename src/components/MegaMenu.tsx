@@ -136,8 +136,20 @@ export default function MegaMenu() {
 
           {/* Panel — full-width on mobile, right-panel on desktop */}
           <div className="absolute right-0 top-0 bottom-0 w-full md:w-[65%] lg:w-[60%] overflow-y-auto">
-            {/* Background image (video placeholder) */}
-            <div className="absolute inset-0">
+            {/* Inner wrapper — min-h-full so background covers all content */}
+            <div className="relative min-h-full">
+            {/* Background: video (preferred) or image fallback */}
+            <div className="absolute inset-0 overflow-hidden">
+              {/* To use video: add /menu-bg.mp4 to /public and uncomment below */}
+              {/* <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover"
+              >
+                <source src="/menu-bg.mp4" type="video/mp4" />
+              </video> */}
               <img
                 src="/hero-miami.jpg"
                 alt=""
@@ -284,6 +296,7 @@ export default function MegaMenu() {
                 </div>
               </div>
             </div>
+            </div>{/* close min-h-full wrapper */}
           </div>
         </div>
       )}
