@@ -55,15 +55,6 @@ function FilterDropdown({
         className="shrink-0 flex items-center gap-2 border border-gray-300 rounded-full px-4 py-2.5 text-sm text-gray-700 hover:border-gray-400 transition-colors whitespace-nowrap"
       >
         {trigger}
-        <svg
-          className={`w-3.5 h-3.5 text-gray-400 transition-transform ${open ? "rotate-180" : ""}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          strokeWidth={2}
-        >
-          <path d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-        </svg>
       </button>
       {open && mounted && pos && createPortal(
         <div
