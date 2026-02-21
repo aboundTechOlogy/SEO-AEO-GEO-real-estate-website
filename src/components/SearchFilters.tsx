@@ -861,7 +861,7 @@ export function DesktopSearchBar({
   };
 
   return (
-    <div className="hidden md:flex items-center gap-2 px-6 py-3">
+    <div className="hidden md:flex items-center gap-3 px-6 py-4">
       {/* Search input */}
       <div className="relative flex-1 min-w-[220px] max-w-[400px]">
         <input
