@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import NavDropdown from "@/components/NavDropdown";
-import MobileMenu from "@/components/MobileMenu";
 import MegaMenu from "@/components/MegaMenu";
 
 const CONDO_ITEMS = [
@@ -119,7 +118,7 @@ export default function Header() {
               <circle cx="12" cy="9.5" r="2.5" />
             </svg>
           </a>
-          <MobileMenu />
+          <MegaMenu />
         </div>
       </nav>
     </header>
