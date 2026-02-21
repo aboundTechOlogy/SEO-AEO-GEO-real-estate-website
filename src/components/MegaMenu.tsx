@@ -155,9 +155,8 @@ export default function MegaMenu() {
                 alt=""
                 className="w-full h-full object-cover"
               />
-              {/* Dark overlay + bottom gradient matching Carroll */}
-              <div className="absolute inset-0 bg-black/60" />
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80" />
+              {/* Dark overlay — lighter at top, nearly opaque black at bottom */}
+              <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/70 to-black/95" />
             </div>
 
             <div className="relative z-10">
