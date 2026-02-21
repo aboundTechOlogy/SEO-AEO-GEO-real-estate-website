@@ -43,7 +43,7 @@ export default function Header() {
   return (
     <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${bg} ${border}`}>
       {/* Desktop nav — grid layout, NO transforms (transforms break fixed positioning in children) */}
-      <nav className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-center w-full px-4 lg:px-6 py-5 md:py-6">
+      <nav className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-center w-full px-4 lg:px-6 py-4">
         {/* Left: Primary Nav Links */}
         <div className="flex items-center gap-8">
           <NavDropdown
@@ -99,13 +99,13 @@ export default function Header() {
       </nav>
 
       {/* Mobile nav */}
-      <nav className="lg:hidden w-full px-4 py-5 flex items-center">
+      <nav className="lg:hidden w-full px-4 py-4 flex items-center">
         {/* Logo left */}
         <a href="/" className="shrink-0">
           <img
             src="/logo-lockup.png"
             alt="Andrew Whalen | LoKation"
-            className="h-5 sm:h-6 w-auto"
+            className="h-8 w-auto"
           />
         </a>
 

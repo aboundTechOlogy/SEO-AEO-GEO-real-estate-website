@@ -219,7 +219,7 @@ export default function SearchPage() {
       <div className="h-[72px] md:h-[80px]" />
 
       {/* Filter bar — ONLY dark element on this page */}
-      <div ref={filterBarRef} className="sticky top-[72px] md:top-[80px] z-30 bg-white border-b border-gray-200">
+      <div ref={filterBarRef} className="sticky top-[64px] z-30 bg-white border-b border-gray-200">
         <DesktopSearchBar
           status={status}
           onStatusChange={setStatus}
@@ -236,7 +236,7 @@ export default function SearchPage() {
 
       {/* ==================== VIEW: GRID ==================== */}
       {view === "grid" && (
-        <div className="bg-white min-h-[calc(100vh-72px-56px)]">
+        <div className="bg-white min-h-[calc(100vh-64px-56px)]">
           <SorterRow count={MOCK_SEARCH.length} />
           <div className="px-[10px] pt-[10px]">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
@@ -304,7 +304,7 @@ export default function SearchPage() {
 
       {/* ==================== VIEW: LIST ==================== */}
       {view === "list" && (
-        <div className="bg-white min-h-[calc(100vh-72px-56px)]">
+        <div className="bg-white min-h-[calc(100vh-64px-56px)]">
           <SorterRow count={MOCK_SEARCH.length} />
 
           {/* Desktop: data table */}
