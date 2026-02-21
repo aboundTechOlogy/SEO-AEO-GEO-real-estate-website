@@ -33,11 +33,11 @@ function FilterDropdown({
     <div className="relative" ref={ref}>
       <button
         onClick={onToggle}
-        className="shrink-0 flex items-center gap-2 border border-white/20 rounded-full px-4 py-2.5 text-sm text-white hover:border-white/40 transition-colors whitespace-nowrap"
+        className="shrink-0 flex items-center gap-2 border border-gray-300 rounded-full px-4 py-2.5 text-sm text-gray-700 hover:border-gray-400 transition-colors whitespace-nowrap"
       >
         {trigger}
         <svg
-          className={`w-3.5 h-3.5 text-neutral-400 transition-transform ${open ? "rotate-180" : ""}`}
+          className={`w-3.5 h-3.5 text-gray-400 transition-transform ${open ? "rotate-180" : ""}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -817,7 +817,7 @@ export function ViewToggle({ view, setView }: { view: ViewMode; setView: (v: Vie
     <div className="relative shrink-0" ref={ref}>
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 border border-white/20 rounded-full px-4 py-2.5 text-white hover:border-white/40 transition-colors"
+        className="flex items-center gap-2 border border-gray-300 rounded-full px-4 py-2.5 text-gray-700 hover:border-gray-400 transition-colors"
       >
         {VIEW_ICONS[view].icon}
         <span className="text-sm font-medium">{VIEW_ICONS[view].label}</span>
@@ -863,11 +863,11 @@ export function DesktopSearchBar({
   return (
     <div className="hidden md:flex items-center gap-2 px-6 py-3">
       {/* Search input */}
-      <div className="relative min-w-[220px] max-w-[280px]">
+      <div className="relative flex-1 min-w-[220px] max-w-[400px]">
         <input
           type="text"
           placeholder="Enter Address, City, Zip Code, Subdivision"
-          className="w-full bg-transparent border border-white/20 rounded-full px-4 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white/40 transition-colors"
+          className="w-full bg-transparent border border-gray-300 rounded-full px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-500 transition-colors"
         />
       </div>
 
@@ -880,7 +880,7 @@ export function DesktopSearchBar({
 
       {/* Save Search + View Toggle */}
       <div className="ml-auto flex items-center gap-3">
-        <button className="shrink-0 bg-white text-black rounded-full px-5 py-2.5 text-sm font-medium hover:bg-neutral-200 transition-colors">
+        <button className="shrink-0 bg-black text-white rounded-full px-5 py-2.5 text-sm font-medium hover:bg-neutral-800 transition-colors">
           Save Search
         </button>
         <ViewToggle view={view} setView={onViewChange} />
