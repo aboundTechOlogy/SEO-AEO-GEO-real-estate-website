@@ -904,13 +904,13 @@ export function DesktopSearchBar({
   };
 
   return (
-    <div className="hidden md:flex items-center gap-3 px-6 py-3">
+    <div className="hidden md:flex items-center gap-3 px-[15px] py-[10px]">
       {/* Search input */}
       <div className="relative flex-1 min-w-[220px] max-w-[400px]">
         <input
           type="text"
           placeholder="Enter Address, City, Zip Code, Subdivision"
-          className="w-full bg-white border border-gray-300 rounded-[6px] px-[15px] h-[50px] text-[15px] text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-500 transition-colors"
+          className="w-full bg-white border border-gray-300 rounded-[6px] px-[15px] h-[50px] text-[15px] text-gray-900 placeholder-gray-500 focus:outline-none focus:border-gray-500 transition-colors"
         />
       </div>
 
@@ -923,7 +923,7 @@ export function DesktopSearchBar({
 
       {/* Save Search + View Toggle */}
       <div className="ml-auto flex items-center gap-3">
-        <button className="shrink-0 relative flex items-center gap-2 bg-white border border-gray-300 rounded-[10px] px-[15px] h-[50px] text-sm font-semibold text-gray-700 hover:border-gray-500 transition-colors whitespace-nowrap">
+        <button className="shrink-0 bg-black text-white rounded-full px-6 h-[50px] text-sm font-semibold hover:bg-neutral-800 transition-colors whitespace-nowrap">
           Save Search
         </button>
         <ViewToggle view={view} setView={onViewChange} />
