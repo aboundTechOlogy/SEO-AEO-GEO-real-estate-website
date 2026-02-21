@@ -52,7 +52,7 @@ function FilterDropdown({
     <div className="relative" ref={btnRef}>
       <button
         onClick={onToggle}
-        className="shrink-0 flex items-center gap-2 border border-gray-300 rounded-full px-4 py-2.5 text-sm text-gray-700 hover:border-gray-400 transition-colors whitespace-nowrap"
+        className="shrink-0 flex items-center gap-2 border border-gray-300 rounded-full px-3 py-2 text-sm text-gray-700 hover:border-gray-400 transition-colors whitespace-nowrap"
       >
         {trigger}
       </button>
@@ -803,7 +803,7 @@ export function ViewToggle({ view, setView }: { view: ViewMode; setView: (v: Vie
     <div className="relative shrink-0" ref={ref}>
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 border border-gray-300 rounded-full px-4 py-2.5 text-gray-700 hover:border-gray-400 transition-colors"
+        className="flex items-center gap-2 border border-gray-300 rounded-full px-3 py-2 text-gray-700 hover:border-gray-400 transition-colors"
       >
         {VIEW_ICONS[view].icon}
         <span className="text-sm font-medium">{VIEW_ICONS[view].label}</span>
@@ -847,7 +847,7 @@ export function DesktopSearchBar({
   };
 
   return (
-    <div className="hidden md:flex items-center gap-3 px-6 py-4">
+    <div className="hidden md:flex items-center gap-3 px-6 py-3">
       {/* Search input */}
       <div className="relative flex-1 min-w-[220px] max-w-[400px]">
         <input
@@ -896,7 +896,7 @@ export function MobileSearchBar({
   return (
     <div className="md:hidden px-4">
       {/* Row 1: Search + view toggle */}
-      <div className="flex items-center gap-3 py-4">
+      <div className="flex items-center gap-3 py-3">
         <div className="relative flex-1">
           <input
             type="text"
@@ -908,11 +908,11 @@ export function MobileSearchBar({
       </div>
 
       {/* Row 2: Filter pills — scrollable, single row */}
-      <div className="flex items-center gap-2 pb-4 overflow-x-auto no-scrollbar">
+      <div className="flex items-center gap-2 pb-3 overflow-x-auto no-scrollbar">
         {/* Filters button — first, matches Carroll's "≡ Filters" */}
         <button
           onClick={() => toggle("more")}
-          className="shrink-0 flex items-center gap-2 border border-gray-300 rounded-full px-4 py-2.5 text-sm text-gray-700 hover:border-gray-400 transition-colors whitespace-nowrap"
+          className="shrink-0 flex items-center gap-2 border border-gray-300 rounded-full px-3 py-2 text-sm text-gray-700 hover:border-gray-400 transition-colors whitespace-nowrap"
         >
           <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
