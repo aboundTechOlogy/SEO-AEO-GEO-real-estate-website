@@ -119,6 +119,7 @@ export default function RootLayout({
                     </li>
                   ))}
                   <li><a href="/neighborhoods/" className="text-neutral-500 hover:text-white transition-colors">View All</a></li>
+                  <li><a href="/search/" className="text-neutral-500 hover:text-white transition-colors">Search Properties</a></li>
                 </ul>
               </div>
 
@@ -130,7 +131,6 @@ export default function RootLayout({
                     { label: "Testimonials", href: "/testimonials/" },
                     { label: "Insights", href: "/blog/" },
                     { label: "Contact", href: "/contact/" },
-                    { label: "Search Properties", href: "/search/" },
                   ].map((l) => (
                     <li key={l.label}>
                       <a href={l.href} className="text-neutral-500 hover:text-white transition-colors">{l.label}</a>
