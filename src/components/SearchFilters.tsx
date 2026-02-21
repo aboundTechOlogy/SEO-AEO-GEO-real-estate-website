@@ -922,7 +922,7 @@ export function MobileSearchBar({
       </div>
 
       {/* Row 2: Filter pills (scrollable) */}
-      <div className="flex items-center gap-2 pb-4 overflow-x-auto no-scrollbar">
+      <div className="flex items-center gap-2 pb-4 flex-wrap">
         <ForSaleFilter value={status} onChange={onStatusChange} open={openFilter === "status"} onToggle={() => toggle("status")} />
         <PriceFilter open={openFilter === "price"} onToggle={() => toggle("price")} />
         <BedBathFilter open={openFilter === "bedbath"} onToggle={() => toggle("bedbath")} />
