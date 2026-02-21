@@ -44,7 +44,7 @@ export default function NavDropdown({ label, items, allLabel, allHref }: NavDrop
     >
       <a
         href={allHref}
-        className="text-sm uppercase tracking-wider text-white hover:text-neutral-300 transition-colors"
+        className="text-[12px] uppercase tracking-[0.08em] text-white hover:text-neutral-300 transition-colors"
       >
         {label}
       </a>
