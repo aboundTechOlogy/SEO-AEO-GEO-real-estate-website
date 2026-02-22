@@ -65,7 +65,7 @@ export default function RootLayout({
                 Contact:{" "}
                 <a href="tel:+13054559744" className="hover:text-white transition-colors">305-455-9744</a>
                 {" | "}
-                <a href="mailto:Andrew@ImAndrewWhalen.com" className="hover:text-white transition-colors">Andrew@ImAndrewWhalen.com</a>
+                <a href="mailto:Andrew@IamAndrewWhalen.com" className="hover:text-white transition-colors">Andrew@IamAndrewWhalen.com</a>
               </p>
               <div className="flex justify-center gap-5">
                 {SOCIAL_LINKS.map((s) => (
