@@ -1195,6 +1195,329 @@ function MoreFilter({
   );
 }
 
+/* ==================== MOBILE FILTERS SHEET (FULL-SCREEN) ==================== */
+function MobileFiltersSheet({
+  isOpen,
+  onClose,
+  filterValues,
+  onFilterChange,
+  status,
+  onStatusChange,
+  soldRange,
+  onSoldRangeChange,
+  totalCount,
+  onClearAll,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  filterValues: SearchFilterValues;
+  onFilterChange: (partial: Partial<SearchFilterValues>) => void;
+  status: string;
+  onStatusChange: (v: string) => void;
+  soldRange: string;
+  onSoldRangeChange: (v: string) => void;
+  totalCount: number;
+  onClearAll: () => void;
+}) {
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, [isOpen]);
+
+  const toggle = (key: string) => setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
+
+  const toggleFeature = (f: string) => {
+    const next = filterValues.features.includes(f)
+      ? filterValues.features.filter((x) => x !== f)
+      : [...filterValues.features, f];
+    onFilterChange({ features: next });
+  };
+
+  const toggleType = (t: string) => {
+    const next = filterValues.propertyTypes.includes(t)
+      ? filterValues.propertyTypes.filter((x) => x !== t)
+      : [...filterValues.propertyTypes, t];
+    onFilterChange({ propertyTypes: next });
+  };
+
+  const countLabel = totalCount > 0
+    ? `View ${totalCount.toLocaleString()} Properties`
+    : "View Properties";
+
+  if (!isOpen || !mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[200] flex flex-col bg-white">
+      {/* Header */}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-200 shrink-0">
+        <h2 className="text-base font-semibold text-neutral-900">Filters</h2>
+        <button
+          onClick={onClose}
+          className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors"
+          aria-label="Close filters"
+        >
+          <svg className="w-5 h-5 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Scrollable body */}
+      <div className="flex-1 overflow-y-auto">
+        {/* 1. Property Search */}
+        <AccordionRow label="Property Search" rightLabel={status} expanded={!!expanded.search} onToggle={() => toggle("search")} />
+        {expanded.search && (
+          <div className="px-5 pb-4 pt-1 space-y-2.5">
+            {["For Sale", "For Rent", "Sold"].map((opt) => (
+              <label key={opt} className="flex items-center gap-3 cursor-pointer group">
+                <div
+                  onClick={() => onStatusChange(opt)}
+                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                    status === opt ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                  }`}
+                >
+                  {status === opt && <div className="w-2.5 h-2.5 rounded-full bg-black" />}
+                </div>
+                <span className={`text-sm ${status === opt ? "text-neutral-900 font-medium" : "text-neutral-600"}`}>
+                  {opt}
+                </span>
+              </label>
+            ))}
+            {status === "Sold" && (
+              <div className="mt-1 ml-8 space-y-2.5 border-l-2 border-neutral-100 pl-3">
+                <p className="text-[11px] text-neutral-400 uppercase tracking-wide font-medium mb-1">Sold within</p>
+                {SOLD_RANGE_OPTIONS.map((opt) => (
+                  <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer group">
+                    <div
+                      className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
+                        soldRange === opt.value ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                      }`}
+                      onClick={() => onSoldRangeChange(opt.value)}
+                    >
+                      {soldRange === opt.value && <div className="w-2 h-2 rounded-full bg-black" />}
+                    </div>
+                    <span
+                      className={`text-[13px] ${soldRange === opt.value ? "text-neutral-900 font-medium" : "text-neutral-500"}`}
+                      onClick={() => onSoldRangeChange(opt.value)}
+                    >
+                      {opt.label}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 2. Price */}
+        <AccordionRow
+          label="Price"
+          rightLabel={filterValues.priceMin ? `$${Number(filterValues.priceMin).toLocaleString()}+` : undefined}
+          expanded={!!expanded.price}
+          onToggle={() => toggle("price")}
+        />
+        {expanded.price && (
+          <div className="flex items-center gap-3 px-5 pb-4 pt-1">
+            <div className="flex-1">
+              <div className="flex items-center border border-neutral-200 rounded-lg px-3 py-2.5">
+                <span className="text-neutral-400 text-sm mr-1">$</span>
+                <input type="text" value={filterValues.priceMin} onChange={(e) => onFilterChange({ priceMin: e.target.value.replace(/[^0-9]/g, "") })} placeholder="Any" className="w-full text-sm text-neutral-900 focus:outline-none bg-transparent" />
+              </div>
+              <p className="text-xs text-neutral-400 mt-1 ml-1">Minimum</p>
+            </div>
+            <span className="text-neutral-400 text-sm mt-[-16px]">to</span>
+            <div className="flex-1">
+              <div className="flex items-center border border-neutral-200 rounded-lg px-3 py-2.5">
+                <span className="text-neutral-400 text-sm mr-1">$</span>
+                <input type="text" value={filterValues.priceMax} onChange={(e) => onFilterChange({ priceMax: e.target.value.replace(/[^0-9]/g, "") })} placeholder="Any" className="w-full text-sm text-neutral-900 focus:outline-none bg-transparent" />
+              </div>
+              <p className="text-xs text-neutral-400 mt-1 ml-1">Maximum</p>
+            </div>
+          </div>
+        )}
+
+        {/* 3. Rooms */}
+        <AccordionRow label="Rooms" expanded={!!expanded.rooms} onToggle={() => toggle("rooms")} />
+        {expanded.rooms && (
+          <div className="px-5 pb-4 pt-1 space-y-5">
+            <div>
+              <p className="text-sm font-medium text-neutral-700 mb-2">Bedrooms</p>
+              <div className="flex items-center gap-3">
+                <div className="flex-1">
+                  <input type="text" value={filterValues.bedMin} onChange={(e) => onFilterChange({ bedMin: e.target.value.replace(/[^0-9]/g, "") })} placeholder="Any" className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400" />
+                  <p className="text-xs text-neutral-400 mt-1 ml-1">Minimum</p>
+                </div>
+                <span className="text-neutral-400 text-sm mt-[-16px]">to</span>
+                <div className="flex-1">
+                  <input type="text" value={filterValues.bedMax} onChange={(e) => onFilterChange({ bedMax: e.target.value.replace(/[^0-9]/g, "") })} placeholder="Any" className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400" />
+                  <p className="text-xs text-neutral-400 mt-1 ml-1">Maximum</p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-neutral-700 mb-2">Bathrooms</p>
+              <div className="flex items-center gap-3">
+                <div className="flex-1">
+                  <input type="text" value={filterValues.bathMin} onChange={(e) => onFilterChange({ bathMin: e.target.value.replace(/[^0-9]/g, "") })} placeholder="Any" className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400" />
+                  <p className="text-xs text-neutral-400 mt-1 ml-1">Minimum</p>
+                </div>
+                <span className="text-neutral-400 text-sm mt-[-16px]">to</span>
+                <div className="flex-1">
+                  <input type="text" value={filterValues.bathMax} onChange={(e) => onFilterChange({ bathMax: e.target.value.replace(/[^0-9]/g, "") })} placeholder="Any" className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400" />
+                  <p className="text-xs text-neutral-400 mt-1 ml-1">Maximum</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 4. Property Type */}
+        <AccordionRow label="Property Type" expanded={!!expanded.type} onToggle={() => toggle("type")} />
+        {expanded.type && (
+          <div className="px-5 pb-4 pt-1 space-y-2.5">
+            {PROPERTY_TYPES.map((type) => (
+              <label key={type} className="flex items-center gap-3 cursor-pointer group">
+                <div
+                  onClick={() => toggleType(type)}
+                  className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                    filterValues.propertyTypes.includes(type) ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                  }`}
+                >
+                  {filterValues.propertyTypes.includes(type) && (
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}><path d="M4.5 12.75l6 6 9-13.5" /></svg>
+                  )}
+                </div>
+                <span className="text-sm text-neutral-700">{type}</span>
+              </label>
+            ))}
+            <div className="border-t border-neutral-100 pt-3 mt-3">
+              <label className="flex items-center gap-3 cursor-pointer group">
+                <div
+                  onClick={() => onFilterChange({ hidePending: !filterValues.hidePending })}
+                  className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                    filterValues.hidePending ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                  }`}
+                >
+                  {filterValues.hidePending && (
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}><path d="M4.5 12.75l6 6 9-13.5" /></svg>
+                  )}
+                </div>
+                <span className="text-sm text-neutral-700">Hide Pending / Contingent</span>
+              </label>
+            </div>
+          </div>
+        )}
+
+        {/* 5. Keyword */}
+        <AccordionRow label="Keyword Search" expanded={!!expanded.keyword} onToggle={() => toggle("keyword")} />
+        {expanded.keyword && (
+          <div className="px-5 pb-4 pt-1">
+            <div className="flex items-center border border-neutral-200 rounded-lg px-3 py-2.5 mb-3">
+              <input type="text" value={filterValues.keyword} onChange={(e) => onFilterChange({ keyword: e.target.value })} placeholder="Pool, Waterfront, Gated..." className="flex-1 text-sm text-neutral-900 focus:outline-none bg-transparent placeholder-neutral-400" />
+              {filterValues.keyword && (
+                <button onClick={() => onFilterChange({ keyword: "" })} className="text-neutral-400 hover:text-neutral-600">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><path d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {KEYWORD_SUGGESTIONS.map((kw) => (
+                <button key={kw} onClick={() => onFilterChange({ keyword: kw })} className="flex items-center gap-1 px-3 py-1.5 border border-neutral-200 rounded-full text-xs text-neutral-700 hover:bg-neutral-50 transition-colors">
+                  <span className="text-neutral-400">+</span> {kw}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 6. Garage */}
+        <AccordionRow label="Garage Spaces" rightLabel={filterValues.garage !== "Any" ? `${filterValues.garage}+` : undefined} expanded={!!expanded.garage} onToggle={() => toggle("garage")} />
+        {expanded.garage && <SegmentedButtons options={GARAGE_OPTIONS} value={filterValues.garage} onChange={(v) => onFilterChange({ garage: v })} />}
+
+        {/* 7. Living Size */}
+        <AccordionRow label="Living Size (sq ft)" expanded={!!expanded.livingSize} onToggle={() => toggle("livingSize")} />
+        {expanded.livingSize && (
+          <div className="flex items-center gap-3 px-5 pb-4 pt-1">
+            <div className="flex-1">
+              <input type="text" value={filterValues.minSqft} onChange={(e) => onFilterChange({ minSqft: e.target.value.replace(/[^0-9]/g, "") })} placeholder="Any" className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400" />
+              <p className="text-xs text-neutral-400 mt-1 ml-1">Minimum</p>
+            </div>
+            <span className="text-neutral-400 text-sm mt-[-16px]">to</span>
+            <div className="flex-1">
+              <input type="text" value={filterValues.maxSqft} onChange={(e) => onFilterChange({ maxSqft: e.target.value.replace(/[^0-9]/g, "") })} placeholder="Any" className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400" />
+              <p className="text-xs text-neutral-400 mt-1 ml-1">Maximum</p>
+            </div>
+          </div>
+        )}
+
+        {/* 8. Waterfront */}
+        <AccordionRow label="Waterfront" rightLabel={filterValues.waterfront !== "Any" ? filterValues.waterfront : undefined} expanded={!!expanded.waterfront} onToggle={() => toggle("waterfront")} />
+        {expanded.waterfront && <RadioList options={WATERFRONT_OPTIONS} value={filterValues.waterfront} onChange={(v) => onFilterChange({ waterfront: v })} />}
+
+        {/* 9. Features */}
+        <AccordionRow label="Features" rightLabel={filterValues.features.length > 0 ? `${filterValues.features.length} selected` : undefined} expanded={!!expanded.features} onToggle={() => toggle("features")} />
+        {expanded.features && <CheckboxList options={FEATURE_OPTIONS} selected={filterValues.features} onToggle={toggleFeature} />}
+
+        {/* 10. Days On Market */}
+        <AccordionRow label="Days On Market" rightLabel={filterValues.domMax !== "Any" ? `≤ ${filterValues.domMax === "Today" ? "1" : filterValues.domMax} days` : undefined} expanded={!!expanded.dom} onToggle={() => toggle("dom")} />
+        {expanded.dom && <SegmentedButtons options={DOM_OPTIONS} value={filterValues.domMax} onChange={(v) => onFilterChange({ domMax: v })} />}
+      </div>
+
+      {/* Sticky footer — always reachable */}
+      <div className="flex items-center gap-3 px-5 py-4 border-t border-neutral-200 bg-white shrink-0">
+        <button
+          onClick={onClearAll}
+          className="text-sm text-neutral-500 hover:text-neutral-800 transition-colors px-4 py-2.5 border border-neutral-200 rounded-full"
+        >
+          Clear All
+        </button>
+        <button
+          onClick={onClose}
+          className="flex-1 bg-black text-white text-sm font-medium py-3 rounded-full hover:bg-neutral-800 transition-colors"
+        >
+          {countLabel}
+        </button>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+/* ==================== FLOATING SAVE SEARCH (TABLET/MOBILE) ==================== */
+export function FloatingSaveSearch({
+  onSave,
+  message,
+}: {
+  onSave: () => void;
+  message: string | null;
+}) {
+  return (
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-20 min-[1180px]:hidden">
+      <button
+        onClick={onSave}
+        className="bg-black text-white rounded-full px-6 py-3 text-sm font-semibold shadow-lg hover:bg-neutral-800 transition-colors whitespace-nowrap flex items-center gap-2"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+        </svg>
+        Save Search
+      </button>
+      {message && (
+        <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-neutral-900 text-white text-xs rounded-full whitespace-nowrap shadow-lg z-50">
+          {message}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ==================== MAIN EXPORT ==================== */
 type ViewMode = "grid" | "map" | "list";
 
@@ -1316,6 +1639,7 @@ export function DesktopSearchBar({
   saveMessage: string | null;
 }) {
   const [openFilter, setOpenFilter] = useState<string | null>(null);
+  const [filtersSheetOpen, setFiltersSheetOpen] = useState(false);
 
   const toggle = (name: string) => {
     setOpenFilter((prev) => (prev === name ? null : name));
@@ -1328,6 +1652,17 @@ export function DesktopSearchBar({
 
   return (
     <div className="hidden md:flex items-center gap-2 px-[15px] py-[10px] overflow-x-auto no-scrollbar">
+      {/* Filters button — visible only when Save Search is hidden (<1180px) */}
+      <button
+        onClick={() => setFiltersSheetOpen(true)}
+        className="shrink-0 flex items-center gap-2 bg-white border border-gray-300 rounded-[10px] px-[15px] h-[50px] text-sm font-semibold text-gray-700 hover:border-gray-500 transition-colors whitespace-nowrap min-[1180px]:hidden"
+      >
+        <svg className="w-[17px] h-[17px] text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
+        </svg>
+        Filters
+      </button>
+
       {/* Address */}
       <div className="shrink-0 min-w-[180px] w-[240px] min-[1180px]:w-[280px] min-[1440px]:w-[320px]">
         <AddressSearchInput
@@ -1402,6 +1737,20 @@ export function DesktopSearchBar({
           onToggle={() => toggle("view")}
         />
       </div>
+
+      {/* Full-screen filters sheet (tablet) */}
+      <MobileFiltersSheet
+        isOpen={filtersSheetOpen}
+        onClose={() => setFiltersSheetOpen(false)}
+        filterValues={filterValues}
+        onFilterChange={onFilterChange}
+        status={status}
+        onStatusChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); }}
+        soldRange={filterValues.soldRange}
+        onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
+        totalCount={totalCount}
+        onClearAll={handleClearAll}
+      />
     </div>
   );
 }
@@ -1427,6 +1776,7 @@ export function MobileSearchBar({
   onSaveSearch: () => void;
 }) {
   const [openFilter, setOpenFilter] = useState<string | null>(null);
+  const [filtersSheetOpen, setFiltersSheetOpen] = useState(false);
 
   const toggle = (name: string) => {
     setOpenFilter((prev) => (prev === name ? null : name));
@@ -1453,7 +1803,7 @@ export function MobileSearchBar({
       {/* Row 2: Filter pills — scrollable, single row */}
       <div className="flex items-center gap-1.5 pb-2 overflow-x-auto no-scrollbar">
         <button
-          onClick={() => toggle("more")}
+          onClick={() => setFiltersSheetOpen(true)}
           className="shrink-0 flex items-center gap-2 bg-white border border-gray-300 rounded-full px-[16px] h-[35px] text-[13px] font-semibold text-gray-700 hover:border-gray-500 transition-colors whitespace-nowrap"
         >
           <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
@@ -1491,25 +1841,21 @@ export function MobileSearchBar({
           hidePending={filterValues.hidePending}
           onHidePendingChange={(v) => onFilterChange({ hidePending: v })}
         />
-        <MoreFilter
-          open={openFilter === "more-full"}
-          onToggle={() => toggle("more-full")}
-          filterValues={filterValues}
-          onFilterChange={onFilterChange}
-          status={status}
-          onStatusChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); }}
-          soldRange={filterValues.soldRange}
-          onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
-          totalCount={totalCount}
-          onClearAll={handleClearAll}
-        />
-        <button
-          onClick={onSaveSearch}
-          className="shrink-0 flex items-center gap-1.5 bg-black text-white rounded-full px-[16px] h-[35px] text-[13px] font-semibold whitespace-nowrap"
-        >
-          Save Search
-        </button>
       </div>
+
+      {/* Full-screen filters sheet */}
+      <MobileFiltersSheet
+        isOpen={filtersSheetOpen}
+        onClose={() => setFiltersSheetOpen(false)}
+        filterValues={filterValues}
+        onFilterChange={onFilterChange}
+        status={status}
+        onStatusChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); }}
+        soldRange={filterValues.soldRange}
+        onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
+        totalCount={totalCount}
+        onClearAll={handleClearAll}
+      />
     </div>
   );
 }
