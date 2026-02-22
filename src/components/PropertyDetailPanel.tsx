@@ -2,7 +2,6 @@
 
 import type { ReactNode, TouchEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import type { BridgeProperty } from "@/lib/bridge";
 import { calculatePricePerSqft, formatAddress, formatCurrency, getListingPhotos } from "@/lib/property-utils";
@@ -119,7 +118,6 @@ function RectTabButton({
 
 export default function PropertyDetailPanel({ property, listingKey }: PropertyDetailPanelProps) {
   const router = useRouter();
-  const [isMounted, setIsMounted] = useState(false);
   const [isClosing, setIsClosing] = useState(true);
   const [activePhoto, setActivePhoto] = useState(0);
   const [isPhotoViewerOpen, setIsPhotoViewerOpen] = useState(false);
@@ -144,8 +142,6 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
   }, [router]);
 
   useEffect(() => {
-    setIsMounted(true);
-
     const frame = window.requestAnimationFrame(() => {
       setIsClosing(false);
     });
@@ -270,12 +266,8 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
     setTouchCurrentX(null);
   }
 
-  if (!isMounted) {
-    return null;
-  }
-
   if (!property) {
-    return createPortal(
+    return (
       <div
         className={`fixed inset-0 z-[150] transition-opacity duration-300 ${isClosing ? "opacity-0" : "opacity-100"}`}
         onClick={(event) => {
@@ -302,8 +294,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
             </button>
           </div>
         </aside>
-      </div>,
-      document.body
+      </div>
     );
   }
 
@@ -439,7 +430,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
     window.location.assign(`/property/${listingKey}/`);
   }
 
-  return createPortal(
+  return (
     <div
       className={`fixed inset-0 z-[150] transition-opacity duration-300 ${isClosing ? "opacity-0" : "opacity-100"}`}
       onClick={(event) => {
@@ -850,7 +841,6 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
           </div>
         )}
       </aside>
-    </div>,
-    document.body
+    </div>
   );
 }
