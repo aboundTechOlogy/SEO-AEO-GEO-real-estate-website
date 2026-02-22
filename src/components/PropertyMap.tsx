@@ -1,6 +1,7 @@
 "use client";
 
 import { APIProvider, AdvancedMarker, Map } from "@vis.gl/react-google-maps";
+import MapDrawControl, { type DrawCoordinate } from "@/components/MapDrawControl";
 
 interface PropertyMapProps {
   center: { lat: number; lng: number };
@@ -15,6 +16,7 @@ interface PropertyMapProps {
   className?: string;
   interactive?: boolean;
   onClick?: (listingKey: string) => void;
+  onDrawBounds?: (coords: DrawCoordinate[] | null) => void;
 }
 
 /* Default Google Maps styling — no custom overrides, matches standard map look */
@@ -37,6 +39,7 @@ export default function PropertyMap({
   className,
   interactive = true,
   onClick,
+  onDrawBounds,
 }: PropertyMapProps) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
 
@@ -90,6 +93,8 @@ export default function PropertyMap({
               </AdvancedMarker>
             );
           })}
+
+          {interactive && <MapDrawControl onBoundsChange={onDrawBounds} />}
         </Map>
       </APIProvider>
     </div>

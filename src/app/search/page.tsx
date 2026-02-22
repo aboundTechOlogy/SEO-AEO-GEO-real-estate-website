@@ -6,6 +6,7 @@ import { MOCK_SEARCH } from "@/data/mockListings";
 import PropertyMap from "@/components/PropertyMap";
 
 type ViewMode = "grid" | "map" | "list";
+type DrawCoords = Array<{ lat: number; lng: number }>;
 
 const SORT_OPTIONS = [
   "Newest Listings",
@@ -185,6 +186,7 @@ function StarIcon() {
 export default function SearchPage() {
   const [status, setStatus] = useState("For Sale");
   const [view, setViewState] = useState<ViewMode>("grid");
+  const [, setDrawBounds] = useState<DrawCoords | null>(null);
   const filterBarRef = useRef<HTMLDivElement>(null);
   const [theadTop, setTheadTop] = useState(136); // fallback
 
@@ -265,6 +267,7 @@ export default function SearchPage() {
               zoom={10}
               interactive={true}
               className="w-full h-full"
+              onDrawBounds={setDrawBounds}
             />
           </div>
 
