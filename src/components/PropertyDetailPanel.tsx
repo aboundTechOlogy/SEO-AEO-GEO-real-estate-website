@@ -55,7 +55,7 @@ function estimateMonthlyPayment(price: number | null | undefined): string | null
 }
 
 const PANEL_CONTAINER_CLASS =
-  "fixed inset-y-0 left-0 right-0 md:left-[25px] md:right-[25px] border-0 md:border md:border-black/15 bg-[#f5f5f5] shadow-[0_24px_70px_rgba(0,0,0,0.45)]";
+  "fixed inset-y-0 left-0 right-0 md:left-1/2 md:right-auto md:-translate-x-1/2 md:w-[calc(100%-50px)] min-[1300px]:w-[1200px] border-0 md:border md:border-black/15 bg-[#f5f5f5] shadow-[0_24px_70px_rgba(0,0,0,0.45)]";
 
 function CircleIconButton({
   label,
@@ -181,42 +181,22 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
 
   useEffect(() => {
     const html = document.documentElement;
-    const scrollY = window.scrollY;
 
     const prevBodyOverflow = document.body.style.overflow;
-    const prevBodyPosition = document.body.style.position;
-    const prevBodyTop = document.body.style.top;
-    const prevBodyLeft = document.body.style.left;
-    const prevBodyRight = document.body.style.right;
-    const prevBodyWidth = document.body.style.width;
     const prevHtmlOverflow = html.style.overflow;
     const prevBodyOverscroll = document.body.style.overscrollBehavior;
     const prevHtmlOverscroll = html.style.overscrollBehavior;
 
     document.body.style.overflow = "hidden";
-    document.body.style.position = "fixed";
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.left = "0";
-    document.body.style.right = "0";
-    document.body.style.width = "100%";
-
     html.style.overflow = "hidden";
     document.body.style.overscrollBehavior = "none";
     html.style.overscrollBehavior = "none";
 
     return () => {
       document.body.style.overflow = prevBodyOverflow;
-      document.body.style.position = prevBodyPosition;
-      document.body.style.top = prevBodyTop;
-      document.body.style.left = prevBodyLeft;
-      document.body.style.right = prevBodyRight;
-      document.body.style.width = prevBodyWidth;
-
       html.style.overflow = prevHtmlOverflow;
       document.body.style.overscrollBehavior = prevBodyOverscroll;
       html.style.overscrollBehavior = prevHtmlOverscroll;
-
-      window.scrollTo({ top: scrollY, behavior: "auto" });
     };
   }, []);
 
@@ -469,7 +449,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
           </div>
         )}
 
-        <div className="h-full overflow-y-auto overscroll-contain bg-[#f5f5f5]">
+        <div className="h-full overflow-y-scroll overscroll-contain bg-[#f5f5f5]" style={{ scrollbarGutter: "stable" }}>
           <div className="sticky top-0 z-30 border-b border-black/10 bg-white">
             <div className="h-[70px] px-[15px] py-[10px] flex items-center justify-between gap-[10px]">
               <div className="min-w-0 flex-1">
