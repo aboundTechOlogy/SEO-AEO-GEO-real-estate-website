@@ -23,6 +23,36 @@ function isNearFirstPoint(point: DrawCoordinate, first: DrawCoordinate): boolean
   return latDiff <= 0.0009 && lngDiff <= 0.0009;
 }
 
+/* ── SVG Icons ── */
+
+function DrawIcon() {
+  return (
+    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+      {/* Pencil */}
+      <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 1 1 3.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function SatelliteIcon() {
+  return (
+    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6}>
+      {/* Globe / satellite view */}
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18M12 3c-2.5 2.5-4 5.5-4 9s1.5 6.5 4 9c2.5-2.5 4-5.5 4-9s-1.5-6.5-4-9z" />
+    </svg>
+  );
+}
+
+function MapIcon() {
+  return (
+    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6}>
+      {/* Map / road view */}
+      <path d="M9 20l-5.447-2.724A1 1 0 0 1 3 16.382V5.618a1 1 0 0 1 1.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0 0 21 18.382V7.618a1 1 0 0 0-.553-.894L15 4m0 13V4m0 0L9 7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export default function MapDrawControl({ onBoundsChange, containerRef }: MapDrawControlProps) {
   const map = useMap();
 
@@ -45,42 +75,25 @@ export default function MapDrawControl({ onBoundsChange, containerRef }: MapDraw
   // Draw polyline/polygon on map
   useEffect(() => {
     if (!map) return;
-
     const googleMaps = (globalThis as any).google?.maps;
     if (!googleMaps) return;
 
-    if (lineRef.current) {
-      lineRef.current.setMap(null);
-      lineRef.current = null;
-    }
-
-    if (polygonRef.current) {
-      polygonRef.current.setMap(null);
-      polygonRef.current = null;
-    }
+    if (lineRef.current) { lineRef.current.setMap(null); lineRef.current = null; }
+    if (polygonRef.current) { polygonRef.current.setMap(null); polygonRef.current = null; }
 
     if (isClosed && points.length >= 3) {
       polygonRef.current = new googleMaps.Polygon({
-        map,
-        paths: points,
-        strokeColor: POLYGON_STROKE,
-        strokeOpacity: 1,
-        strokeWeight: 2,
-        fillColor: POLYGON_FILL,
-        fillOpacity: 1,
-        clickable: false,
+        map, paths: points,
+        strokeColor: POLYGON_STROKE, strokeOpacity: 1, strokeWeight: 2,
+        fillColor: POLYGON_FILL, fillOpacity: 1, clickable: false,
       });
       return;
     }
 
     if (points.length >= 2) {
       lineRef.current = new googleMaps.Polyline({
-        map,
-        path: points,
-        strokeColor: POLYGON_STROKE,
-        strokeOpacity: 1,
-        strokeWeight: 2,
-        clickable: false,
+        map, path: points,
+        strokeColor: POLYGON_STROKE, strokeOpacity: 1, strokeWeight: 2, clickable: false,
       });
     }
   }, [map, points, isClosed]);
@@ -103,14 +116,13 @@ export default function MapDrawControl({ onBoundsChange, containerRef }: MapDraw
     const clickListener = map.addListener("click", (event: any) => {
       const latLng = event.latLng?.toJSON?.();
       if (!latLng) return;
-
-      setPoints((previous) => {
-        if (previous.length >= 3 && isNearFirstPoint(latLng, previous[0])) {
+      setPoints((prev) => {
+        if (prev.length >= 3 && isNearFirstPoint(latLng, prev[0])) {
           setIsClosed(true);
           setIsDrawing(false);
-          return previous;
+          return prev;
         }
-        return [...previous, latLng];
+        return [...prev, latLng];
       });
     });
 
@@ -131,33 +143,18 @@ export default function MapDrawControl({ onBoundsChange, containerRef }: MapDraw
   // Notify parent of bounds changes
   useEffect(() => {
     if (!onBoundsChange) return;
-
-    if (isClosed && points.length >= 3) {
-      onBoundsChange(points);
-      return;
-    }
-
-    if (points.length === 0) {
-      onBoundsChange(null);
-    }
+    if (isClosed && points.length >= 3) { onBoundsChange(points); return; }
+    if (points.length === 0) onBoundsChange(null);
   }, [onBoundsChange, isClosed, points]);
 
   const handleDrawClick = useCallback(() => {
-    if (isDrawing) {
-      setIsDrawing(false);
-      return;
-    }
-
     if (isClosed) {
-      setPoints([]);
-      setIsClosed(false);
-      onBoundsChange?.(null);
+      setPoints([]); setIsClosed(false); onBoundsChange?.(null);
     }
-
     setIsDrawing(true);
-  }, [isDrawing, isClosed, onBoundsChange]);
+  }, [isClosed, onBoundsChange]);
 
-  const handleClear = useCallback(() => {
+  const handleCancel = useCallback(() => {
     setIsDrawing(false);
     setIsClosed(false);
     setPoints([]);
@@ -171,65 +168,71 @@ export default function MapDrawControl({ onBoundsChange, containerRef }: MapDraw
     map.setMapTypeId(next ? "hybrid" : "roadmap");
   }, [map, isSatellite]);
 
-  const hasPolygon = isClosed || points.length > 0;
-
-  // Portal the toolbar buttons into the map container as an absolute overlay
   if (!mounted || !containerRef.current) return null;
 
-  return createPortal(
-    <div className="absolute right-[10px] top-[10px] z-[5] flex flex-col gap-[2px]" style={{ pointerEvents: "auto" }}>
-      {/* Draw boundary tool */}
-      <button
-        type="button"
-        onClick={handleDrawClick}
-        aria-label="Draw boundary"
-        title="Draw boundary"
-        className={`w-10 h-10 bg-white border border-black/10 rounded-sm shadow-[0_1px_4px_rgba(0,0,0,0.3)] flex items-center justify-center transition-colors cursor-pointer ${
-          isDrawing ? "text-[#4285F4]" : "text-neutral-700 hover:bg-neutral-50"
-        }`}
-      >
-        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
-          <polygon points="12,2 22,8.5 19,20 5,20 2,8.5" strokeLinecap="round" strokeLinejoin="round" />
-          <circle cx="12" cy="2" r="1.5" fill="currentColor" stroke="none" />
-          <circle cx="22" cy="8.5" r="1.5" fill="currentColor" stroke="none" />
-          <circle cx="19" cy="20" r="1.5" fill="currentColor" stroke="none" />
-          <circle cx="5" cy="20" r="1.5" fill="currentColor" stroke="none" />
-          <circle cx="2" cy="8.5" r="1.5" fill="currentColor" stroke="none" />
-        </svg>
-      </button>
+  const hasPolygon = isClosed || points.length > 0;
+  const drawActive = isDrawing && !isClosed;
 
-      {/* Clear boundary */}
-      {hasPolygon && (
-        <button
-          type="button"
-          onClick={handleClear}
-          aria-label="Clear boundary"
-          title="Clear boundary"
-          className="w-10 h-10 bg-white border border-black/10 rounded-sm shadow-[0_1px_4px_rgba(0,0,0,0.3)] flex items-center justify-center text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-          </svg>
-        </button>
+  return createPortal(
+    <>
+      {/* ── Draw mode banner ── */}
+      {drawActive && (
+        <div className="absolute top-0 left-0 right-0 z-[6] flex items-center justify-between bg-white/95 backdrop-blur-sm px-4 py-2.5 shadow-md">
+          <p className="text-sm text-neutral-800">
+            Draw a shape around the region(s) you would like to live in
+          </p>
+          <button
+            type="button"
+            onClick={handleCancel}
+            className="px-5 py-1.5 text-sm font-medium text-neutral-800 bg-white border border-neutral-300 rounded-full hover:bg-neutral-100 transition-colors cursor-pointer shadow-sm"
+          >
+            Cancel
+          </button>
+        </div>
       )}
 
-      {/* Satellite / Map view toggle */}
-      <button
-        type="button"
-        onClick={handleSatelliteToggle}
-        aria-label={isSatellite ? "Switch to map view" : "Switch to satellite view"}
-        title={isSatellite ? "Map view" : "Satellite view"}
-        className={`w-10 h-10 bg-white border border-black/10 rounded-sm shadow-[0_1px_4px_rgba(0,0,0,0.3)] flex items-center justify-center transition-colors cursor-pointer ${
-          isSatellite ? "text-[#4285F4]" : "text-neutral-700 hover:bg-neutral-50"
-        }`}
-      >
-        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
-          <rect x="3" y="3" width="18" height="18" rx="2" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M3 12h18M12 3v18" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M3 3l18 18" strokeLinecap="round" strokeLinejoin="round" strokeOpacity="0.4" />
-        </svg>
-      </button>
-    </div>,
+      {/* ── Toolbar (hidden during draw mode, matching Chad) ── */}
+      {!drawActive && (
+        <div className="absolute right-[10px] top-[10px] z-[5] flex flex-col gap-[2px]" style={{ pointerEvents: "auto" }}>
+          {/* Draw boundary */}
+          <button
+            type="button"
+            onClick={handleDrawClick}
+            aria-label="Draw boundary"
+            title="Draw boundary"
+            className="w-10 h-10 bg-white border border-black/10 rounded-sm shadow-[0_1px_4px_rgba(0,0,0,0.3)] flex items-center justify-center text-neutral-700 hover:bg-neutral-50 transition-colors cursor-pointer"
+          >
+            <DrawIcon />
+          </button>
+
+          {/* Clear polygon (only when drawn) */}
+          {hasPolygon && (
+            <button
+              type="button"
+              onClick={handleCancel}
+              aria-label="Clear boundary"
+              title="Clear boundary"
+              className="w-10 h-10 bg-white border border-black/10 rounded-sm shadow-[0_1px_4px_rgba(0,0,0,0.3)] flex items-center justify-center text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+
+          {/* Satellite / Map toggle — icon swaps based on current view */}
+          <button
+            type="button"
+            onClick={handleSatelliteToggle}
+            aria-label={isSatellite ? "Switch to map view" : "Switch to satellite view"}
+            title={isSatellite ? "Map view" : "Satellite view"}
+            className="w-10 h-10 bg-white border border-black/10 rounded-sm shadow-[0_1px_4px_rgba(0,0,0,0.3)] flex items-center justify-center text-neutral-700 hover:bg-neutral-50 transition-colors cursor-pointer"
+          >
+            {isSatellite ? <MapIcon /> : <SatelliteIcon />}
+          </button>
+        </div>
+      )}
+    </>,
     containerRef.current
   );
 }

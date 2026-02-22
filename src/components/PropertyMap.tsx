@@ -65,9 +65,12 @@ export default function PropertyMap({
           defaultCenter={center}
           defaultZoom={zoom}
           style={{ width: "100%", height: "100%" }}
-          disableDefaultUI={true}
           gestureHandling={interactive ? "greedy" : "none"}
           clickableIcons={interactive}
+          mapTypeControl={false}
+          streetViewControl={false}
+          fullscreenControl={false}
+          rotateControl={false}
           zoomControl={interactive}
           zoomControlOptions={{ position: ControlPosition.RIGHT_TOP }}
           scaleControl={true}
@@ -90,10 +93,10 @@ export default function PropertyMap({
               </AdvancedMarker>
             );
           })}
-        </Map>
 
-        {/* Custom toolbar — portaled as absolute overlay on the map container */}
-        {interactive && <MapDrawControl onBoundsChange={onDrawBounds} containerRef={containerRef} />}
+          {/* MUST be inside <Map> so useMap() returns the map instance */}
+          {interactive && <MapDrawControl onBoundsChange={onDrawBounds} containerRef={containerRef} />}
+        </Map>
       </APIProvider>
     </div>
   );
