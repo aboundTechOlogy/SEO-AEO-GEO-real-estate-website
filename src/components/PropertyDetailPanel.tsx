@@ -21,6 +21,20 @@ function DetailRow({ label, value }: { label: string; value: string }) {
   );
 }
 
+function DetailSection({ title, rows }: { title: string; rows: [string, string][] }) {
+  if (rows.length === 0) return null;
+  return (
+    <section className="bg-white border-b border-gray-200 px-[15px] py-[20px]">
+      <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[15px]">{title}</h3>
+      <div className="grid sm:grid-cols-2 gap-2">
+        {rows.map(([label, value]) => (
+          <DetailRow key={label} label={label} value={value} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function StatMetric({ label, value }: { label: string; value: string }) {
   return (
     <div className="px-[15px] py-[10px] text-center uppercase text-gray-500">
@@ -319,19 +333,97 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
   const isLongDescription = remarks.length > 340;
   const description = showFullDescription ? remarks : `${remarks.slice(0, 340)}${isLongDescription ? "..." : ""}`;
 
-  const detailItems = useMemo(
-    () => [
-      ["Property Type", property.PropertyType || "-"],
-      ["Sub Type", property.PropertySubType || "-"],
-      ["Year Built", property.YearBuilt ? String(property.YearBuilt) : "-"],
-      ["Living Area", property.LivingArea ? `${property.LivingArea.toLocaleString()} Sq.Ft` : "-"],
-      ["Lot Size", property.LotSizeArea ? `${property.LotSizeArea.toLocaleString()} Sq.Ft` : "-"],
-      ["Garage", property.GarageSpaces ? String(property.GarageSpaces) : "-"],
-      ["Association Fee", property.AssociationFee ? formatCurrency(property.AssociationFee) : "-"],
-      ["Status", property.StandardStatus || "-"],
-    ],
-    [property]
-  );
+  function fmtArr(arr: string[] | undefined | null): string | null {
+    if (!arr || arr.length === 0) return null;
+    return arr.join(", ");
+  }
+
+  function fmtSqft(val: number | null | undefined): string | null {
+    if (typeof val !== "number" || !Number.isFinite(val) || val <= 0) return null;
+    return `${val.toLocaleString()} Sq.Ft`;
+  }
+
+  function fmtAcres(val: number | null | undefined): string | null {
+    if (typeof val !== "number" || !Number.isFinite(val) || val <= 0) return null;
+    return `${val.toLocaleString(undefined, { maximumFractionDigits: 2 })} Acres`;
+  }
+
+  function fmtDate(val: string | null | undefined): string | null {
+    if (!val) return null;
+    const d = new Date(val);
+    if (isNaN(d.getTime())) return val;
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
+
+  type DetailPair = [string, string];
+
+  function collectRows(pairs: [string, string | null | undefined][]): DetailPair[] {
+    return pairs.filter((p): p is [string, string] => p[1] != null && p[1] !== "");
+  }
+
+  const basicInfoRows = collectRows([
+    ["Property Type", property.PropertyType || null],
+    ["Sub Type", property.PropertySubType || null],
+    ["Status", property.StandardStatus || null],
+    ["Year Built", property.YearBuilt ? String(property.YearBuilt) : null],
+    ["Living Area", fmtSqft(property.LivingArea)],
+    ["Lot Size", fmtSqft(property.LotSizeSquareFeet) || fmtSqft(property.LotSizeArea)],
+    ["Lot Acres", fmtAcres(property.LotSizeAcres)],
+    ["Stories", property.StoriesTotal ? String(property.StoriesTotal) : null],
+    ["Subdivision", property.SubdivisionName],
+    ["Building", property.BuildingName],
+    ["County", property.CountyOrParish],
+    ["Architectural Style", fmtArr(property.ArchitecturalStyle)],
+    ["Construction", fmtArr(property.ConstructionMaterials)],
+    ["Garage Spaces", property.GarageSpaces ? String(property.GarageSpaces) : null],
+    ["Attached Garage", property.AttachedGarageYN ? "Yes" : null],
+    ["Covered Spaces", property.CoveredSpaces ? String(property.CoveredSpaces) : null],
+    ["Days on Market", property.DaysOnMarket != null ? String(property.DaysOnMarket) : null],
+    ["List Date", fmtDate(property.ListingContractDate || null)],
+    ["Original List Price", property.OriginalListPrice ? formatCurrency(property.OriginalListPrice) : null],
+    ["Close Date", fmtDate(property.CloseDate)],
+    ["Close Price", property.ClosePrice ? formatCurrency(property.ClosePrice) : null],
+    ["Association Fee", property.AssociationFee ? `${formatCurrency(property.AssociationFee)}${property.AssociationFeeFrequency ? ` / ${property.AssociationFeeFrequency}` : ""}` : null],
+    ["Direction Faces", property.DirectionFaces],
+  ]);
+
+  const exteriorRows = collectRows([
+    ["Exterior Features", fmtArr(property.ExteriorFeatures)],
+    ["Roof", fmtArr(property.Roof)],
+    ["Pool Features", fmtArr(property.PoolFeatures)],
+    ["Pool", property.PoolPrivateYN ? "Private Pool" : null],
+    ["Patio / Porch", fmtArr(property.PatioAndPorchFeatures)],
+    ["Lot Features", fmtArr(property.LotFeatures)],
+    ["View", fmtArr(property.View)],
+    ["Waterfront", property.WaterfrontYN ? "Yes" : null],
+    ["Water Source", fmtArr(property.WaterSource)],
+    ["Sewer", fmtArr(property.Sewer)],
+  ]);
+
+  const interiorRows = collectRows([
+    ["Interior Features", fmtArr(property.InteriorFeatures)],
+    ["Appliances", fmtArr(property.Appliances)],
+    ["Flooring", fmtArr(property.Flooring)],
+    ["Cooling", fmtArr(property.Cooling)],
+    ["Heating", fmtArr(property.Heating)],
+    ["Levels", fmtArr(property.Levels)],
+  ]);
+
+  const propertyFeaturesRows = collectRows([
+    ["Parking", fmtArr(property.ParkingFeatures)],
+    ["Building Features", fmtArr(property.BuildingFeatures)],
+    ["Community Features", fmtArr(property.CommunityFeatures)],
+    ["Pets Allowed", fmtArr(property.PetsAllowed)],
+    ["Listing Terms", fmtArr(property.ListingTerms)],
+    ["Possession", fmtArr(property.Possession)],
+    ["Occupant Type", property.OccupantType],
+  ]);
+
+  const taxRows = collectRows([
+    ["Tax Annual Amount", property.TaxAnnualAmount ? formatCurrency(property.TaxAnnualAmount) : null],
+    ["Tax Year", property.TaxYear ? String(property.TaxYear) : null],
+    ["Tax Legal Description", property.TaxLegalDescription],
+  ]);
 
   const bathsCount =
     property.BathroomsTotalInteger ??
@@ -695,14 +787,11 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                   )}
                 </section>
 
-                <section className="bg-white border-b border-gray-200 px-[15px] py-[20px]">
-                  <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[15px]">Key Details</h3>
-                  <div className="grid sm:grid-cols-2 gap-2">
-                    {detailItems.map(([label, value]) => (
-                      <DetailRow key={label} label={label} value={value} />
-                    ))}
-                  </div>
-                </section>
+                <DetailSection title="Basic Information" rows={basicInfoRows} />
+                <DetailSection title="Exterior Features" rows={exteriorRows} />
+                <DetailSection title="Interior Features" rows={interiorRows} />
+                <DetailSection title="Property Features" rows={propertyFeaturesRows} />
+                {taxRows.length > 0 && <DetailSection title="Tax Information" rows={taxRows} />}
 
                 <div className="px-[15px] py-[20px] border-b border-gray-200">
                   <a
@@ -713,9 +802,18 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                   </a>
                 </div>
 
-                <div className="px-[15px] py-[20px] text-[11px] text-gray-500 leading-[1.6]">
-                  The multiple listing information is provided by the Miami Association of Realtors from a copyrighted
-                  compilation of listings. All information is deemed reliable but not guaranteed.
+                <div className="px-[15px] py-[20px] text-[11px] text-gray-500 leading-[1.6] space-y-2">
+                  {(property.ListOfficeName || property.ListAgentFullName) && (
+                    <p>
+                      Courtesy of{property.ListAgentFullName ? ` ${property.ListAgentFullName}` : ""}
+                      {property.ListOfficeName ? `, ${property.ListOfficeName}` : ""}
+                      {property.ListOfficePhone ? ` (${property.ListOfficePhone})` : ""}
+                    </p>
+                  )}
+                  <p>
+                    The multiple listing information is provided by the Miami Association of Realtors from a copyrighted
+                    compilation of listings. All information is deemed reliable but not guaranteed.
+                  </p>
                 </div>
               </div>
 
