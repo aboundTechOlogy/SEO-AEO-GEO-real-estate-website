@@ -71,8 +71,7 @@ export default function PropertyMap({
           streetViewControl={false}
           fullscreenControl={false}
           rotateControl={false}
-          zoomControl={interactive}
-          zoomControlOptions={{ position: ControlPosition.RIGHT_TOP }}
+          zoomControl={false}
           scaleControl={true}
         >
           {markers.map((marker, index) => {
