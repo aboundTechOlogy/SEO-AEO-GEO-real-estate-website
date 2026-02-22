@@ -94,7 +94,9 @@ export interface BridgeIdxSearchParams {
   minPrice?: number;
   maxPrice?: number;
   beds?: number;
+  maxBeds?: number;
   baths?: number;
+  maxBaths?: number;
   status?: "Active" | "Pending" | "Closed" | string;
   type?: string;
   types?: string[];
@@ -102,6 +104,24 @@ export interface BridgeIdxSearchParams {
   swLng?: number;
   neLat?: number;
   neLng?: number;
+  /** Free-text address/city/zip search */
+  q?: string;
+  /** Keyword search against remarks/building name */
+  keyword?: string;
+  /** Minimum garage spaces */
+  minGarage?: number;
+  /** Maximum days on market */
+  maxDom?: number;
+  /** Filter to waterfront-only listings */
+  waterfrontOnly?: boolean;
+  /** Filter to pool-only listings */
+  poolOnly?: boolean;
+  /** Exclude Pending/Contingent listings */
+  hidePending?: boolean;
+  /** Minimum living area (sq ft) */
+  minSqft?: number;
+  /** Maximum living area (sq ft) */
+  maxSqft?: number;
 }
 
 export interface BridgeIdxListingPhoto {
@@ -320,6 +340,10 @@ function buildIdxFilters(params: BridgeIdxSearchParams): string[] {
   const status = params.status || "Active";
   filters.push(`StandardStatus eq '${escapeOData(status)}'`);
 
+  if (params.hidePending) {
+    filters.push(`StandardStatus ne 'Pending'`);
+  }
+
   if (typeof params.minPrice === "number") {
     filters.push(`ListPrice ge ${params.minPrice}`);
   }
@@ -332,8 +356,54 @@ function buildIdxFilters(params: BridgeIdxSearchParams): string[] {
     filters.push(`BedroomsTotal ge ${params.beds}`);
   }
 
+  if (typeof params.maxBeds === "number") {
+    filters.push(`BedroomsTotal le ${params.maxBeds}`);
+  }
+
   if (typeof params.baths === "number") {
     filters.push(`BathroomsTotalInteger ge ${params.baths}`);
+  }
+
+  if (typeof params.maxBaths === "number") {
+    filters.push(`BathroomsTotalInteger le ${params.maxBaths}`);
+  }
+
+  if (typeof params.minSqft === "number") {
+    filters.push(`LivingArea ge ${params.minSqft}`);
+  }
+
+  if (typeof params.maxSqft === "number") {
+    filters.push(`LivingArea le ${params.maxSqft}`);
+  }
+
+  if (typeof params.minGarage === "number" && params.minGarage > 0) {
+    filters.push(`GarageSpaces ge ${params.minGarage}`);
+  }
+
+  if (typeof params.maxDom === "number") {
+    filters.push(`DaysOnMarket le ${params.maxDom}`);
+  }
+
+  if (params.waterfrontOnly) {
+    filters.push(`WaterfrontYN eq true`);
+  }
+
+  if (params.poolOnly) {
+    filters.push(`PoolPrivateYN eq true`);
+  }
+
+  if (params.q) {
+    const q = escapeOData(params.q.toLowerCase());
+    filters.push(
+      `(contains(tolower(UnparsedAddress), '${q}') or contains(tolower(City), '${q}') or contains(tolower(PostalCode), '${q}'))`
+    );
+  }
+
+  if (params.keyword) {
+    const kw = escapeOData(params.keyword.toLowerCase());
+    filters.push(
+      `(contains(tolower(PublicRemarks), '${kw}') or contains(tolower(BuildingName), '${kw}'))`
+    );
   }
 
   if (params.types && params.types.length > 0) {
@@ -467,12 +537,49 @@ function filterIdxMockListings(listings: BridgeIdxListing[], params: BridgeIdxSe
     filtered = filtered.filter((item) => item.price <= params.maxPrice!);
   }
 
+  if (params.hidePending) {
+    filtered = filtered.filter((item) => item.status !== "Pending");
+  }
+
   if (typeof params.beds === "number") {
     filtered = filtered.filter((item) => item.beds >= params.beds!);
   }
 
+  if (typeof params.maxBeds === "number") {
+    filtered = filtered.filter((item) => item.beds <= params.maxBeds!);
+  }
+
   if (typeof params.baths === "number") {
     filtered = filtered.filter((item) => item.baths >= params.baths!);
+  }
+
+  if (typeof params.maxBaths === "number") {
+    filtered = filtered.filter((item) => item.baths <= params.maxBaths!);
+  }
+
+  if (typeof params.minSqft === "number") {
+    filtered = filtered.filter((item) => (item.sqft ?? 0) >= params.minSqft!);
+  }
+
+  if (typeof params.maxSqft === "number") {
+    filtered = filtered.filter((item) => (item.sqft ?? 0) <= params.maxSqft!);
+  }
+
+  if (params.q) {
+    const q = params.q.toLowerCase();
+    filtered = filtered.filter(
+      (item) =>
+        item.address.toLowerCase().includes(q) ||
+        item.city.toLowerCase().includes(q) ||
+        item.zip.includes(q)
+    );
+  }
+
+  if (params.keyword) {
+    const kw = params.keyword.toLowerCase();
+    filtered = filtered.filter(
+      (item) => (item.buildingName ?? "").toLowerCase().includes(kw)
+    );
   }
 
   if (params.types && params.types.length > 0) {

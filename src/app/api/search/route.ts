@@ -9,6 +9,10 @@ const PROPERTY_TYPE_MAP: Record<string, string> = {
   "Vacant Land": "Land",
 };
 
+/** Features that map directly to Bridge boolean fields */
+const FEATURE_POOL_LABELS = ["Swimming Pool", "Pool"];
+const FEATURE_WATERFRONT_LABELS = ["Waterfront"];
+
 function parseNumber(value: string | null): number | undefined {
   if (value === null || value.trim() === "") {
     return undefined;
@@ -46,6 +50,19 @@ function parseSkip(search: URLSearchParams, top: number): number {
   return Math.max(0, (Math.max(1, Math.floor(page)) - 1) * top);
 }
 
+function parseDomMax(value: string | null): number | undefined {
+  if (!value || value === "Any") return undefined;
+  if (value === "Today") return 1;
+  const n = Number(value);
+  return Number.isFinite(n) && n > 0 ? n : undefined;
+}
+
+function parseGarage(value: string | null): number | undefined {
+  if (!value || value === "Any") return undefined;
+  const n = Number(value.replace("+", ""));
+  return Number.isFinite(n) && n > 0 ? n : undefined;
+}
+
 export async function GET(req: NextRequest) {
   const search = req.nextUrl.searchParams;
 
@@ -58,6 +75,27 @@ export async function GET(req: NextRequest) {
     ? typesRaw.split(",").map((t) => PROPERTY_TYPE_MAP[t.trim()] || t.trim()).filter(Boolean)
     : undefined;
 
+  // New params
+  const q = search.get("q") || undefined;
+  const keyword = search.get("keyword") || undefined;
+  const maxBeds = parseNumber(search.get("maxBeds"));
+  const maxBaths = parseNumber(search.get("maxBaths"));
+  const minSqft = parseNumber(search.get("minSqft"));
+  const maxSqft = parseNumber(search.get("maxSqft"));
+  const minGarage = parseGarage(search.get("minGarage"));
+  const maxDom = parseDomMax(search.get("maxDom"));
+  const hidePending = search.get("hidePending") === "true";
+
+  const waterfrontParam = search.get("waterfront");
+  const waterfrontOnly = waterfrontParam && waterfrontParam !== "Any" ? true : undefined;
+
+  const featuresRaw = search.get("features");
+  const features = featuresRaw ? featuresRaw.split(",").map((f) => f.trim()).filter(Boolean) : [];
+  const poolOnly = features.some((f) => FEATURE_POOL_LABELS.includes(f)) || undefined;
+  const poolOrWaterfrontOnly = features.some((f) => FEATURE_WATERFRONT_LABELS.includes(f))
+    ? true
+    : undefined;
+
   const result = await fetchIdxSearch({
     top,
     skip,
@@ -65,7 +103,9 @@ export async function GET(req: NextRequest) {
     minPrice: parseNumber(search.get("minPrice")),
     maxPrice: parseNumber(search.get("maxPrice")),
     beds: parseNumber(search.get("beds")),
+    maxBeds,
     baths: parseNumber(search.get("baths")),
+    maxBaths,
     status: search.get("status") || "Active",
     type: search.get("type") || undefined,
     types,
@@ -73,6 +113,15 @@ export async function GET(req: NextRequest) {
     swLng: parseNumber(search.get("swLng")),
     neLat: parseNumber(search.get("neLat")),
     neLng: parseNumber(search.get("neLng")),
+    q,
+    keyword,
+    minGarage,
+    maxDom,
+    waterfrontOnly: waterfrontOnly || poolOrWaterfrontOnly || undefined,
+    poolOnly,
+    hidePending: hidePending || undefined,
+    minSqft,
+    maxSqft,
   });
 
   return NextResponse.json(result);

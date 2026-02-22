@@ -51,14 +51,10 @@ const STATUS_TO_BRIDGE: Record<string, string> = {
 
 const SORT_OPTIONS = [
   { label: "Newest Listings", orderby: "OnMarketTimestamp desc" },
-  { label: "Modified Listings", orderby: "OnMarketTimestamp desc" },
   { label: "Highest Price", orderby: "ListPrice desc" },
   { label: "Lowest Price", orderby: "ListPrice asc" },
   { label: "Highest Sq.Ft", orderby: "LivingArea desc" },
   { label: "Lowest Sq.Ft", orderby: "LivingArea asc" },
-  { label: "Just Reduced", orderby: "ListPrice desc" },
-  { label: "Highest Price/Sq.Ft", orderby: "ListPrice desc" },
-  { label: "Lowest Price/Sq.Ft", orderby: "ListPrice asc" },
 ] as const;
 
 const DEFAULT_SORT = SORT_OPTIONS[0].label;
@@ -353,6 +349,91 @@ function StarIcon() {
   );
 }
 
+/* ==================== URL HELPERS ==================== */
+
+function buildSearchUrl(
+  filterValues: SearchFilterValues,
+  status: string,
+  sortLabel: string,
+  page: number,
+  view: ViewMode
+): string {
+  const params = new URLSearchParams();
+
+  if (filterValues.priceMin) params.set("minPrice", filterValues.priceMin);
+  if (filterValues.priceMax) params.set("maxPrice", filterValues.priceMax);
+  if (filterValues.bedMin) params.set("beds", filterValues.bedMin);
+  if (filterValues.bathMin) params.set("baths", filterValues.bathMin);
+  if (filterValues.bedMax) params.set("maxBeds", filterValues.bedMax);
+  if (filterValues.bathMax) params.set("maxBaths", filterValues.bathMax);
+  if (filterValues.propertyTypes.length > 0) params.set("types", filterValues.propertyTypes.join(","));
+  if (filterValues.addressQuery) params.set("q", filterValues.addressQuery);
+  if (filterValues.keyword) params.set("keyword", filterValues.keyword);
+  if (filterValues.garage !== "Any") params.set("garage", filterValues.garage);
+  if (filterValues.domMax !== "Any") params.set("maxDom", filterValues.domMax);
+  if (filterValues.waterfront !== "Any") params.set("waterfront", filterValues.waterfront);
+  if (filterValues.features.length > 0) params.set("features", filterValues.features.join(","));
+  if (filterValues.hidePending) params.set("hidePending", "true");
+  if (filterValues.minSqft) params.set("minSqft", filterValues.minSqft);
+  if (filterValues.maxSqft) params.set("maxSqft", filterValues.maxSqft);
+
+  params.set("status", status);
+  if (sortLabel !== DEFAULT_SORT) params.set("sort", sortLabel);
+  if (page > 1) params.set("page", String(page));
+
+  const qs = params.toString();
+  const hash = view !== "grid" ? `#${view}` : "";
+  return `/search${qs ? `?${qs}` : ""}${hash}`;
+}
+
+function hydrateFromUrl(): {
+  filterPartial: Partial<SearchFilterValues>;
+  status?: string;
+  sortLabel?: string;
+  page?: number;
+  view?: ViewMode;
+} {
+  const search = new URLSearchParams(window.location.search);
+  const hash = window.location.hash.replace("#", "");
+
+  const filterPartial: Partial<SearchFilterValues> = {};
+  if (search.get("minPrice")) filterPartial.priceMin = search.get("minPrice")!;
+  if (search.get("maxPrice")) filterPartial.priceMax = search.get("maxPrice")!;
+  if (search.get("beds")) filterPartial.bedMin = search.get("beds")!;
+  if (search.get("baths")) filterPartial.bathMin = search.get("baths")!;
+  if (search.get("maxBeds")) filterPartial.bedMax = search.get("maxBeds")!;
+  if (search.get("maxBaths")) filterPartial.bathMax = search.get("maxBaths")!;
+  if (search.get("q")) filterPartial.addressQuery = search.get("q")!;
+  if (search.get("keyword")) filterPartial.keyword = search.get("keyword")!;
+  if (search.get("garage")) filterPartial.garage = search.get("garage")!;
+  if (search.get("maxDom")) filterPartial.domMax = search.get("maxDom")!;
+  if (search.get("waterfront")) filterPartial.waterfront = search.get("waterfront")!;
+  if (search.get("features")) filterPartial.features = search.get("features")!.split(",").filter(Boolean);
+  if (search.get("hidePending") === "true") filterPartial.hidePending = true;
+  if (search.get("minSqft")) filterPartial.minSqft = search.get("minSqft")!;
+  if (search.get("maxSqft")) filterPartial.maxSqft = search.get("maxSqft")!;
+  if (search.get("types")) filterPartial.propertyTypes = search.get("types")!.split(",").filter(Boolean);
+
+  const statusFromUrl = search.get("status") || undefined;
+  const sortFromUrl = SORT_OPTIONS.some((o) => o.label === search.get("sort"))
+    ? (search.get("sort") as string)
+    : undefined;
+  const pageFromUrl = Number(search.get("page")) > 1 ? Number(search.get("page")) : undefined;
+  const viewFromUrl: ViewMode | undefined = ["grid", "map", "list"].includes(hash)
+    ? (hash as ViewMode)
+    : undefined;
+
+  return {
+    filterPartial,
+    status: statusFromUrl,
+    sortLabel: sortFromUrl,
+    page: pageFromUrl,
+    view: viewFromUrl,
+  };
+}
+
+/* ==================== PAGE ==================== */
+
 export default function SearchPage() {
   const router = useRouter();
   const [status, setStatus] = useState<string>("For Sale");
@@ -362,6 +443,8 @@ export default function SearchPage() {
   const [drawBounds, setDrawBounds] = useState<DrawCoords | null>(null);
   const [highlightedListingId, setHighlightedListingId] = useState<string | null>(null);
   const [filterValues, setFilterValues] = useState<SearchFilterValues>(DEFAULT_FILTER_VALUES);
+  const [saveToast, setSaveToast] = useState<string | null>(null);
+  const [hydrated, setHydrated] = useState(false);
 
   const handleFilterChange = (partial: Partial<SearchFilterValues>) => {
     setFilterValues((prev) => ({ ...prev, ...partial }));
@@ -387,12 +470,28 @@ export default function SearchPage() {
     return () => window.removeEventListener("resize", measure);
   }, []);
 
+  // Hydrate all filter state from URL on mount
   useEffect(() => {
-    const hash = window.location.hash.replace("#", "") as ViewMode;
-    if (["grid", "map", "list"].includes(hash)) {
-      setViewState(hash);
+    const { filterPartial, status: urlStatus, sortLabel: urlSort, page: urlPage, view: urlView } =
+      hydrateFromUrl();
+
+    if (Object.keys(filterPartial).length > 0) {
+      setFilterValues((prev) => ({ ...prev, ...filterPartial }));
     }
+    if (urlStatus) setStatus(urlStatus);
+    if (urlSort) setSortLabel(urlSort);
+    if (urlPage) setPage(urlPage);
+    if (urlView) setViewState(urlView);
+
+    setHydrated(true);
   }, []);
+
+  // Sync URL on state changes (after hydration)
+  useEffect(() => {
+    if (!hydrated) return;
+    const url = buildSearchUrl(filterValues, status, sortLabel, page, view);
+    window.history.replaceState(null, "", url);
+  }, [filterValues, status, sortLabel, page, view, hydrated]);
 
   useEffect(() => {
     setPage(1);
@@ -418,7 +517,18 @@ export default function SearchPage() {
     if (filterValues.priceMax) params.set("maxPrice", filterValues.priceMax);
     if (filterValues.bedMin) params.set("beds", filterValues.bedMin);
     if (filterValues.bathMin) params.set("baths", filterValues.bathMin);
+    if (filterValues.bedMax) params.set("maxBeds", filterValues.bedMax);
+    if (filterValues.bathMax) params.set("maxBaths", filterValues.bathMax);
     if (filterValues.propertyTypes.length > 0) params.set("types", filterValues.propertyTypes.join(","));
+    if (filterValues.addressQuery) params.set("q", filterValues.addressQuery);
+    if (filterValues.keyword) params.set("keyword", filterValues.keyword);
+    if (filterValues.garage && filterValues.garage !== "Any") params.set("minGarage", filterValues.garage);
+    if (filterValues.domMax && filterValues.domMax !== "Any") params.set("maxDom", filterValues.domMax);
+    if (filterValues.waterfront && filterValues.waterfront !== "Any") params.set("waterfront", filterValues.waterfront);
+    if (filterValues.features.length > 0) params.set("features", filterValues.features.join(","));
+    if (filterValues.hidePending) params.set("hidePending", "true");
+    if (filterValues.minSqft) params.set("minSqft", filterValues.minSqft);
+    if (filterValues.maxSqft) params.set("maxSqft", filterValues.maxSqft);
 
     if (bbox) {
       params.set("swLat", String(bbox.swLat));
@@ -525,7 +635,28 @@ export default function SearchPage() {
 
   const setView = (newView: ViewMode) => {
     setViewState(newView);
-    window.history.replaceState(null, "", `/search#${newView}`);
+  };
+
+  const handleSaveSearch = () => {
+    const save = {
+      label: filterValues.addressQuery || "South Florida Search",
+      url: window.location.href,
+      filterValues,
+      status,
+      sortLabel,
+      savedAt: new Date().toISOString(),
+    };
+
+    try {
+      const existing = JSON.parse(localStorage.getItem("savedSearches") || "[]") as typeof save[];
+      existing.unshift(save);
+      localStorage.setItem("savedSearches", JSON.stringify(existing.slice(0, 20)));
+      setSaveToast("Search saved!");
+    } catch {
+      setSaveToast("Could not save search.");
+    }
+
+    setTimeout(() => setSaveToast(null), 2500);
   };
 
   const handleMarkerClick = (listingKey: string) => {
@@ -548,6 +679,9 @@ export default function SearchPage() {
           onViewChange={setView}
           filterValues={filterValues}
           onFilterChange={handleFilterChange}
+          totalCount={totalCount}
+          onSaveSearch={handleSaveSearch}
+          saveMessage={saveToast}
         />
         <MobileSearchBar
           status={status}
@@ -556,6 +690,8 @@ export default function SearchPage() {
           onViewChange={setView}
           filterValues={filterValues}
           onFilterChange={handleFilterChange}
+          totalCount={totalCount}
+          onSaveSearch={handleSaveSearch}
         />
       </div>
 
