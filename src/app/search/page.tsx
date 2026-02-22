@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import SearchPropertyCard from "@/components/SearchPropertyCard";
 import { DesktopSearchBar, MobileSearchBar } from "@/components/SearchFilters";
 import { MOCK_SEARCH } from "@/data/mockListings";
+import PropertyMap from "@/components/PropertyMap";
 
 type ViewMode = "grid" | "map" | "list";
 
@@ -258,31 +259,13 @@ export default function SearchPage() {
           style={{ height: "calc(100vh - 72px - 56px)" }}
         >
           {/* Map panel — dark, full width on mobile, 60% on lg, 50% on xl */}
-          <div className="w-full lg:w-[60%] xl:w-1/2 bg-neutral-900 flex items-center justify-center shrink-0">
-            <div className="text-center px-6">
-              <svg
-                className="w-12 h-12 text-neutral-600 mx-auto mb-3"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                strokeWidth={1}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 0 1 15 0Z"
-                />
-              </svg>
-              <p className="text-neutral-500 text-sm uppercase tracking-widest mb-2">
-                Interactive Map
-              </p>
-              <p className="text-neutral-600 text-xs">Map integration coming soon</p>
-            </div>
+          <div className="w-full lg:w-[60%] xl:w-1/2 shrink-0">
+            <PropertyMap
+              center={{ lat: 25.95, lng: -80.15 }}
+              zoom={10}
+              interactive={true}
+              className="w-full h-full"
+            />
           </div>
 
           {/* Right panel — white, hidden on mobile, 40% on lg, 50% on xl */}
