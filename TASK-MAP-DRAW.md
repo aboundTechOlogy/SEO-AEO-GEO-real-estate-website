@@ -59,11 +59,14 @@ A custom map control button that:
 - `src/components/PropertyMap.tsx` (add draw control + onDrawBounds prop)
 - `src/app/search/page.tsx` (wire up onDrawBounds state)
 
-## DO NOT Touch
-- `src/components/SearchFilters.tsx`
-- `src/components/SearchPropertyCard.tsx`
-- Any page other than search
+## DO NOT Touch — CRITICAL
+- **`src/components/SearchFilters.tsx` — DO NOT MODIFY. The search/filter bar layout is final. Do not change any styling, structure, dropdowns, or behavior.**
+- **`src/components/SearchPropertyCard.tsx` — DO NOT MODIFY.**
+- **`src/data/mockListings.ts` — DO NOT MODIFY.**
+- Any page other than `src/app/search/page.tsx`
 - The map dark theme is already removed — don't re-add it
+- Do not change the search page layout, grid, list view, or sorter components
+- The ONLY changes to `search/page.tsx` should be importing the draw bounds state and passing the callback to PropertyMap
 
 ## Test
 - `npm run build` must pass with zero errors
