@@ -36,7 +36,7 @@ export default async function NeighborhoodPage({ params }: Props) {
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section className="px-6 py-16 border-b border-white/5">
+      <section className="px-6 py-16 border-b border-gray-200">
         <div className="max-w-7xl mx-auto">
           <p className="text-neutral-500 text-sm uppercase tracking-wider mb-3">
             Neighborhood Guide
@@ -44,17 +44,17 @@ export default async function NeighborhoodPage({ params }: Props) {
           <h1 className="font-playfair text-5xl md:text-6xl mb-3">
             {n.name}
           </h1>
-          <p className="font-playfair text-xl text-neutral-400 italic mb-6">
+          <p className="font-playfair text-xl text-gray-600 italic mb-6">
             {n.tagline}
           </p>
-          <p className="text-neutral-300 leading-relaxed max-w-3xl">
+          <p className="text-gray-600 leading-relaxed max-w-3xl">
             {n.heroDescription}
           </p>
         </div>
       </section>
 
       {/* Market Stats */}
-      <section className="px-6 py-16 bg-neutral-900/50">
+      <section className="px-6 py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto">
           <h2 className="font-playfair text-3xl mb-8">
             Market Snapshot
@@ -65,35 +65,35 @@ export default async function NeighborhoodPage({ params }: Props) {
               {n.name} real estate market statistics
             </caption>
             <thead>
-              <tr className="border-b border-white/10 text-left">
-                <th className="py-3 text-neutral-400 font-normal">Metric</th>
-                <th className="py-3 text-neutral-400 font-normal text-right">
+              <tr className="border-b border-gray-200 text-left">
+                <th className="py-3 text-gray-500 font-normal">Metric</th>
+                <th className="py-3 text-gray-500 font-normal text-right">
                   Value
                 </th>
               </tr>
             </thead>
-            <tbody className="text-neutral-200">
-              <tr className="border-b border-white/5">
+            <tbody className="text-gray-700">
+              <tr className="border-b border-gray-200">
                 <td className="py-3">Median Price</td>
-                <td className="py-3 text-right font-medium text-white">
+                <td className="py-3 text-right font-medium text-[#1a1a1a]">
                   {n.stats.medianPrice}
                 </td>
               </tr>
-              <tr className="border-b border-white/5">
+              <tr className="border-b border-gray-200">
                 <td className="py-3">Avg Days on Market</td>
                 <td className="py-3 text-right">{n.stats.avgDom}</td>
               </tr>
-              <tr className="border-b border-white/5">
+              <tr className="border-b border-gray-200">
                 <td className="py-3">Price per Sq Ft</td>
                 <td className="py-3 text-right">{n.stats.pricePerSqft}</td>
               </tr>
-              <tr className="border-b border-white/5">
+              <tr className="border-b border-gray-200">
                 <td className="py-3">Active Inventory</td>
                 <td className="py-3 text-right">
                   {n.stats.activeInventory}
                 </td>
               </tr>
-              <tr className="border-b border-white/5">
+              <tr className="border-b border-gray-200">
                 <td className="py-3">Price Range</td>
                 <td className="py-3 text-right">
                   {n.priceRange.low} – {n.priceRange.high}
@@ -117,22 +117,22 @@ export default async function NeighborhoodPage({ params }: Props) {
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12">
           <div>
             <h2 className="font-playfair text-3xl mb-4">Overview</h2>
-            <p className="text-neutral-300 leading-relaxed">{n.overview}</p>
+            <p className="text-gray-600 leading-relaxed">{n.overview}</p>
           </div>
           <div>
             <h2 className="font-playfair text-3xl mb-4">Lifestyle</h2>
-            <p className="text-neutral-300 leading-relaxed">{n.lifestyle}</p>
+            <p className="text-gray-600 leading-relaxed">{n.lifestyle}</p>
           </div>
         </div>
       </section>
 
       {/* Buyer Profile */}
-      <section className="px-6 py-16 bg-neutral-900/50">
+      <section className="px-6 py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto">
           <h2 className="font-playfair text-3xl mb-4">
             Who Buys in {n.name}?
           </h2>
-          <p className="text-neutral-300 leading-relaxed max-w-3xl">
+          <p className="text-gray-600 leading-relaxed max-w-3xl">
             {n.buyerProfile}
           </p>
         </div>
@@ -146,9 +146,9 @@ export default async function NeighborhoodPage({ params }: Props) {
             {n.highlights.map((h) => (
               <div
                 key={h}
-                className="p-4 border border-white/5 bg-white/[0.02] rounded-sm"
+                className="p-4 border border-gray-200 bg-white shadow-sm rounded-sm"
               >
-                <p className="text-neutral-200 text-sm">{h}</p>
+                <p className="text-gray-700 text-sm">{h}</p>
               </div>
             ))}
           </div>
@@ -156,7 +156,7 @@ export default async function NeighborhoodPage({ params }: Props) {
       </section>
 
       {/* FAQ — FAQPage schema for AEO */}
-      <section className="px-6 py-16 bg-neutral-900/50">
+      <section className="px-6 py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto">
           <h2 className="font-playfair text-3xl mb-8">
             Frequently Asked Questions
@@ -164,10 +164,10 @@ export default async function NeighborhoodPage({ params }: Props) {
           <div className="space-y-6 max-w-3xl">
             {n.faqs.map((faq) => (
               <div key={faq.question}>
-                <h3 className="text-white font-medium mb-2">
+                <h3 className="text-[#1a1a1a] font-medium mb-2">
                   {faq.question}
                 </h3>
-                <p className="text-neutral-400 text-sm leading-relaxed">
+                <p className="text-gray-600 text-sm leading-relaxed">
                   {faq.answer}
                 </p>
               </div>
@@ -182,13 +182,13 @@ export default async function NeighborhoodPage({ params }: Props) {
           <h2 className="font-playfair text-3xl mb-4">
             Explore {n.name}
           </h2>
-          <p className="text-neutral-400 mb-8">
+          <p className="text-gray-600 mb-8">
             Ready to find your home in {n.name}? Whether you&apos;re buying,
             investing, or just exploring — I can help you navigate this market.
           </p>
           <a
             href={`mailto:andrew@iamandrewwhalen.com?subject=Interested in ${n.name} Real Estate`}
-            className="inline-block px-8 py-3 bg-white hover:bg-neutral-200 text-neutral-950 transition-colors rounded-sm tracking-wider uppercase text-sm"
+            className="inline-block px-8 py-3 bg-[#1a1a1a] hover:bg-[#333333] text-white transition-colors rounded-sm tracking-wider uppercase text-sm"
           >
             Get in Touch
           </a>

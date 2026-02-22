@@ -3,11 +3,18 @@
 :root {
   --font-playfair: "Playfair Display", serif;
   --font-inter: "Inter", sans-serif;
+  --page-bg: #ffffff;
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --border-light: #e5e7eb;
+  --card-bg: #f9fafb;
+  --section-dark: #0a0a0a;
 }
 
 @theme inline {
-  --color-background: #0a0a0a;
-  --color-foreground: #ffffff;
+  --color-background: #ffffff;
+  --color-foreground: #1a1a1a;
   --font-sans: var(--font-inter);
   --font-serif: var(--font-playfair);
 }
@@ -34,10 +41,10 @@ html {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: #f3f4f6;
 }
 ::-webkit-scrollbar-thumb {
-  background: #333;
+  background: #d1d5db;
   border-radius: 3px;
 }
 

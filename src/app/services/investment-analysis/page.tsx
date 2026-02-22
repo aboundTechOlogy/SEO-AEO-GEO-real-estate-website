@@ -38,16 +38,16 @@ export default function InvestmentAnalysisPage() {
         </div>
       </section>
 
-      <section className="bg-[#0a0a0a] py-16 md:py-20 px-6">
+      <section className="bg-white py-16 md:py-20 px-6">
         <div className="max-w-7xl mx-auto grid gap-10 lg:grid-cols-[1.2fr_0.8fr] items-start">
-          <ScrollReveal className="bg-neutral-900 border border-white/10 p-6 md:p-8" y={24}>
-            <h2 className="font-playfair text-3xl text-white mb-6" data-reveal>
+          <ScrollReveal className="bg-white border border-gray-200 shadow-sm p-6 md:p-8" y={24}>
+            <h2 className="font-playfair text-3xl text-[#1a1a1a] mb-6" data-reveal>
               Share Your Investment Criteria
             </h2>
             <div data-reveal>
               <InvestmentAnalysisLeadForm />
             </div>
-            <p className="text-sm text-neutral-400 mt-6" data-reveal>
+            <p className="text-sm text-gray-500 mt-6" data-reveal>
               Complimentary • No Obligation • Personalized for your goals
             </p>
           </ScrollReveal>
@@ -55,32 +55,32 @@ export default function InvestmentAnalysisPage() {
           <ScrollReveal className="space-y-6 lg:pt-2" y={24}>
             <div data-reveal>
               <p className="text-neutral-500 text-xs uppercase tracking-[0.2em] mb-3">What Is Included?</p>
-              <h2 className="font-playfair text-3xl text-white mb-4">Actionable Investment Clarity</h2>
+              <h2 className="font-playfair text-3xl text-[#1a1a1a] mb-4">Actionable Investment Clarity</h2>
             </div>
 
-            <p className="text-neutral-300 leading-relaxed" data-reveal>
+            <p className="text-gray-600 leading-relaxed" data-reveal>
               This analysis is built to answer the questions that actually drive investment decisions: expected income, expense
               ranges, financing assumptions, and projected returns under realistic operating conditions.
             </p>
 
-            <p className="text-neutral-300 leading-relaxed" data-reveal>
+            <p className="text-gray-600 leading-relaxed" data-reveal>
               You receive a practical view of cash flow and ROI potential based on property type, location, and strategy, whether
               you are evaluating long-term rentals, short-term rentals, or value-add opportunities.
             </p>
 
-            <p className="text-neutral-300 leading-relaxed" data-reveal>
+            <p className="text-gray-600 leading-relaxed" data-reveal>
               I also include South Florida market context to help you evaluate risk and timing, so each acquisition can fit into
               a broader portfolio strategy rather than standing alone.
             </p>
 
-            <div className="border border-white/10 p-6" data-reveal>
+            <div className="border border-gray-200 bg-gray-50 p-6" data-reveal>
               <p className="text-neutral-500 text-xs uppercase tracking-[0.2em] mb-3">Direct Contact</p>
-              <a href="tel:+13054559744" className="block text-neutral-200 hover:text-white transition-colors mb-2">
+              <a href="tel:+13054559744" className="block text-gray-700 hover:text-[#1a1a1a] transition-colors mb-2">
                 (305) 455-9744
               </a>
               <a
                 href="mailto:Andrew@IamAndrewWhalen.com"
-                className="block text-neutral-200 hover:text-white transition-colors"
+                className="block text-gray-700 hover:text-[#1a1a1a] transition-colors"
               >
                 Andrew@IamAndrewWhalen.com
               </a>
@@ -89,7 +89,7 @@ export default function InvestmentAnalysisPage() {
         </div>
       </section>
 
-      <section className="bg-neutral-900 py-20 px-6 text-center">
+      <section className="bg-[#0a0a0a] py-20 px-6 text-center">
         <ScrollReveal className="max-w-3xl mx-auto" y={24}>
           <h2 className="font-playfair text-4xl md:text-5xl text-white mb-4" data-reveal>
             Ready to get started?

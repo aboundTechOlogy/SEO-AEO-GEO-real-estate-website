@@ -38,16 +38,16 @@ export default function MarketAnalysisPage() {
         </div>
       </section>
 
-      <section className="bg-[#0a0a0a] py-16 md:py-20 px-6">
+      <section className="bg-white py-16 md:py-20 px-6">
         <div className="max-w-7xl mx-auto grid gap-10 lg:grid-cols-[1.2fr_0.8fr] items-start">
-          <ScrollReveal className="bg-neutral-900 border border-white/10 p-6 md:p-8" y={24}>
-            <h2 className="font-playfair text-3xl text-white mb-6" data-reveal>
+          <ScrollReveal className="bg-white border border-gray-200 shadow-sm p-6 md:p-8" y={24}>
+            <h2 className="font-playfair text-3xl text-[#1a1a1a] mb-6" data-reveal>
               Tell Us About Your Property
             </h2>
             <div data-reveal>
               <MarketAnalysisLeadForm />
             </div>
-            <p className="text-sm text-neutral-400 mt-6" data-reveal>
+            <p className="text-sm text-gray-500 mt-6" data-reveal>
               Complimentary • No Obligation • Delivered within 48 hours
             </p>
           </ScrollReveal>
@@ -55,33 +55,33 @@ export default function MarketAnalysisPage() {
           <ScrollReveal className="space-y-6 lg:pt-2" y={24}>
             <div data-reveal>
               <p className="text-neutral-500 text-xs uppercase tracking-[0.2em] mb-3">What Is a CMA?</p>
-              <h2 className="font-playfair text-3xl text-white mb-4">A Pricing Strategy, Not Just a Number</h2>
+              <h2 className="font-playfair text-3xl text-[#1a1a1a] mb-4">A Pricing Strategy, Not Just a Number</h2>
             </div>
 
-            <p className="text-neutral-300 leading-relaxed" data-reveal>
+            <p className="text-gray-600 leading-relaxed" data-reveal>
               A comparative market analysis (CMA) evaluates your property against relevant recent sales, current competition,
               and active buyer behavior. It gives you an evidence-based value range so decisions are tied to market reality,
               not guesswork.
             </p>
 
-            <p className="text-neutral-300 leading-relaxed" data-reveal>
+            <p className="text-gray-600 leading-relaxed" data-reveal>
               The right pricing strategy directly impacts showings, offer quality, and time on market. Price too high and you
               lose momentum. Price too low and you leave equity behind. A strong CMA helps you launch with clarity and leverage.
             </p>
 
-            <p className="text-neutral-300 leading-relaxed" data-reveal>
+            <p className="text-gray-600 leading-relaxed" data-reveal>
               Your analysis includes localized trends, supply and demand conditions, and strategic recommendations tailored to
               your home and timeline across South Florida&apos;s luxury market.
             </p>
 
-            <div className="border border-white/10 p-6" data-reveal>
+            <div className="border border-gray-200 bg-gray-50 p-6" data-reveal>
               <p className="text-neutral-500 text-xs uppercase tracking-[0.2em] mb-3">Direct Contact</p>
-              <a href="tel:+13054559744" className="block text-neutral-200 hover:text-white transition-colors mb-2">
+              <a href="tel:+13054559744" className="block text-gray-700 hover:text-[#1a1a1a] transition-colors mb-2">
                 (305) 455-9744
               </a>
               <a
                 href="mailto:Andrew@IamAndrewWhalen.com"
-                className="block text-neutral-200 hover:text-white transition-colors"
+                className="block text-gray-700 hover:text-[#1a1a1a] transition-colors"
               >
                 Andrew@IamAndrewWhalen.com
               </a>
@@ -90,7 +90,7 @@ export default function MarketAnalysisPage() {
         </div>
       </section>
 
-      <section className="bg-neutral-900 py-20 px-6 text-center">
+      <section className="bg-[#0a0a0a] py-20 px-6 text-center">
         <ScrollReveal className="max-w-3xl mx-auto" y={24}>
           <h2 className="font-playfair text-4xl md:text-5xl text-white mb-4" data-reveal>
             Ready to get started?

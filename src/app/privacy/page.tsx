@@ -8,15 +8,15 @@ export const metadata: Metadata = {
 export default function PrivacyPolicyPage() {
   return (
     <div className="pt-24 pb-16 px-6">
-      <div className="max-w-3xl mx-auto prose prose-invert prose-neutral">
+      <div className="max-w-3xl mx-auto prose prose-neutral">
         <h1 className="font-playfair text-4xl mb-8">Privacy Policy</h1>
-        <p className="text-neutral-400 text-sm mb-8">
+        <p className="text-gray-500 text-sm mb-8">
           Last updated: February 17, 2026
         </p>
 
-        <div className="space-y-8 text-neutral-300 leading-relaxed text-sm">
+        <div className="space-y-8 text-gray-600 leading-relaxed text-sm">
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               Information We Collect
             </h2>
             <p>
@@ -30,11 +30,11 @@ export default function PrivacyPolicyPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               How We Use Your Information
             </h2>
             <p>We use the information we collect to:</p>
-            <ul className="list-disc list-inside space-y-1 text-neutral-400 mt-2">
+            <ul className="list-disc list-inside space-y-1 text-gray-600 mt-2">
               <li>Respond to your inquiries about properties and services</li>
               <li>Provide you with real estate market information and updates</li>
               <li>Improve our website and the services we offer</li>
@@ -43,11 +43,11 @@ export default function PrivacyPolicyPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               We Do Not Sell Your Data
             </h2>
             <p>
-              <strong className="text-white">
+              <strong className="text-[#1a1a1a]">
                 We do not sell, trade, or otherwise transfer your personally
                 identifiable information to outside parties.
               </strong>{" "}
@@ -58,7 +58,7 @@ export default function PrivacyPolicyPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               MLS Data Usage
             </h2>
             <p>
@@ -73,7 +73,7 @@ export default function PrivacyPolicyPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               Cookies and Tracking
             </h2>
             <p>
@@ -85,7 +85,7 @@ export default function PrivacyPolicyPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               Third-Party Services
             </h2>
             <p>
@@ -97,7 +97,7 @@ export default function PrivacyPolicyPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               Your Rights
             </h2>
             <p>
@@ -108,13 +108,13 @@ export default function PrivacyPolicyPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               Contact Information
             </h2>
             <p>
               If you have questions about this privacy policy, please contact:
             </p>
-            <div className="mt-2 text-neutral-400">
+            <div className="mt-2 text-gray-600">
               <p>Andrew Whalen</p>
               <p>LoKation Real Estate</p>
               <p>1900 N Bayshore Dr, Suite 120</p>

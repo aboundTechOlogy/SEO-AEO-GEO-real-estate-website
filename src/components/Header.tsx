@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import NavDropdown from "@/components/NavDropdown";
 import MegaMenu from "@/components/MegaMenu";
 import UserMenu from "@/components/UserMenu";
@@ -43,28 +41,8 @@ const SERVICES_ITEMS = [
 ];
 
 export default function Header() {
-  const pathname = usePathname();
-  const isHome = pathname === "/";
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    if (!isHome) return;
-
-    function onScroll() {
-      setScrolled(window.scrollY >= 80);
-    }
-
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [isHome]);
-
-  const transparent = isHome && !scrolled;
-  const bg = transparent ? "bg-transparent" : "bg-black";
-  const border = transparent ? "border-b border-white/10" : "border-b border-black/20";
-
   return (
-    <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${bg} ${border}`}>
+    <header className="fixed top-0 w-full z-50 bg-[#0a0a0a] border-b border-white/10">
       {/* Desktop nav — grid layout, NO transforms (transforms break fixed positioning in children) */}
       <nav className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-center w-full px-4 lg:px-6 py-4 min-[1440px]:py-5">
         {/* Left: Primary Nav Links */}

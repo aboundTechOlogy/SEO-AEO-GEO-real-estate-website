@@ -48,7 +48,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
-      <body className="bg-neutral-950 text-white antialiased font-sans">
+      <body className="bg-white text-[#1a1a1a] antialiased font-sans">
         <AuthProvider>
           <Header />
           <main className="min-h-screen">{children}</main>

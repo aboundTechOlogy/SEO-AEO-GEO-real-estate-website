@@ -36,23 +36,23 @@ export default function AccessibilityPage() {
       </section>
 
       {/* Content */}
-      <section className="bg-[#0a0a0a] py-20 md:py-28 px-6">
+      <section className="bg-white py-20 md:py-28 px-6">
         <div className="max-w-3xl mx-auto">
-          <div className="prose prose-invert max-w-none">
-            <h2 className="font-playfair text-3xl text-white mb-6">
+          <div className="prose prose-neutral max-w-none">
+            <h2 className="font-playfair text-3xl text-[#1a1a1a] mb-6">
               Our Commitment to Accessibility
             </h2>
-            <p className="text-neutral-300 leading-relaxed mb-6">
+            <p className="text-gray-600 leading-relaxed mb-6">
               Andrew Whalen is committed to ensuring digital accessibility for
               people with disabilities. We continually improve the user
               experience for everyone and apply the relevant accessibility
               standards to ensure we provide equal access to all of our users.
             </p>
 
-            <h3 className="font-playfair text-2xl text-white mt-10 mb-4">
+            <h3 className="font-playfair text-2xl text-[#1a1a1a] mt-10 mb-4">
               Standards
             </h3>
-            <p className="text-neutral-300 leading-relaxed mb-6">
+            <p className="text-gray-600 leading-relaxed mb-6">
               We aim to conform to the Web Content Accessibility Guidelines
               (WCAG) 2.1 Level AA. These guidelines explain how to make web
               content more accessible to people with disabilities. Conformance
@@ -60,10 +60,10 @@ export default function AccessibilityPage() {
               everyone.
             </p>
 
-            <h3 className="font-playfair text-2xl text-white mt-10 mb-4">
+            <h3 className="font-playfair text-2xl text-[#1a1a1a] mt-10 mb-4">
               Known Limitations
             </h3>
-            <p className="text-neutral-300 leading-relaxed mb-6">
+            <p className="text-gray-600 leading-relaxed mb-6">
               While we strive to adhere to the accepted guidelines and
               standards for accessibility and usability, it is not always
               possible to do so in all areas of the website. We are continually
@@ -71,16 +71,16 @@ export default function AccessibilityPage() {
               the same level of overall web accessibility.
             </p>
 
-            <h3 className="font-playfair text-2xl text-white mt-10 mb-4">
+            <h3 className="font-playfair text-2xl text-[#1a1a1a] mt-10 mb-4">
               Contact Us
             </h3>
-            <p className="text-neutral-300 leading-relaxed mb-6">
+            <p className="text-gray-600 leading-relaxed mb-6">
               If you experience any difficulty in accessing any part of this
               website, or if you have suggestions on how we can improve
               accessibility, please contact Andrew directly:
             </p>
 
-            <div className="bg-neutral-900 border border-white/5 p-8 mt-6">
+            <div className="bg-gray-50 border border-gray-200 p-8 mt-6">
               <div className="space-y-4">
                 <div>
                   <p className="text-neutral-500 text-xs uppercase tracking-wider mb-1">
@@ -88,7 +88,7 @@ export default function AccessibilityPage() {
                   </p>
                   <a
                     href="mailto:andrew@iamandrewwhalen.com"
-                    className="text-white hover:text-neutral-300 transition-colors"
+                    className="text-[#1a1a1a] hover:text-black transition-colors"
                   >
                     andrew@iamandrewwhalen.com
                   </a>
@@ -99,7 +99,7 @@ export default function AccessibilityPage() {
                   </p>
                   <a
                     href="tel:+13054559744"
-                    className="text-white hover:text-neutral-300 transition-colors"
+                    className="text-[#1a1a1a] hover:text-black transition-colors"
                   >
                     (305) 455-9744
                   </a>
@@ -108,7 +108,7 @@ export default function AccessibilityPage() {
                   <p className="text-neutral-500 text-xs uppercase tracking-wider mb-1">
                     Response Time
                   </p>
-                  <p className="text-neutral-300 text-sm">
+                  <p className="text-gray-600 text-sm">
                     We will respond to accessibility requests within 2 business
                     days.
                   </p>
@@ -119,7 +119,7 @@ export default function AccessibilityPage() {
             <div className="mt-12">
               <a
                 href="/contact/"
-                className="inline-block border border-white/30 rounded-full px-8 py-3 text-sm uppercase tracking-wider text-white hover:bg-white/10 transition-all"
+                className="inline-block bg-[#1a1a1a] rounded-full px-8 py-3 text-sm uppercase tracking-wider text-white hover:bg-[#333333] transition-colors"
               >
                 Contact Andrew
               </a>

@@ -39,14 +39,14 @@ export default function ExclusiveListingsPage() {
       </section>
 
       {/* Grid */}
-      <section className="bg-[#0a0a0a] py-16 px-6">
+      <section className="bg-white py-16 px-6">
         <div className="max-w-7xl mx-auto">
           <p className="text-neutral-500 text-sm uppercase tracking-[0.2em] mb-10">
             {MOCK_EXCLUSIVE.length} Exclusive Properties
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {MOCK_EXCLUSIVE.map((listing, i) => (
-              <PropertyCard key={i} {...listing} />
+              <PropertyCard key={i} {...listing} theme="light" />
             ))}
           </div>
 
@@ -56,7 +56,7 @@ export default function ExclusiveListingsPage() {
             </p>
             <a
               href="/contact/"
-              className="inline-block border border-white/30 rounded-full px-10 py-4 text-sm uppercase tracking-wider text-white hover:bg-white/10 transition-all"
+              className="inline-block bg-[#1a1a1a] rounded-full px-10 py-4 text-sm uppercase tracking-wider text-white hover:bg-[#333333] transition-colors"
             >
               Contact Andrew
             </a>

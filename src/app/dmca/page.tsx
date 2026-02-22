@@ -11,13 +11,13 @@ export default function DMCAPage() {
     <div className="pt-24 pb-16 px-6">
       <div className="max-w-3xl mx-auto">
         <h1 className="font-playfair text-4xl mb-8">DMCA Policy</h1>
-        <p className="text-neutral-400 text-sm mb-8">
+        <p className="text-gray-500 text-sm mb-8">
           Last updated: February 17, 2026
         </p>
 
-        <div className="space-y-8 text-neutral-300 leading-relaxed text-sm">
+        <div className="space-y-8 text-gray-600 leading-relaxed text-sm">
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               Copyright Compliance
             </h2>
             <p>
@@ -30,7 +30,7 @@ export default function DMCAPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               Reporting Copyright Infringement
             </h2>
             <p className="mb-3">
@@ -38,7 +38,7 @@ export default function DMCAPage() {
               copyright, please submit a written notification containing the
               following information:
             </p>
-            <ol className="list-decimal list-inside space-y-2 text-neutral-400">
+            <ol className="list-decimal list-inside space-y-2 text-gray-600">
               <li>
                 A physical or electronic signature of the copyright owner or a
                 person authorized to act on their behalf
@@ -70,14 +70,14 @@ export default function DMCAPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               Designated Agent
             </h2>
             <p className="mb-3">
               DMCA takedown notices should be sent to our designated agent:
             </p>
-            <div className="bg-white/[0.03] border border-white/5 rounded-sm p-4 text-neutral-400">
-              <p className="font-semibold text-neutral-300">Andrew Whalen</p>
+            <div className="bg-gray-50 border border-gray-200 rounded-sm p-4 text-gray-600">
+              <p className="font-semibold text-[#1a1a1a]">Andrew Whalen</p>
               <p>LoKation Real Estate</p>
               <p>1900 N Bayshore Dr, Suite 120</p>
               <p>Miami, FL 33132</p>
@@ -87,7 +87,7 @@ export default function DMCAPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               Takedown Procedure
             </h2>
             <p>
@@ -101,7 +101,7 @@ export default function DMCAPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               Counter-Notification
             </h2>
             <p>
@@ -109,7 +109,7 @@ export default function DMCAPage() {
               mistake or misidentification, you may file a counter-notification
               with our designated agent containing the following:
             </p>
-            <ol className="list-decimal list-inside space-y-2 text-neutral-400 mt-3">
+            <ol className="list-decimal list-inside space-y-2 text-gray-600 mt-3">
               <li>Your physical or electronic signature</li>
               <li>
                 Identification of the material that has been removed or
@@ -130,7 +130,7 @@ export default function DMCAPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               Repeat Infringers
             </h2>
             <p>
@@ -141,7 +141,7 @@ export default function DMCAPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               MLS Data Copyright
             </h2>
             <p>

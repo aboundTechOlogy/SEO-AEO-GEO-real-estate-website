@@ -70,35 +70,35 @@ export default async function BuildingDetailPage({ params }: Props) {
       </section>
 
       {/* Breadcrumb */}
-      <section className="bg-neutral-900 border-b border-white/5">
+      <section className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-3">
           <nav className="flex items-center gap-2 text-xs text-neutral-500 uppercase tracking-wider">
-            <a href="/" className="hover:text-white transition-colors">
+            <a href="/" className="hover:text-[#1a1a1a] transition-colors">
               Home
             </a>
             <span>/</span>
             <a
               href="/luxury-condos/"
-              className="hover:text-white transition-colors"
+              className="hover:text-[#1a1a1a] transition-colors"
             >
               Luxury Condos
             </a>
             <span>/</span>
-            <a href={countyPath} className="hover:text-white transition-colors">
+            <a href={countyPath} className="hover:text-[#1a1a1a] transition-colors">
               {countyLabel}
             </a>
             <span>/</span>
-            <span className="text-neutral-300">{building.name}</span>
+            <span className="text-gray-600">{building.name}</span>
           </nav>
         </div>
       </section>
 
       {/* Main content */}
-      <section className="bg-[#0a0a0a] py-16 px-6">
+      <section className="bg-white py-16 px-6">
         <div className="max-w-5xl mx-auto">
           {/* Building image placeholder */}
-          <div className="w-full aspect-video bg-gradient-to-br from-neutral-800 to-neutral-950 mb-12 flex items-center justify-center">
-            <p className="text-neutral-600 text-sm uppercase tracking-widest">
+          <div className="w-full aspect-video bg-gradient-to-br from-gray-100 to-gray-200 mb-12 flex items-center justify-center">
+            <p className="text-gray-500 text-sm uppercase tracking-widest">
               {building.name} — Photo Coming Soon
             </p>
           </div>
@@ -106,13 +106,13 @@ export default async function BuildingDetailPage({ params }: Props) {
           <div className="grid lg:grid-cols-3 gap-12">
             {/* Left: description */}
             <div className="lg:col-span-2">
-              <h2 className="font-playfair text-3xl text-white mb-6">
+              <h2 className="font-playfair text-3xl text-[#1a1a1a] mb-6">
                 About {building.name}
               </h2>
-              <p className="text-neutral-300 leading-relaxed text-lg mb-8">
+              <p className="text-gray-600 leading-relaxed text-lg mb-8">
                 {building.description}
               </p>
-              <p className="text-neutral-400 leading-relaxed">
+              <p className="text-gray-600 leading-relaxed">
                 Located in {building.neighborhood}, {countyLabel}, this
                 landmark residential tower represents the pinnacle of South
                 Florida luxury living. With {building.units} total residences
@@ -124,8 +124,8 @@ export default async function BuildingDetailPage({ params }: Props) {
 
             {/* Right: details */}
             <div>
-              <div className="bg-neutral-900 border border-white/5 p-8">
-                <h3 className="font-playfair text-xl text-white mb-6">
+              <div className="bg-gray-50 border border-gray-200 p-8">
+                <h3 className="font-playfair text-xl text-[#1a1a1a] mb-6">
                   Building Details
                 </h3>
                 <dl className="space-y-4">
@@ -133,7 +133,7 @@ export default async function BuildingDetailPage({ params }: Props) {
                     <dt className="text-neutral-500 text-xs uppercase tracking-wider mb-1">
                       Location
                     </dt>
-                    <dd className="text-white text-sm">
+                    <dd className="text-[#1a1a1a] text-sm">
                       {building.neighborhood}, {countyLabel}
                     </dd>
                   </div>
@@ -141,25 +141,25 @@ export default async function BuildingDetailPage({ params }: Props) {
                     <dt className="text-neutral-500 text-xs uppercase tracking-wider mb-1">
                       Year Built
                     </dt>
-                    <dd className="text-white text-sm">{building.yearBuilt}</dd>
+                    <dd className="text-[#1a1a1a] text-sm">{building.yearBuilt}</dd>
                   </div>
                   <div>
                     <dt className="text-neutral-500 text-xs uppercase tracking-wider mb-1">
                       Total Units
                     </dt>
-                    <dd className="text-white text-sm">{building.units}</dd>
+                    <dd className="text-[#1a1a1a] text-sm">{building.units}</dd>
                   </div>
                   <div>
                     <dt className="text-neutral-500 text-xs uppercase tracking-wider mb-1">
                       Stories
                     </dt>
-                    <dd className="text-white text-sm">{building.floors}</dd>
+                    <dd className="text-[#1a1a1a] text-sm">{building.floors}</dd>
                   </div>
                   <div>
                     <dt className="text-neutral-500 text-xs uppercase tracking-wider mb-1">
                       Price Range
                     </dt>
-                    <dd className="text-white text-sm">
+                    <dd className="text-[#1a1a1a] text-sm">
                       Contact for current pricing
                     </dd>
                   </div>
@@ -168,13 +168,13 @@ export default async function BuildingDetailPage({ params }: Props) {
                 <div className="mt-8 space-y-3">
                   <a
                     href="/search/"
-                    className="block w-full text-center bg-white text-black py-3 text-sm uppercase tracking-wider font-medium hover:bg-neutral-200 transition-colors"
+                    className="block w-full text-center bg-[#1a1a1a] text-white py-3 text-sm uppercase tracking-wider font-medium hover:bg-[#333333] transition-colors"
                   >
                     View Available Units
                   </a>
                   <a
                     href="/contact/"
-                    className="block w-full text-center border border-white/30 text-white py-3 text-sm uppercase tracking-wider hover:bg-white/10 transition-all"
+                    className="block w-full text-center border border-gray-300 text-[#1a1a1a] py-3 text-sm uppercase tracking-wider hover:bg-gray-100 transition-colors"
                   >
                     Get Building Report
                   </a>
@@ -186,11 +186,11 @@ export default async function BuildingDetailPage({ params }: Props) {
       </section>
 
       {/* Back link */}
-      <section className="bg-neutral-900/30 py-12 px-6">
+      <section className="bg-gray-50 py-12 px-6">
         <div className="max-w-5xl mx-auto">
           <a
             href={countyPath}
-            className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors text-sm uppercase tracking-wider"
+            className="inline-flex items-center gap-2 text-gray-600 hover:text-[#1a1a1a] transition-colors text-sm uppercase tracking-wider"
           >
             <svg
               className="w-4 h-4"

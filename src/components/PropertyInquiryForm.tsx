@@ -85,7 +85,7 @@ export default function PropertyInquiryForm({ listingKey, address }: PropertyInq
       <button
         type="submit"
         disabled={state === "submitting"}
-        className="w-full rounded-full bg-amber-600 hover:bg-amber-500 disabled:opacity-60 text-white py-3 text-xs uppercase tracking-[0.14em] transition-colors"
+        className="w-full rounded-full border border-white/30 text-white py-3 text-xs uppercase tracking-[0.14em] hover:bg-white/10 disabled:opacity-60 transition-colors"
       >
         {state === "submitting" ? "Submitting..." : "Request Information"}
       </button>

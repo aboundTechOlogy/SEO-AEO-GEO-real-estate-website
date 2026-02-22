@@ -35,7 +35,7 @@ export default function NeighborhoodsPage() {
       </section>
 
       {/* County tabs */}
-      <section className="bg-neutral-900 border-b border-white/5 sticky top-16 z-30">
+      <section className="bg-white border-b border-gray-200 sticky top-16 z-30">
         <div className="max-w-7xl mx-auto px-6 flex gap-0">
           {COUNTY_TABS.map((tab) => (
             <button
@@ -43,8 +43,8 @@ export default function NeighborhoodsPage() {
               onClick={() => setActiveCounty(tab.id as "miami-dade" | "broward" | "palm-beach")}
               className={`px-6 py-4 text-xs uppercase tracking-widest transition-colors ${
                 activeCounty === tab.id
-                  ? "text-white border-b-2 border-white"
-                  : "text-neutral-500 hover:text-neutral-300"
+                  ? "text-[#1a1a1a] border-b-2 border-[#1a1a1a]"
+                  : "text-gray-500 hover:text-[#1a1a1a]"
               }`}
             >
               {tab.label}
@@ -54,11 +54,11 @@ export default function NeighborhoodsPage() {
       </section>
 
       {/* Split panel */}
-      <section className="bg-[#0a0a0a]">
+      <section className="bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row">
             {/* Map panel — desktop left */}
-            <div className="hidden lg:block lg:w-[40%] min-h-[600px] bg-neutral-900 border-r border-white/5 sticky top-32 self-start h-[calc(100vh-8rem)] p-4">
+            <div className="hidden lg:block lg:w-[40%] min-h-[600px] bg-gray-50 border-r border-gray-200 sticky top-32 self-start h-[calc(100vh-8rem)] p-4">
               <PropertyMap
                 center={{ lat: COUNTY_CENTERS[activeCounty].lat, lng: COUNTY_CENTERS[activeCounty].lng }}
                 zoom={COUNTY_CENTERS[activeCounty].zoom}
@@ -69,7 +69,7 @@ export default function NeighborhoodsPage() {
 
             {/* Neighborhood grid — right */}
             <div className="lg:w-[60%] px-6 py-12">
-              <p className="text-neutral-500 text-sm uppercase tracking-[0.2em] mb-8">
+              <p className="text-gray-500 text-sm uppercase tracking-[0.2em] mb-8">
                 {filtered.length} Neighborhoods in {COUNTY_TABS.find(t => t.id === activeCounty)?.label}
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -77,17 +77,17 @@ export default function NeighborhoodsPage() {
                   <a
                     key={n.slug}
                     href={`/neighborhoods/${n.slug}/`}
-                    className="group relative bg-neutral-900 border border-white/5 hover:border-white/20 transition-all p-6"
+                    className="group relative bg-white border border-gray-200 hover:border-gray-300 shadow-sm transition-all p-6"
                   >
                     {/* Placeholder thumbnail */}
-                    <div className="aspect-video bg-gradient-to-br from-neutral-800 to-neutral-950 mb-4 flex items-center justify-center">
+                    <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 mb-4 flex items-center justify-center">
                       <span className="text-neutral-700 text-xs uppercase tracking-widest">{n.name}</span>
                     </div>
-                    <h3 className="font-playfair text-xl text-white mb-1">{n.name}</h3>
+                    <h3 className="font-playfair text-xl text-[#1a1a1a] mb-1">{n.name}</h3>
                     {n.tagline && <p className="text-neutral-500 text-xs uppercase tracking-wider mb-4">{n.tagline}</p>}
                     <div className="flex gap-2">
                       {n.propertyTypes.map((t) => (
-                        <span key={t} className="bg-neutral-800 px-3 py-1 text-xs uppercase tracking-wider text-neutral-400">
+                        <span key={t} className="bg-gray-100 px-3 py-1 text-xs uppercase tracking-wider text-gray-600">
                           {t}
                         </span>
                       ))}

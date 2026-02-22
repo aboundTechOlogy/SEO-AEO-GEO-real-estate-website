@@ -44,7 +44,7 @@ export default async function BlogPostPage({ params }: Props) {
         {/* Back link */}
         <Link
           href="/blog"
-          className="text-sm text-neutral-500 hover:text-white transition-colors mb-8 inline-block"
+          className="text-sm text-neutral-500 hover:text-[#1a1a1a] transition-colors mb-8 inline-block"
         >
           ← Back to Insights
         </Link>
@@ -67,17 +67,17 @@ export default async function BlogPostPage({ params }: Props) {
           <h1 className="font-playfair text-3xl md:text-4xl mb-4">
             {post.title}
           </h1>
-          <p className="text-neutral-400 text-lg leading-relaxed">
+          <p className="text-gray-600 text-lg leading-relaxed">
             {post.excerpt}
           </p>
-          <div className="mt-4 pt-4 border-t border-white/5 text-sm text-neutral-500">
+          <div className="mt-4 pt-4 border-t border-gray-200 text-sm text-neutral-500">
             By {post.author}
           </div>
         </div>
 
         {/* Post content placeholder */}
-        <div className="prose prose-invert prose-neutral max-w-none">
-          <div className="text-neutral-300 leading-relaxed space-y-6">
+        <div className="prose prose-neutral max-w-none">
+          <div className="text-gray-600 leading-relaxed space-y-6">
             <p>
               Full article content coming soon. This post is part of our ongoing
               series covering South Florida&apos;s luxury real estate market.
@@ -86,7 +86,7 @@ export default async function BlogPostPage({ params }: Props) {
               Check back shortly for the complete analysis, or{" "}
               <a
                 href="mailto:andrew@iamandrewwhalen.com"
-                className="text-white underline underline-offset-4 hover:text-neutral-300 transition-colors"
+                className="text-[#1a1a1a] underline underline-offset-4 hover:text-black transition-colors"
               >
                 contact Andrew directly
               </a>{" "}
@@ -96,17 +96,17 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
 
         {/* Author card */}
-        <div className="mt-16 pt-8 border-t border-white/5">
+        <div className="mt-16 pt-8 border-t border-gray-200">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-full bg-neutral-800 flex items-center justify-center text-sm font-light tracking-wider">
+            <div className="w-12 h-12 rounded-full bg-gray-100 text-gray-700 flex items-center justify-center text-sm font-light tracking-wider">
               AW
             </div>
             <div>
-              <p className="text-white font-medium">Andrew Whalen</p>
+              <p className="text-[#1a1a1a] font-medium">Andrew Whalen</p>
               <p className="text-sm text-neutral-500 mb-2">
                 Realtor® · LoKation Real Estate
               </p>
-              <p className="text-sm text-neutral-400 leading-relaxed">
+              <p className="text-sm text-gray-600 leading-relaxed">
                 South Florida luxury real estate specialist. Helping buyers,
                 sellers, and investors navigate Miami&apos;s most prestigious
                 neighborhoods.

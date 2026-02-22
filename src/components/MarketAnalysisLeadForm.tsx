@@ -40,62 +40,62 @@ export default function MarketAnalysisLeadForm() {
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="grid gap-4 md:grid-cols-2">
         <label className="space-y-2">
-          <span className="text-xs uppercase tracking-[0.12em] text-neutral-400">First Name *</span>
+          <span className="text-xs uppercase tracking-[0.12em] text-gray-500">First Name *</span>
           <input
             name="firstName"
             required
-            className="w-full bg-black/30 border border-white/15 px-4 py-3 text-white placeholder-neutral-500 focus:border-white/40 outline-none transition-colors"
+            className="w-full bg-white border border-gray-200 px-4 py-3 text-[#1a1a1a] placeholder-gray-400 focus:border-gray-400 outline-none transition-colors"
           />
         </label>
 
         <label className="space-y-2">
-          <span className="text-xs uppercase tracking-[0.12em] text-neutral-400">Last Name *</span>
+          <span className="text-xs uppercase tracking-[0.12em] text-gray-500">Last Name *</span>
           <input
             name="lastName"
             required
-            className="w-full bg-black/30 border border-white/15 px-4 py-3 text-white placeholder-neutral-500 focus:border-white/40 outline-none transition-colors"
+            className="w-full bg-white border border-gray-200 px-4 py-3 text-[#1a1a1a] placeholder-gray-400 focus:border-gray-400 outline-none transition-colors"
           />
         </label>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <label className="space-y-2">
-          <span className="text-xs uppercase tracking-[0.12em] text-neutral-400">Email *</span>
+          <span className="text-xs uppercase tracking-[0.12em] text-gray-500">Email *</span>
           <input
             name="email"
             type="email"
             required
-            className="w-full bg-black/30 border border-white/15 px-4 py-3 text-white placeholder-neutral-500 focus:border-white/40 outline-none transition-colors"
+            className="w-full bg-white border border-gray-200 px-4 py-3 text-[#1a1a1a] placeholder-gray-400 focus:border-gray-400 outline-none transition-colors"
           />
         </label>
 
         <label className="space-y-2">
-          <span className="text-xs uppercase tracking-[0.12em] text-neutral-400">Phone *</span>
+          <span className="text-xs uppercase tracking-[0.12em] text-gray-500">Phone *</span>
           <input
             name="phone"
             type="tel"
             required
-            className="w-full bg-black/30 border border-white/15 px-4 py-3 text-white placeholder-neutral-500 focus:border-white/40 outline-none transition-colors"
+            className="w-full bg-white border border-gray-200 px-4 py-3 text-[#1a1a1a] placeholder-gray-400 focus:border-gray-400 outline-none transition-colors"
           />
         </label>
       </div>
 
       <label className="space-y-2 block">
-        <span className="text-xs uppercase tracking-[0.12em] text-neutral-400">Property Address *</span>
+        <span className="text-xs uppercase tracking-[0.12em] text-gray-500">Property Address *</span>
         <input
           name="propertyAddress"
           required
-          className="w-full bg-black/30 border border-white/15 px-4 py-3 text-white placeholder-neutral-500 focus:border-white/40 outline-none transition-colors"
+          className="w-full bg-white border border-gray-200 px-4 py-3 text-[#1a1a1a] placeholder-gray-400 focus:border-gray-400 outline-none transition-colors"
         />
       </label>
 
       <div className="grid gap-4 md:grid-cols-2">
         <label className="space-y-2">
-          <span className="text-xs uppercase tracking-[0.12em] text-neutral-400">Property Type</span>
+          <span className="text-xs uppercase tracking-[0.12em] text-gray-500">Property Type</span>
           <select
             name="propertyType"
             defaultValue=""
-            className="w-full bg-black/30 border border-white/15 px-4 py-3 text-white focus:border-white/40 outline-none transition-colors"
+            className="w-full bg-white border border-gray-200 px-4 py-3 text-[#1a1a1a] focus:border-gray-400 outline-none transition-colors"
           >
             <option value="" disabled>
               Select property type
@@ -109,11 +109,11 @@ export default function MarketAnalysisLeadForm() {
         </label>
 
         <label className="space-y-2">
-          <span className="text-xs uppercase tracking-[0.12em] text-neutral-400">When are you looking to sell?</span>
+          <span className="text-xs uppercase tracking-[0.12em] text-gray-500">When are you looking to sell?</span>
           <select
             name="sellingTimeline"
             defaultValue=""
-            className="w-full bg-black/30 border border-white/15 px-4 py-3 text-white focus:border-white/40 outline-none transition-colors"
+            className="w-full bg-white border border-gray-200 px-4 py-3 text-[#1a1a1a] focus:border-gray-400 outline-none transition-colors"
           >
             <option value="" disabled>
               Select timeline
@@ -128,11 +128,11 @@ export default function MarketAnalysisLeadForm() {
       </div>
 
       <label className="space-y-2 block">
-        <span className="text-xs uppercase tracking-[0.12em] text-neutral-400">Additional Comments</span>
+        <span className="text-xs uppercase tracking-[0.12em] text-gray-500">Additional Comments</span>
         <textarea
           name="comments"
           rows={4}
-          className="w-full bg-black/30 border border-white/15 px-4 py-3 text-white placeholder-neutral-500 focus:border-white/40 outline-none transition-colors resize-y"
+          className="w-full bg-white border border-gray-200 px-4 py-3 text-[#1a1a1a] placeholder-gray-400 focus:border-gray-400 outline-none transition-colors resize-y"
         />
       </label>
 
@@ -140,20 +140,20 @@ export default function MarketAnalysisLeadForm() {
         <button
           type="submit"
           disabled={status === "submitting"}
-          className="inline-flex items-center justify-center rounded-full bg-amber-600 hover:bg-amber-500 disabled:opacity-60 text-white px-8 py-3.5 text-sm uppercase tracking-wider transition-colors"
+          className="inline-flex items-center justify-center rounded-full bg-[#1a1a1a] hover:bg-[#333333] disabled:opacity-60 text-white px-8 py-3.5 text-sm uppercase tracking-wider transition-colors"
         >
           {status === "submitting" ? "Submitting..." : "Request My Analysis"}
         </button>
       </div>
 
       {status === "success" && (
-        <p className="text-sm text-emerald-300" role="status">
+        <p className="text-sm text-emerald-700" role="status">
           Thank you. Your request has been received.
         </p>
       )}
 
       {status === "error" && (
-        <p className="text-sm text-red-300" role="alert">
+        <p className="text-sm text-red-600" role="alert">
           Something went wrong. Please try again.
         </p>
       )}

@@ -8,15 +8,15 @@ export const metadata: Metadata = {
 export default function TermsPage() {
   return (
     <div className="pt-24 pb-16 px-6">
-      <div className="max-w-3xl mx-auto prose prose-invert prose-neutral">
+      <div className="max-w-3xl mx-auto prose prose-neutral">
         <h1 className="font-playfair text-4xl mb-8">Terms of Use</h1>
-        <p className="text-neutral-400 text-sm mb-8">
+        <p className="text-gray-500 text-sm mb-8">
           Last updated: February 17, 2026
         </p>
 
-        <div className="space-y-8 text-neutral-300 leading-relaxed text-sm">
+        <div className="space-y-8 text-gray-600 leading-relaxed text-sm">
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               Acceptance of Terms
             </h2>
             <p>
@@ -28,7 +28,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               Real Estate Licensing
             </h2>
             <p>
@@ -39,7 +39,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               MLS Data &amp; Listing Information
             </h2>
             <p>
@@ -47,7 +47,7 @@ export default function TermsPage() {
               Miami Association of Realtors and the Southeast Florida MLS (SEFMLS) through
               the Bridge Interactive data platform. Use of this data is subject to the following:
             </p>
-            <ul className="list-disc list-inside space-y-2 text-neutral-400 mt-3">
+            <ul className="list-disc list-inside space-y-2 text-gray-600 mt-3">
               <li>
                 Listing information is provided for consumers&apos; personal, non-commercial use
                 and may not be used for any purpose other than to identify prospective properties
@@ -73,7 +73,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               No Guarantees or Warranties
             </h2>
             <p>
@@ -86,7 +86,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               Intellectual Property
             </h2>
             <p>
@@ -99,11 +99,11 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               User Conduct
             </h2>
             <p>You agree not to:</p>
-            <ul className="list-disc list-inside space-y-2 text-neutral-400 mt-3">
+            <ul className="list-disc list-inside space-y-2 text-gray-600 mt-3">
               <li>
                 Use this Site for any unlawful purpose or in violation of any applicable laws
               </li>
@@ -126,7 +126,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               Third-Party Links
             </h2>
             <p>
@@ -137,7 +137,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               Limitation of Liability
             </h2>
             <p>
@@ -149,7 +149,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               Governing Law
             </h2>
             <p>
@@ -161,13 +161,13 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="font-playfair text-xl text-white mb-3">
+            <h2 className="font-playfair text-xl text-[#1a1a1a] mb-3">
               Contact Information
             </h2>
             <p>
               If you have questions about these Terms of Use, please contact:
             </p>
-            <div className="mt-2 text-neutral-400">
+            <div className="mt-2 text-gray-600">
               <p>Andrew Whalen</p>
               <p>LoKation Real Estate</p>
               <p>1900 N Bayshore Dr, Suite 120</p>

@@ -47,39 +47,39 @@ export default function BuyerServicesPage() {
         </div>
       </section>
 
-      <section className="bg-[#0a0a0a] py-20 md:py-28 px-6">
+      <section className="bg-white py-20 md:py-28 px-6">
         <div className="max-w-7xl mx-auto grid gap-12 lg:grid-cols-[1.5fr_1fr]">
           <ScrollReveal className="space-y-7" y={24}>
-            <p className="text-neutral-300 leading-relaxed" data-reveal>
+            <p className="text-gray-600 leading-relaxed" data-reveal>
               Buying in South Florida can move quickly, especially in top neighborhoods and well-priced luxury segments. I
               start by narrowing your criteria into a clear acquisition brief so we can target properties that match your
               lifestyle goals, investment goals, and timeline instead of touring everything on the market.
             </p>
 
-            <p className="text-neutral-300 leading-relaxed" data-reveal>
+            <p className="text-gray-600 leading-relaxed" data-reveal>
               From there, I curate showings and share local context that goes beyond listing photos. You get neighborhood
               guidance, market trend interpretation, and honest feedback on value so each property is evaluated against both
               emotional fit and financial logic.
             </p>
 
-            <p className="text-neutral-300 leading-relaxed" data-reveal>
+            <p className="text-gray-600 leading-relaxed" data-reveal>
               For buyers considering new construction and pre-construction opportunities, I help compare developer offerings,
               delivery timelines, and contract structure. This is where details matter, and having experienced representation
               can materially improve terms and protect optionality.
             </p>
 
-            <p className="text-neutral-300 leading-relaxed" data-reveal>
+            <p className="text-gray-600 leading-relaxed" data-reveal>
               When it is time to submit, I build a negotiation strategy around leverage and timing, coordinate closely with your
               lender, and manage each milestone through closing. If you are relocating from out of state or internationally, I
               also help connect you with trusted partners after closing so your transition stays smooth.
             </p>
 
-            <div className="border-t border-white/10 pt-8" data-reveal>
-              <h2 className="font-playfair text-2xl text-white mb-5">How I Support Buyers</h2>
+            <div className="border-t border-gray-200 pt-8" data-reveal>
+              <h2 className="font-playfair text-2xl text-[#1a1a1a] mb-5">How I Support Buyers</h2>
               <ul className="space-y-3">
                 {BUYER_FOCUS.map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-neutral-300">
-                    <span className="w-1.5 h-1.5 rounded-full bg-white/50 mt-2 shrink-0" />
+                  <li key={item} className="flex items-start gap-3 text-gray-600">
+                    <span className="w-1.5 h-1.5 rounded-full bg-gray-400 mt-2 shrink-0" />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -88,20 +88,20 @@ export default function BuyerServicesPage() {
           </ScrollReveal>
 
           <ScrollReveal className="lg:pt-2" y={24}>
-            <aside className="bg-neutral-900 border border-white/10 p-8 lg:sticky lg:top-28" data-reveal>
+            <aside className="bg-gray-50 border border-gray-200 p-8 lg:sticky lg:top-28" data-reveal>
               <p className="text-neutral-500 text-xs uppercase tracking-[0.2em] mb-3">Buyer Consultation</p>
-              <h2 className="font-playfair text-3xl text-white mb-4">Plan Your Search</h2>
-              <p className="text-neutral-400 leading-relaxed mb-6">
+              <h2 className="font-playfair text-3xl text-[#1a1a1a] mb-4">Plan Your Search</h2>
+              <p className="text-gray-600 leading-relaxed mb-6">
                 Let&apos;s build your shortlist, define target areas, and map an offer strategy before the right property appears.
               </p>
 
               <div className="space-y-3 mb-7 text-sm">
-                <a href="tel:+13054559744" className="block text-neutral-200 hover:text-white transition-colors">
+                <a href="tel:+13054559744" className="block text-gray-700 hover:text-[#1a1a1a] transition-colors">
                   (305) 455-9744
                 </a>
                 <a
                   href="mailto:Andrew@IamAndrewWhalen.com"
-                  className="block text-neutral-200 hover:text-white transition-colors"
+                  className="block text-gray-700 hover:text-[#1a1a1a] transition-colors"
                 >
                   Andrew@IamAndrewWhalen.com
                 </a>
@@ -110,13 +110,13 @@ export default function BuyerServicesPage() {
               <div className="space-y-3">
                 <a
                   href="/contact/"
-                  className="inline-flex w-full items-center justify-center border border-white/30 rounded-full px-6 py-3 text-xs uppercase tracking-[0.12em] text-white hover:bg-white/10 transition-all"
+                  className="inline-flex w-full items-center justify-center border border-gray-300 rounded-full px-6 py-3 text-xs uppercase tracking-[0.12em] text-[#1a1a1a] hover:bg-gray-100 transition-colors"
                 >
                   Contact Andrew
                 </a>
                 <a
                   href="/services/investors/"
-                  className="inline-flex w-full items-center justify-center border border-white/30 rounded-full px-6 py-3 text-xs uppercase tracking-[0.12em] text-white hover:bg-white/10 transition-all"
+                  className="inline-flex w-full items-center justify-center border border-gray-300 rounded-full px-6 py-3 text-xs uppercase tracking-[0.12em] text-[#1a1a1a] hover:bg-gray-100 transition-colors"
                 >
                   Explore Investor Services
                 </a>
@@ -126,7 +126,7 @@ export default function BuyerServicesPage() {
         </div>
       </section>
 
-      <section className="bg-neutral-900 py-20 px-6 text-center">
+      <section className="bg-[#0a0a0a] py-20 px-6 text-center">
         <ScrollReveal className="max-w-3xl mx-auto" y={24}>
           <h2 className="font-playfair text-4xl md:text-5xl text-white mb-4" data-reveal>
             Ready to get started?
@@ -136,7 +136,7 @@ export default function BuyerServicesPage() {
           </p>
           <a
             href="/contact/"
-            className="inline-flex items-center justify-center rounded-full bg-amber-600 hover:bg-amber-500 text-white px-10 py-3.5 text-sm uppercase tracking-wider transition-colors"
+            className="inline-flex items-center justify-center border border-white/30 rounded-full text-white px-10 py-3.5 text-sm uppercase tracking-wider hover:bg-white/10 transition-all"
             data-reveal
           >
             Schedule a Buyer Call

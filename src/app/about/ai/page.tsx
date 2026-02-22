@@ -82,15 +82,15 @@ export default function HowWeUseAiPage() {
         </div>
       </section>
 
-      <section className="bg-[#0a0a0a] py-20 md:py-28 px-6">
+      <section className="bg-white py-20 md:py-28 px-6">
         <div className="max-w-4xl mx-auto space-y-10">
           {AI_SECTIONS.map((section, index) => (
-            <ScrollReveal key={section.title} className="border-b border-white/10 pb-10" y={24} delay={index * 0.04}>
-              <h2 className="font-playfair text-3xl text-white mb-4" data-reveal>
+            <ScrollReveal key={section.title} className="border-b border-gray-200 pb-10" y={24} delay={index * 0.04}>
+              <h2 className="font-playfair text-3xl text-[#1a1a1a] mb-4" data-reveal>
                 {section.title}
               </h2>
               {section.paragraphs.map((paragraph) => (
-                <p key={paragraph} className="text-neutral-300 leading-relaxed mb-4 last:mb-0" data-reveal>
+                <p key={paragraph} className="text-gray-600 leading-relaxed mb-4 last:mb-0" data-reveal>
                   {paragraph}
                 </p>
               ))}
@@ -99,7 +99,7 @@ export default function HowWeUseAiPage() {
         </div>
       </section>
 
-      <section className="bg-neutral-900 py-20 px-6 text-center">
+      <section className="bg-[#0a0a0a] py-20 px-6 text-center">
         <ScrollReveal className="max-w-3xl mx-auto" y={24}>
           <h2 className="font-playfair text-4xl md:text-5xl text-white mb-4" data-reveal>
             Have questions about our technology?
@@ -109,7 +109,7 @@ export default function HowWeUseAiPage() {
           </p>
           <a
             href="/contact/"
-            className="inline-flex items-center justify-center rounded-full bg-amber-600 hover:bg-amber-500 text-white px-10 py-3.5 text-sm uppercase tracking-wider transition-colors"
+            className="inline-flex items-center justify-center border border-white/30 rounded-full text-white px-10 py-3.5 text-sm uppercase tracking-wider hover:bg-white/10 transition-all"
             data-reveal
           >
             Contact Andrew

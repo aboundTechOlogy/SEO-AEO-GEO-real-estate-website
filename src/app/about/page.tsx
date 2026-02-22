@@ -40,7 +40,7 @@ export default function AboutPage() {
       </section>
 
       {/* Photo + Bio */}
-      <section className="bg-[#0a0a0a] py-20 md:py-28">
+      <section className="bg-white py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
             {/* Photo */}
@@ -56,25 +56,25 @@ export default function AboutPage() {
             {/* Bio */}
             <div className="lg:w-[55%] lg:py-8">
               <p className="text-neutral-500 text-sm uppercase tracking-[0.2em] mb-2">LoKation Real Estate</p>
-              <h2 className="font-playfair text-4xl md:text-5xl uppercase tracking-wide text-white mt-2 mb-6">Andrew Whalen</h2>
+              <h2 className="font-playfair text-4xl md:text-5xl uppercase tracking-wide text-[#1a1a1a] mt-2 mb-6">Andrew Whalen</h2>
               <p className="text-xs uppercase tracking-[0.2em] text-neutral-400 mb-10">
                 Serving Miami, Fort Lauderdale and Palm Beach.
               </p>
 
-              <p className="text-neutral-300 leading-relaxed mb-6">
+              <p className="text-gray-600 leading-relaxed mb-6">
                 Andrew Whalen has built a reputation as one of South Florida&apos;s most dedicated and
                 knowledgeable real estate professionals. With over 1,300 transactions closed and 21+ years
                 of experience across Miami-Dade&apos;s most competitive neighborhoods, Andrew combines deep
                 market expertise with a data-driven approach that consistently delivers results for his clients.
               </p>
-              <p className="text-neutral-300 leading-relaxed mb-6">
+              <p className="text-gray-600 leading-relaxed mb-6">
                 With a career spanning over two decades, Andrew delivers a comprehensive level of
                 concierge-style service with extensive experience across every level of real estate —
                 including investment analysis, negotiation, new development sales, and marketing.
                 Leveraging cutting-edge technology and AI-powered market intelligence, Andrew provides
                 his clients with unmatched insights and exposure in South Florida&apos;s luxury market.
               </p>
-              <p className="text-neutral-300 leading-relaxed mb-10">
+              <p className="text-gray-600 leading-relaxed mb-10">
                 Licensed with LoKation Real Estate, Andrew brings a boutique-level commitment to every
                 client relationship while leveraging the resources and technology of a modern, AI-forward
                 brokerage. Whether you&apos;re buying a first investment property or selling a multi-million
@@ -82,11 +82,11 @@ export default function AboutPage() {
                 excellence.
               </p>
 
-              <div className="border-t border-white/10 pt-8">
-                <h3 className="text-white text-xs uppercase tracking-widest mb-4">Specialties</h3>
+              <div className="border-t border-gray-200 pt-8">
+                <h3 className="text-[#1a1a1a] text-xs uppercase tracking-widest mb-4">Specialties</h3>
                 <div className="flex flex-wrap gap-2">
                   {["Luxury Condos", "Waterfront Estates", "New Construction", "Investment Properties", "Pre-Construction", "International Buyers", "Relocations"].map((s) => (
-                    <span key={s} className="border border-white/20 px-3 py-1 text-xs uppercase tracking-wider text-neutral-400">
+                    <span key={s} className="border border-gray-300 bg-white px-3 py-1 text-xs uppercase tracking-wider text-gray-600">
                       {s}
                     </span>
                   ))}

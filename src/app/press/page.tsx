@@ -28,15 +28,15 @@ export default function PressPage() {
       </section>
 
       {/* Coming Soon */}
-      <section className="bg-[#0a0a0a] py-32 px-6 text-center">
+      <section className="bg-white py-32 px-6 text-center">
         <p className="text-neutral-500 text-sm uppercase tracking-[0.2em] mb-6">Coming Soon</p>
-        <h2 className="font-playfair text-3xl text-white mb-6">Press coverage is being compiled.</h2>
-        <p className="text-neutral-400 max-w-md mx-auto mb-10">
+        <h2 className="font-playfair text-3xl text-[#1a1a1a] mb-6">Press coverage is being compiled.</h2>
+        <p className="text-gray-600 max-w-md mx-auto mb-10">
           For media inquiries, please contact Andrew directly.
         </p>
         <a
           href="/contact/"
-          className="inline-block border border-white/30 rounded-full px-8 py-3 text-sm uppercase tracking-wider text-white hover:bg-white/10 transition-all"
+          className="inline-block bg-[#1a1a1a] rounded-full px-8 py-3 text-sm uppercase tracking-wider text-white hover:bg-[#333333] transition-colors"
         >
           Media Inquiries
         </a>

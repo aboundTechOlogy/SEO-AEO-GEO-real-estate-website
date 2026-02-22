@@ -47,21 +47,21 @@ export default function NewConstructionPage() {
       </section>
 
       {/* Breadcrumb */}
-      <section className="bg-neutral-900 border-b border-white/5">
+      <section className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-3">
           <nav className="flex items-center gap-2 text-xs text-neutral-500 uppercase tracking-wider">
-            <a href="/" className="hover:text-white transition-colors">
+            <a href="/" className="hover:text-[#1a1a1a] transition-colors">
               Home
             </a>
             <span>/</span>
             <a
               href="/luxury-condos/"
-              className="hover:text-white transition-colors"
+              className="hover:text-[#1a1a1a] transition-colors"
             >
               Luxury Condos
             </a>
             <span>/</span>
-            <span className="text-neutral-300">New Construction</span>
+            <span className="text-gray-600">New Construction</span>
           </nav>
         </div>
       </section>
@@ -76,10 +76,10 @@ export default function NewConstructionPage() {
         return (
           <section
             key={county.value}
-            className="py-16 px-6 bg-[#0a0a0a] border-b border-white/5"
+            className="py-16 px-6 bg-white border-b border-gray-200"
           >
             <div className="max-w-7xl mx-auto">
-              <h2 className="font-playfair text-3xl md:text-4xl text-white mb-2">
+              <h2 className="font-playfair text-3xl md:text-4xl text-[#1a1a1a] mb-2">
                 {county.label} County
               </h2>
               <p className="text-neutral-500 text-sm uppercase tracking-[0.2em] mb-10">
@@ -90,9 +90,9 @@ export default function NewConstructionPage() {
                 {countyDevs.map((d) => (
                   <div
                     key={d.slug}
-                    className="group p-8 border border-white/5 hover:border-white/20 bg-white/[0.02] hover:bg-white/[0.04] transition-all"
+                    className="group p-8 border border-gray-200 bg-white hover:border-gray-300 shadow-sm transition-all"
                   >
-                    <div className="w-full h-48 bg-gradient-to-br from-neutral-700/30 to-neutral-800 mb-6 flex flex-col items-center justify-center gap-3">
+                    <div className="w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 mb-6 flex flex-col items-center justify-center gap-3">
                       <svg
                         className="w-8 h-8 text-neutral-600"
                         fill="none"
@@ -113,17 +113,17 @@ export default function NewConstructionPage() {
 
                     <div className="flex items-start justify-between mb-3">
                       <div>
-                        <h3 className="font-playfair text-2xl group-hover:text-white transition-colors">
+                        <h3 className="font-playfair text-2xl group-hover:text-[#1a1a1a] transition-colors">
                           {d.name}
                         </h3>
                         <p className="text-sm text-neutral-500">{d.location}</p>
                       </div>
-                      <span className="text-xs uppercase tracking-wider text-neutral-400 bg-white/5 px-3 py-1 rounded-full shrink-0">
+                      <span className="text-xs uppercase tracking-wider text-gray-600 bg-gray-100 px-3 py-1 rounded-full shrink-0">
                         {d.status}
                       </span>
                     </div>
 
-                    <div className="flex flex-wrap gap-4 text-sm text-neutral-400 mb-3">
+                    <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-3">
                       <span>From {d.priceFrom}</span>
                       <span>{d.units}</span>
                       <span>Est. {d.completionYear}</span>
@@ -132,7 +132,7 @@ export default function NewConstructionPage() {
                     <p className="text-sm text-neutral-500 mb-2">
                       {d.developer}
                     </p>
-                    <p className="text-sm text-neutral-400 leading-relaxed">
+                    <p className="text-sm text-gray-600 leading-relaxed">
                       {d.description}
                     </p>
                   </div>
@@ -144,18 +144,18 @@ export default function NewConstructionPage() {
       })}
 
       {/* CTA */}
-      <section className="py-24 px-6 bg-neutral-900/50">
+      <section className="py-24 px-6 bg-gray-50">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="font-playfair text-4xl mb-4">
             Interested in Pre-Construction?
           </h2>
-          <p className="text-neutral-400 mb-10">
+          <p className="text-gray-600 mb-10">
             Contact me for pricing, floor plans, and developer incentives across
             South Florida.
           </p>
           <a
             href="/contact/"
-            className="inline-block px-8 py-3 border border-white/30 text-white hover:bg-white/10 transition-all tracking-wider uppercase text-sm"
+            className="inline-block px-8 py-3 border border-gray-300 text-[#1a1a1a] hover:bg-gray-100 transition-colors tracking-wider uppercase text-sm"
           >
             Get Details
           </a>

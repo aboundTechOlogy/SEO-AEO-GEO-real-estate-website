@@ -269,7 +269,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
                     value={firstName}
                     onChange={(event) => setFirstName(event.target.value)}
                     placeholder="First name"
-                    className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40"
+                    className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/20"
                     required
                   />
                   <input
@@ -277,7 +277,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
                     value={lastName}
                     onChange={(event) => setLastName(event.target.value)}
                     placeholder="Last name"
-                    className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40"
+                    className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/20"
                     required
                   />
                 </div>
@@ -288,7 +288,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="Email address"
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40"
+                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/20"
                 required
               />
 
@@ -297,7 +297,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Password"
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40"
+                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/20"
                 required
                 minLength={6}
               />
@@ -307,7 +307,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-md bg-amber-600 text-white text-sm font-medium py-2.5 hover:bg-amber-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full rounded-md bg-[#1a1a1a] text-white text-sm font-medium py-2.5 hover:bg-black transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {loading ? "Please wait..." : mode === "login" ? "Continue with email" : "Create Account"}
               </button>
@@ -344,7 +344,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
               <button
                 type="button"
                 onClick={() => setError("Password reset is not configured yet.")}
-                className="text-amber-700 hover:text-amber-800 underline underline-offset-2"
+                className="text-[#1a1a1a] hover:text-black underline underline-offset-2"
               >
                 Forgot password? Reset now
               </button>
@@ -356,7 +356,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
                   Not registered yet?{" "}
                   <button
                     type="button"
-                    className="text-amber-700 hover:text-amber-800 underline underline-offset-2"
+                    className="text-[#1a1a1a] hover:text-black underline underline-offset-2"
                     onClick={() => setMode("register")}
                   >
                     Register now
@@ -367,7 +367,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
                   Already have an account?{" "}
                   <button
                     type="button"
-                    className="text-amber-700 hover:text-amber-800 underline underline-offset-2"
+                    className="text-[#1a1a1a] hover:text-black underline underline-offset-2"
                     onClick={() => setMode("login")}
                   >
                     Sign in

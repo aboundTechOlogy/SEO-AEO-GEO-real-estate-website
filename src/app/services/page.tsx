@@ -80,7 +80,7 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      <section className="bg-[#0a0a0a] py-20 md:py-28 px-6">
+      <section className="bg-white py-20 md:py-28 px-6">
         <div className="max-w-7xl mx-auto">
           <ScrollReveal className="mb-10" y={24}>
             <p className="text-neutral-500 text-sm uppercase tracking-[0.2em]" data-reveal>
@@ -93,12 +93,12 @@ export default function ServicesPage() {
               <a
                 key={service.href}
                 href={service.href}
-                className="group bg-neutral-900 border border-white/5 hover:border-white/20 p-7 transition-all"
+                className="group bg-white border border-gray-200 shadow-sm hover:border-gray-300 p-7 transition-all"
                 data-reveal
               >
-                <div className="h-20 w-20 border border-white/10 bg-black/30 flex items-center justify-center mb-6">
+                <div className="h-20 w-20 border border-gray-200 bg-gray-50 flex items-center justify-center mb-6">
                   <svg
-                    className="w-9 h-9 text-white/70"
+                    className="w-9 h-9 text-gray-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -108,9 +108,9 @@ export default function ServicesPage() {
                   </svg>
                 </div>
 
-                <h2 className="font-playfair text-2xl text-white mb-3">{service.title}</h2>
-                <p className="text-neutral-400 leading-relaxed mb-6">{service.description}</p>
-                <span className="text-sm uppercase tracking-[0.12em] text-white border-b border-white/30 pb-1 group-hover:border-white">
+                <h2 className="font-playfair text-2xl text-[#1a1a1a] mb-3">{service.title}</h2>
+                <p className="text-gray-600 leading-relaxed mb-6">{service.description}</p>
+                <span className="text-sm uppercase tracking-[0.12em] text-[#1a1a1a] border-b border-gray-300 pb-1 group-hover:border-gray-500">
                   Learn More
                 </span>
               </a>
@@ -119,7 +119,7 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      <section className="bg-neutral-900 py-20 px-6 text-center">
+      <section className="bg-[#0a0a0a] py-20 px-6 text-center">
         <ScrollReveal className="max-w-3xl mx-auto" y={24}>
           <h2 className="font-playfair text-4xl md:text-5xl text-white mb-4" data-reveal>
             Ready to get started?
@@ -129,7 +129,7 @@ export default function ServicesPage() {
           </p>
           <a
             href="/contact/"
-            className="inline-flex items-center justify-center rounded-full bg-amber-600 hover:bg-amber-500 text-white px-10 py-3.5 text-sm uppercase tracking-wider transition-colors"
+            className="inline-flex items-center justify-center border border-white/30 rounded-full text-white px-10 py-3.5 text-sm uppercase tracking-wider hover:bg-white/10 transition-all"
             data-reveal
           >
             Contact Andrew

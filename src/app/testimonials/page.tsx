@@ -91,27 +91,27 @@ export default function TestimonialsPage() {
       </section>
 
       {/* Grid */}
-      <section className="bg-[#0a0a0a] py-20 md:py-28">
+      <section className="bg-white py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {TESTIMONIALS.map((t, i) => (
               <div
                 key={i}
-                className="relative bg-neutral-900/50 border border-white/5 p-8 lg:p-10"
+                className="relative bg-white border border-gray-200 shadow-sm p-8 lg:p-10"
               >
                 <span
-                  className="font-playfair text-[100px] leading-none text-white/5 absolute top-0 left-6 select-none pointer-events-none"
+                  className="font-playfair text-[100px] leading-none text-black/5 absolute top-0 left-6 select-none pointer-events-none"
                   aria-hidden="true"
                 >
                   &ldquo;
                 </span>
                 <div className="relative">
                   <StarRating count={t.rating} />
-                  <p className="font-playfair italic text-base text-neutral-300 leading-relaxed mt-4 mb-6">
+                  <p className="font-playfair italic text-base text-gray-600 leading-relaxed mt-4 mb-6">
                     &ldquo;{t.quote}&rdquo;
                   </p>
                   <div>
-                    <p className="text-white text-sm font-medium">{t.name}</p>
+                    <p className="text-[#1a1a1a] text-sm font-medium">{t.name}</p>
                     <p className="text-neutral-500 text-xs uppercase tracking-wider mt-1">{t.role}</p>
                   </div>
                 </div>
@@ -123,7 +123,7 @@ export default function TestimonialsPage() {
             <p className="text-neutral-500 text-sm mb-6">Ready to start your own success story?</p>
             <a
               href="/contact/"
-              className="inline-block border border-white/30 rounded-full px-10 py-4 text-sm uppercase tracking-wider text-white hover:bg-white/10 transition-all"
+              className="inline-block bg-[#1a1a1a] rounded-full px-10 py-4 text-sm uppercase tracking-wider text-white hover:bg-[#333333] transition-colors"
             >
               Contact Andrew
             </a>
