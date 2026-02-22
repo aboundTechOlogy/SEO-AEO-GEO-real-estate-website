@@ -55,7 +55,7 @@ function estimateMonthlyPayment(price: number | null | undefined): string | null
 }
 
 const PANEL_CONTAINER_CLASS =
-  "fixed inset-y-0 left-0 w-screen md:left-[25px] md:w-[calc(100vw-50px)] min-[1300px]:left-1/2 min-[1300px]:w-[1200px] min-[1300px]:-translate-x-1/2 border-0 md:border md:border-black/15 bg-[#f5f5f5] shadow-[0_24px_70px_rgba(0,0,0,0.45)]";
+  "fixed inset-y-0 left-0 right-0 md:left-[25px] md:right-[25px] border-0 md:border md:border-black/15 bg-[#f5f5f5] shadow-[0_24px_70px_rgba(0,0,0,0.45)]";
 
 function CircleIconButton({
   label,
