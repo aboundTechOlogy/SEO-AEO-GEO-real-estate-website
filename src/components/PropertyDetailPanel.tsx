@@ -281,7 +281,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
           <div className="sticky top-0 z-30 border-b border-black/10 bg-white/95 backdrop-blur-sm px-4 py-3">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <p className="text-[34px] sm:text-[42px] lg:text-[56px] leading-[1.02] font-semibold text-[#1a1a1a] break-words pr-2">
+                <p className="text-[34px] sm:text-[40px] lg:text-[44px] leading-[1.02] font-semibold text-[#1a1a1a] break-words pr-2">
                   {address}
                 </p>
                 <p className="text-sm text-gray-600 break-words pr-2">
@@ -455,36 +455,78 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
             </a>
           </div>
 
-          <div className="bg-white border-b border-black/10 px-4 py-4">
-            <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
-              <div className="border border-gray-200 bg-white">
-                <div className="flex items-end justify-between gap-4 px-4 pt-4 pb-3 border-b border-gray-200">
-                  <p className="font-playfair text-[58px] leading-none text-[#1a1a1a]">{formatCurrency(price)}</p>
-                  <div className="text-right pb-1">
-                    <p className="text-[11px] uppercase tracking-[0.12em] text-gray-500">Est. Payment</p>
-                    <p className="text-blue-600 text-[34px] font-semibold leading-none">
-                      {estimatedPayment ? `${estimatedPayment}/mo` : "--"}
-                    </p>
+          <div className="bg-white border-b border-black/10 px-4 py-4 lg:px-5">
+            <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px] items-start">
+              <div className="space-y-4 min-w-0">
+                <div className="border border-gray-200 bg-white">
+                  <div className="flex items-end justify-between gap-4 px-4 pt-4 pb-3 border-b border-gray-200">
+                    <p className="font-playfair text-[58px] leading-none text-[#1a1a1a]">{formatCurrency(price)}</p>
+                    <div className="text-right pb-1">
+                      <p className="text-[11px] uppercase tracking-[0.12em] text-gray-500">Est. Payment</p>
+                      <p className="text-blue-600 text-[34px] font-semibold leading-none">
+                        {estimatedPayment ? `${estimatedPayment}/mo` : "--"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-gray-200 lg:hidden">
+                    <StatMetric label="Beds" value={String(property.BedroomsTotal || 0)} />
+                    <StatMetric label="Baths" value={String(bathsCount || 0)} />
+                    <StatMetric label="Sq.Ft" value={property.LivingArea ? property.LivingArea.toLocaleString() : "-"} />
+                    <StatMetric label="$/SqFt" value={pricePerSqft ? `$${pricePerSqft.toLocaleString()}` : "-"} />
+                  </div>
+
+                  <div className="hidden lg:grid lg:grid-cols-5 divide-x divide-gray-200">
+                    <StatMetric label="Beds" value={String(property.BedroomsTotal || 0)} />
+                    <StatMetric label="Baths" value={String(bathsCount || 0)} />
+                    <StatMetric label="Half Bath" value={halfBathValue} />
+                    <StatMetric label="Sq.Ft" value={property.LivingArea ? property.LivingArea.toLocaleString() : "-"} />
+                    <StatMetric label="$/SqFt" value={pricePerSqft ? `$${pricePerSqft.toLocaleString()}` : "-"} />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-gray-200 lg:hidden">
-                  <StatMetric label="Beds" value={String(property.BedroomsTotal || 0)} />
-                  <StatMetric label="Baths" value={String(bathsCount || 0)} />
-                  <StatMetric label="Sq.Ft" value={property.LivingArea ? property.LivingArea.toLocaleString() : "-"} />
-                  <StatMetric label="$/SqFt" value={pricePerSqft ? `$${pricePerSqft.toLocaleString()}` : "-"} />
-                </div>
+                <section className="space-y-3">
+                  <div className="bg-gray-100 border border-gray-200 rounded px-4 py-3">
+                    <h3 className="text-[30px] font-semibold leading-none text-[#1a1a1a]">Description</h3>
+                  </div>
 
-                <div className="hidden lg:grid lg:grid-cols-5 divide-x divide-gray-200">
-                  <StatMetric label="Beds" value={String(property.BedroomsTotal || 0)} />
-                  <StatMetric label="Baths" value={String(bathsCount || 0)} />
-                  <StatMetric label="Half Bath" value={halfBathValue} />
-                  <StatMetric label="Sq.Ft" value={property.LivingArea ? property.LivingArea.toLocaleString() : "-"} />
-                  <StatMetric label="$/SqFt" value={pricePerSqft ? `$${pricePerSqft.toLocaleString()}` : "-"} />
+                  <div className="bg-white border border-gray-200 px-4 py-4">
+                    <p className="text-[15px] leading-relaxed text-gray-700">{description}</p>
+                    {isLongDescription && (
+                      <button
+                        type="button"
+                        onClick={() => setShowFullDescription((prev) => !prev)}
+                        className="mt-2 text-sm text-gray-700 underline underline-offset-2 hover:text-black transition-colors"
+                      >
+                        {showFullDescription ? "Show less" : "Read more"}
+                      </button>
+                    )}
+                  </div>
+                </section>
+
+                <section className="bg-white border border-gray-200 px-4 py-4">
+                  <h3 className="text-[30px] font-semibold leading-none text-[#1a1a1a] mb-3">Key Details</h3>
+                  <div className="grid sm:grid-cols-2 gap-2">
+                    {detailItems.map(([label, value]) => (
+                      <DetailRow key={label} label={label} value={value} />
+                    ))}
+                  </div>
+                </section>
+
+                <a
+                  href={`/property/${listingKey}/`}
+                  className="inline-flex items-center justify-center w-full border border-gray-300 text-[#1a1a1a] px-4 py-3 rounded-full text-xs uppercase tracking-[0.12em] hover:bg-gray-100 transition-colors"
+                >
+                  View Full Details
+                </a>
+
+                <div className="text-[11px] text-gray-500 leading-relaxed border-t border-gray-300 pt-4">
+                  The multiple listing information is provided by the Miami Association of Realtors from a copyrighted
+                  compilation of listings. All information is deemed reliable but not guaranteed.
                 </div>
               </div>
 
-              <aside className="hidden lg:block border border-gray-200 bg-white p-4 space-y-4">
+              <aside className="hidden lg:block border border-gray-200 bg-white p-4 space-y-4 sticky top-4">
                 <div className="flex items-center gap-3">
                   <img src="/andrew-headshot.png" alt="Andrew Whalen" className="w-14 h-14 rounded-full object-cover" />
                   <div>
@@ -500,50 +542,6 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
               </aside>
             </div>
           </div>
-
-          <div className="px-4 py-5 lg:px-6">
-            <div className="space-y-6">
-              <section className="space-y-3">
-                <div className="bg-gray-100 border border-gray-200 rounded px-4 py-3">
-                  <h3 className="text-[30px] font-semibold leading-none text-[#1a1a1a]">Description</h3>
-                </div>
-
-                <div className="bg-white border border-gray-200 px-4 py-4">
-                  <p className="text-[15px] leading-relaxed text-gray-700">{description}</p>
-                  {isLongDescription && (
-                    <button
-                      type="button"
-                      onClick={() => setShowFullDescription((prev) => !prev)}
-                      className="mt-2 text-sm text-gray-700 underline underline-offset-2 hover:text-black transition-colors"
-                    >
-                      {showFullDescription ? "Show less" : "Read more"}
-                    </button>
-                  )}
-                </div>
-              </section>
-
-              <section className="bg-white border border-gray-200 px-4 py-4">
-                <h3 className="text-[30px] font-semibold leading-none text-[#1a1a1a] mb-3">Key Details</h3>
-                <div className="grid sm:grid-cols-2 gap-2">
-                  {detailItems.map(([label, value]) => (
-                    <DetailRow key={label} label={label} value={value} />
-                  ))}
-                </div>
-              </section>
-
-              <a
-                href={`/property/${listingKey}/`}
-                className="inline-flex items-center justify-center w-full border border-gray-300 text-[#1a1a1a] px-4 py-3 rounded-full text-xs uppercase tracking-[0.12em] hover:bg-gray-100 transition-colors"
-              >
-                View Full Details
-              </a>
-
-              <div className="text-[11px] text-gray-500 leading-relaxed border-t border-gray-300 pt-4">
-                The multiple listing information is provided by the Miami Association of Realtors from a copyrighted
-                compilation of listings. All information is deemed reliable but not guaranteed.
-              </div>
-            </div>
-          </div>
         </div>
 
         {isPhotoViewerOpen && (
@@ -556,12 +554,6 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
             }}
           >
             <div className="h-full flex flex-col" onClick={(event) => event.stopPropagation()}>
-              <div className="sm:hidden border-b border-gray-300 bg-white px-4 py-6 flex justify-end">
-                <CircleIconButton label="Close" onClick={() => setIsPhotoViewerOpen(false)}>
-                  ✕
-                </CircleIconButton>
-              </div>
-
               <div className="hidden sm:block border-b border-gray-300 bg-white px-4 py-3">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
