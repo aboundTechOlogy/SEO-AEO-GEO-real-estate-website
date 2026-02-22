@@ -21,13 +21,7 @@ const BTN =
   "w-10 h-10 bg-white flex items-center justify-center transition-colors cursor-pointer text-neutral-700 hover:bg-neutral-50";
 const BTN_SHADOW = "shadow-[0_1px_4px_rgba(0,0,0,0.3)]";
 
-function isNearFirstPoint(point: DrawCoordinate, first: DrawCoordinate): boolean {
-  const latDiff = Math.abs(point.lat - first.lat);
-  const lngDiff = Math.abs(point.lng - first.lng);
-  return latDiff <= 0.0009 && lngDiff <= 0.0009;
-}
-
-/* ── SVG Icons ── */
+/* ── Icons matching Chad Carroll's toolbar ── */
 
 function PlusIcon() {
   return (
@@ -45,23 +39,36 @@ function MinusIcon() {
   );
 }
 
+/* Hand/finger drawing a squiggly line — matches Chad's draw icon */
 function DrawIcon() {
   return (
-    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
-      <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 1 1 3.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" strokeLinecap="round" strokeLinejoin="round" />
+    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" strokeWidth={1.6}>
+      {/* Curved arrow suggesting a drawing motion */}
+      <path d="M7 16c1-2 3-4 5-4s3 1.5 5 0" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+      {/* Hand/finger pointing down */}
+      <path d="M14 4v7c0 .6.4 1 1 1h0c.6 0 1-.4 1-1V7c0-.6.4-1 1-1h0c.6 0 1 .4 1 1v5c0 2.2-1.8 4-4 4h-2c-2.2 0-4-1.8-4-4V8c0-.6.4-1 1-1h0c.6 0 1 .4 1 1v3" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
+/* Satellite icon — matches Chad's satellite/map toggle */
 function SatelliteIcon() {
   return (
     <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6}>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M3 12h18M12 3c-2.5 2.5-4 5.5-4 9s1.5 6.5 4 9c2.5-2.5 4-5.5 4-9s-1.5-6.5-4-9z" />
+      {/* Satellite body */}
+      <path d="M13 7L9 3 5 7l4 4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M17 11l4-4-4-4-4 4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M8 12l4 4" strokeLinecap="round" strokeLinejoin="round" />
+      {/* Signal waves */}
+      <path d="M7 17a5.5 5.5 0 0 0 7.5-7.5" strokeLinecap="round" />
+      <path d="M4 20a9.5 9.5 0 0 0 13-13" strokeLinecap="round" />
+      {/* Dish base */}
+      <circle cx="6" cy="18" r="1" fill="currentColor" stroke="none" />
     </svg>
   );
 }
 
+/* Map/road view icon */
 function MapViewIcon() {
   return (
     <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6}>
@@ -78,6 +85,7 @@ export default function MapDrawControl({ onBoundsChange, containerRef }: MapDraw
   const [points, setPoints] = useState<DrawCoordinate[]>([]);
   const [isSatellite, setIsSatellite] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isHolding, setIsHolding] = useState(false);
 
   const pointsRef = useRef<DrawCoordinate[]>([]);
   const lineRef = useRef<any>(null);
@@ -111,48 +119,106 @@ export default function MapDrawControl({ onBoundsChange, containerRef }: MapDraw
     }
   }, [map, points, isClosed]);
 
-  // Map click listeners for drawing — ALSO disable dragging so clicks register
+  // Freehand drawing: mousedown → track mousemove → mouseup closes shape
   useEffect(() => {
     if (!map) return;
 
     const drawActive = isDrawing && !isClosed;
 
-    map.setOptions({
-      draggable: !drawActive,
-      disableDoubleClickZoom: drawActive,
-      draggableCursor: drawActive ? "crosshair" : undefined,
-    });
-
-    if (!drawActive) {
-      return () => {
-        map.setOptions({ draggable: true, disableDoubleClickZoom: false, draggableCursor: undefined });
-      };
+    if (drawActive) {
+      map.setOptions({
+        gestureHandling: "none",
+        disableDoubleClickZoom: true,
+        draggableCursor: "crosshair",
+      });
+    } else {
+      map.setOptions({
+        gestureHandling: "greedy",
+        disableDoubleClickZoom: false,
+        draggableCursor: undefined,
+      });
     }
 
-    const clickListener = map.addListener("click", (event: any) => {
-      const latLng = event.latLng?.toJSON?.();
-      if (!latLng) return;
-      setPoints((prev) => {
-        if (prev.length >= 3 && isNearFirstPoint(latLng, prev[0])) {
-          setIsClosed(true);
-          setIsDrawing(false);
-          return prev;
-        }
-        return [...prev, latLng];
-      });
-    });
+    if (!drawActive) return;
 
-    const doubleClickListener = map.addListener("dblclick", () => {
-      if (pointsRef.current.length >= 3) {
+    // Get the map div to attach raw DOM events
+    const mapDiv = (map as any).getDiv?.() as HTMLElement | undefined;
+    if (!mapDiv) return;
+
+    let drawing = false;
+    let localPoints: DrawCoordinate[] = [];
+
+    function pixelToLatLng(x: number, y: number): DrawCoordinate | null {
+      if (!map) return null;
+      const bounds = map.getBounds();
+      const projection = map.getProjection();
+      if (!bounds || !projection) return null;
+
+      const mapDivEl = (map as any).getDiv() as HTMLElement;
+      const rect = mapDivEl.getBoundingClientRect();
+
+      const ne = bounds.getNorthEast();
+      const sw = bounds.getSouthWest();
+
+      const lng = sw.lng() + ((x - rect.left) / rect.width) * (ne.lng() - sw.lng());
+      const lat = ne.lat() - ((y - rect.top) / rect.height) * (ne.lat() - sw.lat());
+
+      return { lat, lng };
+    }
+
+    function onMouseDown(e: MouseEvent) {
+      if (e.button !== 0) return; // left click only
+      drawing = true;
+      localPoints = [];
+      const coord = pixelToLatLng(e.clientX, e.clientY);
+      if (coord) {
+        localPoints.push(coord);
+        setPoints([...localPoints]);
+      }
+    }
+
+    function onMouseMove(e: MouseEvent) {
+      if (!drawing) return;
+      const coord = pixelToLatLng(e.clientX, e.clientY);
+      if (coord) {
+        // Throttle: only add point if moved enough
+        const last = localPoints[localPoints.length - 1];
+        if (last) {
+          const dist = Math.abs(coord.lat - last.lat) + Math.abs(coord.lng - last.lng);
+          if (dist < 0.0005) return; // skip tiny movements
+        }
+        localPoints.push(coord);
+        setPoints([...localPoints]);
+      }
+    }
+
+    function onMouseUp() {
+      if (!drawing) return;
+      drawing = false;
+      if (localPoints.length >= 3) {
+        setPoints([...localPoints]);
         setIsClosed(true);
         setIsDrawing(false);
+      } else {
+        // Not enough points, reset
+        localPoints = [];
+        setPoints([]);
       }
-    });
+    }
+
+    mapDiv.addEventListener("mousedown", onMouseDown);
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
 
     return () => {
-      clickListener.remove();
-      doubleClickListener.remove();
-      map.setOptions({ draggable: true, disableDoubleClickZoom: false, draggableCursor: undefined });
+      mapDiv.removeEventListener("mousedown", onMouseDown);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+      map.setOptions({
+        gestureHandling: "greedy",
+        disableDoubleClickZoom: false,
+        draggableCursor: undefined,
+      });
     };
   }, [map, isDrawing, isClosed]);
 
@@ -173,6 +239,7 @@ export default function MapDrawControl({ onBoundsChange, containerRef }: MapDraw
   const handleCancel = useCallback(() => {
     setIsDrawing(false);
     setIsClosed(false);
+    setIsHolding(false);
     setPoints([]);
     onBoundsChange?.(null);
   }, [onBoundsChange]);
@@ -231,10 +298,9 @@ export default function MapDrawControl({ onBoundsChange, containerRef }: MapDraw
             <MinusIcon />
           </button>
 
-          {/* Spacer */}
           <div className="h-2" />
 
-          {/* Draw boundary */}
+          {/* Draw boundary — freehand */}
           <button type="button" onClick={handleDrawClick} aria-label="Draw boundary" title="Draw boundary"
             className={`${BTN} ${BTN_SHADOW} rounded-t-sm border border-black/10`}>
             <DrawIcon />
