@@ -156,35 +156,7 @@ This is a **differentiator page** — it positions Andrew as tech-forward and tr
 
 ---
 
-## 4. Search Page Polish
-
-**File:** `src/app/search/page.tsx`
-
-Enhance the existing search page to closer match Carroll:
-
-### Sort Controls
-Add above the listing grid:
-- Left: "{count} Properties" text (use mock count)
-- Right: "Sort by:" dropdown with options: Newest Listings, Price (High to Low), Price (Low to High), Sq.Ft (High to Low)
-- View toggles: Grid icon | List icon (grid active by default, list is visual only for now)
-
-### Filter Bar Updates
-Ensure these filter dropdowns exist and match Carroll:
-- "For Sale" dropdown (For Sale / For Rent / Sold)
-- Price Range dropdown
-- Beds/Baths dropdown
-- Property Type dropdown (Any Type, Single Family, Condo, Townhouse, Multi-Family, Land)
-- "More" / "Filters" button
-- "Save Search" ghost button (right side)
-
-### Listing Cards
-- Add time-relative badge: "New — 2 hours ago" or "New — 3 days ago" (use mock timestamps)
-- Add photo count indicator: "1 of 12" bottom-left of image
-- Add share icon (top-right of image, next to favorite star)
-
----
-
-## 5. API Routes for Lead Forms
+## 4. API Routes for Lead Forms
 
 ### 5a. Market Analysis API
 
@@ -234,9 +206,8 @@ Also update the File Structure section to include the new pages.
 7. Create `/services/market-analysis/page.tsx` + API route
 8. Create `/services/investment-analysis/page.tsx` + API route
 9. Create `/about/ai/page.tsx`
-10. Polish `/search/page.tsx` (sort controls, filter updates, card enhancements)
-11. Run `npm run build` — fix ALL errors
-12. Verify: every nav/footer/mega menu link resolves to a real page
+10. Run `npm run build` — fix ALL errors
+11. Verify: every nav/footer/mega menu link resolves to a real page
 
 ## Critical Rules
 - **Read CLAUDE.md** before starting — follow design system strictly
