@@ -90,5 +90,5 @@ export const SITE_AGENT = {
   title: "Realtor®",
   brokerage: "LoKation Real Estate",
   email: "andrew@iamandrewwhalen.com",
-  phone: "(305) 420-6613",
+  phone: "(305) 455-9744",
 };

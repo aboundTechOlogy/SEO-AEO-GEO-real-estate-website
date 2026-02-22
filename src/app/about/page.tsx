@@ -137,7 +137,7 @@ export default function AboutPage() {
             jobTitle: "Luxury Real Estate Specialist",
             worksFor: { "@type": "Organization", name: "LoKation Real Estate" },
             url: "https://iamandrewwhalen.com/about",
-            telephone: "+1-305-420-6613",
+            telephone: "+1-305-455-9744",
             address: {
               "@type": "PostalAddress",
               streetAddress: "1900 N Bayshore Dr, Suite 120",

@@ -120,7 +120,7 @@ export default function PrivacyPolicyPage() {
               <p>1900 N Bayshore Dr, Suite 120</p>
               <p>Miami, FL 33132</p>
               <p>andrew@iamandrewwhalen.com</p>
-              <p>(305) 420-6613</p>
+              <p>(305) 455-9744</p>
             </div>
           </section>
         </div>

@@ -54,7 +54,7 @@ export default function HomePage() {
             description:
               "South Florida luxury real estate specialist with 1,300+ transactions across Miami-Dade, Broward, and Palm Beach counties.",
             url: "https://iamandrewwhalen.com",
-            telephone: "+1-305-420-6613",
+            telephone: "+1-305-455-9744",
             address: {
               "@type": "PostalAddress",
               streetAddress: "1900 N Bayshore Dr, Suite 120",
@@ -82,7 +82,7 @@ export default function HomePage() {
                 postalCode: "33132",
                 addressCountry: "US",
               },
-              telephone: "+1-305-420-6613",
+              telephone: "+1-305-455-9744",
             },
             areaServed: ["Miami-Dade County", "Broward County", "Palm Beach County"],
           }),

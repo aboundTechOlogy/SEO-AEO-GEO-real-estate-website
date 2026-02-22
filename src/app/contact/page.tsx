@@ -138,8 +138,8 @@ export default function ContactPage() {
               <div>
                 <h3 className="text-white text-xs uppercase tracking-widest mb-4">Direct</h3>
                 <p className="text-neutral-400 text-sm">
-                  <a href="tel:+13054206613" className="hover:text-white transition-colors">
-                    (305) 420-6613
+                  <a href="tel:+13054559744" className="hover:text-white transition-colors">
+                    (305) 455-9744
                   </a>
                 </p>
                 <p className="text-neutral-400 text-sm mt-1">

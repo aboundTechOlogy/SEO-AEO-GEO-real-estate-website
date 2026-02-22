@@ -98,10 +98,10 @@ export default function AccessibilityPage() {
                     Phone
                   </p>
                   <a
-                    href="tel:+13059001234"
+                    href="tel:+13054559744"
                     className="text-white hover:text-neutral-300 transition-colors"
                   >
-                    (305) 900-1234
+                    (305) 455-9744
                   </a>
                 </div>
                 <div>

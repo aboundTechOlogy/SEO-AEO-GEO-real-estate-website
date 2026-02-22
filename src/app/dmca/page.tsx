@@ -82,7 +82,7 @@ export default function DMCAPage() {
               <p>1900 N Bayshore Dr, Suite 120</p>
               <p>Miami, FL 33132</p>
               <p>Email: andrew@iamandrewwhalen.com</p>
-              <p>Phone: (305) 420-6613</p>
+              <p>Phone: (305) 455-9744</p>
             </div>
           </section>
 

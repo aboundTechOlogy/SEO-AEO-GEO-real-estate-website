@@ -54,13 +54,19 @@ export default function RootLayout({
         <footer className="bg-neutral-900 border-t border-white/5">
           <div className="max-w-7xl mx-auto px-6 py-16">
 
-            {/* Top: Logo + Social */}
+            {/* Top: Logo + Contact + Social */}
             <div className="text-center mb-14">
               <img
                 src="/logo-lockup.png"
                 alt="Andrew Whalen | LoKation Real Estate"
-                className="h-8 w-auto mx-auto mb-6 opacity-90"
+                className="h-8 w-auto mx-auto mb-4 opacity-90"
               />
+              <p className="text-neutral-400 text-sm mb-5">
+                Contact:{" "}
+                <a href="tel:+13054559744" className="hover:text-white transition-colors">305-455-9744</a>
+                {" | "}
+                <a href="mailto:Andrew@ImAndrewWhalen.com" className="hover:text-white transition-colors">Andrew@ImAndrewWhalen.com</a>
+              </p>
               <div className="flex justify-center gap-5">
                 {SOCIAL_LINKS.map((s) => (
                   <a
