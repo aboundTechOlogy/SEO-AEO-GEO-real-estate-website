@@ -36,13 +36,16 @@ function FilterDropdown({
     }
   }, [open, align]);
 
-  // Close on outside click
+  // Close on outside click — must also check if click is inside the portaled panel
+  const panelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!open) return;
     function handleClick(e: MouseEvent) {
-      if (btnRef.current && !btnRef.current.contains(e.target as Node)) {
-        onToggle();
-      }
+      const target = e.target as Node;
+      // Don't close if clicking inside the trigger button OR the portaled panel
+      if (btnRef.current?.contains(target)) return;
+      if (panelRef.current?.contains(target)) return;
+      onToggle();
     }
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
@@ -70,6 +73,7 @@ function FilterDropdown({
       </button>
       {open && mounted && pos && createPortal(
         <div
+          ref={panelRef}
           className="fixed bg-white rounded-xl shadow-2xl z-[200] overflow-hidden"
           style={{
             top: pos.top,

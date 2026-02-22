@@ -87,6 +87,69 @@ export interface BridgeSearchResult {
   nextLink: string | null;
 }
 
+export interface BridgeIdxSearchParams {
+  top?: number;
+  skip?: number;
+  orderby?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  beds?: number;
+  baths?: number;
+  status?: "Active" | "Pending" | "Closed" | string;
+  type?: string;
+  swLat?: number;
+  swLng?: number;
+  neLat?: number;
+  neLng?: number;
+}
+
+export interface BridgeIdxListingPhoto {
+  url: string;
+  order: number;
+}
+
+export interface BridgeIdxListing {
+  id: string;
+  price: number;
+  status: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  beds: number;
+  baths: number;
+  sqft: number | null;
+  lat: number;
+  lng: number;
+  photos: BridgeIdxListingPhoto[];
+  daysOnMarket: number | null;
+  listDate: string | null;
+  photoCount: number;
+  propertyType: string | null;
+  yearBuilt: number | null;
+  buildingName: string | null;
+}
+
+export interface BridgeIdxMarker {
+  id: string;
+  lat: number;
+  lng: number;
+  price: number;
+}
+
+export interface BridgeIdxSearchResponse {
+  listings: BridgeIdxListing[];
+  total: number;
+  hasMore: boolean;
+  error?: string;
+}
+
+export interface BridgeIdxMarkersResponse {
+  markers: BridgeIdxMarker[];
+  total: number;
+  error?: string;
+}
+
 export interface PropertyCardListing {
   image?: string;
   price: string;
@@ -107,6 +170,44 @@ interface ODataResponse<T> {
   "@odata.count"?: number;
   "@odata.nextLink"?: string;
 }
+
+const IDX_SEARCH_REVALIDATE_SECONDS = 60 * 5;
+const IDX_DEFAULT_TOP = 24;
+const IDX_DEFAULT_SKIP = 0;
+const IDX_DEFAULT_ORDERBY = "ListPrice desc";
+
+const IDX_SELECT_FIELDS = [
+  "ListingKey",
+  "ListPrice",
+  "StandardStatus",
+  "PropertyType",
+  "City",
+  "StateOrProvince",
+  "PostalCode",
+  "UnparsedAddress",
+  "BedroomsTotal",
+  "BathroomsTotalInteger",
+  "LivingArea",
+  "YearBuilt",
+  "Latitude",
+  "Longitude",
+  "Media",
+  "DaysOnMarket",
+  "OnMarketTimestamp",
+  "ClosePrice",
+  "CloseDate",
+  "BuildingName",
+  "LotSizeAcres",
+  "GarageSpaces",
+  "AssociationFee",
+].join(",");
+
+const IDX_MARKER_SELECT_FIELDS = [
+  "ListingKey",
+  "Latitude",
+  "Longitude",
+  "ListPrice",
+].join(",");
 
 function ensureServerSide() {
   if (typeof window !== "undefined") {
@@ -155,6 +256,11 @@ function toBooleanValue(value: unknown): boolean {
   return false;
 }
 
+function toFiniteNumberOrNull(value: unknown): number | null {
+  const num = toNullableNumber(value);
+  return typeof num === "number" && Number.isFinite(num) ? num : null;
+}
+
 function toStringArray(value: unknown): string[] {
   if (Array.isArray(value)) {
     return value
@@ -189,6 +295,315 @@ function normalizeMedia(media: unknown): BridgeMedia[] {
       } as BridgeMedia;
     })
     .filter((item) => item.MediaURL.length > 0);
+}
+
+function sanitizeIdxOrderBy(orderby: string | undefined): string {
+  if (!orderby) {
+    return IDX_DEFAULT_ORDERBY;
+  }
+
+  const clean = orderby.trim().replace(/\+/g, " ");
+  return clean || IDX_DEFAULT_ORDERBY;
+}
+
+function clampIdxInt(value: number | undefined, fallback: number, min: number, max: number): number {
+  if (typeof value !== "number" || Number.isNaN(value)) {
+    return fallback;
+  }
+
+  return Math.min(Math.max(Math.floor(value), min), max);
+}
+
+function buildIdxFilters(params: BridgeIdxSearchParams): string[] {
+  const filters: string[] = [];
+  const status = params.status || "Active";
+  filters.push(`StandardStatus eq '${escapeOData(status)}'`);
+
+  if (typeof params.minPrice === "number") {
+    filters.push(`ListPrice ge ${params.minPrice}`);
+  }
+
+  if (typeof params.maxPrice === "number") {
+    filters.push(`ListPrice le ${params.maxPrice}`);
+  }
+
+  if (typeof params.beds === "number") {
+    filters.push(`BedroomsTotal ge ${params.beds}`);
+  }
+
+  if (typeof params.baths === "number") {
+    filters.push(`BathroomsTotalInteger ge ${params.baths}`);
+  }
+
+  if (params.type) {
+    filters.push(`PropertyType eq '${escapeOData(params.type)}'`);
+  }
+
+  const hasBBox =
+    typeof params.swLat === "number" &&
+    typeof params.swLng === "number" &&
+    typeof params.neLat === "number" &&
+    typeof params.neLng === "number";
+
+  if (hasBBox) {
+    filters.push(`Latitude ge ${params.swLat}`);
+    filters.push(`Latitude le ${params.neLat}`);
+    filters.push(`Longitude ge ${params.swLng}`);
+    filters.push(`Longitude le ${params.neLng}`);
+  }
+
+  return filters;
+}
+
+function mapMediaToIdxPhotos(media: unknown): BridgeIdxListingPhoto[] {
+  const photos = normalizeMedia(media)
+    .filter((item) => item.MediaCategory === "Photo")
+    .sort((a, b) => a.Order - b.Order)
+    .map((item) => ({ url: item.MediaURL, order: item.Order }));
+
+  return photos;
+}
+
+function toIdxListing(raw: unknown): BridgeIdxListing {
+  const record = typeof raw === "object" && raw !== null ? (raw as Record<string, unknown>) : {};
+  const photos = mapMediaToIdxPhotos(record.Media);
+  const address = toNullableString(record.UnparsedAddress);
+
+  return {
+    id: toStringValue(record.ListingKey),
+    price: toNumber(record.ListPrice),
+    status: toStringValue(record.StandardStatus),
+    address: address || "",
+    city: toStringValue(record.City),
+    state: toStringValue(record.StateOrProvince),
+    zip: toStringValue(record.PostalCode),
+    beds: toNumber(record.BedroomsTotal),
+    baths: toNumber(record.BathroomsTotalInteger),
+    sqft: toFiniteNumberOrNull(record.LivingArea),
+    lat: toNumber(record.Latitude),
+    lng: toNumber(record.Longitude),
+    photos,
+    daysOnMarket: toFiniteNumberOrNull(record.DaysOnMarket),
+    listDate: toNullableString(record.OnMarketTimestamp),
+    photoCount: photos.length,
+    propertyType: toNullableString(record.PropertyType),
+    yearBuilt: toFiniteNumberOrNull(record.YearBuilt),
+    buildingName: toNullableString(record.BuildingName),
+  };
+}
+
+function toIdxMarker(raw: unknown): BridgeIdxMarker {
+  const record = typeof raw === "object" && raw !== null ? (raw as Record<string, unknown>) : {};
+
+  return {
+    id: toStringValue(record.ListingKey),
+    lat: toNumber(record.Latitude),
+    lng: toNumber(record.Longitude),
+    price: toNumber(record.ListPrice),
+  };
+}
+
+function mockBaseLat(index: number): number {
+  return 25.72 + (index % 25) * 0.012;
+}
+
+function mockBaseLng(index: number): number {
+  return -80.28 + (index % 25) * 0.011;
+}
+
+function toIdxMockStatus(listing: (typeof MOCK_SEARCH)[number]): string {
+  if (listing.isSold) return "Closed";
+  if ((listing.status || "").toLowerCase().includes("pending")) return "Pending";
+  return "Active";
+}
+
+function toIdxListingFromMock(index: number, listing: (typeof MOCK_SEARCH)[number]): BridgeIdxListing {
+  const parsedPrice = Number(String(listing.price).replace(/[^0-9.]/g, "")) || 0;
+  const lat = mockBaseLat(index);
+  const lng = mockBaseLng(index);
+  const photos = listing.image ? [{ url: listing.image, order: 1 }] : [];
+
+  return {
+    id: `MOCK-${index}`,
+    price: parsedPrice,
+    status: toIdxMockStatus(listing),
+    address: listing.address,
+    city: listing.city,
+    state: listing.state,
+    zip: listing.zip,
+    beds: listing.beds,
+    baths: listing.baths,
+    sqft: typeof listing.sqft === "number" ? listing.sqft : null,
+    lat,
+    lng,
+    photos,
+    daysOnMarket: null,
+    listDate: null,
+    photoCount: photos.length,
+    propertyType: "Residential",
+    yearBuilt: null,
+    buildingName: null,
+  };
+}
+
+function filterIdxMockListings(listings: BridgeIdxListing[], params: BridgeIdxSearchParams): BridgeIdxListing[] {
+  const status = params.status || "Active";
+
+  let filtered = listings.filter((item) => item.status === status);
+
+  if (typeof params.minPrice === "number") {
+    filtered = filtered.filter((item) => item.price >= params.minPrice!);
+  }
+
+  if (typeof params.maxPrice === "number") {
+    filtered = filtered.filter((item) => item.price <= params.maxPrice!);
+  }
+
+  if (typeof params.beds === "number") {
+    filtered = filtered.filter((item) => item.beds >= params.beds!);
+  }
+
+  if (typeof params.baths === "number") {
+    filtered = filtered.filter((item) => item.baths >= params.baths!);
+  }
+
+  if (params.type) {
+    filtered = filtered.filter((item) => item.propertyType === params.type);
+  }
+
+  const hasBBox =
+    typeof params.swLat === "number" &&
+    typeof params.swLng === "number" &&
+    typeof params.neLat === "number" &&
+    typeof params.neLng === "number";
+
+  if (hasBBox) {
+    filtered = filtered.filter(
+      (item) =>
+        item.lat >= params.swLat! &&
+        item.lat <= params.neLat! &&
+        item.lng >= params.swLng! &&
+        item.lng <= params.neLng!
+    );
+  }
+
+  const order = sanitizeIdxOrderBy(params.orderby);
+  if (order.toLowerCase().includes("listprice")) {
+    const desc = order.toLowerCase().includes("desc");
+    filtered = [...filtered].sort((a, b) => (desc ? b.price - a.price : a.price - b.price));
+  }
+
+  return filtered;
+}
+
+function buildMockIdxSearchResponse(params: BridgeIdxSearchParams): BridgeIdxSearchResponse {
+  const top = clampIdxInt(params.top, IDX_DEFAULT_TOP, 1, 100);
+  const skip = clampIdxInt(params.skip, IDX_DEFAULT_SKIP, 0, 20000);
+
+  const source = MOCK_SEARCH.map((listing, index) => toIdxListingFromMock(index, listing));
+  const filtered = filterIdxMockListings(source, params);
+  const pageSlice = filtered.slice(skip, skip + top);
+
+  return {
+    listings: pageSlice,
+    total: filtered.length,
+    hasMore: skip + top < filtered.length,
+  };
+}
+
+function buildMockIdxMarkersResponse(params: BridgeIdxSearchParams): BridgeIdxMarkersResponse {
+  const source = MOCK_SEARCH.map((listing, index) => toIdxListingFromMock(index, listing));
+  const filtered = filterIdxMockListings(source, params).slice(0, 500);
+
+  return {
+    markers: filtered.map((item) => ({ id: item.id, lat: item.lat, lng: item.lng, price: item.price })),
+    total: filtered.length,
+  };
+}
+
+export async function fetchIdxSearch(params: BridgeIdxSearchParams = {}): Promise<BridgeIdxSearchResponse> {
+  const top = clampIdxInt(params.top, IDX_DEFAULT_TOP, 1, 100);
+  const skip = clampIdxInt(params.skip, IDX_DEFAULT_SKIP, 0, 20000);
+  const orderby = sanitizeIdxOrderBy(params.orderby);
+
+  const safeParams: BridgeIdxSearchParams = {
+    ...params,
+    top,
+    skip,
+    orderby,
+    status: params.status || "Active",
+  };
+
+  const query = new URLSearchParams();
+  query.set("$select", IDX_SELECT_FIELDS);
+  query.set("$count", "true");
+  query.set("$top", String(top));
+  query.set("$skip", String(skip));
+  query.set("$orderby", orderby);
+
+  const filters = buildIdxFilters(safeParams);
+  if (filters.length > 0) {
+    query.set("$filter", filters.join(" and "));
+  }
+
+  try {
+    const response = await bridgeFetch<unknown>(query, IDX_SEARCH_REVALIDATE_SECONDS);
+    const listings = (response.value || []).map((item) => toIdxListing(item));
+    const total = typeof response["@odata.count"] === "number" ? response["@odata.count"] : listings.length;
+    const hasMore = Boolean(response["@odata.nextLink"]);
+
+    return {
+      listings,
+      total,
+      hasMore,
+    };
+  } catch (error) {
+    console.error("fetchIdxSearch failed, falling back to mock data:", error);
+    const fallback = buildMockIdxSearchResponse(safeParams);
+    return {
+      ...fallback,
+      error: "Unable to load live Bridge listings.",
+    };
+  }
+}
+
+export async function fetchIdxMarkers(params: BridgeIdxSearchParams = {}): Promise<BridgeIdxMarkersResponse> {
+  const safeParams: BridgeIdxSearchParams = {
+    ...params,
+    top: 500,
+    skip: 0,
+    orderby: "ListPrice desc",
+    status: params.status || "Active",
+  };
+
+  const query = new URLSearchParams();
+  query.set("$select", IDX_MARKER_SELECT_FIELDS);
+  query.set("$count", "true");
+  query.set("$top", "500");
+  query.set("$skip", "0");
+
+  const filters = buildIdxFilters(safeParams);
+  if (filters.length > 0) {
+    query.set("$filter", filters.join(" and "));
+  }
+
+  try {
+    const response = await bridgeFetch<unknown>(query, IDX_SEARCH_REVALIDATE_SECONDS);
+    const markers = (response.value || []).map((item) => toIdxMarker(item));
+    const total = typeof response["@odata.count"] === "number" ? response["@odata.count"] : markers.length;
+
+    return {
+      markers,
+      total,
+    };
+  } catch (error) {
+    console.error("fetchIdxMarkers failed, falling back to mock data:", error);
+    const fallback = buildMockIdxMarkersResponse(safeParams);
+    return {
+      ...fallback,
+      error: "Unable to load live map markers.",
+    };
+  }
 }
 
 function normalizeProperty(raw: unknown): BridgeProperty {
