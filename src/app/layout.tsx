@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import Header from "@/components/Header";
 import FooterAccordion from "@/components/FooterAccordion";
+import AuthProvider from "@/components/AuthProvider";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -48,11 +49,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <body className="bg-neutral-950 text-white antialiased font-sans">
-        <Header />
-        <main className="min-h-screen">{children}</main>
+        <AuthProvider>
+          <Header />
+          <main className="min-h-screen">{children}</main>
 
-        <footer className="bg-neutral-900 border-t border-white/5">
-          <div className="max-w-7xl mx-auto px-6 py-16">
+          <footer className="bg-neutral-900 border-t border-white/5">
+            <div className="max-w-7xl mx-auto px-6 py-16">
 
             {/* Top: Logo + Contact + Social */}
             <div className="text-center mb-14">
@@ -198,8 +200,9 @@ export default function RootLayout({
                 </div>
               </div>
             </div>
-          </div>
-        </footer>
+            </div>
+          </footer>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import NavDropdown from "@/components/NavDropdown";
 import MegaMenu from "@/components/MegaMenu";
+import UserMenu from "@/components/UserMenu";
 
 const LISTING_ITEMS = [
   { label: "Miami-Dade County", href: "/our-listings/" },
@@ -119,14 +120,7 @@ export default function Header() {
           >
             Contact Us
           </a>
-          {/* Login icon */}
-          <a href="/login/" className="text-white hover:text-neutral-300 transition-colors" aria-label="Sign in">
-            <svg className="w-[30px] h-[30px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-              <circle cx="12" cy="12" r="10.5" />
-              <path d="M17 19c0-2.2-2.2-3.5-5-3.5S7 16.8 7 19" />
-              <circle cx="12" cy="9.5" r="2.5" />
-            </svg>
-          </a>
+          <UserMenu />
           {/* Hamburger */}
           <MegaMenu />
         </div>
@@ -145,13 +139,7 @@ export default function Header() {
 
         {/* Login + Hamburger right */}
         <div className="ml-auto flex items-center gap-3">
-          <a href="/login/" className="text-white" aria-label="Sign in">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.4}>
-              <circle cx="12" cy="12" r="10.5" />
-              <path d="M17 19c0-2.2-2.2-3.5-5-3.5S7 16.8 7 19" />
-              <circle cx="12" cy="9.5" r="2.5" />
-            </svg>
-          </a>
+          <UserMenu mobile />
           <MegaMenu />
         </div>
       </nav>
