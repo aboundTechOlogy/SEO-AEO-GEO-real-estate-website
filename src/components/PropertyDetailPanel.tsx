@@ -12,23 +12,26 @@ interface PropertyDetailPanelProps {
   listingKey: string;
 }
 
-function DetailRow({ label, value }: { label: string; value: string }) {
+function DetailRow({ label, value, icon }: { label: string; value: string; icon?: ReactNode }) {
   return (
     <div className="border border-gray-200 bg-white px-[15px] py-[10px]">
-      <p className="text-[13px] text-gray-500 mb-1">{label}</p>
+      <p className="text-[13px] text-gray-500 mb-1 flex items-center gap-1.5">
+        {icon && <span className="w-[14px] h-[14px] shrink-0 text-gray-400">{icon}</span>}
+        {label}
+      </p>
       <p className="text-[14px] text-[#1a1a1a] leading-[1.35]">{value}</p>
     </div>
   );
 }
 
-function DetailSection({ title, rows }: { title: string; rows: [string, string][] }) {
+function DetailSection({ title, rows, iconMap }: { title: string; rows: [string, string][]; iconMap?: Record<string, ReactNode> }) {
   if (rows.length === 0) return null;
   return (
     <section className="bg-white border-b border-gray-200 px-[15px] py-[20px]">
       <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[15px]">{title}</h3>
       <div className="grid sm:grid-cols-2 gap-2">
         {rows.map(([label, value]) => (
-          <DetailRow key={label} label={label} value={value} />
+          <DetailRow key={label} label={label} value={value} icon={iconMap?.[label]} />
         ))}
       </div>
     </section>
@@ -438,6 +441,38 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
 
   const hasCoords = Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) > 0 && Math.abs(lng) > 0;
 
+  const svgIcon = (d: string) => (
+    <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+      <path strokeLinecap="round" strokeLinejoin="round" d={d} />
+    </svg>
+  );
+
+  const BASIC_INFO_ICONS: Record<string, ReactNode> = {
+    "Property Type": svgIcon("M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"),
+    "Sub Type": svgIcon("M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z M6 6h.008v.008H6V6z"),
+    "Status": svgIcon("M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"),
+    "Year Built": svgIcon("M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"),
+    "Living Area": svgIcon("M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15"),
+    "Lot Size": svgIcon("M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15"),
+    "Lot Acres": svgIcon("M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15"),
+    "Stories": svgIcon("M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3"),
+    "Subdivision": svgIcon("M15 10.5a3 3 0 11-6 0 3 3 0 016 0z M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"),
+    "Building": svgIcon("M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"),
+    "County": svgIcon("M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z"),
+    "Architectural Style": svgIcon("M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18"),
+    "Construction": svgIcon("M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085"),
+    "Garage Spaces": svgIcon("M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"),
+    "Attached Garage": svgIcon("M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"),
+    "Covered Spaces": svgIcon("M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"),
+    "Days on Market": svgIcon("M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"),
+    "List Date": svgIcon("M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"),
+    "Original List Price": svgIcon("M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"),
+    "Close Date": svgIcon("M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"),
+    "Close Price": svgIcon("M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"),
+    "Association Fee": svgIcon("M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"),
+    "Direction Faces": svgIcon("M12 2L15 8h6l-5 4 2 7-6-4-6 4 2-7-5-4h6l3-6z"),
+  };
+
   const canonicalUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}/property/${listingKey}/`
@@ -534,15 +569,6 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <button
-          type="button"
-          onClick={handleClose}
-          className="hidden lg:flex absolute top-3 right-3 z-40 w-10 h-10 rounded-full border border-gray-300 bg-white text-[#1a1a1a] hover:bg-gray-100 transition-colors"
-          aria-label="Close property panel"
-        >
-          ✕
-        </button>
-
         {actionNotice && (
           <div className="absolute top-3 left-1/2 -translate-x-1/2 z-40 px-3 py-2 text-xs rounded-md bg-black text-white">
             {actionNotice}
@@ -567,7 +593,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                 </CircleIconButton>
               </div>
 
-              <div className="hidden lg:flex items-center gap-[10px] shrink-0 pl-[15px] pr-12">
+              <div className="hidden lg:flex items-center gap-[10px] shrink-0 pl-[15px]">
                 <CircleIconButton label={isSaved ? "Unsave listing" : "Save listing"} onClick={toggleSaved}>
                   {isSaved ? "★" : "☆"}
                 </CircleIconButton>
@@ -576,6 +602,9 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                 </CircleIconButton>
                 <CircleIconButton label="Open canonical property page" onClick={openCanonicalDetailsPage}>
                   ↱
+                </CircleIconButton>
+                <CircleIconButton label="Close" onClick={handleClose}>
+                  ✕
                 </CircleIconButton>
               </div>
             </div>
@@ -787,7 +816,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                   )}
                 </section>
 
-                <DetailSection title="Basic Information" rows={basicInfoRows} />
+                <DetailSection title="Basic Information" rows={basicInfoRows} iconMap={BASIC_INFO_ICONS} />
                 <DetailSection title="Exterior Features" rows={exteriorRows} />
                 <DetailSection title="Interior Features" rows={interiorRows} />
                 <DetailSection title="Property Features" rows={propertyFeaturesRows} />
@@ -800,20 +829,6 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                   >
                     View Full Details
                   </a>
-                </div>
-
-                <div className="px-[15px] py-[20px] text-[11px] text-gray-500 leading-[1.6] space-y-2">
-                  {(property.ListOfficeName || property.ListAgentFullName) && (
-                    <p>
-                      Courtesy of{property.ListAgentFullName ? ` ${property.ListAgentFullName}` : ""}
-                      {property.ListOfficeName ? `, ${property.ListOfficeName}` : ""}
-                      {property.ListOfficePhone ? ` (${property.ListOfficePhone})` : ""}
-                    </p>
-                  )}
-                  <p>
-                    The multiple listing information is provided by the Miami Association of Realtors from a copyrighted
-                    compilation of listings. All information is deemed reliable but not guaranteed.
-                  </p>
                 </div>
               </div>
 
@@ -834,6 +849,63 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                 </div>
               </aside>
             </div>
+          </div>
+
+          {/* Map block — full-width, below the 2-col grid */}
+          {hasCoords && (
+            <section className="bg-white border-b border-black/10">
+              <div className="px-[15px] py-[20px]">
+                <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[15px]">Location</h3>
+                <a
+                  href={`https://www.google.com/maps?q=${lat},${lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block relative w-full aspect-[2/1] bg-gray-100 rounded-lg overflow-hidden group"
+                >
+                  <img
+                    src={`https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=15&size=800x400&scale=2&markers=color:red%7C${lat},${lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || ""}`}
+                    alt={`Map of ${address}`}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                    <span className="opacity-0 group-hover:opacity-100 transition-opacity bg-white px-4 py-2 rounded-full text-sm font-medium text-[#1a1a1a] shadow">
+                      Open in Google Maps
+                    </span>
+                  </div>
+                </a>
+              </div>
+            </section>
+          )}
+
+          {/* Similar Properties — link to search */}
+          <section className="bg-white border-b border-black/10">
+            <div className="px-[15px] py-[20px]">
+              <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[10px]">Similar Properties</h3>
+              <p className="text-[14px] text-gray-500 mb-[15px]">
+                Explore more properties in {property.City || "this area"}.
+              </p>
+              <a
+                href={`/search?q=${encodeURIComponent(property.City || "")}`}
+                className="inline-flex items-center justify-center border border-gray-300 text-[#1a1a1a] px-5 py-2.5 rounded-full text-xs uppercase tracking-[0.12em] hover:bg-gray-100 transition-colors"
+              >
+                View Similar Listings
+              </a>
+            </div>
+          </section>
+
+          {/* Legal / Courtesy — full-width bottom */}
+          <div className="px-[15px] py-[20px] text-[11px] text-gray-500 leading-[1.6] space-y-2 bg-[#f5f5f5]">
+            {(property.ListOfficeName || property.ListAgentFullName) && (
+              <p>
+                Courtesy of{property.ListAgentFullName ? ` ${property.ListAgentFullName}` : ""}
+                {property.ListOfficeName ? `, ${property.ListOfficeName}` : ""}
+                {property.ListOfficePhone ? ` (${property.ListOfficePhone})` : ""}
+              </p>
+            )}
+            <p>
+              The multiple listing information is provided by the Miami Association of Realtors from a copyrighted
+              compilation of listings. All information is deemed reliable but not guaranteed.
+            </p>
           </div>
         </div>
 
