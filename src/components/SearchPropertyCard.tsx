@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 interface Props {
   image?: string;
@@ -19,6 +20,7 @@ interface Props {
   total?: number;
   listDate?: string;
   photoCount?: number;
+  listingKey?: string;
 }
 
 function formatRelativeTime(dateStr: string): string {
@@ -33,6 +35,25 @@ function formatRelativeTime(dateStr: string): string {
   if (days < 30) return `${days} day${days === 1 ? "" : "s"} ago`;
   const months = Math.floor(days / 30);
   return `${months} month${months === 1 ? "" : "s"} ago`;
+}
+
+const SAVED_KEY = "savedListings";
+
+function getSavedSet(): Set<string> {
+  try {
+    const raw = localStorage.getItem(SAVED_KEY);
+    return new Set(raw ? (JSON.parse(raw) as string[]) : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function saveSet(set: Set<string>) {
+  try {
+    localStorage.setItem(SAVED_KEY, JSON.stringify(Array.from(set)));
+  } catch {
+    // ignore storage errors
+  }
 }
 
 export default function SearchPropertyCard({
@@ -52,7 +73,46 @@ export default function SearchPropertyCard({
   total,
   listDate,
   photoCount,
+  listingKey,
 }: Props) {
+  const [isSaved, setIsSaved] = useState(false);
+  const [shareLabel, setShareLabel] = useState<"idle" | "copied">("idle");
+
+  // Hydrate saved state from localStorage after mount
+  useEffect(() => {
+    if (!listingKey) return;
+    setIsSaved(getSavedSet().has(listingKey));
+  }, [listingKey]);
+
+  function handleShare(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    const url = `${window.location.origin}${href}`;
+    if (navigator.share) {
+      navigator.share({ title: `${address}, ${city}, ${state}`, url }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(url).then(() => {
+        setShareLabel("copied");
+        setTimeout(() => setShareLabel("idle"), 2000);
+      }).catch(() => {});
+    }
+  }
+
+  function handleSave(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!listingKey) return;
+    const set = getSavedSet();
+    if (set.has(listingKey)) {
+      set.delete(listingKey);
+      setIsSaved(false);
+    } else {
+      set.add(listingKey);
+      setIsSaved(true);
+    }
+    saveSet(set);
+  }
+
   const badgeText = isSold
     ? "SOLD"
     : status && listDate
@@ -95,20 +155,34 @@ export default function SearchPropertyCard({
       {/* Action buttons — top right */}
       <div className="absolute top-3 right-3 flex gap-2">
         <button
-          className="w-8 h-8 rounded-full bg-white/90 hover:bg-white flex items-center justify-center transition-colors shadow"
-          aria-label="Share"
-          onClick={(e) => e.preventDefault()}
+          className="w-8 h-8 rounded-full bg-white/90 hover:bg-white flex items-center justify-center transition-colors shadow relative"
+          aria-label={shareLabel === "copied" ? "Link copied!" : "Share"}
+          title={shareLabel === "copied" ? "Link copied!" : "Share listing"}
+          onClick={handleShare}
         >
-          <svg className="w-4 h-4 text-neutral-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185z" />
-          </svg>
+          {shareLabel === "copied" ? (
+            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+            </svg>
+          ) : (
+            <svg className="w-4 h-4 text-neutral-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185z" />
+            </svg>
+          )}
         </button>
         <button
           className="w-8 h-8 rounded-full bg-white/90 hover:bg-white flex items-center justify-center transition-colors shadow"
-          aria-label="Save"
-          onClick={(e) => e.preventDefault()}
+          aria-label={isSaved ? "Unsave listing" : "Save listing"}
+          title={isSaved ? "Remove from saved" : "Save listing"}
+          onClick={handleSave}
         >
-          <svg className="w-4 h-4 text-neutral-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+          <svg
+            className={`w-4 h-4 transition-colors ${isSaved ? "text-rose-500 fill-rose-500" : "text-neutral-700"}`}
+            fill={isSaved ? "currentColor" : "none"}
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            strokeWidth={1.8}
+          >
             <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
           </svg>
         </button>

@@ -125,6 +125,8 @@ export interface BridgeIdxSearchParams {
   minSqft?: number;
   /** Maximum living area (sq ft) */
   maxSqft?: number;
+  /** Minimum close date (ISO YYYY-MM-DD) — used for sold time-range filter */
+  minCloseDate?: string;
 }
 
 export interface BridgeIdxListingPhoto {
@@ -393,6 +395,10 @@ function buildIdxFilters(params: BridgeIdxSearchParams): string[] {
 
   if (params.poolOnly) {
     filters.push(`PoolPrivateYN eq true`);
+  }
+
+  if (params.minCloseDate) {
+    filters.push(`CloseDate ge ${params.minCloseDate}`);
   }
 
   if (params.q) {
