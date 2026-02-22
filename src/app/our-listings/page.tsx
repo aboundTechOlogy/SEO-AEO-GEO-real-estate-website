@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import PropertyCard from "@/components/PropertyCard";
-import { MOCK_EXCLUSIVE } from "@/data/mockListings";
+import { getRecentListings, propertyToCardListing } from "@/lib/bridge";
 
 export const metadata: Metadata = {
   title: "Our Listings | Andrew Whalen | South Florida Luxury Real Estate",
@@ -15,7 +15,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function OurListingsPage() {
+export default async function OurListingsPage() {
+  const listings = await getRecentListings(24);
+  const cards = listings.map((listing) => propertyToCardListing(listing));
+
   return (
     <>
       {/* Hero */}
@@ -42,11 +45,11 @@ export default function OurListingsPage() {
       <section className="bg-[#0a0a0a] py-16 px-6">
         <div className="max-w-7xl mx-auto">
           <p className="text-neutral-500 text-sm uppercase tracking-[0.2em] mb-10">
-            {MOCK_EXCLUSIVE.length} Properties
+            {cards.length} Properties
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {MOCK_EXCLUSIVE.map((listing, i) => (
-              <PropertyCard key={i} {...listing} />
+            {cards.map((listing) => (
+              <PropertyCard key={listing.href} {...listing} />
             ))}
           </div>
 

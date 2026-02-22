@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import PropertyCard from "@/components/PropertyCard";
-import { MOCK_SOLD } from "@/data/mockListings";
+import { getSoldListings, propertyToCardListing } from "@/lib/bridge";
 
 export const metadata: Metadata = {
   title: "Recently Sold | Andrew Whalen | South Florida Luxury Real Estate",
@@ -15,7 +15,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RecentSalesPage() {
+export default async function RecentSalesPage() {
+  const listings = await getSoldListings(24);
+  const cards = listings.map((listing) => propertyToCardListing(listing, true));
+
   return (
     <>
       {/* Hero */}
@@ -42,11 +45,11 @@ export default function RecentSalesPage() {
       <section className="bg-[#0a0a0a] py-16 px-6">
         <div className="max-w-7xl mx-auto">
           <p className="text-neutral-500 text-sm uppercase tracking-[0.2em] mb-10">
-            {MOCK_SOLD.length} Recently Sold Properties
+            {cards.length} Recently Sold Properties
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {MOCK_SOLD.map((listing, i) => (
-              <PropertyCard key={i} {...listing} isSold={true} />
+            {cards.map((listing) => (
+              <PropertyCard key={listing.href} {...listing} isSold={true} />
             ))}
           </div>
 

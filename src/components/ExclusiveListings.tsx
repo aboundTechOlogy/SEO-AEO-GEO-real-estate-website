@@ -4,10 +4,13 @@ import type { Swiper as SwiperType } from "swiper";
 import SwiperCarousel from "@/components/SwiperCarousel";
 import SectionHeader from "@/components/SectionHeader";
 import NavArrows from "@/components/NavArrows";
-import PropertyCard from "@/components/PropertyCard";
-import { MOCK_EXCLUSIVE } from "@/data/mockListings";
+import PropertyCard, { type PropertyCardProps } from "@/components/PropertyCard";
 
-export default function ExclusiveListings() {
+interface ExclusiveListingsProps {
+  listings: PropertyCardProps[];
+}
+
+export default function ExclusiveListings({ listings }: ExclusiveListingsProps) {
   const swiperRef = useRef<SwiperType | null>(null);
 
   return (
@@ -30,8 +33,8 @@ export default function ExclusiveListings() {
           }}
           onSwiper={(swiper) => { swiperRef.current = swiper; }}
         >
-          {MOCK_EXCLUSIVE.map((listing, i) => (
-            <PropertyCard key={i} {...listing} />
+          {listings.map((listing) => (
+            <PropertyCard key={listing.href} {...listing} />
           ))}
         </SwiperCarousel>
 

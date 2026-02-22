@@ -1,6 +1,6 @@
 "use client";
 
-interface Props {
+export interface PropertyCardProps {
   image?: string;
   price: string;
   address: string;
@@ -28,7 +28,7 @@ export default function PropertyCard({
   status,
   href,
   isSold = false,
-}: Props) {
+}: PropertyCardProps) {
   return (
     <a
       href={href}

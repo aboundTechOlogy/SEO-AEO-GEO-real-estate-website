@@ -1,12 +1,19 @@
 "use client";
 import { useState } from "react";
 import { neighborhoods } from "@/data/neighborhoods";
+import PropertyMap from "@/components/PropertyMap";
 
 const COUNTY_TABS = [
   { id: "miami-dade", label: "Miami-Dade" },
   { id: "broward", label: "Broward" },
   { id: "palm-beach", label: "Palm Beach" },
 ];
+
+const COUNTY_CENTERS: Record<"miami-dade" | "broward" | "palm-beach", { lat: number; lng: number; zoom: number }> = {
+  "miami-dade": { lat: 25.7617, lng: -80.1918, zoom: 10 },
+  broward: { lat: 26.1224, lng: -80.1373, zoom: 10 },
+  "palm-beach": { lat: 26.7153, lng: -80.0534, zoom: 10 },
+};
 
 export default function NeighborhoodsPage() {
   const [activeCounty, setActiveCounty] = useState<"miami-dade" | "broward" | "palm-beach">("miami-dade");
@@ -50,12 +57,14 @@ export default function NeighborhoodsPage() {
       <section className="bg-[#0a0a0a]">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row">
-            {/* Map placeholder — desktop left */}
-            <div className="hidden lg:flex lg:w-[40%] min-h-[600px] bg-neutral-900 border-r border-white/5 items-center justify-center sticky top-32 self-start h-[calc(100vh-8rem)]">
-              <div className="text-center px-6">
-                <p className="text-neutral-600 text-sm uppercase tracking-widest mb-2">Interactive Map</p>
-                <p className="text-neutral-700 text-xs">Coming Soon</p>
-              </div>
+            {/* Map panel — desktop left */}
+            <div className="hidden lg:block lg:w-[40%] min-h-[600px] bg-neutral-900 border-r border-white/5 sticky top-32 self-start h-[calc(100vh-8rem)] p-4">
+              <PropertyMap
+                center={{ lat: COUNTY_CENTERS[activeCounty].lat, lng: COUNTY_CENTERS[activeCounty].lng }}
+                zoom={COUNTY_CENTERS[activeCounty].zoom}
+                className="h-full"
+                interactive={true}
+              />
             </div>
 
             {/* Neighborhood grid — right */}

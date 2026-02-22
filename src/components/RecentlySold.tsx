@@ -4,10 +4,13 @@ import type { Swiper as SwiperType } from "swiper";
 import SwiperCarousel from "@/components/SwiperCarousel";
 import SectionHeader from "@/components/SectionHeader";
 import NavArrows from "@/components/NavArrows";
-import PropertyCard from "@/components/PropertyCard";
-import { MOCK_SOLD } from "@/data/mockListings";
+import PropertyCard, { type PropertyCardProps } from "@/components/PropertyCard";
 
-export default function RecentlySold() {
+interface RecentlySoldProps {
+  listings: PropertyCardProps[];
+}
+
+export default function RecentlySold({ listings }: RecentlySoldProps) {
   const swiperRef = useRef<SwiperType | null>(null);
 
   return (
@@ -30,8 +33,8 @@ export default function RecentlySold() {
           }}
           onSwiper={(swiper) => { swiperRef.current = swiper; }}
         >
-          {MOCK_SOLD.map((listing, i) => (
-            <PropertyCard key={i} {...listing} isSold />
+          {listings.map((listing) => (
+            <PropertyCard key={listing.href} {...listing} isSold />
           ))}
         </SwiperCarousel>
 

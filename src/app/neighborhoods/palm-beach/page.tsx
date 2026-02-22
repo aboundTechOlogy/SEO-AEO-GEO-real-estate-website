@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { neighborhoods } from "@/data/neighborhoods";
+import PropertyMap from "@/components/PropertyMap";
 
 export const metadata: Metadata = {
   title: "Palm Beach County Neighborhoods | Andrew Whalen",
@@ -66,14 +67,9 @@ export default function PalmBeachNeighborhoodsPage() {
       <section className="bg-[#0a0a0a]">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row">
-            {/* Map placeholder — desktop left */}
-            <div className="hidden lg:flex lg:w-[40%] min-h-[600px] bg-neutral-900 border-r border-white/5 items-center justify-center sticky top-32 self-start h-[calc(100vh-8rem)]">
-              <div className="text-center px-6">
-                <p className="text-neutral-600 text-sm uppercase tracking-widest mb-2">
-                  Interactive Map
-                </p>
-                <p className="text-neutral-700 text-xs">Coming Soon</p>
-              </div>
+            {/* Map panel — desktop left */}
+            <div className="hidden lg:block lg:w-[40%] min-h-[600px] bg-neutral-900 border-r border-white/5 sticky top-32 self-start h-[calc(100vh-8rem)] p-4">
+              <PropertyMap center={{ lat: 26.7153, lng: -80.0534 }} zoom={10} className="h-full" interactive={true} />
             </div>
 
             {/* Neighborhood grid — right */}

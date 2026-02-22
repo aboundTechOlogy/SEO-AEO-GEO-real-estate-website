@@ -1,13 +1,13 @@
 import { Metadata } from "next";
 import HeroSection from "@/components/HeroSection";
 import PropertySearch from "@/components/PropertySearch";
-import ExclusiveListings from "@/components/ExclusiveListings";
+import ExclusiveListingsSection from "@/components/ExclusiveListingsSection";
 // import ExclusiveVideos from "@/components/ExclusiveVideos";
 import AnimatedTextBanner from "@/components/AnimatedTextBanner";
 import AboutCover from "@/components/AboutCover";
 import AboutDescription from "@/components/AboutDescription";
 import NeighborhoodBlades from "@/components/NeighborhoodBlades";
-// import RecentlySold from "@/components/RecentlySold";
+import RecentlySoldSection from "@/components/RecentlySoldSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 // import PressSection from "@/components/PressSection";
 // import InstagramFeed from "@/components/InstagramFeed";
@@ -32,13 +32,13 @@ export default function HomePage() {
     <>
       <HeroSection />
       <PropertySearch />
-      <ExclusiveListings />
+      <ExclusiveListingsSection />
       {/* <ExclusiveVideos /> */}
       <AnimatedTextBanner />
       <AboutCover />
       <AboutDescription />
       <NeighborhoodBlades />
-      {/* <RecentlySold /> */}
+      <RecentlySoldSection />
       <TestimonialsSection />
       {/* <PressSection /> */}
       {/* <InstagramFeed /> */}
