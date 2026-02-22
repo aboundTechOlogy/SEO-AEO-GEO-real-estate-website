@@ -7,10 +7,24 @@ type SubmitState = "idle" | "submitting" | "success" | "error";
 interface PropertyInquiryFormProps {
   listingKey: string;
   address: string;
+  theme?: "dark" | "light";
 }
 
-export default function PropertyInquiryForm({ listingKey, address }: PropertyInquiryFormProps) {
+export default function PropertyInquiryForm({ listingKey, address, theme = "dark" }: PropertyInquiryFormProps) {
   const [state, setState] = useState<SubmitState>("idle");
+
+  const inputClass =
+    theme === "light"
+      ? "w-full bg-white border border-gray-300 px-3 py-2.5 text-sm text-[#1a1a1a] placeholder-gray-500 focus:outline-none focus:border-gray-500"
+      : "w-full bg-black/20 border border-white/15 px-3 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white/40";
+
+  const buttonClass =
+    theme === "light"
+      ? "w-full rounded-full border border-gray-300 text-[#1a1a1a] py-3 text-xs uppercase tracking-[0.14em] hover:bg-gray-100 disabled:opacity-60 transition-colors"
+      : "w-full rounded-full border border-white/30 text-white py-3 text-xs uppercase tracking-[0.14em] hover:bg-white/10 disabled:opacity-60 transition-colors";
+
+  const successClass = theme === "light" ? "text-xs text-emerald-700" : "text-xs text-emerald-300";
+  const errorClass = theme === "light" ? "text-xs text-red-700" : "text-xs text-red-300";
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -49,13 +63,13 @@ export default function PropertyInquiryForm({ listingKey, address }: PropertyInq
           name="firstName"
           required
           placeholder="First Name *"
-          className="w-full bg-black/20 border border-white/15 px-3 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white/40"
+          className={inputClass}
         />
         <input
           name="lastName"
           required
           placeholder="Last Name *"
-          className="w-full bg-black/20 border border-white/15 px-3 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white/40"
+          className={inputClass}
         />
       </div>
 
@@ -64,7 +78,7 @@ export default function PropertyInquiryForm({ listingKey, address }: PropertyInq
         type="email"
         required
         placeholder="Email *"
-        className="w-full bg-black/20 border border-white/15 px-3 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white/40"
+        className={inputClass}
       />
 
       <input
@@ -72,26 +86,26 @@ export default function PropertyInquiryForm({ listingKey, address }: PropertyInq
         type="tel"
         required
         placeholder="Phone *"
-        className="w-full bg-black/20 border border-white/15 px-3 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white/40"
+        className={inputClass}
       />
 
       <textarea
         name="message"
         rows={4}
         defaultValue={`I am interested in ${address}`}
-        className="w-full bg-black/20 border border-white/15 px-3 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white/40 resize-y"
+        className={`${inputClass} resize-y`}
       />
 
       <button
         type="submit"
         disabled={state === "submitting"}
-        className="w-full rounded-full border border-white/30 text-white py-3 text-xs uppercase tracking-[0.14em] hover:bg-white/10 disabled:opacity-60 transition-colors"
+        className={buttonClass}
       >
         {state === "submitting" ? "Submitting..." : "Request Information"}
       </button>
 
-      {state === "success" && <p className="text-xs text-emerald-300">Thanks. We will contact you shortly.</p>}
-      {state === "error" && <p className="text-xs text-red-300">Something went wrong. Please try again.</p>}
+      {state === "success" && <p className={successClass}>Thanks. We will contact you shortly.</p>}
+      {state === "error" && <p className={errorClass}>Something went wrong. Please try again.</p>}
     </form>
   );
 }
