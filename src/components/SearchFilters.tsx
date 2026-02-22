@@ -1250,6 +1250,49 @@ export function ViewToggle({ view, setView }: { view: ViewMode; setView: (v: Vie
   );
 }
 
+function ViewDropdown({
+  view,
+  setView,
+  open,
+  onToggle,
+}: {
+  view: ViewMode;
+  setView: (v: ViewMode) => void;
+  open: boolean;
+  onToggle: () => void;
+}) {
+  const VIEWS: ViewMode[] = ["grid", "map", "list"];
+
+  return (
+    <FilterDropdown
+      trigger={
+        <>
+          {VIEW_ICONS[view].icon}
+          <span className="hidden md:inline">{VIEW_ICONS[view].label}</span>
+        </>
+      }
+      open={open}
+      onToggle={onToggle}
+      width="160px"
+    >
+      <div className="p-2 space-y-0.5">
+        {VIEWS.map((v) => (
+          <button
+            key={v}
+            onClick={() => { setView(v); onToggle(); }}
+            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+              view === v ? "bg-gray-100 font-semibold text-[#1a1a1a]" : "text-gray-600 hover:bg-gray-50"
+            }`}
+          >
+            {VIEW_ICONS[v].icon}
+            {VIEW_ICONS[v].label}
+          </button>
+        ))}
+      </div>
+    </FilterDropdown>
+  );
+}
+
 /* ==================== SEARCH BAR (DESKTOP) ==================== */
 export function DesktopSearchBar({
   status,
@@ -1284,76 +1327,79 @@ export function DesktopSearchBar({
   };
 
   return (
-    <div className="hidden md:block px-[15px] pt-[20px] pb-[10px] space-y-2">
-      {/* Row 1: Address + Save Search + View Toggle */}
-      <div className="flex items-center gap-3">
-        <div className="flex-1 min-w-0">
-          <AddressSearchInput
-            value={filterValues.addressQuery}
-            onChange={(v) => onFilterChange({ addressQuery: v })}
-          />
-        </div>
-        <div className="flex items-center gap-3 shrink-0">
-          <div className="relative">
-            <button
-              onClick={onSaveSearch}
-              className="shrink-0 bg-black text-white rounded-full px-6 h-[50px] text-sm font-semibold hover:bg-neutral-800 transition-colors whitespace-nowrap"
-            >
-              Save Search
-            </button>
-            {saveMessage && (
-              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-neutral-900 text-white text-xs rounded-full whitespace-nowrap shadow-lg z-50">
-                {saveMessage}
-              </div>
-            )}
-          </div>
-          <ViewToggle view={view} setView={onViewChange} />
-        </div>
+    <div className="hidden md:flex items-center gap-2 px-[15px] py-[10px] overflow-x-auto no-scrollbar">
+      {/* Address */}
+      <div className="shrink-0 min-w-[180px] w-[240px] min-[1180px]:w-[280px] min-[1440px]:w-[320px]">
+        <AddressSearchInput
+          value={filterValues.addressQuery}
+          onChange={(v) => onFilterChange({ addressQuery: v })}
+        />
       </div>
 
-      {/* Row 2: Filter pills (scrollable at narrow widths) */}
-      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
-        <ForSaleFilter
-          value={status}
-          onChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); }}
-          soldRange={filterValues.soldRange}
-          onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
-          open={openFilter === "status"}
-          onToggle={() => toggle("status")}
-        />
-        <PriceFilter
-          open={openFilter === "price"}
-          onToggle={() => toggle("price")}
-          priceMin={filterValues.priceMin}
-          priceMax={filterValues.priceMax}
-          onPriceChange={(min, max) => onFilterChange({ priceMin: min, priceMax: max })}
-        />
-        <BedBathFilter
-          open={openFilter === "bedbath"}
-          onToggle={() => toggle("bedbath")}
-          bedMin={filterValues.bedMin}
-          bathMin={filterValues.bathMin}
-          onBedBathChange={(bed, bath) => onFilterChange({ bedMin: bed, bathMin: bath })}
-        />
-        <PropertyTypeFilter
-          open={openFilter === "type"}
-          onToggle={() => toggle("type")}
-          selectedTypes={filterValues.propertyTypes}
-          onTypesChange={(types) => onFilterChange({ propertyTypes: types })}
-          hidePending={filterValues.hidePending}
-          onHidePendingChange={(v) => onFilterChange({ hidePending: v })}
-        />
-        <MoreFilter
-          open={openFilter === "more"}
-          onToggle={() => toggle("more")}
-          filterValues={filterValues}
-          onFilterChange={onFilterChange}
-          status={status}
-          onStatusChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); }}
-          soldRange={filterValues.soldRange}
-          onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
-          totalCount={totalCount}
-          onClearAll={handleClearAll}
+      {/* Filters */}
+      <ForSaleFilter
+        value={status}
+        onChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); }}
+        soldRange={filterValues.soldRange}
+        onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
+        open={openFilter === "status"}
+        onToggle={() => toggle("status")}
+      />
+      <PriceFilter
+        open={openFilter === "price"}
+        onToggle={() => toggle("price")}
+        priceMin={filterValues.priceMin}
+        priceMax={filterValues.priceMax}
+        onPriceChange={(min, max) => onFilterChange({ priceMin: min, priceMax: max })}
+      />
+      <BedBathFilter
+        open={openFilter === "bedbath"}
+        onToggle={() => toggle("bedbath")}
+        bedMin={filterValues.bedMin}
+        bathMin={filterValues.bathMin}
+        onBedBathChange={(bed, bath) => onFilterChange({ bedMin: bed, bathMin: bath })}
+      />
+      <PropertyTypeFilter
+        open={openFilter === "type"}
+        onToggle={() => toggle("type")}
+        selectedTypes={filterValues.propertyTypes}
+        onTypesChange={(types) => onFilterChange({ propertyTypes: types })}
+        hidePending={filterValues.hidePending}
+        onHidePendingChange={(v) => onFilterChange({ hidePending: v })}
+      />
+      <MoreFilter
+        open={openFilter === "more"}
+        onToggle={() => toggle("more")}
+        filterValues={filterValues}
+        onFilterChange={onFilterChange}
+        status={status}
+        onStatusChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); }}
+        soldRange={filterValues.soldRange}
+        onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
+        totalCount={totalCount}
+        onClearAll={handleClearAll}
+      />
+
+      {/* Right-side actions */}
+      <div className="shrink-0 ml-auto flex items-center gap-2">
+        <div className="relative hidden min-[1180px]:block">
+          <button
+            onClick={onSaveSearch}
+            className="shrink-0 bg-black text-white rounded-full px-5 h-[50px] text-sm font-semibold hover:bg-neutral-800 transition-colors whitespace-nowrap"
+          >
+            Save Search
+          </button>
+          {saveMessage && (
+            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-neutral-900 text-white text-xs rounded-full whitespace-nowrap shadow-lg z-50">
+              {saveMessage}
+            </div>
+          )}
+        </div>
+        <ViewDropdown
+          view={view}
+          setView={onViewChange}
+          open={openFilter === "view"}
+          onToggle={() => toggle("view")}
         />
       </div>
     </div>
