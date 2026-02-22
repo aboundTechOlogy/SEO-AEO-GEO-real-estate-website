@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
 import { point, polygon } from "@turf/helpers";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import SearchPropertyCard from "@/components/SearchPropertyCard";
 import { DesktopSearchBar, MobileSearchBar } from "@/components/SearchFilters";
@@ -297,7 +299,7 @@ function LoadingGrid({ count = 12 }: { count?: number }) {
 
 function MobileListCard({ listing }: { listing: UiListing }) {
   return (
-    <a
+    <Link
       href={listing.href}
       className="mx-4 mb-3 flex gap-3 p-3 bg-white rounded-xl border border-gray-200 shadow-sm cursor-pointer block"
     >
@@ -334,7 +336,7 @@ function MobileListCard({ listing }: { listing: UiListing }) {
       >
         <StarIcon />
       </button>
-    </a>
+    </Link>
   );
 }
 
@@ -351,6 +353,7 @@ function StarIcon() {
 }
 
 export default function SearchPage() {
+  const router = useRouter();
   const [status, setStatus] = useState<string>("For Sale");
   const [view, setViewState] = useState<ViewMode>("grid");
   const [sortLabel, setSortLabel] = useState<string>(DEFAULT_SORT);
@@ -716,7 +719,7 @@ export default function SearchPage() {
                         highlightedListingId === listing.id ? "bg-amber-50" : ""
                       }`}
                       onClick={() => {
-                        window.location.href = listing.href;
+                        router.push(listing.href);
                       }}
                     >
                       <td className="p-3 border border-gray-200 text-center">

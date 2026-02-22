@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 interface Props {
   image?: string;
   price: string;
@@ -58,7 +60,7 @@ export default function SearchPropertyCard({
       : status || (listDate ? `New - ${formatRelativeTime(listDate)}` : undefined);
 
   return (
-    <a
+    <Link
       href={href}
       className="group block relative overflow-hidden bg-neutral-200 cursor-pointer"
       style={{ aspectRatio: "4/3" }}
@@ -131,6 +133,6 @@ export default function SearchPropertyCard({
           </span>
         </div>
       )}
-    </a>
+    </Link>
   );
 }
