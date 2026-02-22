@@ -78,9 +78,9 @@ Match The Chad Carroll Group (thechadcarrollgroup.com):
 
 ## Nav Structure (3-section, matching Carroll)
 ```
-LEFT:  Luxury Condos ▾ | Neighborhoods ▾
+LEFT:  Our Listings ▾ | Luxury Condos ▾ | Neighborhoods ▾
 CENTER: [Logo Lockup]
-RIGHT: About Us | Insights | Contact Us (outlined pill) | 👤 | ☰ (mega menu)
+RIGHT: About ▾ | Services ▾ | Contact Us (outlined pill) | 👤 | ☰ (mega menu)
 ```
 - Transparency: `bg-black/20 backdrop-blur-sm` (no bottom border)
 - Mega menu: right-side slide-out panel (MegaMenu.tsx)
@@ -91,18 +91,32 @@ RIGHT: About Us | Insights | Contact Us (outlined pill) | 👤 | ☰ (mega menu)
 src/
 ├── app/
 │   ├── layout.tsx          # Root layout (nav + footer)
+│   ├── not-found.tsx       # Custom branded 404 page
 │   ├── page.tsx            # Homepage
 │   ├── globals.css
-│   ├── about/page.tsx
+│   ├── about/
+│   │   ├── page.tsx
+│   │   └── ai/page.tsx
 │   ├── contact/page.tsx
 │   ├── neighborhoods/
 │   │   ├── page.tsx        # Hub/directory
 │   │   └── [slug]/page.tsx # Neighborhood guides
 │   ├── luxury-condos/page.tsx
 │   ├── new-construction/page.tsx
+│   ├── services/
+│   │   ├── page.tsx
+│   │   ├── sellers/page.tsx
+│   │   ├── buyers/page.tsx
+│   │   ├── investors/page.tsx
+│   │   ├── market-analysis/page.tsx
+│   │   └── investment-analysis/page.tsx
 │   ├── blog/
 │   │   ├── page.tsx
 │   │   └── [slug]/page.tsx
+│   ├── api/
+│   │   ├── contact/route.ts
+│   │   ├── market-analysis/route.ts
+│   │   └── investment-analysis/route.ts
 │   ├── privacy/page.tsx
 │   ├── terms/page.tsx
 │   └── dmca/page.tsx
@@ -110,7 +124,9 @@ src/
 │   ├── NavDropdown.tsx
 │   ├── MobileMenu.tsx
 │   ├── MegaMenu.tsx
-│   └── ContactForm.tsx
+│   ├── ContactForm.tsx
+│   ├── MarketAnalysisLeadForm.tsx
+│   └── InvestmentAnalysisLeadForm.tsx
 ├── data/
 │   ├── neighborhoods.ts    # 40 neighborhoods
 │   ├── developments.ts     # 10 developments
