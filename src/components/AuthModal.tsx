@@ -22,37 +22,38 @@ interface BenefitItem {
 const BENEFITS: BenefitItem[] = [
   {
     title: "Get new alerts",
-    description: "We'll notify you when a listing matches your search criteria.",
+    description:
+      "We will notify you when a new listing that matches your search criteria hits the market.",
     icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75v-.7V9a6 6 0 1 0-12 0v.05.7a8.967 8.967 0 0 1-2.312 6.022 23.848 23.848 0 0 0 5.454 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9" />
       </svg>
     ),
   },
   {
-    title: "Save favorite listings",
-    description: "Save listings for easy access when you return.",
+    title: "Save your favorite listings",
+    description: "Save unlimited listings on our site for easy access when you return.",
     icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="m12 21-1.35-1.24C5.4 14.86 2 11.8 2 8a4 4 0 0 1 7-2.65A4 4 0 0 1 16 8c0 3.8-3.4 6.86-8.65 11.76L6 21h6Z" />
       </svg>
     ),
   },
   {
     title: "Share properties with friends",
-    description: "Share your favorites with family via email.",
+    description: "Easily share your favorite properties with your friends and family via email.",
     icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186L15.783 6.25m-8.566 7.5 8.566 4.657m0 0a2.25 2.25 0 1 0 1.934-3.861 2.25 2.25 0 0 0-1.934 3.86zm0-12.158a2.25 2.25 0 1 0 1.934-3.861 2.25 2.25 0 0 0-1.934 3.86z" />
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8.5 12a3.5 3.5 0 1 0-3.3 2.5M15.5 7a3.5 3.5 0 1 0 0 0m0 10a3.5 3.5 0 1 0 0 0M8.2 10.8l7-3.7m-7 6 7 3.8" />
       </svg>
     ),
   },
   {
     title: "View property history",
-    description: "Keep track of listings you've recently viewed.",
+    description: "View property history and keep track of listings you have recently viewed.",
     icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2m5-2a9 9 0 1 1-3.133-6.838M15 3h6v6" />
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 2m6-2a9 9 0 1 1-2.6-6.4M21 4v5h-5" />
       </svg>
     ),
   },
@@ -102,7 +103,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     setError("");
   }, [mode, open]);
 
-  const title = useMemo(() => (mode === "login" ? "Sign In" : "Create Account"), [mode]);
+  const title = useMemo(() => (mode === "login" ? "Welcome Back" : "Register for a personalized experience"), [mode]);
 
   if (!mounted || !open) {
     return null;
@@ -208,174 +209,183 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     }
   }
 
+  const inputClass =
+    "w-full h-[55px] rounded-[4px] border border-neutral-200 bg-white px-4 text-[16px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none";
+
   return createPortal(
     <div
-      className="fixed inset-0 z-[300] bg-black/60 backdrop-blur-[1px] flex items-center justify-center p-4"
+      className="fixed inset-0 z-[300] bg-black/82 backdrop-blur-[2px] overflow-y-auto"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
       aria-label="Authentication modal"
     >
-      <div className="relative w-full max-w-[860px] bg-white rounded-xl shadow-2xl overflow-hidden">
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-3 right-3 z-20 text-neutral-400 hover:text-neutral-700 transition-colors"
-          aria-label="Close"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+      <div className="min-h-screen w-full flex items-start md:items-center justify-center">
+        <div className="relative w-full md:max-w-[810px]">
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute right-4 top-4 z-30 w-11 h-11 rounded-full border border-white/30 md:border-neutral-300 bg-transparent md:bg-white text-white md:text-neutral-700 hover:bg-white/10 md:hover:bg-neutral-100 transition-colors"
+            aria-label="Close"
+          >
+            <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
 
-        <div className="grid md:grid-cols-[1fr_1.1fr]">
-          <aside className="hidden md:block bg-neutral-50 border-r border-neutral-200 px-8 py-10">
-            <h2 className="text-2xl font-semibold text-neutral-900 mb-2">Why Create An Account?</h2>
-            <p className="text-sm text-neutral-600 mb-8">
-              Save time and stay ahead of the market with your personalized account.
-            </p>
+          <div className="flex flex-col-reverse md:flex-row md:border md:border-black/15 md:bg-white">
+            <aside className="w-full md:w-[410px] px-4 pb-10 pt-8 md:px-8 md:py-8 text-white md:text-neutral-900 md:bg-[#f4f5f9] md:border-r md:border-black/10 border-t border-dashed border-white/25 md:border-t-0">
+              <h2 className="text-[22px] md:text-[18px] leading-tight font-semibold mb-5">Why Create An Account?</h2>
 
-            <ul className="space-y-6">
-              {BENEFITS.map((item) => (
-                <li key={item.title} className="flex items-start gap-3">
-                  <span className="w-9 h-9 rounded-full bg-white border border-neutral-200 text-neutral-700 flex items-center justify-center mt-0.5">
-                    {item.icon}
-                  </span>
-                  <div>
-                    <p className="text-sm font-semibold text-neutral-900">{item.title}</p>
-                    <p className="text-sm text-neutral-600 mt-1">{item.description}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </aside>
+              <ul className="space-y-5">
+                {BENEFITS.map((item) => (
+                  <li key={item.title} className="flex items-start gap-3.5">
+                    <span className="w-11 h-11 rounded-full bg-white/90 md:bg-[#d9dfed] text-neutral-900 flex items-center justify-center shrink-0">
+                      {item.icon}
+                    </span>
+                    <div>
+                      <p className="text-[16px] leading-tight font-semibold">{item.title}</p>
+                      <p className="text-[14px] leading-relaxed mt-1 text-white/90 md:text-neutral-700">{item.description}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </aside>
 
-          <section className="px-6 py-8 md:px-8 md:py-10">
-            <h3 className="text-2xl font-semibold text-neutral-900 mb-1">{title}</h3>
-            <p className="text-sm text-neutral-600 mb-6">
-              {mode === "login"
-                ? "Access saved listings and saved searches."
-                : "Create your account to save listings and searches."}
-            </p>
+            <section className="w-full md:w-[400px] px-4 pt-16 pb-8 md:px-8 md:py-8 text-white md:text-neutral-900">
+              <h3 className="text-[20px] leading-none font-semibold mb-2">{title}</h3>
 
-            <form
-              onSubmit={mode === "login" ? handleLoginSubmit : handleRegisterSubmit}
-              className="space-y-3"
-            >
-              {mode === "register" && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <input
-                    type="text"
-                    value={firstName}
-                    onChange={(event) => setFirstName(event.target.value)}
-                    placeholder="First name"
-                    className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/20"
-                    required
-                  />
-                  <input
-                    type="text"
-                    value={lastName}
-                    onChange={(event) => setLastName(event.target.value)}
-                    placeholder="Last name"
-                    className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/20"
-                    required
-                  />
-                </div>
-              )}
-
-              <input
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                placeholder="Email address"
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/20"
-                required
-              />
-
-              <input
-                type="password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder="Password"
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/20"
-                required
-                minLength={6}
-              />
-
-              {error && <p className="text-sm text-red-600">{error}</p>}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full rounded-md bg-[#1a1a1a] text-white text-sm font-medium py-2.5 hover:bg-black transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                {loading ? "Please wait..." : mode === "login" ? "Continue with email" : "Create Account"}
-              </button>
-            </form>
-
-            <div className="relative my-5">
-              <div className="border-t border-neutral-200" />
-              <span className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-xs uppercase tracking-wide text-neutral-500">
-                or
-              </span>
-            </div>
-
-            <div className="space-y-3">
-              <button
-                type="button"
-                onClick={handleGoogleLogin}
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2.5 text-sm text-neutral-800 hover:bg-neutral-50 transition-colors flex items-center justify-center gap-2"
-              >
-                <span className="font-semibold text-[#DB4437]">G</span>
-                Login with Google
-              </button>
-
-              <button
-                type="button"
-                onClick={handleFacebookLogin}
-                className="w-full rounded-md bg-[#1877F2] px-3 py-2.5 text-sm font-medium text-white hover:bg-[#1466d1] transition-colors flex items-center justify-center gap-2"
-              >
-                <span className="font-semibold">f</span>
-                Login with Facebook
-              </button>
-            </div>
-
-            <div className="mt-5 text-sm text-neutral-600">
-              <button
-                type="button"
-                onClick={() => setError("Password reset is not configured yet.")}
-                className="text-[#1a1a1a] hover:text-black underline underline-offset-2"
-              >
-                Forgot password? Reset now
-              </button>
-            </div>
-
-            <div className="mt-3 text-sm text-neutral-600">
               {mode === "login" ? (
-                <p>
+                <p className="text-[14px] text-white/90 md:text-neutral-700 mb-5">
                   Not registered yet?{" "}
                   <button
                     type="button"
-                    className="text-[#1a1a1a] hover:text-black underline underline-offset-2"
+                    className="font-semibold text-[#80a5ff] hover:underline"
                     onClick={() => setMode("register")}
                   >
                     Register now
                   </button>
                 </p>
               ) : (
-                <p>
-                  Already have an account?{" "}
+                <p className="text-[14px] text-white/90 md:text-neutral-700 mb-5">
+                  Already registered?{" "}
                   <button
                     type="button"
-                    className="text-[#1a1a1a] hover:text-black underline underline-offset-2"
+                    className="font-semibold text-[#80a5ff] hover:underline"
                     onClick={() => setMode("login")}
                   >
-                    Sign in
+                    Log in
                   </button>
                 </p>
               )}
-            </div>
-          </section>
+
+              <form onSubmit={mode === "login" ? handleLoginSubmit : handleRegisterSubmit} className="space-y-2.5">
+                {mode === "register" && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <input
+                      type="text"
+                      value={firstName}
+                      onChange={(event) => setFirstName(event.target.value)}
+                      placeholder="First Name"
+                      className={inputClass}
+                      required
+                    />
+                    <input
+                      type="text"
+                      value={lastName}
+                      onChange={(event) => setLastName(event.target.value)}
+                      placeholder="Last Name"
+                      className={inputClass}
+                      required
+                    />
+                  </div>
+                )}
+
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="Enter email"
+                  className={inputClass}
+                  required
+                />
+
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="Enter password"
+                  className={inputClass}
+                  required
+                  minLength={6}
+                />
+
+                {error && <p className="text-sm text-red-300 md:text-red-600 pt-1">{error}</p>}
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full h-[55px] rounded-[4px] bg-[#cd1414] text-white text-[14px] leading-none font-semibold hover:bg-[#ec2424] transition-colors disabled:opacity-60"
+                >
+                  {loading ? "Please wait..." : mode === "login" ? "Continue with email" : "Create account"}
+                </button>
+              </form>
+
+              <div className="relative my-4 text-center">
+                <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 border-t border-white/35 md:border-neutral-300" />
+                <span className="relative inline-flex w-8 h-8 items-center justify-center rounded-full bg-neutral-500 text-white text-sm">
+                  or
+                </span>
+              </div>
+
+              <div className="space-y-2.5">
+                <button
+                  type="button"
+                  onClick={handleFacebookLogin}
+                  className="w-full h-[55px] rounded-[4px] bg-[#3C5A99] border border-[#3C5A99] text-white text-[14px] leading-none font-semibold hover:bg-[#2e487f] transition-colors"
+                >
+                  Login with Facebook
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleGoogleLogin}
+                  className="w-full h-[55px] rounded-[4px] bg-white border border-neutral-300 text-neutral-700 text-[14px] leading-none font-semibold hover:bg-neutral-100 transition-colors"
+                >
+                  Login with Google
+                </button>
+              </div>
+
+              <p className="text-center mt-3 text-[14px] text-white md:text-neutral-700">
+                Forgot your password?{" "}
+                <button
+                  type="button"
+                  onClick={() => setError("Password reset is not configured yet.")}
+                  className="font-semibold text-[#80a5ff] hover:underline"
+                >
+                  Reset now
+                </button>
+              </p>
+
+              <div className="mt-7 text-center text-[13px] text-white/90 md:text-neutral-600 leading-relaxed">
+                <p>
+                  In agreement with our{" "}
+                  <a href="/terms-and-conditions/" target="_blank" rel="noreferrer" className="underline hover:no-underline">
+                    Terms of Use
+                  </a>{" "}
+                  and{" "}
+                  <a
+                    href="/terms-and-conditions/#atospp-privacy"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline hover:no-underline"
+                  >
+                    Privacy Policy
+                  </a>
+                </p>
+              </div>
+            </section>
+          </div>
         </div>
       </div>
     </div>,
