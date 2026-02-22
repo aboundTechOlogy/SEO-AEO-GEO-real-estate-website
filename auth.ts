@@ -74,4 +74,28 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       return session;
     },
   },
+  events: {
+    async createUser({ user }) {
+      // Send new user to GoHighLevel as a lead
+      const webhookUrl = process.env.GHL_WEBHOOK_URL;
+      if (!webhookUrl || !user.email) return;
+
+      try {
+        const nameParts = (user.name || "").split(" ");
+        await fetch(webhookUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            firstName: nameParts[0] || "Website",
+            lastName: nameParts.slice(1).join(" ") || "Lead",
+            email: user.email,
+            source: "Website Registration",
+            tags: ["website-signup"],
+          }),
+        });
+      } catch (error) {
+        console.error("GHL webhook failed:", error);
+      }
+    },
+  },
 });
