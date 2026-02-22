@@ -1,3 +1,5 @@
+import ModalPortal from "@/components/ModalPortal";
+
 export default function SearchLayout({
   children,
   modal,
@@ -8,7 +10,7 @@ export default function SearchLayout({
   return (
     <>
       {children}
-      {modal}
+      <ModalPortal>{modal}</ModalPortal>
     </>
   );
 }

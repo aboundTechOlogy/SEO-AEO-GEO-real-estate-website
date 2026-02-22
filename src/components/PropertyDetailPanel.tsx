@@ -300,6 +300,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
 
   const photos = getListingPhotos(property);
   const photoCount = photos.length;
+  const hasDisplayablePhotos = photos.some((photo, index) => Boolean(photo?.MediaURL) && !failedPhotos[index]);
   const address = formatAddress(property);
   const price = property.StandardStatus === "Closed" ? property.ClosePrice || property.ListPrice : property.ListPrice;
   const estimatedPayment = estimateMonthlyPayment(price);
@@ -531,13 +532,13 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
             <button
               type="button"
               onClick={() => {
-                if (photoCount > 0) {
+                if (hasDisplayablePhotos) {
                   setIsPhotoViewerOpen(true);
                 }
               }}
               className="hidden lg:flex absolute right-[15px] top-[15px] z-20 w-[35px] h-[35px] rounded-md bg-black text-white items-center justify-center hover:bg-black/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               aria-label="Open full photo viewer"
-              disabled={photoCount === 0}
+              disabled={!hasDisplayablePhotos}
             >
               ⤢
             </button>
