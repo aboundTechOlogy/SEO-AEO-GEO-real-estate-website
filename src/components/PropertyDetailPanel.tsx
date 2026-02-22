@@ -1,13 +1,26 @@
 "use client";
 
 import type { ReactNode, TouchEvent } from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { BridgeProperty } from "@/lib/bridge";
-import { calculatePricePerSqft, formatAddress, formatCurrency, getListingPhotos } from "@/lib/property-utils";
+import {
+  buildIdxDetailSections,
+  buildIdxLegalDisclosure,
+  calculatePricePerSqft,
+  formatAddress,
+  formatCurrency,
+  getListingPhotos,
+  type IdxDetailRow,
+} from "@/lib/property-utils";
 import PropertyInquiryForm from "@/components/PropertyInquiryForm";
 import {
+  IconCalendar,
   IconClose,
+  IconDetailCounty,
+  IconDetailDepartment,
+  IconDetailInfo,
+  IconDetailTool,
   IconLove,
   IconShared,
   IconOpen,
@@ -17,7 +30,12 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconCamera,
+  IconDollar,
+  IconHouseSale,
+  IconRuler,
+  IconSearchFlat,
   IconStreetView,
+  IconTimeClock,
   IconVirtual360,
 } from "@/components/IdxIcons";
 
@@ -38,16 +56,38 @@ function DetailRow({ label, value, icon }: { label: string; value: string; icon?
   );
 }
 
-function DetailSection({ title, rows, iconMap }: { title: string; rows: [string, string][]; iconMap?: Record<string, ReactNode> }) {
+function DetailSection({ title, rows, iconMap }: { title: string; rows: IdxDetailRow[]; iconMap?: Record<string, ReactNode> }) {
   if (rows.length === 0) return null;
   return (
     <section className="bg-white border-b border-gray-200 px-[15px] py-[20px]">
       <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[15px]">{title}</h3>
       <div className="grid sm:grid-cols-2 gap-2">
-        {rows.map(([label, value]) => (
-          <DetailRow key={label} label={label} value={value} icon={iconMap?.[label]} />
+        {rows.map((row) => (
+          <DetailRow key={row.label} label={row.label} value={row.value} icon={iconMap?.[row.label]} />
         ))}
       </div>
+    </section>
+  );
+}
+
+function AmenitiesSection({ amenities }: { amenities: string[] }) {
+  if (amenities.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="bg-white border-b border-gray-200 px-[15px] py-[20px]">
+      <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[15px]">Amenities</h3>
+      <ul className="grid sm:grid-cols-2 gap-x-5 gap-y-2 text-[14px] text-gray-700 leading-[1.5]">
+        {amenities.map((amenity) => (
+          <li key={amenity} className="flex items-start gap-2">
+            <span aria-hidden className="text-gray-400 leading-[1.2] mt-[1px]">
+              •
+            </span>
+            <span>{amenity}</span>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
@@ -87,6 +127,20 @@ function estimateMonthlyPayment(price: number | null | undefined): string | null
 
 const PANEL_CONTAINER_CLASS =
   "relative w-full h-screen md:my-[15px] md:h-[calc(100vh-30px)] md:w-[calc(100%-50px)] min-[1300px]:w-[1200px] md:mx-auto border-0 md:border md:border-black/15 bg-[#f5f5f5] shadow-[0_24px_70px_rgba(0,0,0,0.45)]";
+
+const BASIC_INFO_ICON_MAP: Record<string, ReactNode> = {
+  "MLS #": <IconSearchFlat className="w-full h-full" />,
+  Type: <IconHouseSale className="w-full h-full" />,
+  Status: <IconDetailInfo className="w-full h-full" />,
+  "Subdivision/Complex": <IconDetailDepartment className="w-full h-full" />,
+  "Year Built": <IconDetailTool className="w-full h-full" />,
+  "Price Range": <IconDollar className="w-full h-full" />,
+  "Total Size": <IconRuler className="w-full h-full" />,
+  "Date Closed": <IconCalendar className="w-full h-full" />,
+  "Date Listed": <IconCalendar className="w-full h-full" />,
+  "Days On Market": <IconTimeClock className="w-full h-full" />,
+  "Community Name": <IconDetailCounty className="w-full h-full" />,
+};
 
 function CircleIconButton({
   label,
@@ -150,6 +204,7 @@ function RectTabButton({
 export default function PropertyDetailPanel({ property, listingKey }: PropertyDetailPanelProps) {
   const router = useRouter();
   const [isClosing, setIsClosing] = useState(true);
+  const [activeMediaTab, setActiveMediaTab] = useState<"photos" | "map" | "virtual-tour">("photos");
   const [activePhoto, setActivePhoto] = useState(0);
   const [isPhotoViewerOpen, setIsPhotoViewerOpen] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -234,6 +289,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
   }, []);
 
   useEffect(() => {
+    setActiveMediaTab("photos");
     setActivePhoto(0);
     setIsPhotoViewerOpen(false);
     setFailedPhotos({});
@@ -348,101 +404,11 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
   const activePhotoUrl = photos[activePhoto]?.MediaURL;
   const activePhotoFailed = failedPhotos[activePhoto];
 
-  const remarks = property.PublicRemarks || "No description provided.";
+  const details = buildIdxDetailSections(property);
+  const legal = buildIdxLegalDisclosure(property);
+  const remarks = details.description;
   const isLongDescription = remarks.length > 340;
   const description = showFullDescription ? remarks : `${remarks.slice(0, 340)}${isLongDescription ? "..." : ""}`;
-
-  function fmtArr(arr: string[] | undefined | null): string | null {
-    if (!arr || arr.length === 0) return null;
-    return arr.join(", ");
-  }
-
-  function fmtSqft(val: number | null | undefined): string | null {
-    if (typeof val !== "number" || !Number.isFinite(val) || val <= 0) return null;
-    return `${val.toLocaleString()} Sq.Ft`;
-  }
-
-  function fmtAcres(val: number | null | undefined): string | null {
-    if (typeof val !== "number" || !Number.isFinite(val) || val <= 0) return null;
-    return `${val.toLocaleString(undefined, { maximumFractionDigits: 2 })} Acres`;
-  }
-
-  function fmtDate(val: string | null | undefined): string | null {
-    if (!val) return null;
-    const d = new Date(val);
-    if (isNaN(d.getTime())) return val;
-    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-  }
-
-  type DetailPair = [string, string];
-
-  function collectRows(pairs: [string, string | null | undefined][]): DetailPair[] {
-    return pairs.filter((p): p is [string, string] => p[1] != null && p[1] !== "");
-  }
-
-  const basicInfoRows = collectRows([
-    ["Property Type", property.PropertyType || null],
-    ["Sub Type", property.PropertySubType || null],
-    ["Status", property.StandardStatus || null],
-    ["Year Built", property.YearBuilt ? String(property.YearBuilt) : null],
-    ["Living Area", fmtSqft(property.LivingArea)],
-    ["Lot Size", fmtSqft(property.LotSizeSquareFeet) || fmtSqft(property.LotSizeArea)],
-    ["Lot Acres", fmtAcres(property.LotSizeAcres)],
-    ["Stories", property.StoriesTotal ? String(property.StoriesTotal) : null],
-    ["Subdivision", property.SubdivisionName],
-    ["Building", property.BuildingName],
-    ["County", property.CountyOrParish],
-    ["Architectural Style", fmtArr(property.ArchitecturalStyle)],
-    ["Construction", fmtArr(property.ConstructionMaterials)],
-    ["Garage Spaces", property.GarageSpaces ? String(property.GarageSpaces) : null],
-    ["Attached Garage", property.AttachedGarageYN ? "Yes" : null],
-    ["Covered Spaces", property.CoveredSpaces ? String(property.CoveredSpaces) : null],
-    ["Days on Market", property.DaysOnMarket != null ? String(property.DaysOnMarket) : null],
-    ["List Date", fmtDate(property.ListingContractDate || null)],
-    ["Original List Price", property.OriginalListPrice ? formatCurrency(property.OriginalListPrice) : null],
-    ["Close Date", fmtDate(property.CloseDate)],
-    ["Close Price", property.ClosePrice ? formatCurrency(property.ClosePrice) : null],
-    ["Association Fee", property.AssociationFee ? `${formatCurrency(property.AssociationFee)}${property.AssociationFeeFrequency ? ` / ${property.AssociationFeeFrequency}` : ""}` : null],
-    ["Direction Faces", property.DirectionFaces],
-  ]);
-
-  const exteriorRows = collectRows([
-    ["Exterior Features", fmtArr(property.ExteriorFeatures)],
-    ["Roof", fmtArr(property.Roof)],
-    ["Pool Features", fmtArr(property.PoolFeatures)],
-    ["Pool", property.PoolPrivateYN ? "Private Pool" : null],
-    ["Patio / Porch", fmtArr(property.PatioAndPorchFeatures)],
-    ["Lot Features", fmtArr(property.LotFeatures)],
-    ["View", fmtArr(property.View)],
-    ["Waterfront", property.WaterfrontYN ? "Yes" : null],
-    ["Water Source", fmtArr(property.WaterSource)],
-    ["Sewer", fmtArr(property.Sewer)],
-  ]);
-
-  const interiorRows = collectRows([
-    ["Interior Features", fmtArr(property.InteriorFeatures)],
-    ["Appliances", fmtArr(property.Appliances)],
-    ["Flooring", fmtArr(property.Flooring)],
-    ["Cooling", fmtArr(property.Cooling)],
-    ["Heating", fmtArr(property.Heating)],
-    ["Levels", fmtArr(property.Levels)],
-  ]);
-
-  const propertyFeaturesRows = collectRows([
-    ["Parking", fmtArr(property.ParkingFeatures)],
-    ["Building Features", fmtArr(property.BuildingFeatures)],
-    ["Community Features", fmtArr(property.CommunityFeatures)],
-    ["Pets Allowed", fmtArr(property.PetsAllowed)],
-    ["Listing Terms", fmtArr(property.ListingTerms)],
-    ["Possession", fmtArr(property.Possession)],
-    ["Occupant Type", property.OccupantType],
-  ]);
-
-  const taxRows = collectRows([
-    ["Tax Annual Amount", property.TaxAnnualAmount ? formatCurrency(property.TaxAnnualAmount) : null],
-    ["Tax Year", property.TaxYear ? String(property.TaxYear) : null],
-    ["Tax Legal Description", property.TaxLegalDescription],
-  ]);
 
   const bathsCount =
     property.BathroomsTotalInteger ??
@@ -456,38 +422,9 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
   const lng = property.Longitude;
 
   const hasCoords = Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) > 0 && Math.abs(lng) > 0;
-
-  const svgIcon = (d: string) => (
-    <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
-      <path strokeLinecap="round" strokeLinejoin="round" d={d} />
-    </svg>
-  );
-
-  const BASIC_INFO_ICONS: Record<string, ReactNode> = {
-    "Property Type": svgIcon("M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"),
-    "Sub Type": svgIcon("M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z M6 6h.008v.008H6V6z"),
-    "Status": svgIcon("M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"),
-    "Year Built": svgIcon("M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"),
-    "Living Area": svgIcon("M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15"),
-    "Lot Size": svgIcon("M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15"),
-    "Lot Acres": svgIcon("M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15"),
-    "Stories": svgIcon("M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3"),
-    "Subdivision": svgIcon("M15 10.5a3 3 0 11-6 0 3 3 0 016 0z M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"),
-    "Building": svgIcon("M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"),
-    "County": svgIcon("M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z"),
-    "Architectural Style": svgIcon("M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18"),
-    "Construction": svgIcon("M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085"),
-    "Garage Spaces": svgIcon("M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"),
-    "Attached Garage": svgIcon("M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"),
-    "Covered Spaces": svgIcon("M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"),
-    "Days on Market": svgIcon("M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"),
-    "List Date": svgIcon("M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"),
-    "Original List Price": svgIcon("M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"),
-    "Close Date": svgIcon("M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"),
-    "Close Price": svgIcon("M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"),
-    "Association Fee": svgIcon("M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"),
-    "Direction Faces": svgIcon("M12 2L15 8h6l-5 4 2 7-6-4-6 4 2-7-5-4h6l3-6z"),
-  };
+  const mapEmbedUrl = hasCoords
+    ? `https://www.google.com/maps?q=${lat},${lng}&z=15&output=embed`
+    : null;
 
   const canonicalUrl =
     typeof window !== "undefined"
@@ -535,12 +472,15 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
   }
 
   function openMapView() {
-    if (!hasCoords) {
-      return;
-    }
+    setActiveMediaTab("map");
+  }
 
-    const url = `https://www.google.com/maps?q=${lat},${lng}`;
-    window.open(url, "_blank", "noopener,noreferrer");
+  function openPhotosView() {
+    setActiveMediaTab("photos");
+  }
+
+  function openVirtualTourView() {
+    setActiveMediaTab("virtual-tour");
   }
 
   function openStreetView() {
@@ -627,131 +567,157 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
           </div>
 
           <div className="relative border-b border-black/10 bg-white">
-            <div className="absolute left-[15px] top-8 z-20 lg:hidden flex items-center gap-[10px]">
-              <CircleIconButton label="Photos" size="sm" active>
-                <IconCamera className="w-[18px] h-[18px]" />
-              </CircleIconButton>
-              <CircleIconButton label="Map view" size="sm" onClick={openMapView} disabled={!hasCoords}>
-                <IconStreetView className="w-[18px] h-[18px]" />
-              </CircleIconButton>
-              <CircleIconButton label="Virtual tour" size="sm" disabled>
-                <IconVirtual360 className="w-[18px] h-[18px]" />
-              </CircleIconButton>
-            </div>
-
-            <div className="absolute left-[15px] top-8 z-20 hidden lg:flex items-center gap-[10px]">
-              <RectTabButton label="PHOTOS" active />
-              <RectTabButton label="MAP VIEW" onClick={openMapView} disabled={!hasCoords} />
-              <RectTabButton label="VIRTUAL TOUR" disabled />
+            <div className="absolute left-[15px] top-8 z-20 flex items-center gap-[10px]">
+              <RectTabButton label="PHOTOS" active={activeMediaTab === "photos"} onClick={openPhotosView} />
+              <RectTabButton label="MAP VIEW" active={activeMediaTab === "map"} onClick={openMapView} />
+              <RectTabButton
+                label="VIRTUAL TOUR"
+                active={activeMediaTab === "virtual-tour"}
+                onClick={openVirtualTourView}
+              />
             </div>
 
             <button
               type="button"
               onClick={() => {
-                if (hasDisplayablePhotos) {
+                if (hasDisplayablePhotos && activeMediaTab === "photos") {
                   setIsPhotoViewerOpen(true);
                 }
               }}
               className="hidden lg:flex absolute right-[15px] top-[15px] z-20 w-[35px] h-[35px] rounded-md bg-black text-white items-center justify-center hover:bg-black/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               aria-label="Open full photo viewer"
-              disabled={!hasDisplayablePhotos}
+              disabled={!hasDisplayablePhotos || activeMediaTab !== "photos"}
             >
               <IconExpand className="w-[18px] h-[18px]" />
             </button>
 
-            <div className="relative lg:hidden">
-              {activePhotoUrl && !activePhotoFailed ? (
-                <img
-                  src={activePhotoUrl}
-                  alt={address}
-                  className="w-full aspect-video object-cover"
-                  onError={() => markPhotoFailed(activePhoto)}
-                />
-              ) : (
-                <div className="w-full aspect-video flex items-center justify-center text-gray-500 text-sm bg-gray-100">
-                  Photo unavailable
-                </div>
-              )}
-            </div>
-
-            <div className="relative hidden lg:grid grid-cols-3 h-[450px] overflow-hidden">
-              {desktopIndexes.length > 0 ? (
-                desktopIndexes.map((photoIndex) => {
-                  const url = photos[photoIndex]?.MediaURL;
-                  const failed = failedPhotos[photoIndex];
-
-                  if (!url || failed) {
-                    return (
-                      <div key={`desktop-fallback-${photoIndex}`} className="bg-gray-100 border-r border-gray-200 last:border-r-0 flex items-center justify-center text-gray-500 text-sm">
-                        Photo unavailable
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <button
-                      key={`desktop-photo-${photoIndex}-${url}`}
-                      type="button"
-                      onClick={() => {
-                        setActivePhoto(photoIndex);
-                        setIsPhotoViewerOpen(true);
-                      }}
-                      className="w-full h-full border-r border-gray-200 last:border-r-0 overflow-hidden"
-                      aria-label={`Open photo ${photoIndex + 1}`}
-                    >
-                      <img
-                        src={url}
-                        alt={`${address} photo ${photoIndex + 1}`}
-                        className="w-full h-full object-cover cursor-zoom-in"
-                        onError={() => markPhotoFailed(photoIndex)}
-                      />
-                    </button>
-                  );
-                })
-              ) : (
-                <div className="col-span-3 bg-gray-100 flex items-center justify-center text-gray-500 text-sm">
-                  Photo unavailable
-                </div>
-              )}
-            </div>
-
-            {photoCount > 1 && (
+            {activeMediaTab === "photos" && (
               <>
-                <button
-                  type="button"
-                  onClick={() => setActivePhoto((prev) => (prev - 1 + photoCount) % photoCount)}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 text-white hover:bg-black transition-colors flex items-center justify-center"
-                  aria-label="Previous photo"
-                >
-                  <IconChevronLeft className="w-5 h-5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActivePhoto((prev) => (prev + 1) % photoCount)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 text-white hover:bg-black transition-colors flex items-center justify-center"
-                  aria-label="Next photo"
-                >
-                  <IconChevronRight className="w-5 h-5" />
-                </button>
+                <div className="relative lg:hidden">
+                  {activePhotoUrl && !activePhotoFailed ? (
+                    <img
+                      src={activePhotoUrl}
+                      alt={address}
+                      className="w-full aspect-video object-cover"
+                      onError={() => markPhotoFailed(activePhoto)}
+                    />
+                  ) : (
+                    <div className="w-full aspect-video flex items-center justify-center text-gray-500 text-sm bg-gray-100">
+                      Photo unavailable
+                    </div>
+                  )}
+                </div>
+
+                <div className="relative hidden lg:grid grid-cols-3 h-[450px] overflow-hidden">
+                  {desktopIndexes.length > 0 ? (
+                    desktopIndexes.map((photoIndex) => {
+                      const url = photos[photoIndex]?.MediaURL;
+                      const failed = failedPhotos[photoIndex];
+
+                      if (!url || failed) {
+                        return (
+                          <div
+                            key={`desktop-fallback-${photoIndex}`}
+                            className="bg-gray-100 border-r border-gray-200 last:border-r-0 flex items-center justify-center text-gray-500 text-sm"
+                          >
+                            Photo unavailable
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <button
+                          key={`desktop-photo-${photoIndex}-${url}`}
+                          type="button"
+                          onClick={() => {
+                            setActivePhoto(photoIndex);
+                            setIsPhotoViewerOpen(true);
+                          }}
+                          className="w-full h-full border-r border-gray-200 last:border-r-0 overflow-hidden"
+                          aria-label={`Open photo ${photoIndex + 1}`}
+                        >
+                          <img
+                            src={url}
+                            alt={`${address} photo ${photoIndex + 1}`}
+                            className="w-full h-full object-cover cursor-zoom-in"
+                            onError={() => markPhotoFailed(photoIndex)}
+                          />
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <div className="col-span-3 bg-gray-100 flex items-center justify-center text-gray-500 text-sm">
+                      Photo unavailable
+                    </div>
+                  )}
+                </div>
+
+                {photoCount > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setActivePhoto((prev) => (prev - 1 + photoCount) % photoCount)}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 text-white hover:bg-black transition-colors flex items-center justify-center"
+                      aria-label="Previous photo"
+                    >
+                      <IconChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActivePhoto((prev) => (prev + 1) % photoCount)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 text-white hover:bg-black transition-colors flex items-center justify-center"
+                      aria-label="Next photo"
+                    >
+                      <IconChevronRight className="w-5 h-5" />
+                    </button>
+                  </>
+                )}
+
+                <div className="absolute right-3 bottom-3">
+                  <span className="rounded-md bg-black text-white text-xs px-2.5 py-1.5">
+                    {Math.min(activePhoto + 1, Math.max(photoCount, 1))} of {Math.max(photoCount, 1)}
+                  </span>
+                </div>
               </>
             )}
 
-            <div className="absolute left-3 bottom-3">
-              <button
-                type="button"
-                onClick={openStreetView}
-                disabled={!hasCoords}
-                className="rounded-full border border-gray-300 bg-white/95 px-3 py-2 text-xs font-medium text-[#1a1a1a] hover:bg-white disabled:opacity-45 disabled:cursor-not-allowed"
-              >
-                Street View
-              </button>
-            </div>
+            {activeMediaTab === "map" && (
+              <div className="w-full aspect-video lg:h-[450px] lg:aspect-auto bg-gray-100">
+                {mapEmbedUrl ? (
+                  <iframe
+                    src={mapEmbedUrl}
+                    title={`Map view for ${address}`}
+                    className="w-full h-full border-0"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">
+                    Map unavailable
+                  </div>
+                )}
 
-            <div className="absolute right-3 bottom-3">
-              <span className="rounded-md bg-black text-white text-xs px-2.5 py-1.5">
-                {Math.min(activePhoto + 1, Math.max(photoCount, 1))} of {Math.max(photoCount, 1)}
-              </span>
-            </div>
+                <div className="absolute left-3 bottom-3">
+                  <button
+                    type="button"
+                    onClick={openStreetView}
+                    disabled={!hasCoords}
+                    className="rounded-full border border-gray-300 bg-white/95 px-3 py-2 text-xs font-medium text-[#1a1a1a] hover:bg-white disabled:opacity-45 disabled:cursor-not-allowed"
+                  >
+                    Street View
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {activeMediaTab === "virtual-tour" && (
+              <div className="w-full aspect-video lg:h-[450px] lg:aspect-auto bg-gray-100 flex items-center justify-center">
+                <div className="text-center text-gray-600 px-6">
+                  <IconVirtual360 className="w-8 h-8 mx-auto mb-2" />
+                  <p className="text-sm font-medium">Virtual tour is not available for this listing.</p>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-4 border-b border-black/10 bg-white lg:hidden">
@@ -823,20 +789,52 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                   )}
                 </section>
 
-                <DetailSection title="Basic Information" rows={basicInfoRows} iconMap={BASIC_INFO_ICONS} />
-                <DetailSection title="Exterior Features" rows={exteriorRows} />
-                <DetailSection title="Interior Features" rows={interiorRows} />
-                <DetailSection title="Property Features" rows={propertyFeaturesRows} />
-                {taxRows.length > 0 && <DetailSection title="Tax Information" rows={taxRows} />}
+                <DetailSection title="Basic Information" rows={details.basicInformationRows} iconMap={BASIC_INFO_ICON_MAP} />
+                <AmenitiesSection amenities={details.amenities} />
+                <DetailSection title="Exterior Features" rows={details.exteriorFeatureRows} />
+                <DetailSection title="Interior Features" rows={details.interiorFeatureRows} />
+                <DetailSection title="Property Features" rows={details.propertyFeatureRows} />
 
-                <div className="px-[15px] py-[20px] border-b border-gray-200">
+                {hasCoords && (
+                  <section className="bg-white border-b border-gray-200 px-[15px] py-[20px]">
+                    <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[15px]">Location</h3>
+                    <a
+                      href={`https://www.google.com/maps?q=${lat},${lng}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block relative w-full aspect-[2/1] bg-gray-100 rounded-lg overflow-hidden group"
+                    >
+                      <img
+                        src={`https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=15&size=800x400&scale=2&markers=color:red%7C${lat},${lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || ""}`}
+                        alt={`Map of ${address}`}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                        <span className="opacity-0 group-hover:opacity-100 transition-opacity bg-white px-4 py-2 rounded-full text-sm font-medium text-[#1a1a1a] shadow">
+                          Open in Google Maps
+                        </span>
+                      </div>
+                    </a>
+                  </section>
+                )}
+
+                <section className="bg-white border-b border-gray-200 px-[15px] py-[20px]">
+                  <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[10px]">Similar Properties For Sale</h3>
+                  <p className="text-[14px] text-gray-500 mb-[15px]">
+                    Explore more properties in {property.City || "this area"}.
+                  </p>
                   <a
-                    href={`/property/${listingKey}/`}
-                    className="inline-flex items-center justify-center w-full border border-gray-300 text-[#1a1a1a] px-4 py-3 rounded-full text-xs uppercase tracking-[0.12em] hover:bg-gray-100 transition-colors"
+                    href={`/search?q=${encodeURIComponent(property.City || "")}`}
+                    className="inline-flex items-center justify-center border border-gray-300 text-[#1a1a1a] px-5 py-2.5 rounded-full text-xs uppercase tracking-[0.12em] hover:bg-gray-100 transition-colors"
                   >
-                    View Full Details
+                    View Similar Listings
                   </a>
-                </div>
+                </section>
+
+                <section className="bg-[#f5f5f5] border-b border-gray-200 px-[15px] py-[20px] text-[11px] text-gray-500 leading-[1.6] space-y-2">
+                  {legal.courtesyLine && <p>{legal.courtesyLine}</p>}
+                  <p>{legal.disclaimer}</p>
+                </section>
               </div>
 
               <aside className="hidden lg:block p-[15px]">
@@ -856,63 +854,6 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                 </div>
               </aside>
             </div>
-          </div>
-
-          {/* Map block — full-width, below the 2-col grid */}
-          {hasCoords && (
-            <section className="bg-white border-b border-black/10">
-              <div className="px-[15px] py-[20px]">
-                <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[15px]">Location</h3>
-                <a
-                  href={`https://www.google.com/maps?q=${lat},${lng}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block relative w-full aspect-[2/1] bg-gray-100 rounded-lg overflow-hidden group"
-                >
-                  <img
-                    src={`https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=15&size=800x400&scale=2&markers=color:red%7C${lat},${lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || ""}`}
-                    alt={`Map of ${address}`}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                    <span className="opacity-0 group-hover:opacity-100 transition-opacity bg-white px-4 py-2 rounded-full text-sm font-medium text-[#1a1a1a] shadow">
-                      Open in Google Maps
-                    </span>
-                  </div>
-                </a>
-              </div>
-            </section>
-          )}
-
-          {/* Similar Properties — link to search */}
-          <section className="bg-white border-b border-black/10">
-            <div className="px-[15px] py-[20px]">
-              <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[10px]">Similar Properties</h3>
-              <p className="text-[14px] text-gray-500 mb-[15px]">
-                Explore more properties in {property.City || "this area"}.
-              </p>
-              <a
-                href={`/search?q=${encodeURIComponent(property.City || "")}`}
-                className="inline-flex items-center justify-center border border-gray-300 text-[#1a1a1a] px-5 py-2.5 rounded-full text-xs uppercase tracking-[0.12em] hover:bg-gray-100 transition-colors"
-              >
-                View Similar Listings
-              </a>
-            </div>
-          </section>
-
-          {/* Legal / Courtesy — full-width bottom */}
-          <div className="px-[15px] py-[20px] text-[11px] text-gray-500 leading-[1.6] space-y-2 bg-[#f5f5f5]">
-            {(property.ListOfficeName || property.ListAgentFullName) && (
-              <p>
-                Courtesy of{property.ListAgentFullName ? ` ${property.ListAgentFullName}` : ""}
-                {property.ListOfficeName ? `, ${property.ListOfficeName}` : ""}
-                {property.ListOfficePhone ? ` (${property.ListOfficePhone})` : ""}
-              </p>
-            )}
-            <p>
-              The multiple listing information is provided by the Miami Association of Realtors from a copyrighted
-              compilation of listings. All information is deemed reliable but not guaranteed.
-            </p>
           </div>
         </div>
 
@@ -944,7 +885,13 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                     <CircleIconButton label="Photos" active>
                       <IconCamera className="w-5 h-5" />
                     </CircleIconButton>
-                    <CircleIconButton label="Map view" onClick={openMapView} disabled={!hasCoords}>
+                    <CircleIconButton
+                      label="Map view"
+                      onClick={() => {
+                        setIsPhotoViewerOpen(false);
+                        openMapView();
+                      }}
+                    >
                       <IconStreetView className="w-5 h-5" />
                     </CircleIconButton>
                     <CircleIconButton label="Email" onClick={() => window.location.assign("mailto:Andrew@IamAndrewWhalen.com")}>
