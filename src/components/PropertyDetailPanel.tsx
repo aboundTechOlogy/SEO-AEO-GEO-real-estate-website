@@ -89,7 +89,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
       >
         <div className="absolute inset-0 bg-black/60" />
         <aside
-          className={`absolute inset-y-0 right-0 w-full sm:max-w-[50vw] min-[1440px]:max-w-[45vw] bg-[#0a0a0a] border-l border-white/10 shadow-2xl transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+          className={`absolute inset-y-0 right-0 w-full sm:max-w-[90vw] bg-[#0a0a0a] border-l border-white/10 shadow-2xl transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
             isClosing ? "translate-x-full" : "translate-x-0"
           }`}
         >
@@ -152,7 +152,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
       <div className="absolute inset-0 bg-black/60" />
 
       <aside
-        className={`absolute inset-y-0 right-0 w-full sm:max-w-[50vw] min-[1440px]:max-w-[45vw] bg-[#0a0a0a] border-l border-white/10 shadow-2xl transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+        className={`absolute inset-y-0 right-0 w-full sm:max-w-[90vw] bg-[#0a0a0a] border-l border-white/10 shadow-2xl transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
           isClosing ? "translate-x-full" : "translate-x-0"
         }`}
         onClick={(event) => event.stopPropagation()}
