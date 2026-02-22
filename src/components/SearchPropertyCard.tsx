@@ -21,6 +21,7 @@ interface Props {
   listDate?: string;
   photoCount?: number;
   listingKey?: string;
+  onOpenOverlay?: (listingKey: string) => void;
 }
 
 function formatRelativeTime(dateStr: string): string {
@@ -74,6 +75,7 @@ export default function SearchPropertyCard({
   listDate,
   photoCount,
   listingKey,
+  onOpenOverlay,
 }: Props) {
   const [isSaved, setIsSaved] = useState(false);
   const [shareLabel, setShareLabel] = useState<"idle" | "copied">("idle");
@@ -119,9 +121,17 @@ export default function SearchPropertyCard({
       ? `${status} - ${formatRelativeTime(listDate)}`
       : status || (listDate ? `New - ${formatRelativeTime(listDate)}` : undefined);
 
+  function handleCardClick(e: React.MouseEvent) {
+    if (onOpenOverlay && listingKey) {
+      e.preventDefault();
+      onOpenOverlay(listingKey);
+    }
+  }
+
   return (
     <Link
       href={href}
+      onClick={handleCardClick}
       className="group block relative overflow-hidden bg-neutral-200 cursor-pointer md:rounded-[10px] md:shadow-[0_1px_4px_rgba(0,0,0,0.16)]"
       style={{ aspectRatio: "16/9" }}
     >

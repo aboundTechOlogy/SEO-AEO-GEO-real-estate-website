@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import PropertyGallery from "@/components/PropertyGallery";
 import PropertyInquiryForm from "@/components/PropertyInquiryForm";
-import PropertyMap from "@/components/PropertyMap";
 import { getProperty } from "@/lib/bridge";
 import { calculatePricePerSqft, formatAddress, formatCurrency, getListingPhotos } from "@/lib/property-utils";
 
@@ -11,10 +10,6 @@ interface Props {
 }
 
 export const revalidate = 3600;
-
-function arrayOrFallback(values: string[]): string[] {
-  return values.filter(Boolean).length > 0 ? values : ["Not specified"];
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { listingKey } = await params;
@@ -44,16 +39,87 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: "website",
       url: `https://iamandrewwhalen.com/property/${property.ListingKey}/`,
       images: photos[0]?.MediaURL
-        ? [
-            {
-              url: photos[0].MediaURL,
-              alt: address,
-            },
-          ]
+        ? [{ url: photos[0].MediaURL, alt: address }]
         : undefined,
     },
   };
 }
+
+/* ── helpers ── */
+
+function fmtArr(arr: string[] | undefined | null): string | null {
+  if (!arr || arr.length === 0) return null;
+  return arr.join(", ");
+}
+
+function fmtSqft(val: number | null | undefined): string | null {
+  if (typeof val !== "number" || !Number.isFinite(val) || val <= 0) return null;
+  return `${val.toLocaleString()} Sq.Ft`;
+}
+
+function fmtAcres(val: number | null | undefined): string | null {
+  if (typeof val !== "number" || !Number.isFinite(val) || val <= 0) return null;
+  return `${val.toLocaleString(undefined, { maximumFractionDigits: 2 })} Acres`;
+}
+
+function fmtDate(val: string | null | undefined): string | null {
+  if (!val) return null;
+  const d = new Date(val);
+  if (isNaN(d.getTime())) return val;
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
+type DetailPair = [string, string];
+
+function collectRows(pairs: [string, string | null | undefined][]): DetailPair[] {
+  return pairs.filter((p): p is [string, string] => p[1] != null && p[1] !== "");
+}
+
+function estimateMonthlyPayment(price: number | null | undefined): string | null {
+  if (typeof price !== "number" || !Number.isFinite(price) || price <= 0) return null;
+  const principal = price * 0.8;
+  const monthlyRate = 0.065 / 12;
+  const payments = 360;
+  const payment =
+    (principal * monthlyRate * Math.pow(1 + monthlyRate, payments)) /
+    (Math.pow(1 + monthlyRate, payments) - 1);
+  if (!Number.isFinite(payment)) return null;
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(Math.round(payment));
+}
+
+function DetailRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="border border-gray-200 bg-white px-[15px] py-[10px]">
+      <p className="text-[13px] text-gray-500 mb-1">{label}</p>
+      <p className="text-[14px] text-[#1a1a1a] leading-[1.35]">{value}</p>
+    </div>
+  );
+}
+
+function DetailSection({ title, rows }: { title: string; rows: DetailPair[] }) {
+  if (rows.length === 0) return null;
+  return (
+    <section className="bg-white border-b border-gray-200 px-[15px] py-[20px]">
+      <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[15px]">{title}</h3>
+      <div className="grid sm:grid-cols-2 gap-2">
+        {rows.map(([label, value]) => (
+          <DetailRow key={label} label={label} value={value} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function StatMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="px-[15px] py-[10px] text-center uppercase text-gray-500">
+      <p className="text-[17px] lg:text-[24px] leading-none font-semibold text-[#1a1a1a]">{value}</p>
+      <p className="mt-[3px] text-[11px] lg:text-[12px] leading-none">{label}</p>
+    </div>
+  );
+}
+
+/* ── page ── */
 
 export default async function PropertyDetailPage({ params }: Props) {
   const { listingKey } = await params;
@@ -66,235 +132,282 @@ export default async function PropertyDetailPage({ params }: Props) {
   const photos = getListingPhotos(property);
   const address = formatAddress(property);
   const price = property.StandardStatus === "Closed" ? property.ClosePrice || property.ListPrice : property.ListPrice;
-  const original = property.OriginalListPrice;
-  const priceDiffPercent =
-    original && original > 0 && original !== price ? Math.round(((price - original) / original) * 1000) / 10 : null;
+  const estimatedPayment = estimateMonthlyPayment(price);
   const pricePerSqft = calculatePricePerSqft(price, property.LivingArea);
+  const bathsCount =
+    property.BathroomsTotalInteger ??
+    (property.BathroomsFull || property.BathroomsHalf
+      ? Number((property.BathroomsFull + property.BathroomsHalf * 0.5).toFixed(1))
+      : 0);
+  const halfBathValue = property.BathroomsHalf ? String(property.BathroomsHalf) : "--";
 
-  const detailRows = [
-    ["Property Type", property.PropertyType || "-"],
-    ["Sub Type", property.PropertySubType || "-"],
-    ["Year Built", property.YearBuilt?.toString() || "-"],
-    ["Lot Size", property.LotSizeArea ? `${property.LotSizeArea.toLocaleString()} sq ft` : "-"],
-    ["Living Area", property.LivingArea ? `${property.LivingArea.toLocaleString()} sq ft` : "-"],
-    ["Garage Spaces", property.GarageSpaces?.toString() || "-"],
-    [
-      "Association Fee",
-      property.AssociationFee ? `${formatCurrency(property.AssociationFee)} ${property.AssociationFeeFrequency || ""}`.trim() : "-",
-    ],
-    ["Days on Market", property.DaysOnMarket !== null ? property.DaysOnMarket.toString() : "-"],
-  ];
+  const remarks = property.PublicRemarks || "No description provided.";
+  const lat = property.Latitude;
+  const lng = property.Longitude;
+  const hasCoords = Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) > 0 && Math.abs(lng) > 0;
+
+  const basicInfoRows = collectRows([
+    ["Property Type", property.PropertyType || null],
+    ["Sub Type", property.PropertySubType || null],
+    ["Status", property.StandardStatus || null],
+    ["Year Built", property.YearBuilt ? String(property.YearBuilt) : null],
+    ["Living Area", fmtSqft(property.LivingArea)],
+    ["Lot Size", fmtSqft(property.LotSizeSquareFeet) || fmtSqft(property.LotSizeArea)],
+    ["Lot Acres", fmtAcres(property.LotSizeAcres)],
+    ["Stories", property.StoriesTotal ? String(property.StoriesTotal) : null],
+    ["Subdivision", property.SubdivisionName],
+    ["Building", property.BuildingName],
+    ["County", property.CountyOrParish],
+    ["Architectural Style", fmtArr(property.ArchitecturalStyle)],
+    ["Construction", fmtArr(property.ConstructionMaterials)],
+    ["Garage Spaces", property.GarageSpaces ? String(property.GarageSpaces) : null],
+    ["Attached Garage", property.AttachedGarageYN ? "Yes" : null],
+    ["Days on Market", property.DaysOnMarket != null ? String(property.DaysOnMarket) : null],
+    ["List Date", fmtDate(property.ListingContractDate || null)],
+    ["Original List Price", property.OriginalListPrice ? formatCurrency(property.OriginalListPrice) : null],
+    ["Close Date", fmtDate(property.CloseDate)],
+    ["Close Price", property.ClosePrice ? formatCurrency(property.ClosePrice) : null],
+    ["Association Fee", property.AssociationFee ? `${formatCurrency(property.AssociationFee)}${property.AssociationFeeFrequency ? ` / ${property.AssociationFeeFrequency}` : ""}` : null],
+    ["Direction Faces", property.DirectionFaces],
+  ]);
+
+  const exteriorRows = collectRows([
+    ["Exterior Features", fmtArr(property.ExteriorFeatures)],
+    ["Roof", fmtArr(property.Roof)],
+    ["Pool Features", fmtArr(property.PoolFeatures)],
+    ["Pool", property.PoolPrivateYN ? "Private Pool" : null],
+    ["Patio / Porch", fmtArr(property.PatioAndPorchFeatures)],
+    ["Lot Features", fmtArr(property.LotFeatures)],
+    ["View", fmtArr(property.View)],
+    ["Waterfront", property.WaterfrontYN ? "Yes" : null],
+    ["Water Source", fmtArr(property.WaterSource)],
+    ["Sewer", fmtArr(property.Sewer)],
+  ]);
+
+  const interiorRows = collectRows([
+    ["Interior Features", fmtArr(property.InteriorFeatures)],
+    ["Appliances", fmtArr(property.Appliances)],
+    ["Flooring", fmtArr(property.Flooring)],
+    ["Cooling", fmtArr(property.Cooling)],
+    ["Heating", fmtArr(property.Heating)],
+    ["Levels", fmtArr(property.Levels)],
+  ]);
+
+  const propertyFeaturesRows = collectRows([
+    ["Parking", fmtArr(property.ParkingFeatures)],
+    ["Building Features", fmtArr(property.BuildingFeatures)],
+    ["Community Features", fmtArr(property.CommunityFeatures)],
+    ["Pets Allowed", fmtArr(property.PetsAllowed)],
+    ["Listing Terms", fmtArr(property.ListingTerms)],
+    ["Possession", fmtArr(property.Possession)],
+    ["Occupant Type", property.OccupantType],
+  ]);
+
+  const taxRows = collectRows([
+    ["Tax Annual Amount", property.TaxAnnualAmount ? formatCurrency(property.TaxAnnualAmount) : null],
+    ["Tax Year", property.TaxYear ? String(property.TaxYear) : null],
+    ["Tax Legal Description", property.TaxLegalDescription],
+  ]);
 
   const featureGroups = [
-    { label: "Interior Features", values: arrayOrFallback(property.InteriorFeatures) },
-    { label: "Exterior Features", values: arrayOrFallback(property.ExteriorFeatures) },
-    { label: "Appliances", values: arrayOrFallback(property.Appliances) },
-    { label: "Cooling", values: arrayOrFallback(property.Cooling) },
-    { label: "Heating", values: arrayOrFallback(property.Heating) },
-    { label: "Parking", values: arrayOrFallback(property.ParkingFeatures) },
-    { label: "Building Features", values: arrayOrFallback(property.BuildingFeatures) },
+    { label: "Interior Features", values: property.InteriorFeatures?.filter(Boolean) || [] },
+    { label: "Exterior Features", values: property.ExteriorFeatures?.filter(Boolean) || [] },
+    { label: "Appliances", values: property.Appliances?.filter(Boolean) || [] },
+    { label: "Parking", values: property.ParkingFeatures?.filter(Boolean) || [] },
+    { label: "Building Features", values: property.BuildingFeatures?.filter(Boolean) || [] },
   ];
 
-  const hasLongRemarks = (property.PublicRemarks || "").length > 520;
-  const shortRemarks = (property.PublicRemarks || "").slice(0, 520);
+  // JSON-LD structured data - constructed from trusted server-side data only
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "RealEstateListing",
+    name: address,
+    description: property.PublicRemarks || `${address} listing details`,
+    url: `https://iamandrewwhalen.com/property/${property.ListingKey}/`,
+    datePosted: property.ListingContractDate || undefined,
+    offers: {
+      "@type": "Offer",
+      price,
+      priceCurrency: "USD",
+      availability: property.StandardStatus === "Closed" ? "https://schema.org/SoldOut" : "https://schema.org/InStock",
+    },
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: address,
+      addressLocality: property.City,
+      addressRegion: property.StateOrProvince,
+      postalCode: property.PostalCode,
+      addressCountry: "US",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: property.Latitude,
+      longitude: property.Longitude,
+    },
+    numberOfRooms: property.BedroomsTotal,
+    numberOfBathroomsTotal: property.BathroomsTotalInteger,
+    floorSize: {
+      "@type": "QuantitativeValue",
+      value: property.LivingArea,
+      unitCode: "FTK",
+    },
+    amenityFeature: featureGroups
+      .filter((g) => g.values.length > 0)
+      .map((group) => ({
+        "@type": "LocationFeatureSpecification",
+        name: group.label,
+        value: group.values.join(", "),
+      })),
+  };
 
   return (
     <>
       <div className="h-[50px] lg:h-[82px] min-[1440px]:h-[90px]" />
 
-      <section className="bg-[#0a0a0a] px-6 py-10 md:py-12">
-        <div className="max-w-7xl mx-auto space-y-7">
-          <div>
-            <p className="text-neutral-400 text-xs uppercase tracking-[0.2em] mb-2">{property.PropertySubType || "Listing"}</p>
-            <h1 className="font-playfair text-3xl md:text-5xl text-white">{address}</h1>
-            <p className="text-neutral-400 mt-2">
+      <div className="bg-[#f5f5f5]">
+        {/* 1. Header/address */}
+        <div className="border-b border-black/10 bg-white">
+          <div className="max-w-[1200px] mx-auto px-[15px] py-[15px]">
+            <h1 className="text-[20px] lg:text-[24px] leading-[1.1] font-semibold text-[#1a1a1a]">{address}</h1>
+            <p className="text-[13px] lg:text-[15px] text-gray-600 mt-1">
               {property.City}, {property.StateOrProvince} {property.PostalCode}
             </p>
           </div>
-
-          <PropertyGallery photos={photos} address={address} />
         </div>
-      </section>
 
-      <section className="bg-neutral-900 border-y border-white/10 px-6 py-6">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-end gap-8 md:gap-12">
-          <div>
-            <p className="text-neutral-500 text-xs uppercase tracking-[0.2em] mb-2">Price</p>
-            <p className="font-playfair text-4xl text-white">{formatCurrency(price)}</p>
-            {priceDiffPercent !== null && (
-              <p className={`text-sm mt-2 ${priceDiffPercent < 0 ? "text-emerald-300" : "text-red-300"}`}>
-                {priceDiffPercent > 0 ? "+" : ""}
-                {priceDiffPercent}% vs original list
-              </p>
-            )}
-          </div>
-
-          <div className="flex flex-wrap items-center gap-4 text-sm text-neutral-300">
-            <span>{property.BedroomsTotal} Beds</span>
-            <span className="text-neutral-600">|</span>
-            <span>{property.BathroomsFull} Full Baths</span>
-            <span className="text-neutral-600">|</span>
-            <span>{property.BathroomsHalf} Half Bath</span>
-            <span className="text-neutral-600">|</span>
-            <span>{property.LivingArea ? `${property.LivingArea.toLocaleString()} Sq.Ft` : "Sq.Ft N/A"}</span>
-            <span className="text-neutral-600">|</span>
-            <span>{pricePerSqft ? `$${pricePerSqft.toLocaleString()}/Sq.Ft` : "$/Sq.Ft N/A"}</span>
+        {/* 2. Media/gallery */}
+        <div className="border-b border-black/10 bg-white">
+          <div className="max-w-[1200px] mx-auto">
+            <PropertyGallery photos={photos} address={address} />
           </div>
         </div>
-      </section>
 
-      <section className="bg-[#0a0a0a] px-6 py-14 md:py-16">
-        <div className="max-w-7xl mx-auto grid gap-10 lg:grid-cols-[1.65fr_0.95fr] items-start">
-          <div className="space-y-10">
-            <div>
-              <h2 className="font-playfair text-3xl text-white mb-4">Description</h2>
-              {hasLongRemarks ? (
-                <>
-                  <p className="text-neutral-300 leading-relaxed">{shortRemarks}...</p>
-                  <details className="mt-4 border border-white/10 p-4 bg-neutral-900/40">
-                    <summary className="text-sm uppercase tracking-[0.12em] text-neutral-300 cursor-pointer">Read full description</summary>
-                    <p className="text-neutral-300 leading-relaxed mt-4">{property.PublicRemarks}</p>
-                  </details>
-                </>
-              ) : (
-                <p className="text-neutral-300 leading-relaxed">{property.PublicRemarks || "No description provided."}</p>
-              )}
-            </div>
-
-            <div>
-              <h2 className="font-playfair text-3xl text-white mb-5">Property Details</h2>
-              <div className="grid sm:grid-cols-2 gap-3">
-                {detailRows.map(([label, value]) => (
-                  <div key={label} className="border border-white/10 p-4 bg-neutral-900/40">
-                    <p className="text-neutral-500 text-xs uppercase tracking-[0.12em] mb-2">{label}</p>
-                    <p className="text-neutral-200 text-sm">{value}</p>
+        {/* 3–13. Content grid with sidebar */}
+        <div className="max-w-[1200px] mx-auto">
+          <div className="grid lg:grid-cols-[minmax(0,1fr)_350px]">
+            <div className="min-w-0 border-r-0 lg:border-r lg:border-gray-200">
+              {/* 3. Price/stats */}
+              <div className="border-b border-gray-200 bg-white">
+                <div className="flex items-end justify-between gap-4 px-[15px] py-[15px] border-b border-gray-200">
+                  <p className="text-[22px] font-semibold leading-none text-[#1a1a1a]">{formatCurrency(price)}</p>
+                  <div className="text-right">
+                    <p className="text-[13px] text-gray-500">Est. Payment</p>
+                    <p className="text-[13px] font-semibold leading-none text-[#1a1a1a]">
+                      {estimatedPayment ? `${estimatedPayment}/mo` : "--"}
+                    </p>
                   </div>
-                ))}
-              </div>
-            </div>
+                </div>
 
-            <div>
-              <h2 className="font-playfair text-3xl text-white mb-5">Features & Amenities</h2>
-              <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
-                {featureGroups.map((group) => (
-                  <div key={group.label} className="border border-white/10 p-4 bg-neutral-900/30">
-                    <p className="text-neutral-400 text-xs uppercase tracking-[0.12em] mb-3">{group.label}</p>
-                    <ul className="space-y-2">
-                      {group.values.map((value) => (
-                        <li key={`${group.label}-${value}`} className="flex items-start gap-2 text-neutral-300 text-sm">
-                          <span className="w-1.5 h-1.5 rounded-full bg-white/50 mt-1.5 shrink-0" />
-                          <span>{value}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h2 className="font-playfair text-3xl text-white mb-5">Location Map</h2>
-              <PropertyMap
-                center={{ lat: property.Latitude || 25.7617, lng: property.Longitude || -80.1918 }}
-                zoom={16}
-                interactive={true}
-                markers={
-                  property.Latitude && property.Longitude
-                    ? [
-                        {
-                          lat: property.Latitude,
-                          lng: property.Longitude,
-                          price,
-                          listingKey: property.ListingKey,
-                        },
-                      ]
-                    : []
-                }
-                className="h-[340px]"
-              />
-            </div>
-
-            <div className="border-t border-white/10 pt-6">
-              <h2 className="font-playfair text-2xl text-white mb-3">MLS Compliance</h2>
-              <p className="text-neutral-400 text-sm leading-relaxed mb-2">
-                Listing Agent: {property.ListAgentFullName || "Not Provided"} | Listing Office: {property.ListOfficeName || "Not Provided"}
-              </p>
-              <p className="text-neutral-500 text-xs leading-relaxed">
-                The multiple listing information is provided by the Miami Association of Realtors from a copyrighted compilation of listings.
-                The information provided is for consumers' personal, noncommercial use and may not be used for any purpose other than to
-                identify prospective properties consumers may be interested in purchasing. All properties are subject to prior sale or
-                withdrawal. All information is deemed reliable but not guaranteed.
-              </p>
-            </div>
-          </div>
-
-          <aside className="lg:sticky lg:top-28">
-            <div className="bg-neutral-900 border border-white/10 p-6 space-y-5">
-              <div className="flex items-center gap-4">
-                <img src="/andrew-headshot.png" alt="Andrew Whalen" className="w-16 h-16 rounded-full object-cover" />
-                <div>
-                  <p className="font-playfair text-2xl text-white leading-none">Andrew Whalen</p>
-                  <p className="text-neutral-400 text-sm">LoKation Real Estate</p>
+                <div className="grid grid-cols-2 sm:grid-cols-5 divide-x divide-gray-200">
+                  <StatMetric label="Beds" value={String(property.BedroomsTotal || 0)} />
+                  <StatMetric label="Baths" value={String(bathsCount || 0)} />
+                  <StatMetric label="Half Bath" value={halfBathValue} />
+                  <StatMetric label="Sq.Ft" value={property.LivingArea ? property.LivingArea.toLocaleString() : "-"} />
+                  <StatMetric label="$/SqFt" value={pricePerSqft ? `$${pricePerSqft.toLocaleString()}` : "-"} />
                 </div>
               </div>
 
-              <div className="space-y-2 text-sm">
-                <a href="tel:+13054559744" className="block text-neutral-200 hover:text-white transition-colors">
-                  (305) 455-9744
-                </a>
-                <a href="mailto:Andrew@IamAndrewWhalen.com" className="block text-neutral-200 hover:text-white transition-colors">
-                  Andrew@IamAndrewWhalen.com
-                </a>
-              </div>
+              {/* 4. Description */}
+              <section className="bg-white border-b border-gray-200 px-[15px] py-[20px]">
+                <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[10px]">Description</h3>
+                <p className="text-[14px] leading-[1.6] text-gray-700">{remarks}</p>
+              </section>
 
-              <PropertyInquiryForm listingKey={property.ListingKey} address={address} />
+              {/* 5. Basic Information */}
+              <DetailSection title="Basic Information" rows={basicInfoRows} />
+
+              {/* 6. Exterior Features */}
+              <DetailSection title="Exterior Features" rows={exteriorRows} />
+
+              {/* 7. Interior Features */}
+              <DetailSection title="Interior Features" rows={interiorRows} />
+
+              {/* 8. Property Features */}
+              <DetailSection title="Property Features" rows={propertyFeaturesRows} />
+
+              {/* 9. Tax Information */}
+              {taxRows.length > 0 && <DetailSection title="Tax Information" rows={taxRows} />}
             </div>
-          </aside>
+
+            {/* Agent sidebar (desktop) */}
+            <aside className="hidden lg:block p-[15px]">
+              <div className="border border-gray-200 bg-white p-[15px] space-y-[15px] sticky top-[100px]">
+                <div className="flex items-center gap-3">
+                  <img src="/andrew-headshot.png" alt="Andrew Whalen" className="w-14 h-14 rounded-full object-cover" />
+                  <div>
+                    <p className="text-[#1a1a1a] font-semibold leading-none">Andrew Whalen</p>
+                    <p className="text-gray-600 text-sm">LoKation Real Estate</p>
+                    <a href="tel:+13054559744" className="text-sm text-[#1a1a1a] hover:underline">(305) 455-9744</a>
+                  </div>
+                </div>
+                <PropertyInquiryForm listingKey={property.ListingKey} address={address} theme="light" />
+              </div>
+            </aside>
+          </div>
         </div>
-      </section>
+
+        {/* 10. Location map — full-width */}
+        {hasCoords && (
+          <section className="bg-white border-b border-black/10">
+            <div className="max-w-[1200px] mx-auto px-[15px] py-[20px]">
+              <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[15px]">Location</h3>
+              <a
+                href={`https://www.google.com/maps?q=${lat},${lng}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block relative w-full aspect-[2/1] bg-gray-100 rounded-lg overflow-hidden group"
+              >
+                <img
+                  src={`https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=15&size=800x400&scale=2&markers=color:red%7C${lat},${lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || ""}`}
+                  alt={`Map of ${address}`}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                  <span className="opacity-0 group-hover:opacity-100 transition-opacity bg-white px-4 py-2 rounded-full text-sm font-medium text-[#1a1a1a] shadow">
+                    Open in Google Maps
+                  </span>
+                </div>
+              </a>
+            </div>
+          </section>
+        )}
+
+        {/* 11. Similar Properties */}
+        <section className="bg-white border-b border-black/10">
+          <div className="max-w-[1200px] mx-auto px-[15px] py-[20px]">
+            <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[10px]">Similar Properties</h3>
+            <p className="text-[14px] text-gray-500 mb-[15px]">
+              Explore more properties in {property.City || "this area"}.
+            </p>
+            <a
+              href={`/search?q=${encodeURIComponent(property.City || "")}`}
+              className="inline-flex items-center justify-center border border-gray-300 text-[#1a1a1a] px-5 py-2.5 rounded-full text-xs uppercase tracking-[0.12em] hover:bg-gray-100 transition-colors"
+            >
+              View Similar Listings
+            </a>
+          </div>
+        </section>
+
+        {/* 13. Legal / Courtesy — full-width bottom */}
+        <div className="max-w-[1200px] mx-auto px-[15px] py-[20px] text-[11px] text-gray-500 leading-[1.6] space-y-2">
+          {(property.ListOfficeName || property.ListAgentFullName) && (
+            <p>
+              Courtesy of{property.ListAgentFullName ? ` ${property.ListAgentFullName}` : ""}
+              {property.ListOfficeName ? `, ${property.ListOfficeName}` : ""}
+              {property.ListOfficePhone ? ` (${property.ListOfficePhone})` : ""}
+            </p>
+          )}
+          <p>
+            The multiple listing information is provided by the Miami Association of Realtors from a copyrighted
+            compilation of listings. All information is deemed reliable but not guaranteed.
+          </p>
+        </div>
+      </div>
 
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "RealEstateListing",
-            name: address,
-            description: property.PublicRemarks || `${address} listing details`,
-            url: `https://iamandrewwhalen.com/property/${property.ListingKey}/`,
-            datePosted: property.ListingContractDate || undefined,
-            offers: {
-              "@type": "Offer",
-              price,
-              priceCurrency: "USD",
-              availability: property.StandardStatus === "Closed" ? "https://schema.org/SoldOut" : "https://schema.org/InStock",
-            },
-            address: {
-              "@type": "PostalAddress",
-              streetAddress: address,
-              addressLocality: property.City,
-              addressRegion: property.StateOrProvince,
-              postalCode: property.PostalCode,
-              addressCountry: "US",
-            },
-            geo: {
-              "@type": "GeoCoordinates",
-              latitude: property.Latitude,
-              longitude: property.Longitude,
-            },
-            numberOfRooms: property.BedroomsTotal,
-            numberOfBathroomsTotal: property.BathroomsTotalInteger,
-            floorSize: {
-              "@type": "QuantitativeValue",
-              value: property.LivingArea,
-              unitCode: "FTK",
-            },
-            amenityFeature: featureGroups.map((group) => ({
-              "@type": "LocationFeatureSpecification",
-              name: group.label,
-              value: group.values.join(", "),
-            })),
-          }),
+          __html: JSON.stringify(jsonLd),
         }}
       />
     </>
