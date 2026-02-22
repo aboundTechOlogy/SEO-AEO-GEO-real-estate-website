@@ -15,6 +15,22 @@ interface Props {
   isSold?: boolean;
   index?: number;
   total?: number;
+  listDate?: string;
+  photoCount?: number;
+}
+
+function formatRelativeTime(dateStr: string): string {
+  const now = Date.now();
+  const listed = new Date(dateStr).getTime();
+  const diffMs = now - listed;
+  const hours = Math.floor(diffMs / (1000 * 60 * 60));
+  const days = Math.floor(hours / 24);
+
+  if (hours < 1) return "Just now";
+  if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+  if (days < 30) return `${days} day${days === 1 ? "" : "s"} ago`;
+  const months = Math.floor(days / 30);
+  return `${months} month${months === 1 ? "" : "s"} ago`;
 }
 
 export default function SearchPropertyCard({
@@ -32,8 +48,14 @@ export default function SearchPropertyCard({
   isSold = false,
   index,
   total,
+  listDate,
+  photoCount,
 }: Props) {
-  const badge = isSold ? "SOLD" : status;
+  const badgeText = isSold
+    ? "SOLD"
+    : status && listDate
+      ? `${status} - ${formatRelativeTime(listDate)}`
+      : status || (listDate ? `New - ${formatRelativeTime(listDate)}` : undefined);
 
   return (
     <a
@@ -60,10 +82,10 @@ export default function SearchPropertyCard({
       <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
       {/* Status badge — top left */}
-      {badge && (
+      {badgeText && (
         <div className="absolute top-3 left-3">
-          <span className="bg-black text-white text-[11px] uppercase tracking-wider font-medium px-3 py-1 rounded-sm">
-            {badge}
+          <span className="bg-black text-white text-[11px] tracking-wider font-medium px-3 py-1 rounded-sm">
+            {badgeText}
           </span>
         </div>
       )}
@@ -102,10 +124,10 @@ export default function SearchPropertyCard({
       </div>
 
       {/* Photo counter — bottom right */}
-      {index !== undefined && total !== undefined && (
+      {photoCount && photoCount > 0 && (
         <div className="absolute bottom-4 right-4">
           <span className="bg-black/60 text-white text-xs px-2 py-0.5 rounded-sm">
-            {index + 1} of {total}
+            1 of {photoCount}
           </span>
         </div>
       )}

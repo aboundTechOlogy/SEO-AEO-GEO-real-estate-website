@@ -11,14 +11,16 @@ export interface ListingData {
   status?: string;
   href: string;
   isSold?: boolean;
+  listDate?: string; // ISO date string for relative time badges
+  photoCount?: number;
 }
 
 export const MOCK_EXCLUSIVE: ListingData[] = [
-  { price: "$4,250,000", address: "1000 Brickell Plaza #5501", city: "Miami", state: "FL", zip: "33131", beds: 4, baths: 4, sqft: 3200, status: "New", href: "#" },
-  { price: "$2,850,000", address: "900 Biscayne Blvd #4201", city: "Miami", state: "FL", zip: "33132", beds: 3, baths: 3, sqft: 2450, status: "", href: "#" },
-  { price: "$7,500,000", address: "7412 Fisher Island Dr", city: "Miami Beach", state: "FL", zip: "33109", beds: 5, baths: 6, sqft: 5100, status: "New", href: "#" },
-  { price: "$1,995,000", address: "2627 S Bayshore Dr #2401", city: "Coconut Grove", state: "FL", zip: "33133", beds: 3, baths: 3, sqft: 2100, status: "", href: "#" },
-  { price: "$12,500,000", address: "6800 Indian Creek Dr", city: "Miami Beach", state: "FL", zip: "33141", beds: 7, baths: 8, sqft: 8500, status: "New", href: "#" },
+  { price: "$4,250,000", address: "1000 Brickell Plaza #5501", city: "Miami", state: "FL", zip: "33131", beds: 4, baths: 4, sqft: 3200, status: "New", listDate: new Date(Date.now() - 2 * 3600000).toISOString(), photoCount: 43, href: "#" },
+  { price: "$2,850,000", address: "900 Biscayne Blvd #4201", city: "Miami", state: "FL", zip: "33132", beds: 3, baths: 3, sqft: 2450, listDate: new Date(Date.now() - 18 * 3600000).toISOString(), photoCount: 35, href: "#" },
+  { price: "$7,500,000", address: "7412 Fisher Island Dr", city: "Miami Beach", state: "FL", zip: "33109", beds: 5, baths: 6, sqft: 5100, status: "New", listDate: new Date(Date.now() - 5 * 3600000).toISOString(), photoCount: 52, href: "#" },
+  { price: "$1,995,000", address: "2627 S Bayshore Dr #2401", city: "Coconut Grove", state: "FL", zip: "33133", beds: 3, baths: 3, sqft: 2100, listDate: new Date(Date.now() - 3 * 86400000).toISOString(), photoCount: 28, href: "#" },
+  { price: "$12,500,000", address: "6800 Indian Creek Dr", city: "Miami Beach", state: "FL", zip: "33141", beds: 7, baths: 8, sqft: 8500, status: "New", listDate: new Date(Date.now() - 1 * 3600000).toISOString(), photoCount: 67, href: "#" },
 ];
 
 export const MOCK_SOLD: ListingData[] = [
