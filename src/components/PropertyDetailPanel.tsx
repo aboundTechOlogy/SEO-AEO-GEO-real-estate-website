@@ -55,7 +55,7 @@ function estimateMonthlyPayment(price: number | null | undefined): string | null
 }
 
 const PANEL_CONTAINER_CLASS =
-  "absolute inset-0 sm:inset-x-4 sm:top-20 sm:bottom-4 lg:inset-x-[7vw] lg:top-24 lg:bottom-6 border-0 sm:border sm:border-black/15 bg-[#f5f5f5] shadow-[0_24px_70px_rgba(0,0,0,0.45)]";
+  "absolute inset-0 lg:inset-y-0 lg:left-[7vw] lg:right-[7vw] border-0 lg:border lg:border-black/15 bg-[#f5f5f5] shadow-[0_24px_70px_rgba(0,0,0,0.45)]";
 
 function CircleIconButton({
   label,
@@ -281,7 +281,6 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
           <div className="sticky top-0 z-30 border-b border-black/10 bg-white/95 backdrop-blur-sm px-4 py-3">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <p className="text-[11px] text-gray-500 uppercase tracking-[0.14em] hidden sm:block">Property Details</p>
                 <p className="text-[34px] sm:text-[42px] lg:text-[56px] leading-[1.02] font-semibold text-[#1a1a1a] break-words pr-2">
                   {address}
                 </p>
@@ -469,15 +468,19 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 divide-x divide-gray-200">
+                <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-gray-200 lg:hidden">
+                  <StatMetric label="Beds" value={String(property.BedroomsTotal || 0)} />
+                  <StatMetric label="Baths" value={String(bathsCount || 0)} />
+                  <StatMetric label="Sq.Ft" value={property.LivingArea ? property.LivingArea.toLocaleString() : "-"} />
+                  <StatMetric label="$/SqFt" value={pricePerSqft ? `$${pricePerSqft.toLocaleString()}` : "-"} />
+                </div>
+
+                <div className="hidden lg:grid lg:grid-cols-5 divide-x divide-gray-200">
                   <StatMetric label="Beds" value={String(property.BedroomsTotal || 0)} />
                   <StatMetric label="Baths" value={String(bathsCount || 0)} />
                   <StatMetric label="Half Bath" value={halfBathValue} />
                   <StatMetric label="Sq.Ft" value={property.LivingArea ? property.LivingArea.toLocaleString() : "-"} />
                   <StatMetric label="$/SqFt" value={pricePerSqft ? `$${pricePerSqft.toLocaleString()}` : "-"} />
-                  <div className="px-3 py-3 flex items-center text-[11px] uppercase tracking-[0.12em] text-gray-500">
-                    {property.StandardStatus || "Active"}
-                  </div>
                 </div>
               </div>
 
