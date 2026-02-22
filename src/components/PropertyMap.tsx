@@ -17,19 +17,7 @@ interface PropertyMapProps {
   onClick?: (listingKey: string) => void;
 }
 
-const DARK_MAP_STYLES = [
-  { elementType: "geometry", stylers: [{ color: "#0f1116" }] },
-  { elementType: "labels.text.stroke", stylers: [{ color: "#0f1116" }] },
-  { elementType: "labels.text.fill", stylers: [{ color: "#8f99a8" }] },
-  { featureType: "administrative", elementType: "geometry", stylers: [{ color: "#252932" }] },
-  { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#7a818e" }] },
-  { featureType: "road", elementType: "geometry", stylers: [{ color: "#1f2430" }] },
-  { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#11151c" }] },
-  { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#6f7784" }] },
-  { featureType: "transit", elementType: "geometry", stylers: [{ color: "#1a1e27" }] },
-  { featureType: "water", elementType: "geometry", stylers: [{ color: "#05070b" }] },
-  { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#4c596d" }] },
-];
+/* Default Google Maps styling — no custom overrides, matches standard map look */
 
 function formatPriceLabel(value: number): string {
   if (!Number.isFinite(value)) return "$0";
@@ -71,16 +59,16 @@ export default function PropertyMap({
     <div className={`relative overflow-hidden border border-white/10 ${className || ""}`}>
       <APIProvider apiKey={apiKey}>
         <Map
-          center={center}
-          zoom={zoom}
+          defaultCenter={center}
+          defaultZoom={zoom}
           style={{ width: "100%", height: "100%" }}
-          disableDefaultUI={!interactive}
-          gestureHandling={interactive ? "greedy" : "none"}
+          disableDefaultUI={false}
+          gestureHandling={interactive ? "cooperative" : "none"}
           clickableIcons={interactive}
-          styles={DARK_MAP_STYLES}
           mapTypeControl={false}
           streetViewControl={interactive}
           fullscreenControl={interactive}
+          zoomControl={interactive}
         >
           {markers.map((marker, index) => {
             const markerLabel = marker.price ? formatPriceLabel(marker.price) : marker.label || "";
