@@ -21,12 +21,11 @@ function DetailRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-function StatCell({ label, value }: { label: string; value: string }) {
+function StatMetric({ label, value }: { label: string; value: string }) {
   return (
     <div className="px-3 py-3 text-left">
-      <p className="text-[34px] font-semibold leading-none text-[#1a1a1a] hidden md:block">{value}</p>
-      <p className="text-[30px] font-semibold leading-none text-[#1a1a1a] md:hidden">{value}</p>
-      <p className="text-[11px] uppercase tracking-[0.12em] text-gray-500 mt-1">{label}</p>
+      <p className="text-[42px] leading-none font-semibold text-[#1a1a1a] inline-block mr-1">{value}</p>
+      <span className="text-[34px] leading-none font-light text-[#1a1a1a]">{label}</span>
     </div>
   );
 }
@@ -56,21 +55,24 @@ function estimateMonthlyPayment(price: number | null | undefined): string | null
 }
 
 const PANEL_CONTAINER_CLASS =
-  "absolute inset-0 sm:inset-x-4 sm:top-20 sm:bottom-4 lg:inset-x-[5vw] lg:top-24 lg:bottom-6 border-0 sm:border sm:border-black/15 bg-[#f5f5f5] shadow-[0_24px_70px_rgba(0,0,0,0.45)]";
+  "absolute inset-0 sm:inset-x-4 sm:top-20 sm:bottom-4 lg:inset-x-[7vw] lg:top-24 lg:bottom-6 border-0 sm:border sm:border-black/15 bg-[#f5f5f5] shadow-[0_24px_70px_rgba(0,0,0,0.45)]";
 
-function IconButton({
+function CircleIconButton({
   label,
   children,
   active = false,
+  onClick,
 }: {
   label: string;
   children: ReactNode;
   active?: boolean;
+  onClick?: () => void;
 }) {
   return (
     <button
       type="button"
       aria-label={label}
+      onClick={onClick}
       className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
         active ? "bg-black text-white" : "bg-white text-[#1a1a1a] border border-gray-300 hover:bg-gray-100"
       }`}
@@ -80,10 +82,26 @@ function IconButton({
   );
 }
 
+function RectTabButton({ label, active }: { label: string; active?: boolean }) {
+  return (
+    <button
+      type="button"
+      className={`h-11 px-5 text-sm font-semibold border transition-colors ${
+        active
+          ? "border-black bg-black text-white"
+          : "border-gray-300 bg-white text-[#1a1a1a] hover:bg-gray-100"
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
+
 export default function PropertyDetailPanel({ property, listingKey }: PropertyDetailPanelProps) {
   const router = useRouter();
   const [isClosing, setIsClosing] = useState(true);
   const [activePhoto, setActivePhoto] = useState(0);
+  const [isPhotoViewerOpen, setIsPhotoViewerOpen] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchCurrentX, setTouchCurrentX] = useState<number | null>(null);
@@ -110,6 +128,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
 
   useEffect(() => {
     setActivePhoto(0);
+    setIsPhotoViewerOpen(false);
     setFailedPhotos({});
     setShowFullDescription(false);
   }, [listingKey]);
@@ -141,10 +160,6 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
 
     setTouchStartX(null);
     setTouchCurrentX(null);
-  }
-
-  function markPhotoFailed(index: number) {
-    setFailedPhotos((prev) => (prev[index] ? prev : { ...prev, [index]: true }));
   }
 
   if (!property) {
@@ -180,10 +195,35 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
   }
 
   const photos = getListingPhotos(property);
+  const photoCount = photos.length;
   const address = formatAddress(property);
   const price = property.StandardStatus === "Closed" ? property.ClosePrice || property.ListPrice : property.ListPrice;
   const estimatedPayment = estimateMonthlyPayment(price);
   const pricePerSqft = calculatePricePerSqft(price, property.LivingArea);
+
+  function markPhotoFailed(index: number) {
+    setFailedPhotos((prev) => {
+      if (prev[index]) {
+        return prev;
+      }
+
+      const nextFailed = { ...prev, [index]: true };
+
+      if (index === activePhoto) {
+        const nextIndex = photos.findIndex((_, i) => !nextFailed[i]);
+        if (nextIndex !== -1 && nextIndex !== activePhoto) {
+          setActivePhoto(nextIndex);
+        }
+      }
+
+      return nextFailed;
+    });
+  }
+
+  const desktopIndexes =
+    photoCount > 0
+      ? [activePhoto, (activePhoto + 1) % photoCount, (activePhoto + 2) % photoCount]
+      : [];
 
   const activePhotoUrl = photos[activePhoto]?.MediaURL;
   const activePhotoFailed = failedPhotos[activePhoto];
@@ -212,6 +252,8 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
       ? Number((property.BathroomsFull + property.BathroomsHalf * 0.5).toFixed(1))
       : 0);
 
+  const halfBathValue = property.BathroomsHalf ? String(property.BathroomsHalf) : "--";
+
   return (
     <div
       className={`fixed inset-0 z-[150] transition-opacity duration-300 ${isClosing ? "opacity-0" : "opacity-100"}`}
@@ -227,7 +269,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
       <div className="absolute inset-0 bg-black/65 backdrop-blur-[1.5px]" />
 
       <aside
-        className={`${PANEL_CONTAINER_CLASS} transition-all duration-300 ${
+        className={`${PANEL_CONTAINER_CLASS} relative overflow-hidden transition-all duration-300 ${
           isClosing ? "translate-y-3 scale-[0.985] opacity-0" : "translate-y-0 scale-100 opacity-100"
         }`}
         onClick={(event) => event.stopPropagation()}
@@ -236,135 +278,170 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
         onTouchEnd={handleTouchEnd}
       >
         <div className="h-full overflow-y-auto bg-[#f5f5f5]">
-          <div className="sticky top-0 z-30 border-b border-black/10 bg-white/95 backdrop-blur-sm px-4 sm:px-5 py-3">
+          <div className="sticky top-0 z-30 border-b border-black/10 bg-white/95 backdrop-blur-sm px-4 py-3">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
                 <p className="text-[11px] text-gray-500 uppercase tracking-[0.14em] hidden sm:block">Property Details</p>
-                <p className="text-[40px] leading-[1.02] font-semibold text-[#1a1a1a] truncate">{address}</p>
-                <p className="text-sm text-gray-600 truncate">
+                <p className="text-[34px] sm:text-[42px] lg:text-[56px] leading-[1.02] font-semibold text-[#1a1a1a] break-words pr-2">
+                  {address}
+                </p>
+                <p className="text-sm text-gray-600 break-words pr-2">
                   {property.City}, {property.StateOrProvince} {property.PostalCode}
                 </p>
               </div>
 
-              <div className="flex items-center gap-2 shrink-0">
-                <button
-                  type="button"
-                  onClick={handleClose}
-                  className="w-12 h-12 rounded-full border border-gray-300 bg-white text-[#1a1a1a] hover:bg-gray-100 transition-colors"
-                  aria-label="Close property panel"
-                >
+              <div className="sm:hidden flex items-center gap-2 shrink-0">
+                <CircleIconButton label="Close" onClick={handleClose}>
                   ✕
-                </button>
+                </CircleIconButton>
+              </div>
+
+              <div className="hidden sm:flex items-center gap-2 shrink-0 pt-1">
+                <CircleIconButton label="Save">
+                  ☆
+                </CircleIconButton>
+                <CircleIconButton label="Share">
+                  ↗
+                </CircleIconButton>
+                <CircleIconButton
+                  label="Fullscreen"
+                  onClick={() => {
+                    if (photoCount > 0) {
+                      setIsPhotoViewerOpen(true);
+                    }
+                  }}
+                >
+                  ⤢
+                </CircleIconButton>
+                <CircleIconButton label="Close" onClick={handleClose}>
+                  ✕
+                </CircleIconButton>
               </div>
             </div>
           </div>
 
           <div className="relative border-b border-black/10 bg-white">
-            <div className="absolute left-4 top-4 z-20 flex items-center gap-2">
-              <IconButton label="Photos" active>
+            <div className="absolute left-4 top-4 z-20 sm:hidden flex items-center gap-2">
+              <CircleIconButton label="Photos" active>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 16.5 8.25 12l3 3 4.5-5.25 4.5 6.75" />
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 6.75A1.75 1.75 0 0 1 4.75 5h14.5A1.75 1.75 0 0 1 21 6.75v10.5A1.75 1.75 0 0 1 19.25 19H4.75A1.75 1.75 0 0 1 3 17.25V6.75Z" />
                 </svg>
-              </IconButton>
-              <IconButton label="Map view">
+              </CircleIconButton>
+              <CircleIconButton label="Map view">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 21s6-5.686 6-10a6 6 0 1 0-12 0c0 4.314 6 10 6 10Z" />
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 13.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" />
                 </svg>
-              </IconButton>
-              <IconButton label="Virtual tour">
+              </CircleIconButton>
+              <CircleIconButton label="Virtual tour">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
                   <circle cx="12" cy="12" r="9" />
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 12h18M12 3c2.5 2.3 2.5 13.7 0 18M12 3c-2.5 2.3-2.5 13.7 0 18" />
                 </svg>
-              </IconButton>
+              </CircleIconButton>
             </div>
 
-            <div className="relative">
+            <div className="absolute left-4 top-4 z-20 hidden sm:flex items-center gap-2">
+              <RectTabButton label="PHOTOS" active />
+              <RectTabButton label="MAP VIEW" />
+              <RectTabButton label="VIRTUAL TOUR" />
+            </div>
+
+            <div className="relative sm:hidden">
               {activePhotoUrl && !activePhotoFailed ? (
                 <img
                   src={activePhotoUrl}
                   alt={address}
-                  className="w-full h-[42vh] min-h-[260px] max-h-[620px] object-cover"
+                  className="w-full h-[42vh] min-h-[260px] object-cover"
                   onError={() => markPhotoFailed(activePhoto)}
                 />
               ) : (
-                <div className="w-full h-[42vh] min-h-[260px] max-h-[620px] flex items-center justify-center text-gray-500 text-sm bg-gray-100">
+                <div className="w-full h-[42vh] min-h-[260px] flex items-center justify-center text-gray-500 text-sm bg-gray-100">
                   Photo unavailable
                 </div>
               )}
-
-              {photos.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => setActivePhoto((prev) => (prev - 1 + photos.length) % photos.length)}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 text-white hover:bg-black transition-colors"
-                    aria-label="Previous photo"
-                  >
-                    ‹
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setActivePhoto((prev) => (prev + 1) % photos.length)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 text-white hover:bg-black transition-colors"
-                    aria-label="Next photo"
-                  >
-                    ›
-                  </button>
-                </>
-              )}
-
-              <div className="absolute left-3 bottom-3">
-                <button
-                  type="button"
-                  className="rounded-full border border-gray-300 bg-white/95 px-3 py-2 text-xs font-medium text-[#1a1a1a] hover:bg-white"
-                >
-                  Street View
-                </button>
-              </div>
-
-              <div className="absolute right-3 bottom-3">
-                <span className="rounded-md bg-black text-white text-xs px-2.5 py-1.5">
-                  {Math.min(activePhoto + 1, Math.max(photos.length, 1))} of {Math.max(photos.length, 1)}
-                </span>
-              </div>
             </div>
 
-            {photos.length > 1 && (
-              <div className="hidden sm:flex gap-2 overflow-x-auto px-4 py-3 border-t border-gray-200 bg-[#f8f8f8]">
-                {photos.slice(0, 12).map((photo, index) => {
-                  const failed = failedPhotos[index];
+            <div className="relative hidden sm:grid grid-cols-3 h-[62vh] min-h-[420px] max-h-[700px] overflow-hidden">
+              {desktopIndexes.length > 0 ? (
+                desktopIndexes.map((photoIndex) => {
+                  const url = photos[photoIndex]?.MediaURL;
+                  const failed = failedPhotos[photoIndex];
+
+                  if (!url || failed) {
+                    return (
+                      <div key={`desktop-fallback-${photoIndex}`} className="bg-gray-100 border-r border-gray-200 last:border-r-0 flex items-center justify-center text-gray-500 text-sm">
+                        Photo unavailable
+                      </div>
+                    );
+                  }
+
                   return (
                     <button
-                      key={`${photo.MediaURL}-${index}`}
+                      key={`desktop-photo-${photoIndex}-${url}`}
                       type="button"
-                      onClick={() => setActivePhoto(index)}
-                      className={`shrink-0 border bg-white ${
-                        activePhoto === index ? "border-black" : "border-gray-300"
-                      }`}
+                      onClick={() => {
+                        setActivePhoto(photoIndex);
+                        setIsPhotoViewerOpen(true);
+                      }}
+                      className="w-full h-full border-r border-gray-200 last:border-r-0 overflow-hidden"
+                      aria-label={`Open photo ${photoIndex + 1}`}
                     >
-                      {failed ? (
-                        <div className="w-[86px] h-[58px] bg-gray-100 flex items-center justify-center text-[10px] text-gray-500">
-                          N/A
-                        </div>
-                      ) : (
-                        <img
-                          src={photo.MediaURL}
-                          alt={`${address} photo ${index + 1}`}
-                          className="w-[86px] h-[58px] object-cover"
-                          onError={() => markPhotoFailed(index)}
-                        />
-                      )}
+                      <img
+                        src={url}
+                        alt={`${address} photo ${photoIndex + 1}`}
+                        className="w-full h-full object-cover cursor-zoom-in"
+                        onError={() => markPhotoFailed(photoIndex)}
+                      />
                     </button>
                   );
-                })}
-              </div>
+                })
+              ) : (
+                <div className="col-span-3 bg-gray-100 flex items-center justify-center text-gray-500 text-sm">
+                  Photo unavailable
+                </div>
+              )}
+            </div>
+
+            {photoCount > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setActivePhoto((prev) => (prev - 1 + photoCount) % photoCount)}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 text-white hover:bg-black transition-colors"
+                  aria-label="Previous photo"
+                >
+                  ‹
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActivePhoto((prev) => (prev + 1) % photoCount)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 text-white hover:bg-black transition-colors"
+                  aria-label="Next photo"
+                >
+                  ›
+                </button>
+              </>
             )}
+
+            <div className="absolute left-3 bottom-3">
+              <button
+                type="button"
+                className="rounded-full border border-gray-300 bg-white/95 px-3 py-2 text-xs font-medium text-[#1a1a1a] hover:bg-white"
+              >
+                Street View
+              </button>
+            </div>
+
+            <div className="absolute right-3 bottom-3">
+              <span className="rounded-md bg-black text-white text-xs px-2.5 py-1.5">
+                {Math.min(activePhoto + 1, Math.max(photoCount, 1))} of {Math.max(photoCount, 1)}
+              </span>
+            </div>
           </div>
 
-          <div className="grid grid-cols-4 border-b border-black/10 bg-white">
+          <div className="grid grid-cols-4 border-b border-black/10 bg-white sm:hidden">
             <button type="button" className="h-14 border-r border-gray-200 text-[#1a1a1a] hover:bg-gray-100 transition-colors" aria-label="Save">
               ☆
             </button>
@@ -380,67 +457,31 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
           </div>
 
           <div className="bg-white border-b border-black/10 px-4 py-4">
-            <div className="flex items-end justify-between gap-4 pb-3 border-b border-gray-200">
-              <p className="font-playfair text-5xl leading-none text-[#1a1a1a]">{formatCurrency(price)}</p>
-              <div className="text-right">
-                <p className="text-[11px] uppercase tracking-[0.12em] text-gray-500">Est. Payment</p>
-                <p className="text-blue-600 text-[24px] font-semibold leading-none">{estimatedPayment || "--"}</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-gray-200 mt-1">
-              <StatCell label="Beds" value={String(property.BedroomsTotal || 0)} />
-              <StatCell label="Baths" value={String(bathsCount || 0)} />
-              <StatCell label="Sq.Ft" value={property.LivingArea ? property.LivingArea.toLocaleString() : "-"} />
-              <StatCell label="$/SqFt" value={pricePerSqft ? `$${pricePerSqft.toLocaleString()}` : "-"} />
-            </div>
-          </div>
-
-          <div className="px-4 py-5 lg:px-6">
-            <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-              <div className="space-y-6 min-w-0">
-                <section className="space-y-3">
-                  <div className="bg-gray-100 border border-gray-200 rounded px-4 py-3">
-                    <h3 className="text-[30px] font-semibold leading-none text-[#1a1a1a]">Description</h3>
+            <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
+              <div className="border border-gray-200 bg-white">
+                <div className="flex items-end justify-between gap-4 px-4 pt-4 pb-3 border-b border-gray-200">
+                  <p className="font-playfair text-[58px] leading-none text-[#1a1a1a]">{formatCurrency(price)}</p>
+                  <div className="text-right pb-1">
+                    <p className="text-[11px] uppercase tracking-[0.12em] text-gray-500">Est. Payment</p>
+                    <p className="text-blue-600 text-[34px] font-semibold leading-none">
+                      {estimatedPayment ? `${estimatedPayment}/mo` : "--"}
+                    </p>
                   </div>
-
-                  <div className="bg-white border border-gray-200 px-4 py-4">
-                    <p className="text-[15px] leading-relaxed text-gray-700">{description}</p>
-                    {isLongDescription && (
-                      <button
-                        type="button"
-                        onClick={() => setShowFullDescription((prev) => !prev)}
-                        className="mt-2 text-sm text-gray-700 underline underline-offset-2 hover:text-black transition-colors"
-                      >
-                        {showFullDescription ? "Show less" : "Read more"}
-                      </button>
-                    )}
-                  </div>
-                </section>
-
-                <section className="bg-white border border-gray-200 px-4 py-4">
-                  <h3 className="text-[30px] font-semibold leading-none text-[#1a1a1a] mb-3">Key Details</h3>
-                  <div className="grid sm:grid-cols-2 gap-2">
-                    {detailItems.map(([label, value]) => (
-                      <DetailRow key={label} label={label} value={value} />
-                    ))}
-                  </div>
-                </section>
-
-                <div className="text-[11px] text-gray-500 leading-relaxed border-t border-gray-300 pt-4">
-                  The multiple listing information is provided by the Miami Association of Realtors from a copyrighted
-                  compilation of listings. All information is deemed reliable but not guaranteed.
                 </div>
 
-                <a
-                  href={`/property/${listingKey}/`}
-                  className="inline-flex items-center justify-center w-full border border-gray-300 text-[#1a1a1a] px-4 py-3 rounded-full text-xs uppercase tracking-[0.12em] hover:bg-gray-100 transition-colors"
-                >
-                  View Full Details
-                </a>
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 divide-x divide-gray-200">
+                  <StatMetric label="Beds" value={String(property.BedroomsTotal || 0)} />
+                  <StatMetric label="Baths" value={String(bathsCount || 0)} />
+                  <StatMetric label="Half Bath" value={halfBathValue} />
+                  <StatMetric label="Sq.Ft" value={property.LivingArea ? property.LivingArea.toLocaleString() : "-"} />
+                  <StatMetric label="$/SqFt" value={pricePerSqft ? `$${pricePerSqft.toLocaleString()}` : "-"} />
+                  <div className="px-3 py-3 flex items-center text-[11px] uppercase tracking-[0.12em] text-gray-500">
+                    {property.StandardStatus || "Active"}
+                  </div>
+                </div>
               </div>
 
-              <aside className="hidden lg:block border border-gray-200 bg-white p-4 space-y-4 h-fit">
+              <aside className="hidden lg:block border border-gray-200 bg-white p-4 space-y-4">
                 <div className="flex items-center gap-3">
                   <img src="/andrew-headshot.png" alt="Andrew Whalen" className="w-14 h-14 rounded-full object-cover" />
                   <div>
@@ -456,7 +497,146 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
               </aside>
             </div>
           </div>
+
+          <div className="px-4 py-5 lg:px-6">
+            <div className="space-y-6">
+              <section className="space-y-3">
+                <div className="bg-gray-100 border border-gray-200 rounded px-4 py-3">
+                  <h3 className="text-[30px] font-semibold leading-none text-[#1a1a1a]">Description</h3>
+                </div>
+
+                <div className="bg-white border border-gray-200 px-4 py-4">
+                  <p className="text-[15px] leading-relaxed text-gray-700">{description}</p>
+                  {isLongDescription && (
+                    <button
+                      type="button"
+                      onClick={() => setShowFullDescription((prev) => !prev)}
+                      className="mt-2 text-sm text-gray-700 underline underline-offset-2 hover:text-black transition-colors"
+                    >
+                      {showFullDescription ? "Show less" : "Read more"}
+                    </button>
+                  )}
+                </div>
+              </section>
+
+              <section className="bg-white border border-gray-200 px-4 py-4">
+                <h3 className="text-[30px] font-semibold leading-none text-[#1a1a1a] mb-3">Key Details</h3>
+                <div className="grid sm:grid-cols-2 gap-2">
+                  {detailItems.map(([label, value]) => (
+                    <DetailRow key={label} label={label} value={value} />
+                  ))}
+                </div>
+              </section>
+
+              <a
+                href={`/property/${listingKey}/`}
+                className="inline-flex items-center justify-center w-full border border-gray-300 text-[#1a1a1a] px-4 py-3 rounded-full text-xs uppercase tracking-[0.12em] hover:bg-gray-100 transition-colors"
+              >
+                View Full Details
+              </a>
+
+              <div className="text-[11px] text-gray-500 leading-relaxed border-t border-gray-300 pt-4">
+                The multiple listing information is provided by the Miami Association of Realtors from a copyrighted
+                compilation of listings. All information is deemed reliable but not guaranteed.
+              </div>
+            </div>
+          </div>
         </div>
+
+        {isPhotoViewerOpen && (
+          <div
+            className="hidden sm:block absolute inset-0 z-40 bg-black/75 backdrop-blur-[2px]"
+            onClick={(event) => {
+              if (event.target === event.currentTarget) {
+                setIsPhotoViewerOpen(false);
+              }
+            }}
+          >
+            <div className="h-full flex flex-col" onClick={(event) => event.stopPropagation()}>
+              <div className="sm:hidden border-b border-gray-300 bg-white px-4 py-6 flex justify-end">
+                <CircleIconButton label="Close" onClick={() => setIsPhotoViewerOpen(false)}>
+                  ✕
+                </CircleIconButton>
+              </div>
+
+              <div className="hidden sm:block border-b border-gray-300 bg-white px-4 py-3">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <p className="text-[32px] sm:text-[38px] leading-[1.05] font-semibold text-[#1a1a1a] break-words pr-2">
+                      {address}
+                    </p>
+                    <p className="text-sm text-gray-600 break-words pr-2">
+                      {property.City}, {property.StateOrProvince} {property.PostalCode}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <CircleIconButton label="Save">☆</CircleIconButton>
+                    <CircleIconButton label="Photos" active>
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 16.5 8.25 12l3 3 4.5-5.25 4.5 6.75" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 6.75A1.75 1.75 0 0 1 4.75 5h14.5A1.75 1.75 0 0 1 21 6.75v10.5A1.75 1.75 0 0 1 19.25 19H4.75A1.75 1.75 0 0 1 3 17.25V6.75Z" />
+                      </svg>
+                    </CircleIconButton>
+                    <CircleIconButton label="Map view">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 21s6-5.686 6-10a6 6 0 1 0-12 0c0 4.314 6 10 6 10Z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 13.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" />
+                      </svg>
+                    </CircleIconButton>
+                    <CircleIconButton label="Email">✉</CircleIconButton>
+                    <CircleIconButton label="Share">↗</CircleIconButton>
+                    <CircleIconButton label="Close" onClick={() => setIsPhotoViewerOpen(false)}>
+                      ✕
+                    </CircleIconButton>
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative flex-1 px-4 pb-6 pt-4 sm:p-6 md:p-8 lg:p-10">
+                <div className="h-full w-full flex items-center justify-center">
+                  {activePhotoUrl && !activePhotoFailed ? (
+                    <img
+                      src={activePhotoUrl}
+                      alt={`${address} enlarged photo`}
+                      className="w-full h-[56vh] max-h-[640px] object-cover sm:w-auto sm:h-auto sm:max-h-full sm:max-w-full sm:object-contain"
+                      onError={() => markPhotoFailed(activePhoto)}
+                    />
+                  ) : (
+                    <div className="text-gray-400 text-sm">Photo unavailable</div>
+                  )}
+                </div>
+
+                {photoCount > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setActivePhoto((prev) => (prev - 1 + photoCount) % photoCount)}
+                      className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/70 text-white hover:bg-black transition-colors"
+                      aria-label="Previous photo"
+                    >
+                      ‹
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActivePhoto((prev) => (prev + 1) % photoCount)}
+                      className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/70 text-white hover:bg-black transition-colors"
+                      aria-label="Next photo"
+                    >
+                      ›
+                    </button>
+                  </>
+                )}
+
+                <div className="absolute right-6 bottom-8 sm:bottom-6">
+                  <span className="rounded-md bg-black text-white text-sm px-3 py-2">
+                    {Math.min(activePhoto + 1, Math.max(photoCount, 1))} of {Math.max(photoCount, 1)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </aside>
     </div>
   );
