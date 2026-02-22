@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import NavDropdown from "@/components/NavDropdown";
 import MegaMenu from "@/components/MegaMenu";
@@ -46,17 +46,33 @@ export default function Header() {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (!isHome) return;
 
     function onScroll() {
-      setScrolled(window.scrollY >= 80);
+      const threshold = headerRef.current?.offsetHeight ?? 80;
+      setScrolled(window.scrollY >= threshold);
     }
 
-    onScroll();
+    // Keep home header transparent on initial paint, then sync a moment later.
+    // Some refresh/navigation paths can report a stale scroll position briefly.
+    setScrolled(false);
+    const rafId = window.requestAnimationFrame(onScroll);
+    const timeoutId = window.setTimeout(onScroll, 120);
+
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener("resize", onScroll);
+    window.addEventListener("pageshow", onScroll);
+
+    return () => {
+      window.cancelAnimationFrame(rafId);
+      window.clearTimeout(timeoutId);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("pageshow", onScroll);
+    };
   }, [isHome]);
 
   const transparent = isHome && !scrolled;
@@ -64,7 +80,7 @@ export default function Header() {
   const border = transparent ? "border-b border-white/10" : "border-b border-white/10";
 
   return (
-    <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${bg} ${border}`}>
+    <header ref={headerRef} className={`fixed top-0 w-full z-50 transition-all duration-300 ${bg} ${border}`}>
       {/* Desktop nav — grid layout, NO transforms (transforms break fixed positioning in children) */}
       <nav className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-center w-full px-4 lg:px-6 py-4 min-[1440px]:py-5">
         {/* Left: Primary Nav Links */}
