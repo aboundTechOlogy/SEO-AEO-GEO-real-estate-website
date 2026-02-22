@@ -62,6 +62,34 @@ export interface BridgeProperty {
   BuildingFeatures: string[];
   ListAgentFullName: string | null;
   ListOfficeName: string | null;
+  ListOfficePhone: string | null;
+  SubdivisionName: string | null;
+  LotSizeAcres: number | null;
+  LotSizeSquareFeet: number | null;
+  CountyOrParish: string | null;
+  CoveredSpaces: number | null;
+  StoriesTotal: number | null;
+  AttachedGarageYN: boolean;
+  DirectionFaces: string | null;
+  OccupantType: string | null;
+  TaxAnnualAmount: number | null;
+  TaxLegalDescription: string | null;
+  TaxYear: number | null;
+  ArchitecturalStyle: string[];
+  ConstructionMaterials: string[];
+  CommunityFeatures: string[];
+  Flooring: string[];
+  Levels: string[];
+  ListingTerms: string[];
+  LotFeatures: string[];
+  PatioAndPorchFeatures: string[];
+  PetsAllowed: string[];
+  PoolFeatures: string[];
+  Possession: string[];
+  Roof: string[];
+  Sewer: string[];
+  View: string[];
+  WaterSource: string[];
   Media: BridgeMedia[];
 }
 
@@ -780,6 +808,34 @@ function normalizeProperty(raw: unknown): BridgeProperty {
     BuildingFeatures: toStringArray(record.BuildingFeatures),
     ListAgentFullName: toNullableString(record.ListAgentFullName),
     ListOfficeName: toNullableString(record.ListOfficeName),
+    ListOfficePhone: toNullableString(record.ListOfficePhone),
+    SubdivisionName: toNullableString(record.SubdivisionName),
+    LotSizeAcres: toNullableNumber(record.LotSizeAcres),
+    LotSizeSquareFeet: toNullableNumber(record.LotSizeSquareFeet),
+    CountyOrParish: toNullableString(record.CountyOrParish),
+    CoveredSpaces: toNullableNumber(record.CoveredSpaces),
+    StoriesTotal: toNullableNumber(record.StoriesTotal),
+    AttachedGarageYN: toBooleanValue(record.AttachedGarageYN),
+    DirectionFaces: toNullableString(record.DirectionFaces),
+    OccupantType: toNullableString(record.OccupantType),
+    TaxAnnualAmount: toNullableNumber(record.TaxAnnualAmount),
+    TaxLegalDescription: toNullableString(record.TaxLegalDescription),
+    TaxYear: toNullableNumber(record.TaxYear),
+    ArchitecturalStyle: toStringArray(record.ArchitecturalStyle),
+    ConstructionMaterials: toStringArray(record.ConstructionMaterials),
+    CommunityFeatures: toStringArray(record.CommunityFeatures),
+    Flooring: toStringArray(record.Flooring),
+    Levels: toStringArray(record.Levels),
+    ListingTerms: toStringArray(record.ListingTerms),
+    LotFeatures: toStringArray(record.LotFeatures),
+    PatioAndPorchFeatures: toStringArray(record.PatioAndPorchFeatures),
+    PetsAllowed: toStringArray(record.PetsAllowed),
+    PoolFeatures: toStringArray(record.PoolFeatures),
+    Possession: toStringArray(record.Possession),
+    Roof: toStringArray(record.Roof),
+    Sewer: toStringArray(record.Sewer),
+    View: toStringArray(record.View),
+    WaterSource: toStringArray(record.WaterSource),
     Media: normalizeMedia(record.Media),
   };
 }
@@ -1050,6 +1106,34 @@ export function mockListingToBridgeProperty(index: number, listing: (typeof MOCK
     BuildingFeatures: [],
     ListAgentFullName: null,
     ListOfficeName: null,
+    ListOfficePhone: null,
+    SubdivisionName: null,
+    LotSizeAcres: null,
+    LotSizeSquareFeet: null,
+    CountyOrParish: null,
+    CoveredSpaces: null,
+    StoriesTotal: null,
+    AttachedGarageYN: false,
+    DirectionFaces: null,
+    OccupantType: null,
+    TaxAnnualAmount: null,
+    TaxLegalDescription: null,
+    TaxYear: null,
+    ArchitecturalStyle: [],
+    ConstructionMaterials: [],
+    CommunityFeatures: [],
+    Flooring: [],
+    Levels: [],
+    ListingTerms: [],
+    LotFeatures: [],
+    PatioAndPorchFeatures: [],
+    PetsAllowed: [],
+    PoolFeatures: [],
+    Possession: [],
+    Roof: [],
+    Sewer: [],
+    View: [],
+    WaterSource: [],
     Media: listing.image
       ? [{ MediaURL: listing.image, Order: 1, MimeType: "image/jpeg", MediaCategory: "Photo", ShortDescription: null }]
       : [],
