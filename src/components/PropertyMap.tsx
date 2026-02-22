@@ -69,6 +69,8 @@ export default function PropertyMap({
           streetViewControl={interactive}
           fullscreenControl={interactive}
           zoomControl={interactive}
+          rotateControl={interactive}
+          scaleControl={true}
         >
           {markers.map((marker, index) => {
             const markerLabel = marker.price ? formatPriceLabel(marker.price) : marker.label || "";
