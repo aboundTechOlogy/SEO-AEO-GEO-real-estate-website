@@ -248,15 +248,23 @@ function escapeOData(value: string): string {
 }
 
 function getBridgeConfig() {
+  const proxyBase = process.env.BRIDGE_PROXY_URL; // e.g., http://34.75.30.116:8787
   const apiBase = process.env.BRIDGE_API_BASE || DEFAULT_BRIDGE_API_BASE;
   const dataset = process.env.BRIDGE_DATASET || DEFAULT_BRIDGE_DATASET;
   const token = process.env.BRIDGE_SERVER_TOKEN;
+
+  // If proxy is configured, route through it (proxy handles auth)
+  const useProxy = !!proxyBase;
+  const endpoint = useProxy
+    ? `${proxyBase}/api/v2/OData/${dataset}/Property`
+    : `${apiBase}/${dataset}/Property`;
 
   return {
     apiBase,
     dataset,
     token,
-    endpoint: `${apiBase}/${dataset}/Property`,
+    endpoint,
+    useProxy,
   };
 }
 
@@ -264,18 +272,24 @@ async function bridgeFetch<T>(query: URLSearchParams, revalidateSeconds: number)
   ensureServerSide();
   const config = getBridgeConfig();
 
-  if (!config.token) {
-    throw new Error("Missing BRIDGE_SERVER_TOKEN environment variable.");
+  if (!config.useProxy && !config.token) {
+    throw new Error("Missing BRIDGE_SERVER_TOKEN or BRIDGE_PROXY_URL environment variable.");
   }
 
   const url = `${config.endpoint}?${query.toString()}`;
 
+  const headers: Record<string, string> = {
+    Accept: "application/json",
+  };
+
+  // Only add auth header when calling Bridge directly (proxy handles its own auth)
+  if (!config.useProxy && config.token) {
+    headers.Authorization = `Bearer ${config.token}`;
+  }
+
   const response = await fetch(url, {
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${config.token}`,
-      Accept: "application/json",
-    },
+    headers,
     next: {
       revalidate: revalidateSeconds,
     },
