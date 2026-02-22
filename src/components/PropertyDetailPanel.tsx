@@ -55,7 +55,7 @@ function estimateMonthlyPayment(price: number | null | undefined): string | null
 }
 
 const PANEL_CONTAINER_CLASS =
-  "fixed inset-y-0 left-0 right-0 md:left-1/2 md:right-auto md:-translate-x-1/2 md:w-[calc(100%-50px)] min-[1300px]:w-[1200px] border-0 md:border md:border-black/15 bg-[#f5f5f5] shadow-[0_24px_70px_rgba(0,0,0,0.45)]";
+  "relative w-full h-screen md:my-[15px] md:h-[calc(100vh-30px)] md:w-[calc(100%-50px)] min-[1300px]:w-[1200px] md:mx-auto border-0 md:border md:border-black/15 bg-[#f5f5f5] shadow-[0_24px_70px_rgba(0,0,0,0.45)]";
 
 function CircleIconButton({
   label,
@@ -249,21 +249,23 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
   if (!property) {
     return (
       <div
-        className={`fixed inset-0 z-[150] transition-opacity duration-300 ${isClosing ? "opacity-0" : "opacity-100"}`}
+        className={`fixed inset-0 z-[150] transition-opacity duration-300 ${
+          isClosing ? "opacity-0" : "opacity-100"
+        }`}
         onClick={(event) => {
           if (event.target === event.currentTarget) {
             handleClose();
           }
         }}
       >
-        <div className="absolute inset-0 bg-black/65 backdrop-blur-[1.5px]" />
+        <div className="fixed inset-0 bg-black/65 backdrop-blur-[1.5px]" />
 
         <aside
           className={`${PANEL_CONTAINER_CLASS} transition-all duration-300 ${
             isClosing ? "translate-y-3 scale-[0.985] opacity-0" : "translate-y-0 scale-100 opacity-100"
           }`}
         >
-          <div className="h-full flex flex-col items-center justify-center px-8 text-center bg-white">
+          <div className="min-h-full flex flex-col items-center justify-center px-8 text-center bg-white">
             <p className="text-gray-700 text-lg mb-3">Property not found.</p>
             <button
               type="button"
@@ -413,7 +415,9 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
 
   return (
     <div
-      className={`fixed inset-0 z-[150] transition-opacity duration-300 ${isClosing ? "opacity-0" : "opacity-100"}`}
+      className={`fixed inset-0 z-[150] transition-opacity duration-300 ${
+        isClosing ? "opacity-0" : "opacity-100"
+      }`}
       onClick={(event) => {
         if (event.target === event.currentTarget) {
           handleClose();
@@ -423,10 +427,14 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
       aria-modal="true"
       aria-label="Property details panel"
     >
-      <div className="absolute inset-0 bg-black/65 backdrop-blur-[1.5px]" />
+      <div className="fixed inset-0 bg-black/65 backdrop-blur-[1.5px]" />
 
       <aside
-        className={`${PANEL_CONTAINER_CLASS} relative overflow-hidden transition-all duration-300 ${
+        className={`${PANEL_CONTAINER_CLASS} relative transition-all duration-300 ${
+          isPhotoViewerOpen
+            ? "overflow-hidden"
+            : "overflow-y-auto overscroll-contain [scrollbar-gutter:stable]"
+        } ${
           isClosing ? "translate-y-3 scale-[0.985] opacity-0" : "translate-y-0 scale-100 opacity-100"
         }`}
         onClick={(event) => event.stopPropagation()}
@@ -449,7 +457,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
           </div>
         )}
 
-        <div className="h-full overflow-y-scroll overscroll-contain bg-[#f5f5f5]" style={{ scrollbarGutter: "stable" }}>
+        <div className="min-h-full bg-[#f5f5f5]">
           <div className="sticky top-0 z-30 border-b border-black/10 bg-white">
             <div className="h-[70px] px-[15px] py-[10px] flex items-center justify-between gap-[10px]">
               <div className="min-w-0 flex-1">
