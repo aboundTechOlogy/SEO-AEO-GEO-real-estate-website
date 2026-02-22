@@ -69,14 +69,12 @@ export default function PropertyMap({
           gestureHandling={interactive ? "greedy" : "none"}
           clickableIcons={interactive}
           mapTypeControl={false}
-          streetViewControl={interactive}
-          streetViewControlOptions={{ position: ControlPosition.TOP_RIGHT }}
-          fullscreenControl={interactive}
-          fullscreenControlOptions={{ position: ControlPosition.TOP_RIGHT }}
+          streetViewControl={false}
+          fullscreenControl={false}
           zoomControl={interactive}
-          zoomControlOptions={{ position: ControlPosition.TOP_RIGHT }}
+          zoomControlOptions={{ position: ControlPosition.RIGHT_TOP }}
           rotateControl={interactive}
-          rotateControlOptions={{ position: ControlPosition.TOP_RIGHT }}
+          rotateControlOptions={{ position: ControlPosition.RIGHT_TOP }}
           scaleControl={true}
         >
           {markers.map((marker, index) => {

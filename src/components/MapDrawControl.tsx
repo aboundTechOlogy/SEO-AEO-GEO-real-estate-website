@@ -160,8 +160,8 @@ export default function MapDrawControl({ onBoundsChange }: MapDrawControlProps) 
   }
 
   return (
-    <MapControl position={ControlPosition.TOP_RIGHT}>
-      <div className="mr-2 mt-2 flex flex-col gap-2">
+    <MapControl position={ControlPosition.RIGHT_TOP}>
+      <div className="mr-[10px] mt-1 flex flex-col gap-1">
         <button
           type="button"
           onClick={handleDrawClick}
