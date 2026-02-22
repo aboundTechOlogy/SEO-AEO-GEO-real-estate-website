@@ -1,5 +1,8 @@
 import { MOCK_EXCLUSIVE, MOCK_SEARCH, MOCK_SOLD } from "@/data/mockListings";
 
+/** True only in local/dev. All mock fallbacks are gated on this. */
+const IS_DEV = process.env.NODE_ENV !== "production";
+
 const SEARCH_REVALIDATE_SECONDS = 60 * 15;
 const DETAIL_REVALIDATE_SECONDS = 60 * 60;
 
@@ -675,12 +678,12 @@ export async function fetchIdxSearch(params: BridgeIdxSearchParams = {}): Promis
       hasMore,
     };
   } catch (error) {
-    console.error("fetchIdxSearch failed, falling back to mock data:", error);
-    const fallback = buildMockIdxSearchResponse(safeParams);
-    return {
-      ...fallback,
-      error: "Unable to load live Bridge listings.",
-    };
+    console.error("fetchIdxSearch failed:", error);
+    if (IS_DEV) {
+      const fallback = buildMockIdxSearchResponse(safeParams);
+      return { ...fallback, error: "Unable to load live Bridge listings." };
+    }
+    return { listings: [], total: 0, hasMore: false, error: "Listing data temporarily unavailable." };
   }
 }
 
@@ -714,12 +717,12 @@ export async function fetchIdxMarkers(params: BridgeIdxSearchParams = {}): Promi
       total,
     };
   } catch (error) {
-    console.error("fetchIdxMarkers failed, falling back to mock data:", error);
-    const fallback = buildMockIdxMarkersResponse(safeParams);
-    return {
-      ...fallback,
-      error: "Unable to load live map markers.",
-    };
+    console.error("fetchIdxMarkers failed:", error);
+    if (IS_DEV) {
+      const fallback = buildMockIdxMarkersResponse(safeParams);
+      return { ...fallback, error: "Unable to load live map markers." };
+    }
+    return { markers: [], total: 0, error: "Map data temporarily unavailable." };
   }
 }
 
@@ -1093,8 +1096,11 @@ export async function searchProperties(params: BridgeSearchParams = {}): Promise
     const response = await bridgeFetch<unknown>(query, SEARCH_REVALIDATE_SECONDS);
     return parseResult(response);
   } catch (error) {
-    console.error("searchProperties failed, falling back to mock data:", error);
-    return getMockSearchResult(page, limit);
+    console.error("searchProperties failed:", error);
+    if (IS_DEV) {
+      return getMockSearchResult(page, limit);
+    }
+    return { properties: [], totalCount: 0, nextLink: null };
   }
 }
 
@@ -1103,9 +1109,12 @@ export async function getProperty(listingKey: string): Promise<BridgeProperty | 
     return null;
   }
 
-  const mockMatch = getMockPropertyByListingKey(listingKey);
-  if (mockMatch) {
-    return mockMatch;
+  // MOCK-* keys only resolved in dev; never served in production
+  if (IS_DEV) {
+    const mockMatch = getMockPropertyByListingKey(listingKey);
+    if (mockMatch) {
+      return mockMatch;
+    }
   }
 
   const query = new URLSearchParams();
@@ -1132,8 +1141,11 @@ export async function getRecentListings(limit = 8): Promise<BridgeProperty[]> {
     const response = await bridgeFetch<unknown>(query, SEARCH_REVALIDATE_SECONDS);
     return (response.value || []).map((item) => normalizeProperty(item));
   } catch (error) {
-    console.error("getRecentListings failed, using mock fallback:", error);
-    return MOCK_EXCLUSIVE.map((listing, index) => mockListingToBridgeProperty(index, listing));
+    console.error("getRecentListings failed:", error);
+    if (IS_DEV) {
+      return MOCK_EXCLUSIVE.map((listing, index) => mockListingToBridgeProperty(index, listing));
+    }
+    return [];
   }
 }
 
@@ -1147,7 +1159,10 @@ export async function getSoldListings(limit = 8): Promise<BridgeProperty[]> {
     const response = await bridgeFetch<unknown>(query, SEARCH_REVALIDATE_SECONDS);
     return (response.value || []).map((item) => normalizeProperty(item));
   } catch (error) {
-    console.error("getSoldListings failed, using mock fallback:", error);
-    return MOCK_SOLD.map((listing, index) => mockListingToBridgeProperty(index, listing));
+    console.error("getSoldListings failed:", error);
+    if (IS_DEV) {
+      return MOCK_SOLD.map((listing, index) => mockListingToBridgeProperty(index, listing));
+    }
+    return [];
   }
 }
