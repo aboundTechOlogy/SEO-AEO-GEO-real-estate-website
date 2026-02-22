@@ -40,39 +40,29 @@ function MinusIcon() {
 }
 
 /* Hand/finger drawing a squiggly line — matches Chad's draw icon */
+/* IDXBoost icon-draw — exact glyph from Chad Carroll's IDXBoost plugin */
 function DrawIcon() {
   return (
-    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" strokeWidth={1.6}>
-      {/* Curved arrow suggesting a drawing motion */}
-      <path d="M7 16c1-2 3-4 5-4s3 1.5 5 0" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
-      {/* Hand/finger pointing down */}
-      <path d="M14 4v7c0 .6.4 1 1 1h0c.6 0 1-.4 1-1V7c0-.6.4-1 1-1h0c.6 0 1 .4 1 1v5c0 2.2-1.8 4-4 4h-2c-2.2 0-4-1.8-4-4V8c0-.6.4-1 1-1h0c.6 0 1 .4 1 1v3" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+    <svg className="w-5 h-5" viewBox="0 0 1024 1024" fill="currentColor">
+      <path d="M913.067 709.689l-76.8-304.356c14.222-8.533 25.6-25.6 25.6-45.511 0-28.444-22.756-54.044-54.044-54.044-28.444 0-51.2 19.911-54.044 48.356l-355.556 39.822c-8.533-19.911-28.444-34.133-51.2-34.133-28.444 0-54.044 22.756-54.044 54.044 0 11.378 2.844 22.756 11.378 31.289l-145.067 219.022c-8.533-5.689-17.067-8.533-25.6-8.533-28.444 0-54.044 22.756-54.044 54.044s22.756 54.044 54.044 54.044c22.756 0 42.667-14.222 51.2-36.978l676.978 45.511c5.689 25.6 25.6 45.511 54.044 45.511s54.044-22.756 54.044-54.044c0-28.444-22.756-54.044-54.044-54.044zM887.467 718.222c-8.533 5.689-17.067 14.222-19.911 25.6l-679.822-45.511c0-5.689-2.844-11.378-5.689-14.222l147.911-221.867c5.689 2.844 14.222 5.689 19.911 5.689 28.444 0 48.356-19.911 54.044-45.511l355.556-39.822c8.533 19.911 28.444 31.289 48.356 31.289l79.644 304.356z" />
     </svg>
   );
 }
 
-/* Satellite icon — matches Chad's satellite/map toggle */
+/* IDXBoost icon-satellite — exact glyph from Chad Carroll's IDXBoost plugin */
 function SatelliteIcon() {
   return (
-    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6}>
-      {/* Satellite body */}
-      <path d="M13 7L9 3 5 7l4 4" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M17 11l4-4-4-4-4 4" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M8 12l4 4" strokeLinecap="round" strokeLinejoin="round" />
-      {/* Signal waves */}
-      <path d="M7 17a5.5 5.5 0 0 0 7.5-7.5" strokeLinecap="round" />
-      <path d="M4 20a9.5 9.5 0 0 0 13-13" strokeLinecap="round" />
-      {/* Dish base */}
-      <circle cx="6" cy="18" r="1" fill="currentColor" stroke="none" />
+    <svg className="w-5 h-5" viewBox="0 0 1024 1024" fill="currentColor">
+      <path d="M128 533.334h-42.667c0.17 259.137 210.196 469.163 469.316 469.333h0.017v-42.667c-235.486-0.388-426.279-191.182-426.667-426.63v-0.037zM298.667 533.334h-42.667c0.194 164.871 133.796 298.473 298.648 298.667h0.018v-42.667c-141.336-0.121-255.879-114.664-256-255.988v-0.012zM938.667 759.041l-192-192-42.667 42.667-55.040-55.040 85.333-85.333-115.627-115.627-85.333 85.333-55.040-55.040 42.667-42.667-192-192h-17.92l-106.667 106.667 200.96 200.96 42.667-42.667 55.040 55.040-85.333 85.333 115.627 115.627 85.333-85.333 55.040 55.040-42.667 42.667 200.96 200.96 106.667-106.667z" />
     </svg>
   );
 }
 
-/* Map/road view icon */
+/* IDXBoost icon-map-flat — shown when in satellite mode to switch back */
 function MapViewIcon() {
   return (
-    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6}>
-      <path d="M9 20l-5.447-2.724A1 1 0 0 1 3 16.382V5.618a1 1 0 0 1 1.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0 0 21 18.382V7.618a1 1 0 0 0-.553-.894L15 4m0 13V4m0 0L9 7" strokeLinecap="round" strokeLinejoin="round" />
+    <svg className="w-5 h-5" viewBox="0 0 1024 1024" fill="currentColor">
+      <path d="M672 256l-320-128-352 128v768l352-128 320 128 352-128v-768l-352 128zM384 209.728l256 102.4v630.144l-256-102.4v-630.144zM64 300.832l256-93.088v631.808l-256 93.088v-631.808zM960 851.168l-256 93.088v-631.808l256-93.088v631.808z" />
     </svg>
   );
 }

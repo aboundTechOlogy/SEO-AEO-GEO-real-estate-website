@@ -117,7 +117,7 @@ function Pagination() {
 /* ── Mobile list card — matches Carroll's rounded card layout ── */
 function MobileListCard({ listing }: { listing: (typeof MOCK_SEARCH)[0] }) {
   return (
-    <div className="mx-4 mb-3 flex gap-3 p-3 bg-white rounded-xl border border-gray-200 shadow-sm cursor-pointer">
+    <a href={listing.href} className="mx-4 mb-3 flex gap-3 p-3 bg-white rounded-xl border border-gray-200 shadow-sm cursor-pointer block">
       {/* Thumbnail */}
       {listing.image ? (
         <img
@@ -166,7 +166,7 @@ function MobileListCard({ listing }: { listing: (typeof MOCK_SEARCH)[0] }) {
       >
         <StarIcon />
       </button>
-    </div>
+    </a>
   );
 }
 
@@ -342,6 +342,7 @@ export default function SearchPage() {
                   <tr
                     key={i}
                     className="cursor-pointer group hover:bg-gray-50 transition-colors"
+                    onClick={() => window.location.href = listing.href}
                   >
                     <td className="p-3 border border-gray-200 text-center">
                       <button className="text-gray-400 hover:text-gray-700 group-hover:text-gray-500 transition-colors">
