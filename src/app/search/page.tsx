@@ -7,7 +7,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import SearchPropertyCard from "@/components/SearchPropertyCard";
-import { DesktopSearchBar, MobileSearchBar } from "@/components/SearchFilters";
+import { DesktopSearchBar, MobileSearchBar, DEFAULT_FILTER_VALUES } from "@/components/SearchFilters";
+import type { SearchFilterValues } from "@/components/SearchFilters";
 import PropertyMap from "@/components/PropertyMap";
 import type {
   BridgeIdxListing,
@@ -287,10 +288,10 @@ function Pagination({
 
 function LoadingGrid({ count = 12 }: { count?: number }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+    <div className="grid grid-cols-1 md:grid-cols-2">
       {Array.from({ length: count }).map((_, index) => (
         <div key={index} className="px-[5px] mb-[10px]">
-          <div className="aspect-[4/3] bg-gray-200 animate-pulse" />
+          <div className="aspect-[16/9] bg-gray-200 animate-pulse" />
         </div>
       ))}
     </div>
@@ -360,6 +361,12 @@ export default function SearchPage() {
   const [page, setPage] = useState(1);
   const [drawBounds, setDrawBounds] = useState<DrawCoords | null>(null);
   const [highlightedListingId, setHighlightedListingId] = useState<string | null>(null);
+  const [filterValues, setFilterValues] = useState<SearchFilterValues>(DEFAULT_FILTER_VALUES);
+
+  const handleFilterChange = (partial: Partial<SearchFilterValues>) => {
+    setFilterValues((prev) => ({ ...prev, ...partial }));
+    setPage(1);
+  };
 
   const filterBarRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<Record<string, HTMLElement | null>>({});
@@ -407,6 +414,12 @@ export default function SearchPage() {
     params.set("orderby", orderby);
     params.set("status", bridgeStatus);
 
+    if (filterValues.priceMin) params.set("minPrice", filterValues.priceMin);
+    if (filterValues.priceMax) params.set("maxPrice", filterValues.priceMax);
+    if (filterValues.bedMin) params.set("beds", filterValues.bedMin);
+    if (filterValues.bathMin) params.set("baths", filterValues.bathMin);
+    if (filterValues.propertyTypes.length > 0) params.set("types", filterValues.propertyTypes.join(","));
+
     if (bbox) {
       params.set("swLat", String(bbox.swLat));
       params.set("swLng", String(bbox.swLng));
@@ -415,7 +428,7 @@ export default function SearchPage() {
     }
 
     return `/api/search?${params.toString()}`;
-  }, [bbox, bridgeStatus, orderby, skip]);
+  }, [bbox, bridgeStatus, filterValues, orderby, skip]);
 
   const markersKey = useMemo(() => {
     if (view !== "map") {
@@ -533,12 +546,16 @@ export default function SearchPage() {
           onStatusChange={setStatus}
           view={view}
           onViewChange={setView}
+          filterValues={filterValues}
+          onFilterChange={handleFilterChange}
         />
         <MobileSearchBar
           status={status}
           onStatusChange={setStatus}
           view={view}
           onViewChange={setView}
+          filterValues={filterValues}
+          onFilterChange={handleFilterChange}
         />
       </div>
 
@@ -557,7 +574,7 @@ export default function SearchPage() {
             ) : showNoResults ? (
               <div className="py-14 text-center text-sm text-gray-500">No properties match this search.</div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+              <div className="grid grid-cols-1 md:grid-cols-2">
                 {listings.map((listing) => (
                   <div
                     key={listing.id}

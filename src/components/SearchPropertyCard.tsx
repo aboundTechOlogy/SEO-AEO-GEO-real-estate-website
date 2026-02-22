@@ -62,8 +62,8 @@ export default function SearchPropertyCard({
   return (
     <Link
       href={href}
-      className="group block relative overflow-hidden bg-neutral-200 cursor-pointer"
-      style={{ aspectRatio: "4/3" }}
+      className="group block relative overflow-hidden bg-neutral-200 cursor-pointer md:rounded-[10px] md:shadow-[0_1px_4px_rgba(0,0,0,0.16)]"
+      style={{ aspectRatio: "16/9" }}
     >
       {/* Image or placeholder */}
       {image ? (

@@ -97,6 +97,7 @@ export interface BridgeIdxSearchParams {
   baths?: number;
   status?: "Active" | "Pending" | "Closed" | string;
   type?: string;
+  types?: string[];
   swLat?: number;
   swLng?: number;
   neLat?: number;
@@ -335,7 +336,14 @@ function buildIdxFilters(params: BridgeIdxSearchParams): string[] {
     filters.push(`BathroomsTotalInteger ge ${params.baths}`);
   }
 
-  if (params.type) {
+  if (params.types && params.types.length > 0) {
+    if (params.types.length === 1) {
+      filters.push(`PropertyType eq '${escapeOData(params.types[0])}'`);
+    } else {
+      const typeFilters = params.types.map((t) => `PropertyType eq '${escapeOData(t)}'`).join(" or ");
+      filters.push(`(${typeFilters})`);
+    }
+  } else if (params.type) {
     filters.push(`PropertyType eq '${escapeOData(params.type)}'`);
   }
 
@@ -467,7 +475,9 @@ function filterIdxMockListings(listings: BridgeIdxListing[], params: BridgeIdxSe
     filtered = filtered.filter((item) => item.baths >= params.baths!);
   }
 
-  if (params.type) {
+  if (params.types && params.types.length > 0) {
+    filtered = filtered.filter((item) => params.types!.includes(item.propertyType || ""));
+  } else if (params.type) {
     filtered = filtered.filter((item) => item.propertyType === params.type);
   }
 
