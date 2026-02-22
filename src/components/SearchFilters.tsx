@@ -367,7 +367,11 @@ function ForSaleFilter({
       <PanelHeader title="Property Search" onDone={onToggle} />
       <div className="px-5 py-4 space-y-3">
         {options.map((opt) => (
-          <label key={opt} className="flex items-center gap-3 cursor-pointer group">
+          <label
+            key={opt}
+            className="flex items-center gap-3 cursor-pointer group"
+            onClick={() => onChange(opt)}
+          >
             <div
               className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
                 value === opt ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
@@ -375,10 +379,7 @@ function ForSaleFilter({
             >
               {value === opt && <div className="w-2.5 h-2.5 rounded-full bg-black" />}
             </div>
-            <span
-              className={`text-sm ${value === opt ? "text-neutral-900 font-medium" : "text-neutral-600"}`}
-              onClick={() => onChange(opt)}
-            >
+            <span className={`text-sm ${value === opt ? "text-neutral-900 font-medium" : "text-neutral-600"}`}>
               {opt}
             </span>
           </label>
