@@ -14,7 +14,7 @@ All 4 P0 items implemented and verified. Build passes TypeScript strict mode wit
 | P0-01: View toggle → inline pill | ✅ PASS | SearchFilters.tsx |
 | P0-02: Filter API wiring | ✅ PASS | SearchFilters.tsx, page.tsx, api/search/route.ts, bridge.ts |
 | P0-03: Card ratio 4:3 → 16:9 | ✅ PASS | SearchPropertyCard.tsx |
-| P0-04: Grid max 2 cols | ✅ PASS | page.tsx |
+| P0-04: Grid max 2 cols | ⚠️ CORRECTED | page.tsx — see §7 Correction Log |
 
 **Remaining P1/P2 items unchanged.** See original report [IDX-SEARCH-PARITY-REPORT.md](./IDX-SEARCH-PARITY-REPORT.md) for full delta list.
 
@@ -260,7 +260,7 @@ if (params.types && params.types.length > 0) {
 
 ---
 
-### P0-04: Grid Column Count — 3 cols → max 2 cols
+### P0-04: Grid Column Count — 3 cols → max 2 cols ⚠️ CORRECTED (see §7)
 
 **Provenance:**
 - Source file: `reference/carroll-idx-search-filter.css`
@@ -268,7 +268,7 @@ if (params.types && params.types.length > 0) {
 - Extracted value: `width:50%; margin-bottom:10px; padding:0 5px` — 2 columns via 50% width
 - **No 3-col rule exists anywhere in Carroll's CSS** — max is 2 cols at all breakpoints in grid view.
 
-**Before (`src/app/search/page.tsx`):**
+**Original before (`src/app/search/page.tsx`):**
 ```tsx
 // Grid view
 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
@@ -277,13 +277,22 @@ if (params.types && params.types.length > 0) {
 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
 ```
 
-**After:**
+**P0 implementation (max-2 — incorrect, since reverted):**
 ```tsx
 // Grid view
 <div className="grid grid-cols-1 md:grid-cols-2">
 
 // LoadingGrid
 <div className="grid grid-cols-1 md:grid-cols-2">
+```
+
+**Corrected implementation (current):**
+```tsx
+// Grid view
+<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+
+// LoadingGrid
+<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
 ```
 
 **Note:** Map view right-panel grid was already correct at `xl:grid-cols-2` (1 col on mobile, 2 on xl). Left unchanged.
@@ -309,7 +318,7 @@ if (params.types && params.types.length > 0) {
 | P0-01 | View toggle is inline pill with sliding indicator | ✅ PASS | 3-button pill, `bg-[#f6f6f6]`, white sliding indicator with `border-[#dedede]`, `transition-transform duration-300`, exact Carroll dimensions at each breakpoint |
 | P0-02 | Filters wire to Bridge API | ✅ PASS | Price min/max → `minPrice`/`maxPrice` params; bed/bath min → `beds`/`baths` params; property types → `types` comma-sep → OR OData filter; page resets on filter change |
 | P0-03 | Card ratio 16:9 | ✅ PASS | `aspectRatio:"16/9"`, `md:rounded-[10px]`, `md:shadow-[0_1px_4px_rgba(0,0,0,0.16)]`; loading skeleton updated to match |
-| P0-04 | Grid max 2 columns | ✅ PASS | `grid-cols-1 md:grid-cols-2` — no 3-col breakpoint; matches Carroll's 50% width 2-col layout |
+| P0-04 | Grid responsive columns | ⚠️ CORRECTED | Reverted hard 2-col cap → `grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4`. See §7. |
 
 ---
 
@@ -375,7 +384,35 @@ All P0 tokens extracted from:
 .ms-sf-property-card-dody { border-radius:0; }
 @media(min-width:768px){ .ms-sf-property-card-dody { border-radius:10px; box-shadow:#00000029 0 1px 4px; } }
 
-/* P0-04: Grid 2 columns */
+/* P0-04: Carroll grid (2 columns via 50% width — Carroll's IDX is hosted in a fixed-width iframe at ~50% viewport) */
 @media(min-width:768px){ .ms-sf-pitem { width:50%; margin-bottom:10px; padding:0 5px; } }
-/* No 3-col rule anywhere in Carroll's CSS */
+/* Carroll has no 3-col rule — but Carroll's grid runs inside a 50% viewport column, not full-width */
+/* Our grid is full-width, so 1/2/3/4 breakpoints are correct for our layout */
 ```
+
+---
+
+## 7. Correction Log
+
+### C-01: P0-04 Grid Column Cap Reverted — 2026-02-22
+
+**What was wrong:**
+P0-04 implemented `grid-cols-1 md:grid-cols-2` with no breakpoints above md, hard-capping all viewport widths at 2 columns.
+
+**Why it was wrong:**
+The Carroll CSS evidence (`width:50%` on `.ms-sf-pitem`) was read as "max 2 cols" without accounting for context: Carroll's IDX search grid runs inside an iframe or constrained container that occupies roughly 50% of the viewport. Their grid is effectively already 2 cols relative to the _container_, not the full page. Applying that same rule to our full-width layout produced cards that were excessively wide on xl/2xl screens (~600–900px per card), wasting real estate and degrading scan efficiency.
+
+**What was actually correct:**
+A full-width grid that uses the full breakpoint ladder:
+- `grid-cols-1` — mobile (single column, full bleed)
+- `md:grid-cols-2` — tablet (768px+)
+- `xl:grid-cols-3` — desktop (1280px+)
+- `2xl:grid-cols-4` — large desktop (1536px+)
+
+This matches the standard IDX grid density expected by real estate search UX at each viewport size.
+
+**Files corrected:**
+- `src/app/search/page.tsx` — grid view grid + LoadingGrid (2 occurrences)
+- `reports/IDX-SEARCH-PARITY-REPORT-v2.md` — this file
+
+**Build after correction:** ✅ PASS

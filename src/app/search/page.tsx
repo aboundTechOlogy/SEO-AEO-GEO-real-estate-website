@@ -288,7 +288,7 @@ function Pagination({
 
 function LoadingGrid({ count = 12 }: { count?: number }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
       {Array.from({ length: count }).map((_, index) => (
         <div key={index} className="px-[5px] mb-[10px]">
           <div className="aspect-[16/9] bg-gray-200 animate-pulse" />
@@ -574,7 +574,7 @@ export default function SearchPage() {
             ) : showNoResults ? (
               <div className="py-14 text-center text-sm text-gray-500">No properties match this search.</div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 {listings.map((listing) => (
                   <div
                     key={listing.id}
