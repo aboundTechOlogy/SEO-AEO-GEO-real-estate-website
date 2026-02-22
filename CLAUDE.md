@@ -13,7 +13,18 @@ Luxury real estate website for **Andrew Whalen, Realtor®** (iamandrewwhalen.com
 - Deployed on Vercel (auto-deploy on push)
 - App Router (async server components, `"use client"` where needed)
 - Tailwind 4 uses `@import "tailwindcss"` — NOT `@tailwind` directives
-- Bridge API (SEFMLS) for MLS data (Phase 2)
+- Bridge API for MLS data (test dataset active, production pending MLS approval)
+- `@turf/boolean-point-in-polygon` + `swr` for map search
+- Google Maps via `@vis.gl/react-google-maps`
+
+## Bridge API Reference
+- **Base URL:** `https://api.bridgedataoutput.com/api/v2/OData/test/Property`
+- **Auth:** Bearer token via `BRIDGE_SERVER_TOKEN` env var (server-side ONLY)
+- **Geo filtering:** Bounding box with `Latitude ge/le` + `Longitude ge/le` (NO `geo.distance`)
+- **Photos:** `Media` field returns ordered array with CDN URLs
+- **Pagination:** `$top`, `$skip`, `@odata.nextLink`, `$count=true`
+- **Key fields:** ListingKey, ListPrice, StandardStatus, UnparsedAddress, City, StateOrProvince, PostalCode, BedroomsTotal, BathroomsTotalInteger, LivingArea, Latitude, Longitude, Media, OnMarketTimestamp, DaysOnMarket, YearBuilt, BuildingName
+- **Env vars (set in Vercel):** BRIDGE_SERVER_TOKEN, BRIDGE_API_BASE, BRIDGE_DATASET, NEXT_PUBLIC_GOOGLE_MAPS_KEY
 
 ## Design System — Carroll Reference
 
