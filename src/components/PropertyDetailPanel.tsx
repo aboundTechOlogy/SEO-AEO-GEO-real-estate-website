@@ -6,6 +6,20 @@ import { useRouter } from "next/navigation";
 import type { BridgeProperty } from "@/lib/bridge";
 import { calculatePricePerSqft, formatAddress, formatCurrency, getListingPhotos } from "@/lib/property-utils";
 import PropertyInquiryForm from "@/components/PropertyInquiryForm";
+import {
+  IconClose,
+  IconLove,
+  IconShared,
+  IconOpen,
+  IconExpand,
+  IconPhone,
+  IconEnvelope,
+  IconChevronLeft,
+  IconChevronRight,
+  IconCamera,
+  IconStreetView,
+  IconVirtual360,
+} from "@/components/IdxIcons";
 
 interface PropertyDetailPanelProps {
   property: BridgeProperty | null;
@@ -154,7 +168,9 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
     }
 
     closeTimeoutRef.current = window.setTimeout(() => {
-      router.back();
+      const url = new URL(window.location.href);
+      url.searchParams.delete("show");
+      router.replace(url.pathname + url.search, { scroll: false });
     }, 220);
   }, [router]);
 
@@ -589,22 +605,22 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
 
               <div className="lg:hidden flex items-center gap-2 shrink-0">
                 <CircleIconButton label="Close" size="sm" onClick={handleClose}>
-                  ✕
+                  <IconClose className="w-4 h-4" />
                 </CircleIconButton>
               </div>
 
               <div className="hidden lg:flex items-center gap-[10px] shrink-0 pl-[15px]">
                 <CircleIconButton label={isSaved ? "Unsave listing" : "Save listing"} onClick={toggleSaved}>
-                  {isSaved ? "★" : "☆"}
+                  <IconLove className="w-5 h-5" active={isSaved} />
                 </CircleIconButton>
                 <CircleIconButton label="Share" onClick={shareListing}>
-                  ↗
+                  <IconShared className="w-5 h-5" />
                 </CircleIconButton>
                 <CircleIconButton label="Open canonical property page" onClick={openCanonicalDetailsPage}>
-                  ↱
+                  <IconOpen className="w-5 h-5" />
                 </CircleIconButton>
                 <CircleIconButton label="Close" onClick={handleClose}>
-                  ✕
+                  <IconClose className="w-5 h-5" />
                 </CircleIconButton>
               </div>
             </div>
@@ -613,22 +629,13 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
           <div className="relative border-b border-black/10 bg-white">
             <div className="absolute left-[15px] top-8 z-20 lg:hidden flex items-center gap-[10px]">
               <CircleIconButton label="Photos" size="sm" active>
-                <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 16.5 8.25 12l3 3 4.5-5.25 4.5 6.75" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 6.75A1.75 1.75 0 0 1 4.75 5h14.5A1.75 1.75 0 0 1 21 6.75v10.5A1.75 1.75 0 0 1 19.25 19H4.75A1.75 1.75 0 0 1 3 17.25V6.75Z" />
-                </svg>
+                <IconCamera className="w-[18px] h-[18px]" />
               </CircleIconButton>
               <CircleIconButton label="Map view" size="sm" onClick={openMapView} disabled={!hasCoords}>
-                <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 21s6-5.686 6-10a6 6 0 1 0-12 0c0 4.314 6 10 6 10Z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 13.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" />
-                </svg>
+                <IconStreetView className="w-[18px] h-[18px]" />
               </CircleIconButton>
               <CircleIconButton label="Virtual tour" size="sm" disabled>
-                <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
-                  <circle cx="12" cy="12" r="9" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 12h18M12 3c2.5 2.3 2.5 13.7 0 18M12 3c-2.5 2.3-2.5 13.7 0 18" />
-                </svg>
+                <IconVirtual360 className="w-[18px] h-[18px]" />
               </CircleIconButton>
             </div>
 
@@ -649,7 +656,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
               aria-label="Open full photo viewer"
               disabled={!hasDisplayablePhotos}
             >
-              ⤢
+              <IconExpand className="w-[18px] h-[18px]" />
             </button>
 
             <div className="relative lg:hidden">
@@ -713,18 +720,18 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                 <button
                   type="button"
                   onClick={() => setActivePhoto((prev) => (prev - 1 + photoCount) % photoCount)}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 text-white hover:bg-black transition-colors"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 text-white hover:bg-black transition-colors flex items-center justify-center"
                   aria-label="Previous photo"
                 >
-                  ‹
+                  <IconChevronLeft className="w-5 h-5" />
                 </button>
                 <button
                   type="button"
                   onClick={() => setActivePhoto((prev) => (prev + 1) % photoCount)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 text-white hover:bg-black transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 text-white hover:bg-black transition-colors flex items-center justify-center"
                   aria-label="Next photo"
                 >
-                  ›
+                  <IconChevronRight className="w-5 h-5" />
                 </button>
               </>
             )}
@@ -751,24 +758,24 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
             <button
               type="button"
               onClick={toggleSaved}
-              className="h-[45px] border-r border-gray-200 text-[#1a1a1a] hover:bg-gray-100 transition-colors text-[18px]"
+              className="h-[45px] border-r border-gray-200 text-[#1a1a1a] hover:bg-gray-100 transition-colors flex items-center justify-center"
               aria-label={isSaved ? "Unsave listing" : "Save listing"}
             >
-              {isSaved ? "★" : "☆"}
+              <IconLove className="w-5 h-5" active={isSaved} />
             </button>
             <button
               type="button"
               onClick={shareListing}
-              className="h-[45px] border-r border-gray-200 text-[#1a1a1a] hover:bg-gray-100 transition-colors text-[18px]"
+              className="h-[45px] border-r border-gray-200 text-[#1a1a1a] hover:bg-gray-100 transition-colors flex items-center justify-center"
               aria-label="Share"
             >
-              ↗
+              <IconShared className="w-5 h-5" />
             </button>
-            <a href="tel:+13054559744" className="h-[45px] border-r border-gray-200 text-[#1a1a1a] hover:bg-gray-100 transition-colors flex items-center justify-center text-[18px]" aria-label="Call">
-              ☎
+            <a href="tel:+13054559744" className="h-[45px] border-r border-gray-200 text-[#1a1a1a] hover:bg-gray-100 transition-colors flex items-center justify-center" aria-label="Call">
+              <IconPhone className="w-5 h-5" />
             </a>
-            <a href="mailto:Andrew@IamAndrewWhalen.com" className="h-[45px] text-[#1a1a1a] hover:bg-gray-100 transition-colors flex items-center justify-center text-[24px] leading-none" aria-label="Email">
-              ✉
+            <a href="mailto:Andrew@IamAndrewWhalen.com" className="h-[45px] text-[#1a1a1a] hover:bg-gray-100 transition-colors flex items-center justify-center" aria-label="Email">
+              <IconEnvelope className="w-5 h-5" />
             </a>
           </div>
 
@@ -932,24 +939,22 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
 
                   <div className="flex items-center gap-[10px] shrink-0">
                     <CircleIconButton label={isSaved ? "Unsave listing" : "Save listing"} onClick={toggleSaved}>
-                      {isSaved ? "★" : "☆"}
+                      <IconLove className="w-5 h-5" active={isSaved} />
                     </CircleIconButton>
                     <CircleIconButton label="Photos" active>
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 16.5 8.25 12l3 3 4.5-5.25 4.5 6.75" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 6.75A1.75 1.75 0 0 1 4.75 5h14.5A1.75 1.75 0 0 1 21 6.75v10.5A1.75 1.75 0 0 1 19.25 19H4.75A1.75 1.75 0 0 1 3 17.25V6.75Z" />
-                      </svg>
+                      <IconCamera className="w-5 h-5" />
                     </CircleIconButton>
                     <CircleIconButton label="Map view" onClick={openMapView} disabled={!hasCoords}>
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 21s6-5.686 6-10a6 6 0 1 0-12 0c0 4.314 6 10 6 10Z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 13.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" />
-                      </svg>
+                      <IconStreetView className="w-5 h-5" />
                     </CircleIconButton>
-                    <CircleIconButton label="Email" onClick={() => window.location.assign("mailto:Andrew@IamAndrewWhalen.com")}>✉</CircleIconButton>
-                    <CircleIconButton label="Share" onClick={shareListing}>↗</CircleIconButton>
+                    <CircleIconButton label="Email" onClick={() => window.location.assign("mailto:Andrew@IamAndrewWhalen.com")}>
+                      <IconEnvelope className="w-5 h-5" />
+                    </CircleIconButton>
+                    <CircleIconButton label="Share" onClick={shareListing}>
+                      <IconShared className="w-5 h-5" />
+                    </CircleIconButton>
                     <CircleIconButton label="Close" onClick={() => setIsPhotoViewerOpen(false)}>
-                      ✕
+                      <IconClose className="w-5 h-5" />
                     </CircleIconButton>
                   </div>
                 </div>
@@ -974,18 +979,18 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                     <button
                       type="button"
                       onClick={() => setActivePhoto((prev) => (prev - 1 + photoCount) % photoCount)}
-                      className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/70 text-white hover:bg-black transition-colors"
+                      className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/70 text-white hover:bg-black transition-colors flex items-center justify-center"
                       aria-label="Previous photo"
                     >
-                      ‹
+                      <IconChevronLeft className="w-6 h-6" />
                     </button>
                     <button
                       type="button"
                       onClick={() => setActivePhoto((prev) => (prev + 1) % photoCount)}
-                      className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/70 text-white hover:bg-black transition-colors"
+                      className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/70 text-white hover:bg-black transition-colors flex items-center justify-center"
                       aria-label="Next photo"
                     >
-                      ›
+                      <IconChevronRight className="w-6 h-6" />
                     </button>
                   </>
                 )}

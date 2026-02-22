@@ -1,20 +1,22 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
 import { point, polygon } from "@turf/helpers";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import SearchPropertyCard from "@/components/SearchPropertyCard";
 import { DesktopSearchBar, MobileSearchBar, FloatingSaveSearch, DEFAULT_FILTER_VALUES } from "@/components/SearchFilters";
 import type { SearchFilterValues } from "@/components/SearchFilters";
 import PropertyMap from "@/components/PropertyMap";
+import PropertyDetailPanel from "@/components/PropertyDetailPanel";
 import type {
   BridgeIdxListing,
   BridgeIdxMarker,
   BridgeIdxMarkersResponse,
   BridgeIdxSearchResponse,
+  BridgeProperty,
 } from "@/lib/bridge";
 
 type ViewMode = "grid" | "map" | "list";
@@ -294,10 +296,18 @@ function LoadingGrid({ count = 12 }: { count?: number }) {
   );
 }
 
-function MobileListCard({ listing }: { listing: UiListing }) {
+function MobileListCard({ listing, onOpenOverlay }: { listing: UiListing; onOpenOverlay?: (listingKey: string) => void }) {
+  const handleClick = (e: React.MouseEvent) => {
+    if (onOpenOverlay) {
+      e.preventDefault();
+      onOpenOverlay(listing.id);
+    }
+  };
+
   return (
     <Link
       href={listing.href}
+      onClick={handleClick}
       className="mx-4 mb-3 flex gap-3 p-3 bg-white rounded-xl border border-gray-200 shadow-sm cursor-pointer block"
     >
       {listing.image ? (
@@ -436,7 +446,15 @@ function hydrateFromUrl(): {
 
 /* ==================== PAGE ==================== */
 
-export default function SearchPage() {
+export default function SearchPageWrapper() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white" />}>
+      <SearchPage />
+    </Suspense>
+  );
+}
+
+function SearchPage() {
   const router = useRouter();
   const [status, setStatus] = useState<string>("For Sale");
   const [view, setViewState] = useState<ViewMode>("grid");
@@ -447,6 +465,26 @@ export default function SearchPage() {
   const [filterValues, setFilterValues] = useState<SearchFilterValues>(DEFAULT_FILTER_VALUES);
   const [saveToast, setSaveToast] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
+
+  // Overlay state — `?show=listingKey` URL param
+  const searchParams = useSearchParams();
+  const showListingKey = searchParams.get("show") || null;
+
+  // Fetch overlay property data when ?show= is set
+  const { data: overlayProperty } = useSWR<BridgeProperty>(
+    showListingKey ? `/api/property/${showListingKey}` : null,
+    fetcher,
+    { revalidateOnFocus: false }
+  );
+
+  const handleOpenOverlay = useCallback(
+    (listingKey: string) => {
+      const url = new URL(window.location.href);
+      url.searchParams.set("show", listingKey);
+      router.replace(url.pathname + url.search + url.hash, { scroll: false });
+    },
+    [router]
+  );
 
   const handleFilterChange = (partial: Partial<SearchFilterValues>) => {
     setFilterValues((prev) => ({ ...prev, ...partial }));
@@ -492,8 +530,15 @@ export default function SearchPage() {
   useEffect(() => {
     if (!hydrated) return;
     const url = buildSearchUrl(filterValues, status, sortLabel, page, view);
-    window.history.replaceState(null, "", url);
-  }, [filterValues, status, sortLabel, page, view, hydrated]);
+    // Preserve ?show= param if overlay is open
+    if (showListingKey) {
+      const parsed = new URL(url, window.location.origin);
+      parsed.searchParams.set("show", showListingKey);
+      window.history.replaceState(null, "", parsed.pathname + parsed.search + parsed.hash);
+    } else {
+      window.history.replaceState(null, "", url);
+    }
+  }, [filterValues, status, sortLabel, page, view, hydrated, showListingKey]);
 
   useEffect(() => {
     setPage(1);
@@ -742,6 +787,7 @@ export default function SearchPage() {
                       href={listing.href}
                       listDate={listing.listDate}
                       photoCount={listing.photoCount}
+                      onOpenOverlay={handleOpenOverlay}
                     />
                   </div>
                 ))}
@@ -786,6 +832,7 @@ export default function SearchPage() {
                       }}
                     >
                       <SearchPropertyCard
+                        listingKey={listing.id}
                         image={listing.image}
                         price={listing.price}
                         address={listing.address}
@@ -799,6 +846,7 @@ export default function SearchPage() {
                         href={listing.href}
                         listDate={listing.listDate}
                         photoCount={listing.photoCount}
+                        onOpenOverlay={handleOpenOverlay}
                       />
                     </div>
                   ))}
@@ -879,7 +927,7 @@ export default function SearchPage() {
                         highlightedListingId === listing.id ? "bg-amber-50" : ""
                       }`}
                       onClick={() => {
-                        router.push(listing.href);
+                        handleOpenOverlay(listing.id);
                       }}
                     >
                       <td className="p-3 border border-gray-200 text-center">
@@ -931,7 +979,7 @@ export default function SearchPage() {
                 <div key={`mobile-loading-${index}`} className="mx-4 mb-3 h-24 rounded-xl bg-gray-200 animate-pulse" />
               ))}
 
-            {!showLoading && listings.map((listing) => <MobileListCard key={listing.id} listing={listing} />)}
+            {!showLoading && listings.map((listing) => <MobileListCard key={listing.id} listing={listing} onOpenOverlay={handleOpenOverlay} />)}
 
             {showNoResults && (
               <div className="px-4 py-10 text-center text-sm text-gray-500">No properties match this search.</div>
@@ -940,6 +988,14 @@ export default function SearchPage() {
 
           <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
+      )}
+
+      {/* Property detail overlay — triggered by ?show=listingKey */}
+      {showListingKey && (
+        <PropertyDetailPanel
+          property={overlayProperty ?? null}
+          listingKey={showListingKey}
+        />
       )}
     </>
   );
