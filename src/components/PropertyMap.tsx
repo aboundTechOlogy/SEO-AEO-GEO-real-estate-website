@@ -70,13 +70,13 @@ export default function PropertyMap({
           clickableIcons={interactive}
           mapTypeControl={false}
           streetViewControl={interactive}
-          streetViewControlOptions={{ position: ControlPosition.RIGHT_CENTER }}
+          streetViewControlOptions={{ position: ControlPosition.TOP_RIGHT }}
           fullscreenControl={interactive}
-          fullscreenControlOptions={{ position: ControlPosition.RIGHT_BOTTOM }}
+          fullscreenControlOptions={{ position: ControlPosition.TOP_RIGHT }}
           zoomControl={interactive}
-          zoomControlOptions={{ position: ControlPosition.RIGHT_CENTER }}
+          zoomControlOptions={{ position: ControlPosition.TOP_RIGHT }}
           rotateControl={interactive}
-          rotateControlOptions={{ position: ControlPosition.RIGHT_CENTER }}
+          rotateControlOptions={{ position: ControlPosition.TOP_RIGHT }}
           scaleControl={true}
         >
           {markers.map((marker, index) => {
