@@ -63,6 +63,15 @@ function parseGarage(value: string | null): number | undefined {
   return Number.isFinite(n) && n > 0 ? n : undefined;
 }
 
+function parseSoldRange(value: string | null): string | undefined {
+  if (!value) return undefined;
+  const days = Number(value);
+  if (!Number.isFinite(days) || days <= 0) return undefined;
+  const date = new Date();
+  date.setDate(date.getDate() - days);
+  return date.toISOString().slice(0, 10); // "YYYY-MM-DD"
+}
+
 export async function GET(req: NextRequest) {
   const search = req.nextUrl.searchParams;
 
@@ -85,6 +94,7 @@ export async function GET(req: NextRequest) {
   const minGarage = parseGarage(search.get("minGarage"));
   const maxDom = parseDomMax(search.get("maxDom"));
   const hidePending = search.get("hidePending") === "true";
+  const minCloseDate = parseSoldRange(search.get("soldRange"));
 
   const waterfrontParam = search.get("waterfront");
   const waterfrontOnly = waterfrontParam && waterfrontParam !== "Any" ? true : undefined;
@@ -122,6 +132,7 @@ export async function GET(req: NextRequest) {
     hidePending: hidePending || undefined,
     minSqft,
     maxSqft,
+    minCloseDate,
   });
 
   return NextResponse.json(result);

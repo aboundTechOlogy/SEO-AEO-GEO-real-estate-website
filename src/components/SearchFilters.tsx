@@ -22,6 +22,8 @@ export interface SearchFilterValues {
   hidePending: boolean;
   minSqft: string;
   maxSqft: string;
+  /** Sold time-range: number of days as string, or "" for any time */
+  soldRange: string;
 }
 
 export const DEFAULT_FILTER_VALUES: SearchFilterValues = {
@@ -41,7 +43,20 @@ export const DEFAULT_FILTER_VALUES: SearchFilterValues = {
   hidePending: false,
   minSqft: "",
   maxSqft: "",
+  soldRange: "",
 };
+
+/* ==================== SOLD RANGE OPTIONS ==================== */
+const SOLD_RANGE_OPTIONS: { label: string; value: string }[] = [
+  { label: "Last 1 Week", value: "7" },
+  { label: "Last 1 Month", value: "30" },
+  { label: "Last 3 Months", value: "90" },
+  { label: "Last 6 Months", value: "180" },
+  { label: "Last 1 Year", value: "365" },
+  { label: "Last 2 Years", value: "730" },
+  { label: "Last 3 Years", value: "1095" },
+  { label: "Last 5 Years", value: "1825" },
+];
 
 /* ==================== SOUTH FLORIDA CITY SUGGESTIONS ==================== */
 
@@ -320,11 +335,15 @@ function PanelHeader({ title, onDone }: { title: string; onDone: () => void }) {
 function ForSaleFilter({
   value,
   onChange,
+  soldRange,
+  onSoldRangeChange,
   open,
   onToggle,
 }: {
   value: string;
   onChange: (v: string) => void;
+  soldRange: string;
+  onSoldRangeChange: (v: string) => void;
   open: boolean;
   onToggle: () => void;
 }) {
@@ -364,8 +383,36 @@ function ForSaleFilter({
             </span>
           </label>
         ))}
+
+        {/* Sold time-range sub-options */}
+        {value === "Sold" && (
+          <div className="mt-1 ml-8 space-y-2.5 border-l-2 border-neutral-100 pl-3">
+            <p className="text-[11px] text-neutral-400 uppercase tracking-wide font-medium mb-1">Sold within</p>
+            {SOLD_RANGE_OPTIONS.map((opt) => (
+              <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer group">
+                <div
+                  className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
+                    soldRange === opt.value ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                  }`}
+                  onClick={() => onSoldRangeChange(opt.value)}
+                >
+                  {soldRange === opt.value && <div className="w-2 h-2 rounded-full bg-black" />}
+                </div>
+                <span
+                  className={`text-[13px] ${soldRange === opt.value ? "text-neutral-900 font-medium" : "text-neutral-500"}`}
+                  onClick={() => onSoldRangeChange(opt.value)}
+                >
+                  {opt.label}
+                </span>
+              </label>
+            ))}
+          </div>
+        )}
       </div>
-      <PanelFooter onDone={onToggle} />
+      <PanelFooter
+        onReset={value === "Sold" ? () => onSoldRangeChange("") : undefined}
+        onDone={onToggle}
+      />
     </FilterDropdown>
   );
 }
@@ -757,6 +804,8 @@ function MoreFilter({
   onFilterChange,
   status,
   onStatusChange,
+  soldRange,
+  onSoldRangeChange,
   totalCount,
   onClearAll,
 }: {
@@ -766,6 +815,8 @@ function MoreFilter({
   onFilterChange: (partial: Partial<SearchFilterValues>) => void;
   status: string;
   onStatusChange: (v: string) => void;
+  soldRange: string;
+  onSoldRangeChange: (v: string) => void;
   totalCount: number;
   onClearAll: () => void;
 }) {
@@ -833,6 +884,29 @@ function MoreFilter({
                 </span>
               </label>
             ))}
+            {status === "Sold" && (
+              <div className="mt-1 ml-8 space-y-2.5 border-l-2 border-neutral-100 pl-3">
+                <p className="text-[11px] text-neutral-400 uppercase tracking-wide font-medium mb-1">Sold within</p>
+                {SOLD_RANGE_OPTIONS.map((opt) => (
+                  <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer group">
+                    <div
+                      className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
+                        soldRange === opt.value ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                      }`}
+                      onClick={() => onSoldRangeChange(opt.value)}
+                    >
+                      {soldRange === opt.value && <div className="w-2 h-2 rounded-full bg-black" />}
+                    </div>
+                    <span
+                      className={`text-[13px] ${soldRange === opt.value ? "text-neutral-900 font-medium" : "text-neutral-500"}`}
+                      onClick={() => onSoldRangeChange(opt.value)}
+                    >
+                      {opt.label}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
@@ -1217,7 +1291,14 @@ export function DesktopSearchBar({
       />
 
       {/* Filter buttons */}
-      <ForSaleFilter value={status} onChange={onStatusChange} open={openFilter === "status"} onToggle={() => toggle("status")} />
+      <ForSaleFilter
+        value={status}
+        onChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); }}
+        soldRange={filterValues.soldRange}
+        onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
+        open={openFilter === "status"}
+        onToggle={() => toggle("status")}
+      />
       <PriceFilter
         open={openFilter === "price"}
         onToggle={() => toggle("price")}
@@ -1246,7 +1327,9 @@ export function DesktopSearchBar({
         filterValues={filterValues}
         onFilterChange={onFilterChange}
         status={status}
-        onStatusChange={onStatusChange}
+        onStatusChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); }}
+        soldRange={filterValues.soldRange}
+        onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
         totalCount={totalCount}
         onClearAll={handleClearAll}
       />
@@ -1327,7 +1410,14 @@ export function MobileSearchBar({
           </svg>
           Filters
         </button>
-        <ForSaleFilter value={status} onChange={onStatusChange} open={openFilter === "status"} onToggle={() => toggle("status")} />
+        <ForSaleFilter
+          value={status}
+          onChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); }}
+          soldRange={filterValues.soldRange}
+          onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
+          open={openFilter === "status"}
+          onToggle={() => toggle("status")}
+        />
         <PriceFilter
           open={openFilter === "price"}
           onToggle={() => toggle("price")}
@@ -1356,7 +1446,9 @@ export function MobileSearchBar({
           filterValues={filterValues}
           onFilterChange={onFilterChange}
           status={status}
-          onStatusChange={onStatusChange}
+          onStatusChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); }}
+          soldRange={filterValues.soldRange}
+          onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
           totalCount={totalCount}
           onClearAll={handleClearAll}
         />

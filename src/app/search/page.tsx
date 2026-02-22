@@ -376,6 +376,7 @@ function buildSearchUrl(
   if (filterValues.hidePending) params.set("hidePending", "true");
   if (filterValues.minSqft) params.set("minSqft", filterValues.minSqft);
   if (filterValues.maxSqft) params.set("maxSqft", filterValues.maxSqft);
+  if (status === "Sold" && filterValues.soldRange) params.set("soldRange", filterValues.soldRange);
 
   params.set("status", status);
   if (sortLabel !== DEFAULT_SORT) params.set("sort", sortLabel);
@@ -413,6 +414,7 @@ function hydrateFromUrl(): {
   if (search.get("minSqft")) filterPartial.minSqft = search.get("minSqft")!;
   if (search.get("maxSqft")) filterPartial.maxSqft = search.get("maxSqft")!;
   if (search.get("types")) filterPartial.propertyTypes = search.get("types")!.split(",").filter(Boolean);
+  if (search.get("soldRange")) filterPartial.soldRange = search.get("soldRange")!;
 
   const statusFromUrl = search.get("status") || undefined;
   const sortFromUrl = SORT_OPTIONS.some((o) => o.label === search.get("sort"))
@@ -529,6 +531,7 @@ export default function SearchPage() {
     if (filterValues.hidePending) params.set("hidePending", "true");
     if (filterValues.minSqft) params.set("minSqft", filterValues.minSqft);
     if (filterValues.maxSqft) params.set("maxSqft", filterValues.maxSqft);
+    if (bridgeStatus === "Closed" && filterValues.soldRange) params.set("soldRange", filterValues.soldRange);
 
     if (bbox) {
       params.set("swLat", String(bbox.swLat));
@@ -722,6 +725,7 @@ export default function SearchPage() {
                     }}
                   >
                     <SearchPropertyCard
+                      listingKey={listing.id}
                       image={listing.image}
                       price={listing.price}
                       address={listing.address}
