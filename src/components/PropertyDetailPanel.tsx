@@ -55,7 +55,7 @@ function estimateMonthlyPayment(price: number | null | undefined): string | null
 }
 
 const PANEL_CONTAINER_CLASS =
-  "absolute inset-0 lg:inset-y-0 lg:left-[7vw] lg:right-[7vw] border-0 lg:border lg:border-black/15 bg-[#f5f5f5] shadow-[0_24px_70px_rgba(0,0,0,0.45)]";
+  "fixed inset-0 lg:inset-y-0 lg:left-1/2 lg:-translate-x-1/2 lg:w-[min(1200px,calc(100%-56px))] border-0 lg:border lg:border-black/15 bg-[#f5f5f5] shadow-[0_24px_70px_rgba(0,0,0,0.45)]";
 
 function CircleIconButton({
   label,
@@ -124,6 +124,26 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
       window.removeEventListener("keydown", onEscape);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const html = document.documentElement;
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevHtmlOverflow = html.style.overflow;
+    const prevBodyOverscroll = document.body.style.overscrollBehavior;
+    const prevHtmlOverscroll = html.style.overscrollBehavior;
+
+    document.body.style.overflow = "hidden";
+    html.style.overflow = "hidden";
+    document.body.style.overscrollBehavior = "none";
+    html.style.overscrollBehavior = "none";
+
+    return () => {
+      document.body.style.overflow = prevBodyOverflow;
+      html.style.overflow = prevHtmlOverflow;
+      document.body.style.overscrollBehavior = prevBodyOverscroll;
+      html.style.overscrollBehavior = prevHtmlOverscroll;
+    };
   }, []);
 
   useEffect(() => {
@@ -277,7 +297,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="h-full overflow-y-auto bg-[#f5f5f5]">
+        <div className="h-full overflow-y-auto overscroll-contain bg-[#f5f5f5]">
           <div className="sticky top-0 z-30 border-b border-black/10 bg-white/95 backdrop-blur-sm px-4 py-3">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
