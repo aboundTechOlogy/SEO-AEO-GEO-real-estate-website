@@ -1,6 +1,6 @@
 "use client";
 
-import { APIProvider, AdvancedMarker, Map } from "@vis.gl/react-google-maps";
+import { APIProvider, AdvancedMarker, ControlPosition, Map } from "@vis.gl/react-google-maps";
 import MapDrawControl, { type DrawCoordinate } from "@/components/MapDrawControl";
 
 interface PropertyMapProps {
@@ -70,9 +70,13 @@ export default function PropertyMap({
           clickableIcons={interactive}
           mapTypeControl={false}
           streetViewControl={interactive}
+          streetViewControlOptions={{ position: ControlPosition.RIGHT_CENTER }}
           fullscreenControl={interactive}
+          fullscreenControlOptions={{ position: ControlPosition.RIGHT_BOTTOM }}
           zoomControl={interactive}
+          zoomControlOptions={{ position: ControlPosition.RIGHT_CENTER }}
           rotateControl={interactive}
+          rotateControlOptions={{ position: ControlPosition.RIGHT_CENTER }}
           scaleControl={true}
         >
           {markers.map((marker, index) => {
