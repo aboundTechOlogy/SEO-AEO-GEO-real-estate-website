@@ -18,6 +18,7 @@ import {
 } from "@/lib/property-utils";
 import { APIProvider, Map as GoogleMap, Marker, useMap } from "@vis.gl/react-google-maps";
 import PropertyInquiryForm from "@/components/PropertyInquiryForm";
+import MortgageCalculatorModal from "@/components/MortgageCalculatorModal";
 import {
   IconCalendar,
   IconClose,
@@ -77,6 +78,18 @@ function DetailRow({ label, value, icon }: { label: string; value: string; icon?
       </p>
       <p className="text-[14px] text-[#1a1a1a] leading-[1.5]">{value}</p>
     </li>
+  );
+}
+
+export function EstPaymentLink({ label, listPrice }: { label: string; listPrice: number }) {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <>
+      <button type="button" onClick={() => setIsOpen(true)} className="font-semibold text-[#1a1a1a] underline underline-offset-2 hover:text-black/70 transition-colors">
+        {label}
+      </button>
+      <MortgageCalculatorModal isOpen={isOpen} onClose={() => setIsOpen(false)} listPrice={listPrice} />
+    </>
   );
 }
 
@@ -844,6 +857,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
   const [touchCurrentX, setTouchCurrentX] = useState<number | null>(null);
   const [isSaved, setIsSaved] = useState(false);
   const [actionNotice, setActionNotice] = useState<string | null>(null);
+  const [isMortgageCalcOpen, setIsMortgageCalcOpen] = useState(false);
   const closeTimeoutRef = useRef<number | null>(null);
 
   const handleClose = useCallback(() => {
@@ -1178,7 +1192,11 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                     <div className="px-[15px] py-[10px] col-span-1 sm:col-span-2">
                       <p className="text-[20px] lg:text-[24px] leading-none font-semibold text-[#1a1a1a]">{formatCurrency(price)}</p>
                       <p className="mt-[5px] text-[11px] lg:text-[12px] leading-none text-gray-500">
-                        Est. Payment {estimatedPayment ? <span className="font-semibold text-[#1a1a1a] underline underline-offset-2">{estimatedPayment}/mo</span> : "--"}
+                        Est. Payment {estimatedPayment ? (
+                          <button type="button" onClick={() => setIsMortgageCalcOpen(true)} className="font-semibold text-[#1a1a1a] underline underline-offset-2 hover:text-black/70 transition-colors">
+                            {estimatedPayment}/mo
+                          </button>
+                        ) : "--"}
                       </p>
                     </div>
                     <StatMetric label="Beds" value={String(property.BedroomsTotal || 0)} />
@@ -1242,6 +1260,12 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
 
         </aside>
       </div>
+
+      <MortgageCalculatorModal
+        isOpen={isMortgageCalcOpen}
+        onClose={() => setIsMortgageCalcOpen(false)}
+        listPrice={price}
+      />
     </div>
   );
 }

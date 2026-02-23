@@ -5,6 +5,7 @@ import {
   AmenitiesSection,
   BASIC_INFO_ICON_MAP,
   DetailSection,
+  EstPaymentLink,
   LocationSection,
   PropertyMediaTabs,
   SimilarListingsSection,
@@ -201,8 +202,8 @@ export default async function PropertyDetailPage({ params }: Props) {
                   <p className="text-[22px] font-semibold leading-none text-[#1a1a1a]">{formatCurrency(price)}</p>
                   <div className="text-right">
                     <p className="text-[13px] text-gray-500">Est. Payment</p>
-                    <p className="text-[13px] font-semibold leading-none text-[#1a1a1a]">
-                      {estimatedPayment ? `${estimatedPayment}/mo` : "--"}
+                    <p className="text-[13px] leading-none">
+                      {estimatedPayment ? <EstPaymentLink label={`${estimatedPayment}/mo`} listPrice={price} /> : "--"}
                     </p>
                   </div>
                 </div>
