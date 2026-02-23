@@ -266,7 +266,7 @@ function DetailMapControls({ showFullscreen = true }: { showFullscreen?: boolean
   }, []);
 
   return (
-    <div className="absolute right-[10px] top-[10px] z-[5] flex flex-col" style={{ pointerEvents: "auto" }}>
+    <div className={`absolute right-[10px] ${showFullscreen ? "top-[10px]" : "top-[60px]"} z-[5] flex flex-col`} style={{ pointerEvents: "auto" }}>
       {showFullscreen && (
         <>
           {/* 1. Fullscreen / Expand (sf-icon-fullscreen) */}
