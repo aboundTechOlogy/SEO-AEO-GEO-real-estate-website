@@ -983,26 +983,11 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
   if (!property) {
     return (
       <div
-        className={`fixed inset-0 z-[150] overflow-y-auto overscroll-contain transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[150] overflow-hidden bg-white transition-opacity duration-300 ${
           isClosing ? "opacity-0" : "opacity-100"
         }`}
       >
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-[7px] pointer-events-none" />
-
-        <div
-          className="relative min-h-full flex items-start justify-center"
-          onClick={(event) => {
-            if (event.target === event.currentTarget) {
-              handleClose();
-            }
-          }}
-        >
-          <aside
-            className={`${PANEL_CONTAINER_CLASS} min-h-screen md:min-h-[calc(100vh-30px)] transition-all duration-300 ${
-              isClosing ? "translate-y-3 scale-[0.985] opacity-0" : "translate-y-0 scale-100 opacity-100"
-            }`}
-          >
-            <div className="min-h-[inherit] flex flex-col items-center justify-center px-8 text-center bg-white">
+            <div className="h-screen flex flex-col items-center justify-center px-8 text-center">
               <p className="text-gray-700 text-lg mb-3">Property not found.</p>
               <button
                 type="button"
@@ -1012,8 +997,6 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                 Back to Search
               </button>
             </div>
-          </aside>
-        </div>
       </div>
     );
   }
@@ -1090,39 +1073,22 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
 
   return (
     <div
-      className={`fixed inset-0 z-[150] overflow-y-auto overscroll-contain [scrollbar-gutter:stable] transition-opacity duration-300 ${
+      className={`fixed inset-0 z-[150] overflow-hidden bg-white transition-opacity duration-300 ${
         isClosing ? "opacity-0" : "opacity-100"
       }`}
       role="dialog"
       aria-modal="true"
       aria-label="Property details panel"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
-      <div className="fixed inset-0 bg-black/80 backdrop-blur-[7px] pointer-events-none" />
-
-      <div
-        className="relative min-h-full flex items-start justify-center"
-        onClick={(event) => {
-          if (event.target === event.currentTarget) {
-            handleClose();
-          }
-        }}
-      >
-        <aside
-          className={`${PANEL_CONTAINER_CLASS} transition-all duration-300 ${
-            isClosing ? "translate-y-3 scale-[0.985] opacity-0" : "translate-y-0 scale-100 opacity-100"
-          }`}
-          onClick={(event) => event.stopPropagation()}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
         {actionNotice && (
           <div className="absolute top-3 left-1/2 -translate-x-1/2 z-40 px-3 py-2 text-xs rounded-md bg-black text-white">
             {actionNotice}
           </div>
         )}
 
-        <div className="min-h-full bg-[#f5f5f5]">
           <div className="sticky top-0 z-30 border-b border-black/10 bg-white">
             <div className="h-[70px] px-[15px] py-[10px] flex items-center justify-between gap-[10px]">
               <div className="min-w-0 flex-1">
@@ -1157,6 +1123,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
             </div>
           </div>
 
+          <div className="overflow-y-auto overflow-x-hidden" style={{ maxHeight: "calc(100vh - 70px)" }}>
           <PropertyMediaTabs photos={photos} address={address} latitude={lat} longitude={lng} virtualTourUrl={property.VirtualTourURLUnbranded} />
 
           <div className="grid grid-cols-4 border-b border-black/10 bg-white lg:hidden">
@@ -1239,7 +1206,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
               </div>
 
               <aside className="hidden lg:block p-[15px] self-stretch">
-                <div className="border border-gray-200 bg-white p-[15px] space-y-[15px] sticky top-[85px]">
+                <div className="border border-gray-200 bg-white p-[15px] space-y-[15px] sticky top-[15px]">
                   <div className="flex items-center gap-3">
                     <img src="/andrew-headshot.png" alt="Andrew Whalen" className="w-14 h-14 rounded-full object-cover" />
                     <div>
@@ -1256,10 +1223,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
               </aside>
             </div>
           </div>
-        </div>
-
-        </aside>
-      </div>
+          </div>
 
       <MortgageCalculatorModal
         isOpen={isMortgageCalcOpen}
