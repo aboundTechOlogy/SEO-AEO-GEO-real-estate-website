@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { IconLove } from "@/components/IdxIcons";
 
 interface Props {
   image?: string;
@@ -22,6 +23,8 @@ interface Props {
   photoCount?: number;
   listingKey?: string;
   onOpenOverlay?: (listingKey: string) => void;
+  isSaved?: boolean;
+  onToggleSave?: (listingKey: string) => void;
 }
 
 function formatRelativeTime(dateStr: string): string {
@@ -76,15 +79,18 @@ export default function SearchPropertyCard({
   photoCount,
   listingKey,
   onOpenOverlay,
+  isSaved: controlledSaved,
+  onToggleSave,
 }: Props) {
-  const [isSaved, setIsSaved] = useState(false);
+  const [internalSaved, setInternalSaved] = useState(false);
   const [shareLabel, setShareLabel] = useState<"idle" | "copied">("idle");
+  const isSaved = controlledSaved ?? internalSaved;
 
   // Hydrate saved state from localStorage after mount
   useEffect(() => {
-    if (!listingKey) return;
-    setIsSaved(getSavedSet().has(listingKey));
-  }, [listingKey]);
+    if (!listingKey || controlledSaved !== undefined) return;
+    setInternalSaved(getSavedSet().has(listingKey));
+  }, [listingKey, controlledSaved]);
 
   function handleShare(e: React.MouseEvent) {
     e.preventDefault();
@@ -104,13 +110,17 @@ export default function SearchPropertyCard({
     e.preventDefault();
     e.stopPropagation();
     if (!listingKey) return;
+    if (onToggleSave) {
+      onToggleSave(listingKey);
+      return;
+    }
     const set = getSavedSet();
     if (set.has(listingKey)) {
       set.delete(listingKey);
-      setIsSaved(false);
+      setInternalSaved(false);
     } else {
       set.add(listingKey);
-      setIsSaved(true);
+      setInternalSaved(true);
     }
     saveSet(set);
   }
@@ -132,8 +142,7 @@ export default function SearchPropertyCard({
     <Link
       href={href}
       onClick={handleCardClick}
-      className="group block relative overflow-hidden bg-neutral-200 cursor-pointer md:rounded-[10px] md:shadow-[0_1px_4px_rgba(0,0,0,0.16)]"
-      style={{ aspectRatio: "16/9" }}
+      className="group block relative overflow-hidden bg-neutral-200 cursor-pointer aspect-[4/3] md:aspect-[16/9] md:rounded-[10px] md:shadow-[0_1px_4px_rgba(0,0,0,0.16)]"
     >
       {/* Image or placeholder */}
       {image ? (
@@ -186,15 +195,7 @@ export default function SearchPropertyCard({
           title={isSaved ? "Remove from saved" : "Save listing"}
           onClick={handleSave}
         >
-          <svg
-            className={`w-4 h-4 transition-colors ${isSaved ? "text-rose-500 fill-rose-500" : "text-neutral-700"}`}
-            fill={isSaved ? "currentColor" : "none"}
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            strokeWidth={1.8}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-          </svg>
+          <IconLove className={`w-4 h-4 ${isSaved ? "text-rose-500" : "text-neutral-700"}`} active={isSaved} />
         </button>
       </div>
 

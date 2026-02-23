@@ -1,21 +1,15 @@
 import type { Metadata } from "next";
-import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
-import PropertyGallery from "@/components/PropertyGallery";
-import {
-  IconCalendar,
-  IconDetailCounty,
-  IconDetailDepartment,
-  IconDetailInfo,
-  IconDetailTool,
-  IconDollar,
-  IconHouseSale,
-  IconRuler,
-  IconSearchFlat,
-  IconTimeClock,
-} from "@/components/IdxIcons";
 import PropertyInquiryForm from "@/components/PropertyInquiryForm";
-import { getProperty } from "@/lib/bridge";
+import {
+  AmenitiesSection,
+  BASIC_INFO_ICON_MAP,
+  DetailSection,
+  LocationSection,
+  PropertyMediaTabs,
+  SimilarListingsSection,
+} from "@/components/PropertyDetailPanel";
+import { fetchIdxSearch, getProperty } from "@/lib/bridge";
 import {
   buildIdxDetailSections,
   buildIdxLegalDisclosure,
@@ -23,7 +17,6 @@ import {
   formatAddress,
   formatCurrency,
   getListingPhotos,
-  type IdxDetailRow,
 } from "@/lib/property-utils";
 
 interface Props {
@@ -31,20 +24,6 @@ interface Props {
 }
 
 export const revalidate = 3600;
-
-const BASIC_INFO_ICON_MAP: Record<string, ReactNode> = {
-  "MLS #": <IconSearchFlat className="w-full h-full" />,
-  Type: <IconHouseSale className="w-full h-full" />,
-  Status: <IconDetailInfo className="w-full h-full" />,
-  "Subdivision/Complex": <IconDetailDepartment className="w-full h-full" />,
-  "Year Built": <IconDetailTool className="w-full h-full" />,
-  "Price Range": <IconDollar className="w-full h-full" />,
-  "Total Size": <IconRuler className="w-full h-full" />,
-  "Date Closed": <IconCalendar className="w-full h-full" />,
-  "Date Listed": <IconCalendar className="w-full h-full" />,
-  "Days On Market": <IconTimeClock className="w-full h-full" />,
-  "Community Name": <IconDetailCounty className="w-full h-full" />,
-};
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { listingKey } = await params;
@@ -80,70 +59,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-function DetailRow({
-  label,
-  value,
-  icon,
-}: {
-  label: string;
-  value: string;
-  icon?: ReactNode;
-}) {
-  return (
-    <div className="border border-gray-200 bg-white px-[15px] py-[10px]">
-      <p className="text-[13px] text-gray-500 mb-1 flex items-center gap-1.5">
-        {icon && <span className="w-[14px] h-[14px] shrink-0 text-gray-400">{icon}</span>}
-        {label}
-      </p>
-      <p className="text-[14px] text-[#1a1a1a] leading-[1.35]">{value}</p>
-    </div>
-  );
-}
-
-function DetailSection({
-  title,
-  rows,
-  iconMap,
-}: {
-  title: string;
-  rows: IdxDetailRow[];
-  iconMap?: Record<string, ReactNode>;
-}) {
-  if (rows.length === 0) return null;
-
-  return (
-    <section className="bg-white border-b border-gray-200 px-[15px] py-[20px]">
-      <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[15px]">{title}</h3>
-      <div className="grid sm:grid-cols-2 gap-2">
-        {rows.map((row) => (
-          <DetailRow key={row.label} label={row.label} value={row.value} icon={iconMap?.[row.label]} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function AmenitiesSection({ amenities }: { amenities: string[] }) {
-  if (amenities.length === 0) {
-    return null;
-  }
-
-  return (
-    <section className="bg-white border-b border-gray-200 px-[15px] py-[20px]">
-      <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[15px]">Amenities</h3>
-      <ul className="grid sm:grid-cols-2 gap-x-5 gap-y-2 text-[14px] text-gray-700 leading-[1.5]">
-        {amenities.map((amenity) => (
-          <li key={amenity} className="flex items-start gap-2">
-            <span aria-hidden className="text-gray-400 leading-[1.2] mt-[1px]">
-              •
-            </span>
-            <span>{amenity}</span>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
 
 function StatMetric({ label, value }: { label: string; value: string }) {
   return (
@@ -201,7 +116,13 @@ export default async function PropertyDetailPage({ params }: Props) {
 
   const lat = property.Latitude;
   const lng = property.Longitude;
-  const hasCoords = Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) > 0 && Math.abs(lng) > 0;
+  const similarListings = await fetchIdxSearch({
+    status: "Active",
+    top: 8,
+    skip: 0,
+    orderby: "ListPrice desc",
+    q: property.City || undefined,
+  });
 
   const featureGroups = [
     { label: "Amenities", values: details.amenities },
@@ -268,7 +189,7 @@ export default async function PropertyDetailPage({ params }: Props) {
 
         <div className="border-b border-black/10 bg-white">
           <div className="max-w-[1200px] mx-auto">
-            <PropertyGallery photos={photos} address={address} />
+            <PropertyMediaTabs photos={photos} address={address} latitude={lat} longitude={lng} />
           </div>
         </div>
 
@@ -295,9 +216,13 @@ export default async function PropertyDetailPage({ params }: Props) {
                 </div>
               </div>
 
-              <section className="bg-white border-b border-gray-200 px-[15px] py-[20px]">
-                <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[10px]">Description</h3>
-                <p className="text-[14px] leading-[1.6] text-gray-700">{details.description}</p>
+              <section className="bg-white border-b border-gray-200">
+                <div className="bg-[#f5f5f5] border-y border-gray-200 px-[15px] py-[10px]">
+                  <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a]">Description</h3>
+                </div>
+                <div className="px-[15px] py-[12px]">
+                  <p className="text-[14px] leading-[1.6] text-gray-700">{details.description}</p>
+                </div>
               </section>
 
               <DetailSection title="Basic Information" rows={details.basicInformationRows} iconMap={BASIC_INFO_ICON_MAP} />
@@ -305,42 +230,8 @@ export default async function PropertyDetailPage({ params }: Props) {
               <DetailSection title="Exterior Features" rows={details.exteriorFeatureRows} />
               <DetailSection title="Interior Features" rows={details.interiorFeatureRows} />
               <DetailSection title="Property Features" rows={details.propertyFeatureRows} />
-
-              {hasCoords && (
-                <section className="bg-white border-b border-gray-200 px-[15px] py-[20px]">
-                  <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[15px]">Location</h3>
-                  <a
-                    href={`https://www.google.com/maps?q=${lat},${lng}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block relative w-full aspect-[2/1] bg-gray-100 rounded-lg overflow-hidden group"
-                  >
-                    <img
-                      src={`https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=15&size=800x400&scale=2&markers=color:red%7C${lat},${lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || ""}`}
-                      alt={`Map of ${address}`}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                      <span className="opacity-0 group-hover:opacity-100 transition-opacity bg-white px-4 py-2 rounded-full text-sm font-medium text-[#1a1a1a] shadow">
-                        Open in Google Maps
-                      </span>
-                    </div>
-                  </a>
-                </section>
-              )}
-
-              <section className="bg-white border-b border-gray-200 px-[15px] py-[20px]">
-                <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[10px]">Similar Properties For Sale</h3>
-                <p className="text-[14px] text-gray-500 mb-[15px]">
-                  Explore more properties in {property.City || "this area"}.
-                </p>
-                <a
-                  href={`/search?q=${encodeURIComponent(property.City || "")}`}
-                  className="inline-flex items-center justify-center border border-gray-300 text-[#1a1a1a] px-5 py-2.5 rounded-full text-xs uppercase tracking-[0.12em] hover:bg-gray-100 transition-colors"
-                >
-                  View Similar Listings
-                </a>
-              </section>
+              <LocationSection latitude={lat} longitude={lng} address={address} />
+              <SimilarListingsSection listingKey={listingKey} city={property.City} listings={similarListings} />
 
               <section className="bg-[#f5f5f5] border-b border-gray-200 px-[15px] py-[20px] text-[11px] text-gray-500 leading-[1.6] space-y-2">
                 {legal.courtesyLine && <p>{legal.courtesyLine}</p>}
@@ -348,7 +239,7 @@ export default async function PropertyDetailPage({ params }: Props) {
               </section>
             </div>
 
-            <aside className="hidden lg:block p-[15px]">
+            <aside className="hidden lg:block p-[15px] self-start">
               <div className="border border-gray-200 bg-white p-[15px] space-y-[15px] sticky top-[82px]">
                 <div className="flex items-center gap-3">
                   <img src="/andrew-headshot.png" alt="Andrew Whalen" className="w-14 h-14 rounded-full object-cover" />
