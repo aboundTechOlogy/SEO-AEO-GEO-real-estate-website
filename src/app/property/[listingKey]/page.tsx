@@ -230,7 +230,13 @@ export default async function PropertyDetailPage({ params }: Props) {
               <DetailSection title="Exterior Features" rows={details.exteriorFeatureRows} />
               <DetailSection title="Interior Features" rows={details.interiorFeatureRows} />
               <DetailSection title="Property Features" rows={details.propertyFeatureRows} />
-              <LocationSection latitude={lat} longitude={lng} address={address} />
+              <LocationSection
+                latitude={lat}
+                longitude={lng}
+                address={address}
+                addressShort={[property.StreetNumber, property.StreetName].filter(Boolean).join(" ") || address}
+                addressLong={`${property.City || ""}, ${property.StateOrProvince || ""} ${property.PostalCode || ""}`}
+              />
               <SimilarListingsSection listingKey={listingKey} city={property.City} listings={similarListings} />
 
               <section className="bg-[#f5f5f5] border-b border-gray-200 px-[15px] py-[20px] text-[11px] text-gray-500 leading-[1.6] space-y-2">

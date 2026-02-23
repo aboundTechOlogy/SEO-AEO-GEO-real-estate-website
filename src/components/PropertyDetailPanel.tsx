@@ -16,7 +16,7 @@ import {
   getListingPhotos,
   type IdxDetailRow,
 } from "@/lib/property-utils";
-import { APIProvider, Map as GoogleMap, AdvancedMarker } from "@vis.gl/react-google-maps";
+import { APIProvider, Map as GoogleMap, Marker, useMap } from "@vis.gl/react-google-maps";
 import PropertyInquiryForm from "@/components/PropertyInquiryForm";
 import {
   IconCalendar,
@@ -130,10 +130,14 @@ export function LocationSection({
   latitude,
   longitude,
   address,
+  addressShort,
+  addressLong,
 }: {
   latitude: number;
   longitude: number;
   address: string;
+  addressShort?: string;
+  addressLong?: string;
 }) {
   const hasCoords =
     Number.isFinite(latitude) &&
@@ -149,56 +153,38 @@ export function LocationSection({
 
   return (
     <section className="bg-white border-b border-gray-200">
-      <SectionTitleStrip title="Location" />
-      <div className="px-[15px] py-[12px] space-y-3">
-        <div className="relative w-full aspect-[2/1] border border-gray-200 overflow-hidden bg-gray-100">
-          {apiKey ? (
-            <APIProvider apiKey={apiKey}>
-              <GoogleMap
-                defaultCenter={{ lat: latitude, lng: longitude }}
-                defaultZoom={15}
-                style={{ width: "100%", height: "100%" }}
-                gestureHandling="greedy"
-                mapTypeControl={true}
-                streetViewControl={true}
-                fullscreenControl={false}
-                rotateControl={false}
-                zoomControl={true}
-                scaleControl={true}
-              >
-                <AdvancedMarker position={{ lat: latitude, lng: longitude }} />
-              </GoogleMap>
-            </APIProvider>
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">
-              Map unavailable
-            </div>
-          )}
+      {/* Address header — matches Chad's ms-sf-title -flex with sf-icon-map */}
+      <div className="px-[15px] py-[12px] flex items-start gap-3">
+        <IconLocation className="w-[22px] h-[22px] shrink-0 text-[#1a1a1a] mt-[2px]" />
+        <div className="min-w-0">
+          <p className="text-[16px] font-semibold text-[#1a1a1a] leading-tight">{addressShort || address}</p>
+          {addressLong && <p className="text-[13px] text-gray-500 leading-tight mt-[2px]">{addressLong}</p>}
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={() =>
-              window.open(
-                `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${latitude},${longitude}`,
-                "_blank",
-                "noopener,noreferrer",
-              )
-            }
-            className="min-h-[35px] px-[15px] py-[6px] text-[14px] font-semibold border border-black rounded-[6px] bg-white text-[#1a1a1a] hover:bg-black hover:text-white transition-all duration-300 flex items-center gap-[6px]"
-          >
-            <IconStreetView className="w-[18px] h-[18px]" />
-            Street View
-          </button>
-          <a
-            href={`https://www.google.com/maps?q=${latitude},${longitude}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="min-h-[35px] px-[15px] py-[6px] text-[14px] font-semibold border border-black rounded-[6px] bg-white text-[#1a1a1a] hover:bg-black hover:text-white transition-all duration-300 flex items-center gap-[6px]"
-          >
-            Open in Google Maps
-          </a>
-        </div>
+      </div>
+      <div className="relative w-full aspect-[2/1] overflow-hidden bg-gray-100">
+        {apiKey ? (
+          <APIProvider apiKey={apiKey}>
+            <GoogleMap
+              defaultCenter={{ lat: latitude, lng: longitude }}
+              defaultZoom={18}
+              style={{ width: "100%", height: "100%" }}
+              gestureHandling="cooperative"
+              mapTypeControl={false}
+              streetViewControl={true}
+              fullscreenControl={false}
+              rotateControl={false}
+              zoomControl={false}
+              scaleControl={false}
+            >
+              <Marker position={{ lat: latitude, lng: longitude }} />
+              <DetailMapControls />
+            </GoogleMap>
+          </APIProvider>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">
+            Map unavailable
+          </div>
+        )}
       </div>
     </section>
   );
@@ -258,6 +244,99 @@ export function SimilarListingsSection({
         </div>
       </div>
     </section>
+  );
+}
+
+/* ── Custom map controls matching Chad Carroll's listing detail page ── */
+
+const CTRL = "w-[40px] h-[40px] bg-white flex items-center justify-center cursor-pointer text-[#333] hover:bg-gray-50 transition-colors";
+const CTRL_SHADOW = "shadow-[0_1px_4px_rgba(0,0,0,0.3)]";
+
+function DetailMapControls() {
+  const map = useMap();
+  const [isSatellite, setIsSatellite] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    function onFullscreenChange() {
+      setIsFullscreen(!!document.fullscreenElement);
+    }
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
+  }, []);
+
+  return (
+    <>
+      {/* Fullscreen — RIGHT_TOP (matches Chad's sf-icon-fullscreen) */}
+      <div className="absolute right-[10px] top-[10px] z-[5]" style={{ pointerEvents: "auto" }}>
+        <button type="button" aria-label={isFullscreen ? "Exit fullscreen" : "Fullscreen"} title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+          onClick={() => {
+            const container = map?.getDiv()?.parentElement;
+            if (!container) return;
+            if (document.fullscreenElement) {
+              document.exitFullscreen();
+            } else {
+              container.requestFullscreen();
+            }
+          }}
+          className={`${CTRL} ${CTRL_SHADOW} rounded-[4px] border border-[#e6e6e6]`}>
+          {isFullscreen ? (
+            /* sf-icon-fullscreen-exit */
+            <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+              <path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7" />
+            </svg>
+          ) : (
+            /* sf-icon-fullscreen */
+            <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+              <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+            </svg>
+          )}
+        </button>
+      </div>
+
+      {/* Zoom + Satellite — RIGHT_BOTTOM (matches Chad's layout) */}
+      <div className="absolute right-[10px] bottom-[30px] z-[5] flex flex-col" style={{ pointerEvents: "auto" }}>
+        {/* Zoom in (sf-icon-zoom) */}
+        <button type="button" aria-label="Zoom in" title="Zoom in"
+          onClick={() => map?.setZoom((map.getZoom() || 15) + 1)}
+          className={`${CTRL} ${CTRL_SHADOW} rounded-t-[4px] border border-[#e6e6e6]`}>
+          <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+        </button>
+        {/* Zoom out (sf-icon-min) */}
+        <button type="button" aria-label="Zoom out" title="Zoom out"
+          onClick={() => map?.setZoom((map.getZoom() || 15) - 1)}
+          className={`${CTRL} ${CTRL_SHADOW} border-x border-b border-[#e6e6e6]`}>
+          <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round">
+            <path d="M5 12h14" />
+          </svg>
+        </button>
+        {/* Satellite toggle (sf-icon-satellite / sf-icon-guide) */}
+        <button type="button"
+          aria-label={isSatellite ? "Switch to map view" : "Switch to satellite view"}
+          title={isSatellite ? "Map view" : "Satellite view"}
+          onClick={() => {
+            if (!map) return;
+            const next = !isSatellite;
+            setIsSatellite(next);
+            map.setMapTypeId(next ? "satellite" : "roadmap");
+          }}
+          className={`${CTRL} ${CTRL_SHADOW} border-x border-b border-[#e6e6e6] rounded-b-[4px]`}>
+          {isSatellite ? (
+            /* Map/roadmap icon (sf-icon-guide) */
+            <svg className="w-[20px] h-[20px]" viewBox="0 0 1024 1024" fill="currentColor">
+              <path d="M672 256l-320-128-352 128v768l352-128 320 128 352-128v-768l-352 128zM384 209.728l256 102.4v630.144l-256-102.4v-630.144zM64 300.832l256-93.088v631.808l-256 93.088v-631.808zM960 851.168l-256 93.088v-631.808l256-93.088v631.808z" />
+            </svg>
+          ) : (
+            /* Satellite icon (sf-icon-satellite) */
+            <svg className="w-[20px] h-[20px]" viewBox="0 0 1024 1024" fill="currentColor">
+              <path d="M128 533.334h-42.667c0.17 259.137 210.196 469.163 469.316 469.333h0.017v-42.667c-235.486-0.388-426.279-191.182-426.667-426.63v-0.037zM298.667 533.334h-42.667c0.194 164.871 133.796 298.473 298.648 298.667h0.018v-42.667c-141.336-0.121-255.879-114.664-256-255.988v-0.012zM938.667 759.041l-192-192-42.667 42.667-55.040-55.040 85.333-85.333-115.627-115.627-85.333 85.333-55.040-55.040 42.667-42.667-192-192h-17.92l-106.667 106.667 200.96 200.96 42.667-42.667 55.040 55.040-85.333 85.333 115.627 115.627 85.333-85.333 55.040 55.040-42.667 42.667 200.96 200.96 106.667-106.667z" />
+            </svg>
+          )}
+        </button>
+      </div>
+    </>
   );
 }
 
@@ -473,14 +552,15 @@ export function PropertyMediaTabs({
                 defaultZoom={15}
                 style={{ width: "100%", height: "100%" }}
                 gestureHandling="greedy"
-                mapTypeControl={true}
+                mapTypeControl={false}
                 streetViewControl={true}
                 fullscreenControl={false}
                 rotateControl={false}
-                zoomControl={true}
-                scaleControl={true}
+                zoomControl={false}
+                scaleControl={false}
               >
-                <AdvancedMarker position={{ lat: latitude, lng: longitude }} />
+                <Marker position={{ lat: latitude, lng: longitude }} />
+                <DetailMapControls />
               </GoogleMap>
             </APIProvider>
           ) : (
@@ -1065,7 +1145,13 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                 <DetailSection title="Exterior Features" rows={details.exteriorFeatureRows} />
                 <DetailSection title="Interior Features" rows={details.interiorFeatureRows} />
                 <DetailSection title="Property Features" rows={details.propertyFeatureRows} />
-                <LocationSection latitude={lat} longitude={lng} address={address} />
+                <LocationSection
+                  latitude={lat}
+                  longitude={lng}
+                  address={address}
+                  addressShort={[property.StreetNumber, property.StreetName].filter(Boolean).join(" ") || address}
+                  addressLong={`${property.City || ""}, ${property.StateOrProvince || ""} ${property.PostalCode || ""}`}
+                />
                 <SimilarListingsSection
                   listingKey={listingKey}
                   city={property.City}
