@@ -252,7 +252,7 @@ export function SimilarListingsSection({
 const CTRL = "w-[40px] h-[40px] bg-white flex items-center justify-center cursor-pointer text-[#333] hover:bg-gray-50 transition-colors";
 const CTRL_SHADOW = "shadow-[0_1px_4px_rgba(0,0,0,0.3)]";
 
-function DetailMapControls() {
+function DetailMapControls({ showFullscreen = true }: { showFullscreen?: boolean } = {}) {
   const map = useMap();
   const [isSatellite, setIsSatellite] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -267,30 +267,33 @@ function DetailMapControls() {
 
   return (
     <div className="absolute right-[10px] top-[10px] z-[5] flex flex-col" style={{ pointerEvents: "auto" }}>
-      {/* 1. Fullscreen / Expand (sf-icon-fullscreen) */}
-      <button type="button" aria-label={isFullscreen ? "Exit fullscreen" : "Fullscreen"} title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
-        onClick={() => {
-          const container = map?.getDiv()?.parentElement;
-          if (!container) return;
-          if (document.fullscreenElement) {
-            document.exitFullscreen();
-          } else {
-            container.requestFullscreen();
-          }
-        }}
-        className={`${CTRL} ${CTRL_SHADOW} rounded-[4px] border border-[#e6e6e6]`}>
-        {isFullscreen ? (
-          <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
-            <path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7" />
-          </svg>
-        ) : (
-          <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
-            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-          </svg>
-        )}
-      </button>
-
-      <div className="h-[6px]" />
+      {showFullscreen && (
+        <>
+          {/* 1. Fullscreen / Expand (sf-icon-fullscreen) */}
+          <button type="button" aria-label={isFullscreen ? "Exit fullscreen" : "Fullscreen"} title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+            onClick={() => {
+              const container = map?.getDiv()?.parentElement;
+              if (!container) return;
+              if (document.fullscreenElement) {
+                document.exitFullscreen();
+              } else {
+                container.requestFullscreen();
+              }
+            }}
+            className={`${CTRL} ${CTRL_SHADOW} rounded-[4px] border border-[#e6e6e6]`}>
+            {isFullscreen ? (
+              <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+                <path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7" />
+              </svg>
+            ) : (
+              <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+              </svg>
+            )}
+          </button>
+          <div className="h-[6px]" />
+        </>
+      )}
 
       {/* 2. Zoom in (sf-icon-zoom) */}
       <button type="button" aria-label="Zoom in" title="Zoom in"
@@ -418,13 +421,20 @@ export function PropertyMediaTabs({
       <button
         type="button"
         onClick={() => {
-          if (hasDisplayablePhotos && activeMediaTab === "photos") {
-            setIsPhotoViewerOpen(true);
+          if (activeMediaTab === "photos") {
+            if (hasDisplayablePhotos) setIsPhotoViewerOpen(true);
+          } else if (activeMediaTab === "map") {
+            const mapContainer = document.querySelector<HTMLElement>("[data-media-map]");
+            if (mapContainer) mapContainer.requestFullscreen();
           }
         }}
-        className="hidden lg:flex absolute right-[15px] top-[15px] z-20 w-[35px] h-[35px] rounded-md bg-black text-white items-center justify-center hover:bg-black/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-        aria-label="Open full photo viewer"
-        disabled={!hasDisplayablePhotos || activeMediaTab !== "photos"}
+        className={`hidden lg:flex absolute right-[15px] top-[15px] z-20 w-[35px] h-[35px] rounded-md items-center justify-center transition-colors ${
+          activeMediaTab === "map"
+            ? "bg-white text-[#333] border border-[#e6e6e6] shadow-[0_1px_4px_rgba(0,0,0,0.3)] hover:bg-gray-50"
+            : "bg-black text-white hover:bg-black/90"
+        } ${activeMediaTab === "photos" && !hasDisplayablePhotos ? "opacity-40 cursor-not-allowed" : ""} ${activeMediaTab === "virtual-tour" ? "opacity-40 cursor-not-allowed" : ""}`}
+        aria-label={activeMediaTab === "map" ? "Fullscreen map" : "Open full photo viewer"}
+        disabled={activeMediaTab === "virtual-tour" || (activeMediaTab === "photos" && !hasDisplayablePhotos)}
       >
         <IconExpand className="w-[18px] h-[18px]" />
       </button>
@@ -538,7 +548,7 @@ export function PropertyMediaTabs({
       )}
 
       {activeMediaTab === "map" && (
-        <div className="relative w-full aspect-video lg:h-[450px] lg:aspect-auto bg-gray-100">
+        <div data-media-map className="relative w-full aspect-video lg:h-[450px] lg:aspect-auto bg-gray-100">
           {hasCoords && apiKey ? (
             <APIProvider apiKey={apiKey}>
               <GoogleMap
@@ -554,7 +564,7 @@ export function PropertyMediaTabs({
                 scaleControl={false}
               >
                 <Marker position={{ lat: latitude, lng: longitude }} />
-                <DetailMapControls />
+                <DetailMapControls showFullscreen={false} />
               </GoogleMap>
             </APIProvider>
           ) : (
