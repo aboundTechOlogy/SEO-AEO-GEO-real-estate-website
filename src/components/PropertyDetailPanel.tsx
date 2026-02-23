@@ -340,7 +340,6 @@ function DetailMapControls({ showFullscreen = true }: { showFullscreen?: boolean
 /** Embedded Google Street View Panorama using raw Maps JS API */
 function EmbeddedStreetView({ latitude, longitude }: { latitude: number; longitude: number }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const panoRef = useRef<google.maps.StreetViewPanorama | null>(null);
 
   useEffect(() => {
@@ -384,37 +383,9 @@ function EmbeddedStreetView({ latitude, longitude }: { latitude: number; longitu
     return () => { panoRef.current = null; };
   }, [latitude, longitude]);
 
-  useEffect(() => {
-    function onFsChange() { setIsFullscreen(!!document.fullscreenElement); }
-    document.addEventListener("fullscreenchange", onFsChange);
-    return () => document.removeEventListener("fullscreenchange", onFsChange);
-  }, []);
-
   return (
     <div data-media-sv className="relative w-full h-full">
       <div ref={containerRef} className="w-full h-full" />
-      {/* Fullscreen button */}
-      <button
-        type="button"
-        aria-label={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
-        onClick={() => {
-          const el = containerRef.current;
-          if (!el) return;
-          if (document.fullscreenElement) document.exitFullscreen();
-          else el.requestFullscreen();
-        }}
-        className="absolute right-[10px] top-[10px] z-[5] w-[40px] h-[40px] bg-white flex items-center justify-center cursor-pointer text-[#333] hover:bg-gray-50 transition-colors shadow-[0_1px_4px_rgba(0,0,0,0.3)] rounded-[4px] border border-[#e6e6e6]"
-      >
-        {isFullscreen ? (
-          <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
-            <path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7" />
-          </svg>
-        ) : (
-          <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
-            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-          </svg>
-        )}
-      </button>
     </div>
   );
 }
@@ -503,24 +474,32 @@ export function PropertyMediaTabs({
         )}
       </div>
 
-      {activeMediaTab !== "street-view" && (
-        <button
-          type="button"
-          onClick={() => {
-            if (activeMediaTab === "photos") {
-              if (hasDisplayablePhotos) setIsPhotoViewerOpen(true);
-            } else if (activeMediaTab === "map") {
-              const mapContainer = document.querySelector<HTMLElement>("[data-media-map]");
-              if (mapContainer) mapContainer.requestFullscreen();
+      <button
+        type="button"
+        onClick={() => {
+          if (activeMediaTab === "photos") {
+            if (hasDisplayablePhotos) setIsPhotoViewerOpen(true);
+          } else if (activeMediaTab === "map") {
+            const mapContainer = document.querySelector<HTMLElement>("[data-media-map]");
+            if (mapContainer) mapContainer.requestFullscreen();
+          } else if (activeMediaTab === "street-view") {
+            const svContainer = document.querySelector<HTMLElement>("[data-media-sv]");
+            if (svContainer) {
+              if (document.fullscreenElement) document.exitFullscreen();
+              else svContainer.requestFullscreen();
             }
-          }}
-          className={`hidden lg:flex absolute right-[15px] top-[15px] z-20 w-[35px] h-[35px] rounded-[6px] items-center justify-center transition-colors bg-white text-[#333] border border-[#e6e6e6] shadow-[0_1px_4px_rgba(0,0,0,0.3)] hover:bg-gray-50 ${activeMediaTab === "photos" && !hasDisplayablePhotos ? "opacity-40 cursor-not-allowed" : ""}`}
-          aria-label={activeMediaTab === "map" ? "Fullscreen map" : "Open full photo viewer"}
-          disabled={activeMediaTab === "photos" && !hasDisplayablePhotos}
-        >
-          <IconExpand className="w-[18px] h-[18px]" />
-        </button>
-      )}
+          }
+        }}
+        className={`hidden lg:flex absolute right-[15px] top-[15px] z-20 w-[35px] h-[35px] rounded-[6px] items-center justify-center transition-colors ${
+          activeMediaTab === "photos"
+            ? "bg-black text-white hover:bg-black/90"
+            : "bg-white text-[#333] border border-[#e6e6e6] shadow-[0_1px_4px_rgba(0,0,0,0.3)] hover:bg-gray-50"
+        } ${activeMediaTab === "photos" && !hasDisplayablePhotos ? "opacity-40 cursor-not-allowed" : ""}`}
+        aria-label={activeMediaTab === "photos" ? "Open full photo viewer" : "Fullscreen"}
+        disabled={activeMediaTab === "photos" && !hasDisplayablePhotos}
+      >
+        <IconExpand className="w-[18px] h-[18px]" />
+      </button>
 
       {activeMediaTab === "photos" && (
         <>
