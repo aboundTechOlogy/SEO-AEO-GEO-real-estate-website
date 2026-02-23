@@ -16,7 +16,7 @@ import {
   getListingPhotos,
   type IdxDetailRow,
 } from "@/lib/property-utils";
-import { APIProvider, Map as GoogleMap, AdvancedMarker, useMap } from "@vis.gl/react-google-maps";
+import { APIProvider, Map as GoogleMap, AdvancedMarker } from "@vis.gl/react-google-maps";
 import PropertyInquiryForm from "@/components/PropertyInquiryForm";
 import {
   IconCalendar,
@@ -159,15 +159,14 @@ export function LocationSection({
                 defaultZoom={15}
                 style={{ width: "100%", height: "100%" }}
                 gestureHandling="greedy"
-                mapTypeControl={false}
-                streetViewControl={false}
+                mapTypeControl={true}
+                streetViewControl={true}
                 fullscreenControl={false}
                 rotateControl={false}
-                zoomControl={false}
+                zoomControl={true}
                 scaleControl={true}
               >
                 <AdvancedMarker position={{ lat: latitude, lng: longitude }} />
-                <DetailMapControls lat={latitude} lng={longitude} />
               </GoogleMap>
             </APIProvider>
           ) : (
@@ -259,103 +258,6 @@ export function SimilarListingsSection({
         </div>
       </div>
     </section>
-  );
-}
-
-/* ── Map controls for detail panel (matching Carroll's toolbar) ── */
-
-const MAP_BTN = "w-10 h-10 bg-white flex items-center justify-center transition-colors cursor-pointer text-neutral-700 hover:bg-neutral-50";
-const MAP_BTN_SHADOW = "shadow-[0_1px_4px_rgba(0,0,0,0.3)]";
-
-function MapPlusIcon() {
-  return (
-    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round">
-      <path d="M12 5v14M5 12h14" />
-    </svg>
-  );
-}
-
-function MapMinusIcon() {
-  return (
-    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round">
-      <path d="M5 12h14" />
-    </svg>
-  );
-}
-
-function MapSatelliteIcon() {
-  return (
-    <svg className="w-5 h-5" viewBox="0 0 1024 1024" fill="currentColor">
-      <path d="M128 533.334h-42.667c0.17 259.137 210.196 469.163 469.316 469.333h0.017v-42.667c-235.486-0.388-426.279-191.182-426.667-426.63v-0.037zM298.667 533.334h-42.667c0.194 164.871 133.796 298.473 298.648 298.667h0.018v-42.667c-141.336-0.121-255.879-114.664-256-255.988v-0.012zM938.667 759.041l-192-192-42.667 42.667-55.040-55.040 85.333-85.333-115.627-115.627-85.333 85.333-55.040-55.040 42.667-42.667-192-192h-17.92l-106.667 106.667 200.96 200.96 42.667-42.667 55.040 55.040-85.333 85.333 115.627 115.627 85.333-85.333 55.040 55.040-42.667 42.667 200.96 200.96 106.667-106.667z" />
-    </svg>
-  );
-}
-
-function MapViewIcon() {
-  return (
-    <svg className="w-5 h-5" viewBox="0 0 1024 1024" fill="currentColor">
-      <path d="M672 256l-320-128-352 128v768l352-128 320 128 352-128v-768l-352 128zM384 209.728l256 102.4v630.144l-256-102.4v-630.144zM64 300.832l256-93.088v631.808l-256 93.088v-631.808zM960 851.168l-256 93.088v-631.808l256-93.088v631.808z" />
-    </svg>
-  );
-}
-
-function MapRecenterIcon() {
-  return (
-    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
-      <circle cx="12" cy="12" r="3" />
-      <path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
-    </svg>
-  );
-}
-
-function DetailMapControls({ lat, lng }: { lat: number; lng: number }) {
-  const map = useMap();
-  const [isSatellite, setIsSatellite] = useState(false);
-
-  const handleZoomIn = useCallback(() => {
-    if (!map) return;
-    map.setZoom((map.getZoom() || 15) + 1);
-  }, [map]);
-
-  const handleZoomOut = useCallback(() => {
-    if (!map) return;
-    map.setZoom((map.getZoom() || 15) - 1);
-  }, [map]);
-
-  const handleSatelliteToggle = useCallback(() => {
-    if (!map) return;
-    const next = !isSatellite;
-    setIsSatellite(next);
-    map.setMapTypeId(next ? "hybrid" : "roadmap");
-  }, [map, isSatellite]);
-
-  const handleRecenter = useCallback(() => {
-    if (!map) return;
-    map.panTo({ lat, lng });
-  }, [map, lat, lng]);
-
-  return (
-    <div className="absolute right-[10px] top-[10px] z-[5] flex flex-col" style={{ pointerEvents: "auto" }}>
-      <button type="button" onClick={handleZoomIn} aria-label="Zoom in" title="Zoom in"
-        className={`${MAP_BTN} ${MAP_BTN_SHADOW} rounded-t-[6px] border border-black/10`}>
-        <MapPlusIcon />
-      </button>
-      <button type="button" onClick={handleZoomOut} aria-label="Zoom out" title="Zoom out"
-        className={`${MAP_BTN} ${MAP_BTN_SHADOW} border-x border-b border-black/10`}>
-        <MapMinusIcon />
-      </button>
-      <div className="h-2" />
-      <button type="button" onClick={handleSatelliteToggle}
-        aria-label={isSatellite ? "Map view" : "Satellite view"}
-        title={isSatellite ? "Map view" : "Satellite view"}
-        className={`${MAP_BTN} ${MAP_BTN_SHADOW} rounded-t-[6px] border border-black/10`}>
-        {isSatellite ? <MapViewIcon /> : <MapSatelliteIcon />}
-      </button>
-      <button type="button" onClick={handleRecenter} aria-label="Recenter map" title="Recenter"
-        className={`${MAP_BTN} ${MAP_BTN_SHADOW} rounded-b-[6px] border-x border-b border-black/10`}>
-        <MapRecenterIcon />
-      </button>
-    </div>
   );
 }
 
@@ -571,15 +473,14 @@ export function PropertyMediaTabs({
                 defaultZoom={15}
                 style={{ width: "100%", height: "100%" }}
                 gestureHandling="greedy"
-                mapTypeControl={false}
-                streetViewControl={false}
+                mapTypeControl={true}
+                streetViewControl={true}
                 fullscreenControl={false}
                 rotateControl={false}
-                zoomControl={false}
+                zoomControl={true}
                 scaleControl={true}
               >
                 <AdvancedMarker position={{ lat: latitude, lng: longitude }} />
-                <DetailMapControls lat={latitude} lng={longitude} />
               </GoogleMap>
             </APIProvider>
           ) : (
