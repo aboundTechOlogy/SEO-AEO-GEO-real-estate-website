@@ -757,6 +757,18 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
     setTouchCurrentX(null);
   }
 
+  // useSWR must be called unconditionally (React Rules of Hooks) — use null key to skip fetch when property is absent
+  const similarQuery = property?.City
+    ? `/api/search?status=Active&top=8&orderby=ListPrice%20desc&q=${encodeURIComponent(property.City)}`
+    : property
+      ? `/api/search?status=Active&top=8&orderby=ListPrice%20desc`
+      : null;
+  const { data: similarListings } = useSWR<BridgeIdxSearchResponse>(
+    similarQuery,
+    fetchJson,
+    { revalidateOnFocus: false },
+  );
+
   if (!property) {
     return (
       <div
@@ -813,14 +825,6 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
 
   const lat = property.Latitude;
   const lng = property.Longitude;
-  const similarQuery = property.City
-    ? `/api/search?status=Active&top=8&orderby=ListPrice%20desc&q=${encodeURIComponent(property.City)}`
-    : `/api/search?status=Active&top=8&orderby=ListPrice%20desc`;
-  const { data: similarListings } = useSWR<BridgeIdxSearchResponse>(
-    similarQuery,
-    fetchJson,
-    { revalidateOnFocus: false },
-  );
 
   const canonicalUrl =
     typeof window !== "undefined"
