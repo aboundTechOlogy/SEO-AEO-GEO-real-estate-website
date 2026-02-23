@@ -840,7 +840,6 @@ function RectTabButton({
 export default function PropertyDetailPanel({ property, listingKey }: PropertyDetailPanelProps) {
   const router = useRouter();
   const [isClosing, setIsClosing] = useState(true);
-  const [showFullDescription, setShowFullDescription] = useState(false);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchCurrentX, setTouchCurrentX] = useState<number | null>(null);
   const [isSaved, setIsSaved] = useState(false);
@@ -915,8 +914,6 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
   }, []);
 
   useEffect(() => {
-    setShowFullDescription(false);
-
     try {
       const raw = window.localStorage.getItem("savedListings");
       const parsed = raw ? (JSON.parse(raw) as string[]) : [];
@@ -1016,8 +1013,6 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
   const details = buildIdxDetailSections(property);
   const legal = buildIdxLegalDisclosure(property);
   const remarks = details.description;
-  const isLongDescription = remarks.length > 340;
-  const description = showFullDescription ? remarks : `${remarks.slice(0, 340)}${isLongDescription ? "..." : ""}`;
 
   const bathsCount =
     property.BathroomsTotalInteger ??
@@ -1197,16 +1192,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                 <section className="bg-white border-b border-gray-200">
                   <SectionTitleStrip title="Description" />
                   <div className="px-[15px] py-[12px]">
-                    <p className="text-[14px] leading-[1.6] text-gray-700">{description}</p>
-                    {isLongDescription && (
-                      <button
-                        type="button"
-                        onClick={() => setShowFullDescription((prev) => !prev)}
-                        className="mt-2 text-[14px] text-gray-700 underline underline-offset-2 hover:text-black transition-colors"
-                      >
-                        {showFullDescription ? "Show less" : "Read more"}
-                      </button>
-                    )}
+                    <p className="text-[14px] leading-[1.6] text-gray-700">{remarks}</p>
                   </div>
                 </section>
 
