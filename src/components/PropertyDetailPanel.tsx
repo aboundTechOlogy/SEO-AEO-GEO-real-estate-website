@@ -1032,8 +1032,8 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                 </section>
               </div>
 
-              <aside className="hidden lg:block p-[15px] self-start">
-                <div className="border border-gray-200 bg-white p-[15px] space-y-[15px] sticky top-[82px]">
+              <aside className="hidden lg:block p-[15px] self-stretch">
+                <div className="border border-gray-200 bg-white p-[15px] space-y-[15px] sticky top-[85px]">
                   <div className="flex items-center gap-3">
                     <img src="/andrew-headshot.png" alt="Andrew Whalen" className="w-14 h-14 rounded-full object-cover" />
                     <div>
