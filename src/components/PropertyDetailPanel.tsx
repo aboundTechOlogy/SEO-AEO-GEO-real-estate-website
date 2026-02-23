@@ -49,7 +49,7 @@ interface PropertyDetailPanelProps {
   listingKey: string;
 }
 
-type MediaTab = "photos" | "map" | "virtual-tour";
+type MediaTab = "photos" | "map" | "street-view" | "virtual-tour";
 
 async function fetchJson<T>(url: string): Promise<T> {
   const response = await fetch(url);
@@ -337,6 +337,88 @@ function DetailMapControls({ showFullscreen = true }: { showFullscreen?: boolean
   );
 }
 
+/** Embedded Google Street View Panorama using raw Maps JS API */
+function EmbeddedStreetView({ latitude, longitude }: { latitude: number; longitude: number }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const panoRef = useRef<google.maps.StreetViewPanorama | null>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || typeof google === "undefined") return;
+    const pano = new google.maps.StreetViewPanorama(containerRef.current, {
+      position: { lat: latitude, lng: longitude },
+      pov: { heading: 34, pitch: 10 },
+      zoom: 1,
+      addressControl: false,
+      linksControl: true,
+      panControl: true,
+      enableCloseButton: false,
+      zoomControl: false,
+      fullscreenControl: false,
+    });
+    panoRef.current = pano;
+
+    /* Add custom zoom +/- controls */
+    const controlDiv = document.createElement("div");
+    controlDiv.className = "gm-sv-custom-controls";
+    controlDiv.style.cssText = "display:flex;flex-direction:column;margin:10px 10px 0 0;";
+
+    const btnStyle = "width:40px;height:40px;background:#fff;border:1px solid #e6e6e6;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#333;font-size:18px;box-shadow:0 1px 4px rgba(0,0,0,0.3);";
+
+    const zoomIn = document.createElement("button");
+    zoomIn.textContent = "+";
+    zoomIn.style.cssText = btnStyle + "border-radius:4px 4px 0 0;";
+    zoomIn.title = "Zoom in";
+    zoomIn.onclick = () => pano.setZoom(Math.min((pano.getZoom() ?? 1) + 1, 5));
+
+    const zoomOut = document.createElement("button");
+    zoomOut.textContent = "\u2212";
+    zoomOut.style.cssText = btnStyle + "border-radius:0 0 4px 4px;border-top:none;";
+    zoomOut.title = "Zoom out";
+    zoomOut.onclick = () => pano.setZoom(Math.max((pano.getZoom() ?? 1) - 1, 0));
+
+    controlDiv.appendChild(zoomIn);
+    controlDiv.appendChild(zoomOut);
+    pano.controls[google.maps.ControlPosition.RIGHT_TOP]?.push(controlDiv);
+
+    return () => { panoRef.current = null; };
+  }, [latitude, longitude]);
+
+  useEffect(() => {
+    function onFsChange() { setIsFullscreen(!!document.fullscreenElement); }
+    document.addEventListener("fullscreenchange", onFsChange);
+    return () => document.removeEventListener("fullscreenchange", onFsChange);
+  }, []);
+
+  return (
+    <div data-media-sv className="relative w-full h-full">
+      <div ref={containerRef} className="w-full h-full" />
+      {/* Fullscreen button */}
+      <button
+        type="button"
+        aria-label={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+        onClick={() => {
+          const el = containerRef.current;
+          if (!el) return;
+          if (document.fullscreenElement) document.exitFullscreen();
+          else el.requestFullscreen();
+        }}
+        className="absolute right-[10px] top-[10px] z-[5] w-[40px] h-[40px] bg-white flex items-center justify-center cursor-pointer text-[#333] hover:bg-gray-50 transition-colors shadow-[0_1px_4px_rgba(0,0,0,0.3)] rounded-[4px] border border-[#e6e6e6]"
+      >
+        {isFullscreen ? (
+          <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+            <path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7" />
+          </svg>
+        ) : (
+          <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+          </svg>
+        )}
+      </button>
+    </div>
+  );
+}
+
 export function PropertyMediaTabs({
   photos,
   address,
@@ -418,26 +500,28 @@ export function PropertyMediaTabs({
         />
       </div>
 
-      <button
-        type="button"
-        onClick={() => {
-          if (activeMediaTab === "photos") {
-            if (hasDisplayablePhotos) setIsPhotoViewerOpen(true);
-          } else if (activeMediaTab === "map") {
-            const mapContainer = document.querySelector<HTMLElement>("[data-media-map]");
-            if (mapContainer) mapContainer.requestFullscreen();
-          }
-        }}
-        className={`hidden lg:flex absolute right-[15px] top-[15px] z-20 w-[35px] h-[35px] rounded-md items-center justify-center transition-colors ${
-          activeMediaTab === "map"
-            ? "bg-white text-[#333] border border-[#e6e6e6] shadow-[0_1px_4px_rgba(0,0,0,0.3)] hover:bg-gray-50"
-            : "bg-black text-white hover:bg-black/90"
-        } ${activeMediaTab === "photos" && !hasDisplayablePhotos ? "opacity-40 cursor-not-allowed" : ""} ${activeMediaTab === "virtual-tour" ? "opacity-40 cursor-not-allowed" : ""}`}
-        aria-label={activeMediaTab === "map" ? "Fullscreen map" : "Open full photo viewer"}
-        disabled={activeMediaTab === "virtual-tour" || (activeMediaTab === "photos" && !hasDisplayablePhotos)}
-      >
-        <IconExpand className="w-[18px] h-[18px]" />
-      </button>
+      {activeMediaTab !== "street-view" && (
+        <button
+          type="button"
+          onClick={() => {
+            if (activeMediaTab === "photos") {
+              if (hasDisplayablePhotos) setIsPhotoViewerOpen(true);
+            } else if (activeMediaTab === "map") {
+              const mapContainer = document.querySelector<HTMLElement>("[data-media-map]");
+              if (mapContainer) mapContainer.requestFullscreen();
+            }
+          }}
+          className={`hidden lg:flex absolute right-[15px] top-[15px] z-20 w-[35px] h-[35px] rounded-md items-center justify-center transition-colors ${
+            activeMediaTab === "map"
+              ? "bg-white text-[#333] border border-[#e6e6e6] shadow-[0_1px_4px_rgba(0,0,0,0.3)] hover:bg-gray-50"
+              : "bg-black text-white hover:bg-black/90"
+          } ${activeMediaTab === "photos" && !hasDisplayablePhotos ? "opacity-40 cursor-not-allowed" : ""} ${activeMediaTab === "virtual-tour" ? "opacity-40 cursor-not-allowed" : ""}`}
+          aria-label={activeMediaTab === "map" ? "Fullscreen map" : "Open full photo viewer"}
+          disabled={activeMediaTab === "virtual-tour" || (activeMediaTab === "photos" && !hasDisplayablePhotos)}
+        >
+          <IconExpand className="w-[18px] h-[18px]" />
+        </button>
+      )}
 
       {activeMediaTab === "photos" && (
         <>
@@ -524,13 +608,7 @@ export function PropertyMediaTabs({
           <div className="absolute left-[15px] bottom-[15px] z-20">
             <button
               type="button"
-              onClick={() =>
-                window.open(
-                  `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${latitude},${longitude}`,
-                  "_blank",
-                  "noopener,noreferrer",
-                )
-              }
+              onClick={() => hasCoords && setActiveMediaTab("street-view")}
               disabled={!hasCoords}
               className="min-h-[35px] px-[15px] py-[6px] text-[14px] font-semibold border border-black rounded-[6px] bg-white text-[#1a1a1a] hover:bg-black hover:text-white transition-all duration-300 flex items-center gap-[6px] disabled:opacity-50 disabled:cursor-default"
             >
@@ -576,15 +654,34 @@ export function PropertyMediaTabs({
           <div className="absolute left-[15px] bottom-[15px] z-20">
             <button
               type="button"
-              onClick={() =>
-                window.open(
-                  `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${latitude},${longitude}`,
-                  "_blank",
-                  "noopener,noreferrer",
-                )
-              }
+              onClick={() => hasCoords && setActiveMediaTab("street-view")}
               disabled={!hasCoords}
               className="min-h-[35px] px-[15px] py-[6px] text-[14px] font-semibold border border-black rounded-[6px] bg-white text-[#1a1a1a] hover:bg-black hover:text-white transition-all duration-300 flex items-center gap-[6px] disabled:opacity-50 disabled:cursor-default"
+            >
+              <IconStreetView className="w-[18px] h-[18px]" />
+              Street View
+            </button>
+          </div>
+        </div>
+      )}
+
+      {activeMediaTab === "street-view" && (
+        <div className="relative w-full aspect-video lg:h-[450px] lg:aspect-auto bg-gray-100">
+          {hasCoords && apiKey ? (
+            <APIProvider apiKey={apiKey}>
+              <EmbeddedStreetView latitude={latitude} longitude={longitude} />
+            </APIProvider>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">
+              Street View unavailable
+            </div>
+          )}
+
+          <div className="absolute left-[15px] bottom-[15px] z-20">
+            <button
+              type="button"
+              onClick={() => setActiveMediaTab("street-view")}
+              className="min-h-[35px] px-[15px] py-[6px] text-[14px] font-semibold border border-black rounded-[6px] bg-black text-white transition-all duration-300 flex items-center gap-[6px]"
             >
               <IconStreetView className="w-[18px] h-[18px]" />
               Street View
