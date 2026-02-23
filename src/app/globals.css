@@ -36,17 +36,18 @@ html {
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Custom scrollbar */
+/* Custom scrollbar — matches Carroll IDXBoost */
 ::-webkit-scrollbar {
-  width: 11px;
+  width: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #eceff3;
+  border-radius: 50px;
+  background-color: rgba(0, 0, 0, 0.15);
 }
 ::-webkit-scrollbar-thumb {
-  background: #b6bec8;
-  border-radius: 8px;
-  border: 2px solid #eceff3;
+  border-radius: 50px;
+  background-color: #1a1a1a;
+  min-height: 45px;
 }
 
 /* Hero parallax — desktop only */
