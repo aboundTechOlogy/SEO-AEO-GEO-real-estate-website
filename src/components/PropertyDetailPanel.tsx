@@ -2,9 +2,12 @@
 
 import type { ReactNode, TouchEvent } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type { BridgeProperty } from "@/lib/bridge";
+import useSWR from "swr";
+import type { BridgeIdxSearchResponse, BridgeMedia, BridgeProperty } from "@/lib/bridge";
 import {
+  buildSimilarListingSlots,
   buildIdxDetailSections,
   buildIdxLegalDisclosure,
   calculatePricePerSqft,
@@ -29,12 +32,10 @@ import {
   IconEnvelope,
   IconChevronLeft,
   IconChevronRight,
-  IconCamera,
   IconDollar,
   IconHouseSale,
   IconRuler,
   IconSearchFlat,
-  IconStreetView,
   IconTimeClock,
   IconVirtual360,
 } from "@/components/IdxIcons";
@@ -44,41 +45,70 @@ interface PropertyDetailPanelProps {
   listingKey: string;
 }
 
-function DetailRow({ label, value, icon }: { label: string; value: string; icon?: ReactNode }) {
+type MediaTab = "photos" | "map" | "virtual-tour";
+
+async function fetchJson<T>(url: string): Promise<T> {
+  const response = await fetch(url);
+  const data = (await response.json()) as T & { error?: string };
+  if (!response.ok) {
+    throw new Error(data.error || "Request failed.");
+  }
+  return data;
+}
+
+function SectionTitleStrip({ title }: { title: string }) {
   return (
-    <div className="border border-gray-200 bg-white px-[15px] py-[10px]">
-      <p className="text-[13px] text-gray-500 mb-1 flex items-center gap-1.5">
-        {icon && <span className="w-[14px] h-[14px] shrink-0 text-gray-400">{icon}</span>}
-        {label}
-      </p>
-      <p className="text-[14px] text-[#1a1a1a] leading-[1.35]">{value}</p>
+    <div className="bg-[#f5f5f5] border-y border-gray-200 px-[15px] py-[10px]">
+      <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a]">{title}</h3>
     </div>
   );
 }
 
-function DetailSection({ title, rows, iconMap }: { title: string; rows: IdxDetailRow[]; iconMap?: Record<string, ReactNode> }) {
+function DetailRow({ label, value, icon }: { label: string; value: string; icon?: ReactNode }) {
+  return (
+    <li className="grid gap-1.5 border-b border-gray-200 py-[10px] last:border-b-0 sm:grid-cols-[230px_minmax(0,1fr)]">
+      <p className="text-[13px] text-gray-600 flex items-center gap-2">
+        {icon && <span className="w-4 h-4 shrink-0 text-gray-500">{icon}</span>}
+        <span>{label}</span>
+      </p>
+      <p className="text-[14px] text-[#1a1a1a] leading-[1.5]">{value}</p>
+    </li>
+  );
+}
+
+export function DetailSection({
+  title,
+  rows,
+  iconMap,
+}: {
+  title: string;
+  rows: IdxDetailRow[];
+  iconMap?: Record<string, ReactNode>;
+}) {
   if (rows.length === 0) return null;
   return (
-    <section className="bg-white border-b border-gray-200 px-[15px] py-[20px]">
-      <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[15px]">{title}</h3>
-      <div className="grid sm:grid-cols-2 gap-2">
+    <section className="bg-white border-b border-gray-200">
+      <SectionTitleStrip title={title} />
+      <div className="px-[15px] py-[12px]">
+        <ul>
         {rows.map((row) => (
-          <DetailRow key={row.label} label={row.label} value={row.value} icon={iconMap?.[row.label]} />
+            <DetailRow key={row.label} label={row.label} value={row.value} icon={iconMap?.[row.label]} />
         ))}
+        </ul>
       </div>
     </section>
   );
 }
 
-function AmenitiesSection({ amenities }: { amenities: string[] }) {
+export function AmenitiesSection({ amenities }: { amenities: string[] }) {
   if (amenities.length === 0) {
     return null;
   }
 
   return (
-    <section className="bg-white border-b border-gray-200 px-[15px] py-[20px]">
-      <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[15px]">Amenities</h3>
-      <ul className="grid sm:grid-cols-2 gap-x-5 gap-y-2 text-[14px] text-gray-700 leading-[1.5]">
+    <section className="bg-white border-b border-gray-200">
+      <SectionTitleStrip title="Amenities" />
+      <ul className="px-[15px] py-[12px] grid sm:grid-cols-2 gap-x-6 gap-y-2 text-[14px] text-gray-700 leading-[1.5]">
         {amenities.map((amenity) => (
           <li key={amenity} className="flex items-start gap-2">
             <span aria-hidden className="text-gray-400 leading-[1.2] mt-[1px]">
@@ -89,6 +119,412 @@ function AmenitiesSection({ amenities }: { amenities: string[] }) {
         ))}
       </ul>
     </section>
+  );
+}
+
+export function LocationSection({
+  latitude,
+  longitude,
+  address,
+}: {
+  latitude: number;
+  longitude: number;
+  address: string;
+}) {
+  const hasCoords =
+    Number.isFinite(latitude) &&
+    Number.isFinite(longitude) &&
+    Math.abs(latitude) > 0 &&
+    Math.abs(longitude) > 0;
+
+  if (!hasCoords) {
+    return null;
+  }
+
+  const mapEmbedUrl = `https://www.google.com/maps?q=${latitude},${longitude}&z=15&output=embed`;
+
+  return (
+    <section className="bg-white border-b border-gray-200">
+      <SectionTitleStrip title="Location" />
+      <div className="px-[15px] py-[12px] space-y-3">
+        <div className="w-full aspect-[2/1] border border-gray-200 overflow-hidden bg-gray-100">
+          <iframe
+            src={mapEmbedUrl}
+            title={`Map of ${address}`}
+            className="w-full h-full border-0"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() =>
+              window.open(
+                `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${latitude},${longitude}`,
+                "_blank",
+                "noopener,noreferrer",
+              )
+            }
+            className="rounded-full border border-gray-300 bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-[#1a1a1a] hover:bg-gray-100 transition-colors"
+          >
+            Street View
+          </button>
+          <a
+            href={`https://www.google.com/maps?q=${latitude},${longitude}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-full border border-gray-300 bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-[#1a1a1a] hover:bg-gray-100 transition-colors"
+          >
+            Open in Google Maps
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function SimilarListingsSection({
+  listingKey,
+  city,
+  listings,
+}: {
+  listingKey: string;
+  city: string;
+  listings: BridgeIdxSearchResponse | null;
+}) {
+  const { slots, activeCount } = buildSimilarListingSlots(listings?.listings || [], listingKey, 4);
+  const isEmptyFeed = activeCount === 0;
+
+  return (
+    <section className="bg-white border-b border-gray-200">
+      <SectionTitleStrip title="Similar Properties For Sale" />
+      <div className="px-[15px] py-[12px]">
+        <p className="text-[14px] text-gray-600 mb-3">
+          {isEmptyFeed
+            ? `No active similar listings are available in ${city || "this area"} right now.`
+            : `Explore more properties in ${city || "this area"}.`}
+        </p>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {slots.map((slot) =>
+            slot.href ? (
+              <Link
+                key={slot.key}
+                href={slot.href}
+                className="block border border-gray-200 bg-white hover:border-gray-300 transition-colors"
+              >
+                {slot.imageUrl ? (
+                  <img src={slot.imageUrl} alt={slot.addressLine} className="w-full aspect-[4/3] object-cover bg-gray-100" />
+                ) : (
+                  <div className="w-full aspect-[4/3] bg-gray-100 flex items-center justify-center text-[12px] text-gray-500">
+                    Photo unavailable
+                  </div>
+                )}
+                <div className="p-2">
+                  <p className="text-[14px] font-semibold leading-tight text-[#1a1a1a]">{slot.priceLabel}</p>
+                  <p className="text-[12px] text-gray-600 mt-1 line-clamp-2">{slot.addressLine}</p>
+                  <p className="text-[12px] text-gray-500 mt-1">{slot.detailLine}</p>
+                </div>
+              </Link>
+            ) : (
+              <div
+                key={slot.key}
+                className="border border-dashed border-gray-300 bg-[#fafafa] aspect-[4/3] flex items-center justify-center text-center px-3"
+              >
+                <p className="text-[12px] text-gray-500">{slot.addressLine}</p>
+              </div>
+            )
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function PropertyMediaTabs({
+  photos,
+  address,
+  latitude,
+  longitude,
+}: {
+  photos: BridgeMedia[];
+  address: string;
+  latitude: number;
+  longitude: number;
+}) {
+  const [activeMediaTab, setActiveMediaTab] = useState<MediaTab>("photos");
+  const [activePhoto, setActivePhoto] = useState(0);
+  const [failedPhotos, setFailedPhotos] = useState<Record<number, boolean>>({});
+  const [isPhotoViewerOpen, setIsPhotoViewerOpen] = useState(false);
+
+  useEffect(() => {
+    setActiveMediaTab("photos");
+    setActivePhoto(0);
+    setFailedPhotos({});
+    setIsPhotoViewerOpen(false);
+  }, [photos, address]);
+
+  useEffect(() => {
+    function onEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsPhotoViewerOpen(false);
+      }
+    }
+    window.addEventListener("keydown", onEscape);
+    return () => window.removeEventListener("keydown", onEscape);
+  }, []);
+
+  const photoCount = photos.length;
+  const hasDisplayablePhotos = photos.some((photo, index) => Boolean(photo?.MediaURL) && !failedPhotos[index]);
+  const hasCoords =
+    Number.isFinite(latitude) &&
+    Number.isFinite(longitude) &&
+    Math.abs(latitude) > 0 &&
+    Math.abs(longitude) > 0;
+  const mapEmbedUrl = hasCoords
+    ? `https://www.google.com/maps?q=${latitude},${longitude}&z=15&output=embed`
+    : null;
+
+  const activePhotoUrl = photos[activePhoto]?.MediaURL;
+  const activePhotoFailed = failedPhotos[activePhoto];
+  const desktopIndexes =
+    photoCount > 0
+      ? [activePhoto, (activePhoto + 1) % photoCount, (activePhoto + 2) % photoCount]
+      : [];
+
+  function markPhotoFailed(index: number) {
+    setFailedPhotos((prev) => {
+      if (prev[index]) {
+        return prev;
+      }
+
+      const nextFailed = { ...prev, [index]: true };
+
+      if (index === activePhoto) {
+        const nextIndex = photos.findIndex((_, i) => !nextFailed[i]);
+        if (nextIndex !== -1 && nextIndex !== activePhoto) {
+          setActivePhoto(nextIndex);
+        }
+      }
+
+      return nextFailed;
+    });
+  }
+
+  return (
+    <div className="relative border-b border-black/10 bg-white">
+      <div className="absolute left-[15px] top-8 z-20 flex items-center gap-[10px]">
+        <RectTabButton label="PHOTOS" active={activeMediaTab === "photos"} onClick={() => setActiveMediaTab("photos")} />
+        <RectTabButton label="MAP VIEW" active={activeMediaTab === "map"} onClick={() => setActiveMediaTab("map")} />
+        <RectTabButton
+          label="VIRTUAL TOUR"
+          active={activeMediaTab === "virtual-tour"}
+          onClick={() => setActiveMediaTab("virtual-tour")}
+        />
+      </div>
+
+      <button
+        type="button"
+        onClick={() => {
+          if (hasDisplayablePhotos && activeMediaTab === "photos") {
+            setIsPhotoViewerOpen(true);
+          }
+        }}
+        className="hidden lg:flex absolute right-[15px] top-[15px] z-20 w-[35px] h-[35px] rounded-md bg-black text-white items-center justify-center hover:bg-black/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        aria-label="Open full photo viewer"
+        disabled={!hasDisplayablePhotos || activeMediaTab !== "photos"}
+      >
+        <IconExpand className="w-[18px] h-[18px]" />
+      </button>
+
+      {activeMediaTab === "photos" && (
+        <>
+          <div className="relative lg:hidden">
+            {activePhotoUrl && !activePhotoFailed ? (
+              <img
+                src={activePhotoUrl}
+                alt={address}
+                className="w-full aspect-video object-cover"
+                onError={() => markPhotoFailed(activePhoto)}
+              />
+            ) : (
+              <div className="w-full aspect-video flex items-center justify-center text-gray-500 text-sm bg-gray-100">
+                Photo unavailable
+              </div>
+            )}
+          </div>
+
+          <div className="relative hidden lg:grid grid-cols-3 h-[450px] overflow-hidden">
+            {desktopIndexes.length > 0 ? (
+              desktopIndexes.map((photoIndex) => {
+                const url = photos[photoIndex]?.MediaURL;
+                const failed = failedPhotos[photoIndex];
+
+                if (!url || failed) {
+                  return (
+                    <div
+                      key={`desktop-fallback-${photoIndex}`}
+                      className="bg-gray-100 border-r border-gray-200 last:border-r-0 flex items-center justify-center text-gray-500 text-sm"
+                    >
+                      Photo unavailable
+                    </div>
+                  );
+                }
+
+                return (
+                  <button
+                    key={`desktop-photo-${photoIndex}-${url}`}
+                    type="button"
+                    onClick={() => {
+                      setActivePhoto(photoIndex);
+                      setIsPhotoViewerOpen(true);
+                    }}
+                    className="w-full h-full border-r border-gray-200 last:border-r-0 overflow-hidden"
+                    aria-label={`Open photo ${photoIndex + 1}`}
+                  >
+                    <img
+                      src={url}
+                      alt={`${address} photo ${photoIndex + 1}`}
+                      className="w-full h-full object-cover cursor-zoom-in"
+                      onError={() => markPhotoFailed(photoIndex)}
+                    />
+                  </button>
+                );
+              })
+            ) : (
+              <div className="col-span-3 bg-gray-100 flex items-center justify-center text-gray-500 text-sm">
+                Photo unavailable
+              </div>
+            )}
+          </div>
+
+          {photoCount > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={() => setActivePhoto((prev) => (prev - 1 + photoCount) % photoCount)}
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 text-white hover:bg-black transition-colors flex items-center justify-center"
+                aria-label="Previous photo"
+              >
+                <IconChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setActivePhoto((prev) => (prev + 1) % photoCount)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 text-white hover:bg-black transition-colors flex items-center justify-center"
+                aria-label="Next photo"
+              >
+                <IconChevronRight className="w-5 h-5" />
+              </button>
+            </>
+          )}
+
+          <div className="absolute right-3 bottom-3">
+            <span className="rounded-md bg-black text-white text-xs px-2.5 py-1.5">
+              {Math.min(activePhoto + 1, Math.max(photoCount, 1))} of {Math.max(photoCount, 1)}
+            </span>
+          </div>
+        </>
+      )}
+
+      {activeMediaTab === "map" && (
+        <div className="w-full aspect-video lg:h-[450px] lg:aspect-auto bg-gray-100">
+          {mapEmbedUrl ? (
+            <iframe
+              src={mapEmbedUrl}
+              title={`Map view for ${address}`}
+              className="w-full h-full border-0"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">
+              Map unavailable
+            </div>
+          )}
+
+          <div className="absolute left-3 bottom-3">
+            <button
+              type="button"
+              onClick={() =>
+                window.open(
+                  `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${latitude},${longitude}`,
+                  "_blank",
+                  "noopener,noreferrer",
+                )
+              }
+              disabled={!hasCoords}
+              className="rounded-full border border-gray-300 bg-white/95 px-3 py-2 text-xs font-medium text-[#1a1a1a] hover:bg-white disabled:opacity-45 disabled:cursor-not-allowed"
+            >
+              Street View
+            </button>
+          </div>
+        </div>
+      )}
+
+      {activeMediaTab === "virtual-tour" && (
+        <div className="w-full aspect-video lg:h-[450px] lg:aspect-auto bg-gray-100 flex items-center justify-center">
+          <div className="text-center text-gray-600 px-6">
+            <IconVirtual360 className="w-8 h-8 mx-auto mb-2" />
+            <p className="text-sm font-medium">Virtual tour is not available for this listing.</p>
+          </div>
+        </div>
+      )}
+
+      {isPhotoViewerOpen && (
+        <div
+          className="hidden lg:block absolute inset-0 z-30 bg-black/75 backdrop-blur-[2px]"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              setIsPhotoViewerOpen(false);
+            }
+          }}
+        >
+          <div className="relative h-full w-full flex items-center justify-center p-10">
+            {activePhotoUrl && !activePhotoFailed ? (
+              <img
+                src={activePhotoUrl}
+                alt={`${address} enlarged photo`}
+                className="max-h-full max-w-full object-contain"
+                onError={() => markPhotoFailed(activePhoto)}
+              />
+            ) : (
+              <div className="text-gray-300 text-sm">Photo unavailable</div>
+            )}
+
+            {photoCount > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setActivePhoto((prev) => (prev - 1 + photoCount) % photoCount)}
+                  className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/70 text-white hover:bg-black transition-colors flex items-center justify-center"
+                  aria-label="Previous photo"
+                >
+                  <IconChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActivePhoto((prev) => (prev + 1) % photoCount)}
+                  className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/70 text-white hover:bg-black transition-colors flex items-center justify-center"
+                  aria-label="Next photo"
+                >
+                  <IconChevronRight className="w-6 h-6" />
+                </button>
+              </>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setIsPhotoViewerOpen(false)}
+              className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white text-[#1a1a1a] border border-gray-300 hover:bg-gray-100 flex items-center justify-center"
+              aria-label="Close photo viewer"
+            >
+              <IconClose className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -128,7 +564,7 @@ function estimateMonthlyPayment(price: number | null | undefined): string | null
 const PANEL_CONTAINER_CLASS =
   "relative w-full h-screen md:my-[15px] md:h-[calc(100vh-30px)] md:w-[calc(100%-50px)] min-[1300px]:w-[1200px] md:mx-auto border-0 md:border md:border-black/15 bg-[#f5f5f5] shadow-[0_24px_70px_rgba(0,0,0,0.45)]";
 
-const BASIC_INFO_ICON_MAP: Record<string, ReactNode> = {
+export const BASIC_INFO_ICON_MAP: Record<string, ReactNode> = {
   "MLS #": <IconSearchFlat className="w-full h-full" />,
   Type: <IconHouseSale className="w-full h-full" />,
   Status: <IconDetailInfo className="w-full h-full" />,
@@ -204,13 +640,9 @@ function RectTabButton({
 export default function PropertyDetailPanel({ property, listingKey }: PropertyDetailPanelProps) {
   const router = useRouter();
   const [isClosing, setIsClosing] = useState(true);
-  const [activeMediaTab, setActiveMediaTab] = useState<"photos" | "map" | "virtual-tour">("photos");
-  const [activePhoto, setActivePhoto] = useState(0);
-  const [isPhotoViewerOpen, setIsPhotoViewerOpen] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchCurrentX, setTouchCurrentX] = useState<number | null>(null);
-  const [failedPhotos, setFailedPhotos] = useState<Record<number, boolean>>({});
   const [isSaved, setIsSaved] = useState(false);
   const [actionNotice, setActionNotice] = useState<string | null>(null);
   const closeTimeoutRef = useRef<number | null>(null);
@@ -244,12 +676,6 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
       if (event.key !== "Escape") {
         return;
       }
-
-      if (isPhotoViewerOpen) {
-        setIsPhotoViewerOpen(false);
-        return;
-      }
-
       handleClose();
     }
 
@@ -257,7 +683,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
     return () => {
       window.removeEventListener("keydown", onEscape);
     };
-  }, [handleClose, isPhotoViewerOpen]);
+  }, [handleClose]);
 
   useEffect(() => {
     return () => {
@@ -289,10 +715,6 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
   }, []);
 
   useEffect(() => {
-    setActiveMediaTab("photos");
-    setActivePhoto(0);
-    setIsPhotoViewerOpen(false);
-    setFailedPhotos({});
     setShowFullDescription(false);
 
     try {
@@ -370,39 +792,10 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
   }
 
   const photos = getListingPhotos(property);
-  const photoCount = photos.length;
-  const hasDisplayablePhotos = photos.some((photo, index) => Boolean(photo?.MediaURL) && !failedPhotos[index]);
   const address = formatAddress(property);
   const price = property.StandardStatus === "Closed" ? property.ClosePrice || property.ListPrice : property.ListPrice;
   const estimatedPayment = estimateMonthlyPayment(price);
   const pricePerSqft = calculatePricePerSqft(price, property.LivingArea);
-
-  function markPhotoFailed(index: number) {
-    setFailedPhotos((prev) => {
-      if (prev[index]) {
-        return prev;
-      }
-
-      const nextFailed = { ...prev, [index]: true };
-
-      if (index === activePhoto) {
-        const nextIndex = photos.findIndex((_, i) => !nextFailed[i]);
-        if (nextIndex !== -1 && nextIndex !== activePhoto) {
-          setActivePhoto(nextIndex);
-        }
-      }
-
-      return nextFailed;
-    });
-  }
-
-  const desktopIndexes =
-    photoCount > 0
-      ? [activePhoto, (activePhoto + 1) % photoCount, (activePhoto + 2) % photoCount]
-      : [];
-
-  const activePhotoUrl = photos[activePhoto]?.MediaURL;
-  const activePhotoFailed = failedPhotos[activePhoto];
 
   const details = buildIdxDetailSections(property);
   const legal = buildIdxLegalDisclosure(property);
@@ -420,11 +813,14 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
 
   const lat = property.Latitude;
   const lng = property.Longitude;
-
-  const hasCoords = Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) > 0 && Math.abs(lng) > 0;
-  const mapEmbedUrl = hasCoords
-    ? `https://www.google.com/maps?q=${lat},${lng}&z=15&output=embed`
-    : null;
+  const similarQuery = property.City
+    ? `/api/search?status=Active&top=8&orderby=ListPrice%20desc&q=${encodeURIComponent(property.City)}`
+    : `/api/search?status=Active&top=8&orderby=ListPrice%20desc`;
+  const { data: similarListings } = useSWR<BridgeIdxSearchResponse>(
+    similarQuery,
+    fetchJson,
+    { revalidateOnFocus: false },
+  );
 
   const canonicalUrl =
     typeof window !== "undefined"
@@ -471,27 +867,6 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
     }
   }
 
-  function openMapView() {
-    setActiveMediaTab("map");
-  }
-
-  function openPhotosView() {
-    setActiveMediaTab("photos");
-  }
-
-  function openVirtualTourView() {
-    setActiveMediaTab("virtual-tour");
-  }
-
-  function openStreetView() {
-    if (!hasCoords) {
-      return;
-    }
-
-    const url = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}`;
-    window.open(url, "_blank", "noopener,noreferrer");
-  }
-
   function openCanonicalDetailsPage() {
     window.location.assign(`/property/${listingKey}/`);
   }
@@ -513,11 +888,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
       <div className="fixed inset-0 bg-black/65 backdrop-blur-[1.5px]" />
 
       <aside
-        className={`${PANEL_CONTAINER_CLASS} relative transition-all duration-300 ${
-          isPhotoViewerOpen
-            ? "overflow-hidden"
-            : "overflow-y-auto overscroll-contain [scrollbar-gutter:stable]"
-        } ${
+        className={`${PANEL_CONTAINER_CLASS} relative transition-all duration-300 overflow-y-auto overscroll-contain [scrollbar-gutter:stable] ${
           isClosing ? "translate-y-3 scale-[0.985] opacity-0" : "translate-y-0 scale-100 opacity-100"
         }`}
         onClick={(event) => event.stopPropagation()}
@@ -566,159 +937,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
             </div>
           </div>
 
-          <div className="relative border-b border-black/10 bg-white">
-            <div className="absolute left-[15px] top-8 z-20 flex items-center gap-[10px]">
-              <RectTabButton label="PHOTOS" active={activeMediaTab === "photos"} onClick={openPhotosView} />
-              <RectTabButton label="MAP VIEW" active={activeMediaTab === "map"} onClick={openMapView} />
-              <RectTabButton
-                label="VIRTUAL TOUR"
-                active={activeMediaTab === "virtual-tour"}
-                onClick={openVirtualTourView}
-              />
-            </div>
-
-            <button
-              type="button"
-              onClick={() => {
-                if (hasDisplayablePhotos && activeMediaTab === "photos") {
-                  setIsPhotoViewerOpen(true);
-                }
-              }}
-              className="hidden lg:flex absolute right-[15px] top-[15px] z-20 w-[35px] h-[35px] rounded-md bg-black text-white items-center justify-center hover:bg-black/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-              aria-label="Open full photo viewer"
-              disabled={!hasDisplayablePhotos || activeMediaTab !== "photos"}
-            >
-              <IconExpand className="w-[18px] h-[18px]" />
-            </button>
-
-            {activeMediaTab === "photos" && (
-              <>
-                <div className="relative lg:hidden">
-                  {activePhotoUrl && !activePhotoFailed ? (
-                    <img
-                      src={activePhotoUrl}
-                      alt={address}
-                      className="w-full aspect-video object-cover"
-                      onError={() => markPhotoFailed(activePhoto)}
-                    />
-                  ) : (
-                    <div className="w-full aspect-video flex items-center justify-center text-gray-500 text-sm bg-gray-100">
-                      Photo unavailable
-                    </div>
-                  )}
-                </div>
-
-                <div className="relative hidden lg:grid grid-cols-3 h-[450px] overflow-hidden">
-                  {desktopIndexes.length > 0 ? (
-                    desktopIndexes.map((photoIndex) => {
-                      const url = photos[photoIndex]?.MediaURL;
-                      const failed = failedPhotos[photoIndex];
-
-                      if (!url || failed) {
-                        return (
-                          <div
-                            key={`desktop-fallback-${photoIndex}`}
-                            className="bg-gray-100 border-r border-gray-200 last:border-r-0 flex items-center justify-center text-gray-500 text-sm"
-                          >
-                            Photo unavailable
-                          </div>
-                        );
-                      }
-
-                      return (
-                        <button
-                          key={`desktop-photo-${photoIndex}-${url}`}
-                          type="button"
-                          onClick={() => {
-                            setActivePhoto(photoIndex);
-                            setIsPhotoViewerOpen(true);
-                          }}
-                          className="w-full h-full border-r border-gray-200 last:border-r-0 overflow-hidden"
-                          aria-label={`Open photo ${photoIndex + 1}`}
-                        >
-                          <img
-                            src={url}
-                            alt={`${address} photo ${photoIndex + 1}`}
-                            className="w-full h-full object-cover cursor-zoom-in"
-                            onError={() => markPhotoFailed(photoIndex)}
-                          />
-                        </button>
-                      );
-                    })
-                  ) : (
-                    <div className="col-span-3 bg-gray-100 flex items-center justify-center text-gray-500 text-sm">
-                      Photo unavailable
-                    </div>
-                  )}
-                </div>
-
-                {photoCount > 1 && (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => setActivePhoto((prev) => (prev - 1 + photoCount) % photoCount)}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 text-white hover:bg-black transition-colors flex items-center justify-center"
-                      aria-label="Previous photo"
-                    >
-                      <IconChevronLeft className="w-5 h-5" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setActivePhoto((prev) => (prev + 1) % photoCount)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 text-white hover:bg-black transition-colors flex items-center justify-center"
-                      aria-label="Next photo"
-                    >
-                      <IconChevronRight className="w-5 h-5" />
-                    </button>
-                  </>
-                )}
-
-                <div className="absolute right-3 bottom-3">
-                  <span className="rounded-md bg-black text-white text-xs px-2.5 py-1.5">
-                    {Math.min(activePhoto + 1, Math.max(photoCount, 1))} of {Math.max(photoCount, 1)}
-                  </span>
-                </div>
-              </>
-            )}
-
-            {activeMediaTab === "map" && (
-              <div className="w-full aspect-video lg:h-[450px] lg:aspect-auto bg-gray-100">
-                {mapEmbedUrl ? (
-                  <iframe
-                    src={mapEmbedUrl}
-                    title={`Map view for ${address}`}
-                    className="w-full h-full border-0"
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">
-                    Map unavailable
-                  </div>
-                )}
-
-                <div className="absolute left-3 bottom-3">
-                  <button
-                    type="button"
-                    onClick={openStreetView}
-                    disabled={!hasCoords}
-                    className="rounded-full border border-gray-300 bg-white/95 px-3 py-2 text-xs font-medium text-[#1a1a1a] hover:bg-white disabled:opacity-45 disabled:cursor-not-allowed"
-                  >
-                    Street View
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {activeMediaTab === "virtual-tour" && (
-              <div className="w-full aspect-video lg:h-[450px] lg:aspect-auto bg-gray-100 flex items-center justify-center">
-                <div className="text-center text-gray-600 px-6">
-                  <IconVirtual360 className="w-8 h-8 mx-auto mb-2" />
-                  <p className="text-sm font-medium">Virtual tour is not available for this listing.</p>
-                </div>
-              </div>
-            )}
-          </div>
+          <PropertyMediaTabs photos={photos} address={address} latitude={lat} longitude={lng} />
 
           <div className="grid grid-cols-4 border-b border-black/10 bg-white lg:hidden">
             <button
@@ -775,18 +994,20 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                   </div>
                 </div>
 
-                <section className="bg-white border-b border-gray-200 px-[15px] py-[20px]">
-                  <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[10px]">Description</h3>
-                  <p className="text-[14px] leading-[1.6] text-gray-700">{description}</p>
-                  {isLongDescription && (
-                    <button
-                      type="button"
-                      onClick={() => setShowFullDescription((prev) => !prev)}
-                      className="mt-2 text-[14px] text-gray-700 underline underline-offset-2 hover:text-black transition-colors"
-                    >
-                      {showFullDescription ? "Show less" : "Read more"}
-                    </button>
-                  )}
+                <section className="bg-white border-b border-gray-200">
+                  <SectionTitleStrip title="Description" />
+                  <div className="px-[15px] py-[12px]">
+                    <p className="text-[14px] leading-[1.6] text-gray-700">{description}</p>
+                    {isLongDescription && (
+                      <button
+                        type="button"
+                        onClick={() => setShowFullDescription((prev) => !prev)}
+                        className="mt-2 text-[14px] text-gray-700 underline underline-offset-2 hover:text-black transition-colors"
+                      >
+                        {showFullDescription ? "Show less" : "Read more"}
+                      </button>
+                    )}
+                  </div>
                 </section>
 
                 <DetailSection title="Basic Information" rows={details.basicInformationRows} iconMap={BASIC_INFO_ICON_MAP} />
@@ -794,42 +1015,12 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                 <DetailSection title="Exterior Features" rows={details.exteriorFeatureRows} />
                 <DetailSection title="Interior Features" rows={details.interiorFeatureRows} />
                 <DetailSection title="Property Features" rows={details.propertyFeatureRows} />
-
-                {hasCoords && (
-                  <section className="bg-white border-b border-gray-200 px-[15px] py-[20px]">
-                    <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[15px]">Location</h3>
-                    <a
-                      href={`https://www.google.com/maps?q=${lat},${lng}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block relative w-full aspect-[2/1] bg-gray-100 rounded-lg overflow-hidden group"
-                    >
-                      <img
-                        src={`https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=15&size=800x400&scale=2&markers=color:red%7C${lat},${lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || ""}`}
-                        alt={`Map of ${address}`}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                        <span className="opacity-0 group-hover:opacity-100 transition-opacity bg-white px-4 py-2 rounded-full text-sm font-medium text-[#1a1a1a] shadow">
-                          Open in Google Maps
-                        </span>
-                      </div>
-                    </a>
-                  </section>
-                )}
-
-                <section className="bg-white border-b border-gray-200 px-[15px] py-[20px]">
-                  <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a] mb-[10px]">Similar Properties For Sale</h3>
-                  <p className="text-[14px] text-gray-500 mb-[15px]">
-                    Explore more properties in {property.City || "this area"}.
-                  </p>
-                  <a
-                    href={`/search?q=${encodeURIComponent(property.City || "")}`}
-                    className="inline-flex items-center justify-center border border-gray-300 text-[#1a1a1a] px-5 py-2.5 rounded-full text-xs uppercase tracking-[0.12em] hover:bg-gray-100 transition-colors"
-                  >
-                    View Similar Listings
-                  </a>
-                </section>
+                <LocationSection latitude={lat} longitude={lng} address={address} />
+                <SimilarListingsSection
+                  listingKey={listingKey}
+                  city={property.City}
+                  listings={similarListings || null}
+                />
 
                 <section className="bg-[#f5f5f5] border-b border-gray-200 px-[15px] py-[20px] text-[11px] text-gray-500 leading-[1.6] space-y-2">
                   {legal.courtesyLine && <p>{legal.courtesyLine}</p>}
@@ -837,7 +1028,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                 </section>
               </div>
 
-              <aside className="hidden lg:block p-[15px]">
+              <aside className="hidden lg:block p-[15px] self-start">
                 <div className="border border-gray-200 bg-white p-[15px] space-y-[15px] sticky top-[82px]">
                   <div className="flex items-center gap-3">
                     <img src="/andrew-headshot.png" alt="Andrew Whalen" className="w-14 h-14 rounded-full object-cover" />
@@ -857,100 +1048,6 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
           </div>
         </div>
 
-        {isPhotoViewerOpen && (
-          <div
-            className="hidden lg:block absolute inset-0 z-40 bg-black/75 backdrop-blur-[2px]"
-            onClick={(event) => {
-              if (event.target === event.currentTarget) {
-                setIsPhotoViewerOpen(false);
-              }
-            }}
-          >
-            <div className="h-full flex flex-col" onClick={(event) => event.stopPropagation()}>
-              <div className="hidden lg:block border-b border-gray-300 bg-white px-[15px]">
-                <div className="h-[80px] max-w-[1368px] mx-auto flex items-center justify-between gap-4">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[20px] leading-[1.1] font-semibold text-[#1a1a1a] truncate pr-2">
-                      {address}
-                    </p>
-                    <p className="text-[15px] leading-[1.1] text-gray-600 truncate pr-2">
-                      {property.City}, {property.StateOrProvince} {property.PostalCode}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-[10px] shrink-0">
-                    <CircleIconButton label={isSaved ? "Unsave listing" : "Save listing"} onClick={toggleSaved}>
-                      <IconLove className="w-5 h-5" active={isSaved} />
-                    </CircleIconButton>
-                    <CircleIconButton label="Photos" active>
-                      <IconCamera className="w-5 h-5" />
-                    </CircleIconButton>
-                    <CircleIconButton
-                      label="Map view"
-                      onClick={() => {
-                        setIsPhotoViewerOpen(false);
-                        openMapView();
-                      }}
-                    >
-                      <IconStreetView className="w-5 h-5" />
-                    </CircleIconButton>
-                    <CircleIconButton label="Email" onClick={() => window.location.assign("mailto:Andrew@IamAndrewWhalen.com")}>
-                      <IconEnvelope className="w-5 h-5" />
-                    </CircleIconButton>
-                    <CircleIconButton label="Share" onClick={shareListing}>
-                      <IconShared className="w-5 h-5" />
-                    </CircleIconButton>
-                    <CircleIconButton label="Close" onClick={() => setIsPhotoViewerOpen(false)}>
-                      <IconClose className="w-5 h-5" />
-                    </CircleIconButton>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative flex-1 px-4 pb-6 pt-4 lg:p-8 xl:p-10">
-                <div className="h-full w-full flex items-center justify-center">
-                  {activePhotoUrl && !activePhotoFailed ? (
-                    <img
-                      src={activePhotoUrl}
-                      alt={`${address} enlarged photo`}
-                      className="w-full h-[56vh] max-h-[640px] object-cover lg:w-auto lg:h-auto lg:max-h-full lg:max-w-full lg:object-contain"
-                      onError={() => markPhotoFailed(activePhoto)}
-                    />
-                  ) : (
-                    <div className="text-gray-400 text-sm">Photo unavailable</div>
-                  )}
-                </div>
-
-                {photoCount > 1 && (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => setActivePhoto((prev) => (prev - 1 + photoCount) % photoCount)}
-                      className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/70 text-white hover:bg-black transition-colors flex items-center justify-center"
-                      aria-label="Previous photo"
-                    >
-                      <IconChevronLeft className="w-6 h-6" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setActivePhoto((prev) => (prev + 1) % photoCount)}
-                      className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/70 text-white hover:bg-black transition-colors flex items-center justify-center"
-                      aria-label="Next photo"
-                    >
-                      <IconChevronRight className="w-6 h-6" />
-                    </button>
-                  </>
-                )}
-
-                <div className="absolute right-6 bottom-8 lg:bottom-6">
-                  <span className="rounded-md bg-black text-white text-sm px-3 py-2">
-                    {Math.min(activePhoto + 1, Math.max(photoCount, 1))} of {Math.max(photoCount, 1)}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </aside>
     </div>
   );
