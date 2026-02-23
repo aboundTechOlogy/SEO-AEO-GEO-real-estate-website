@@ -514,11 +514,7 @@ export function PropertyMediaTabs({
               if (mapContainer) mapContainer.requestFullscreen();
             }
           }}
-          className={`hidden lg:flex absolute right-[15px] top-[15px] z-20 w-[35px] h-[35px] rounded-md items-center justify-center transition-colors ${
-            activeMediaTab === "map"
-              ? "bg-white text-[#333] border border-[#e6e6e6] shadow-[0_1px_4px_rgba(0,0,0,0.3)] hover:bg-gray-50"
-              : "bg-black text-white hover:bg-black/90"
-          } ${activeMediaTab === "photos" && !hasDisplayablePhotos ? "opacity-40 cursor-not-allowed" : ""}`}
+          className={`hidden lg:flex absolute right-[15px] top-[15px] z-20 w-[35px] h-[35px] rounded-[6px] items-center justify-center transition-colors bg-white text-[#333] border border-[#e6e6e6] shadow-[0_1px_4px_rgba(0,0,0,0.3)] hover:bg-gray-50 ${activeMediaTab === "photos" && !hasDisplayablePhotos ? "opacity-40 cursor-not-allowed" : ""}`}
           aria-label={activeMediaTab === "map" ? "Fullscreen map" : "Open full photo viewer"}
           disabled={activeMediaTab === "photos" && !hasDisplayablePhotos}
         >
