@@ -7,10 +7,11 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import SearchPropertyCard from "@/components/SearchPropertyCard";
-import { DesktopSearchBar, MobileSearchBar, FloatingSaveSearch, DEFAULT_FILTER_VALUES } from "@/components/SearchFilters";
+import { DesktopSearchBar, MobileSearchBar, DEFAULT_FILTER_VALUES } from "@/components/SearchFilters";
 import type { SearchFilterValues } from "@/components/SearchFilters";
 import PropertyMap from "@/components/PropertyMap";
 import PropertyDetailPanel from "@/components/PropertyDetailPanel";
+import { IconLove } from "@/components/IdxIcons";
 import type {
   BridgeIdxListing,
   BridgeIdxMarker,
@@ -40,10 +41,12 @@ interface UiListing {
   photoCount?: number;
   lat: number;
   lng: number;
+  buildingName?: string;
 }
 
 const PAGE_SIZE = 24;
 const FALLBACK_CENTER = { lat: 25.95, lng: -80.15 };
+const SAVED_LISTINGS_KEY = "savedListings";
 
 const STATUS_TO_BRIDGE: Record<string, string> = {
   "For Sale": "Active",
@@ -164,7 +167,26 @@ function toUiListing(listing: BridgeIdxListing): UiListing {
     photoCount: listing.photoCount,
     lat: listing.lat,
     lng: listing.lng,
+    buildingName: listing.buildingName || undefined,
   };
+}
+
+function readSavedListingKeys(): Set<string> {
+  try {
+    const raw = window.localStorage.getItem(SAVED_LISTINGS_KEY);
+    const parsed = raw ? (JSON.parse(raw) as string[]) : [];
+    return new Set(parsed.filter(Boolean));
+  } catch {
+    return new Set();
+  }
+}
+
+function persistSavedListingKeys(keys: Set<string>) {
+  try {
+    window.localStorage.setItem(SAVED_LISTINGS_KEY, JSON.stringify(Array.from(keys)));
+  } catch {
+    // ignore storage errors
+  }
 }
 
 /* Sort dropdown */
@@ -286,7 +308,7 @@ function Pagination({
 
 function LoadingGrid({ count = 12 }: { count?: number }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
       {Array.from({ length: count }).map((_, index) => (
         <div key={index} className="px-[5px] mb-[10px]">
           <div className="aspect-[16/9] bg-gray-200 animate-pulse" />
@@ -296,12 +318,28 @@ function LoadingGrid({ count = 12 }: { count?: number }) {
   );
 }
 
-function MobileListCard({ listing, onOpenOverlay }: { listing: UiListing; onOpenOverlay?: (listingKey: string) => void }) {
+function MobileListCard({
+  listing,
+  isSaved,
+  onToggleSave,
+  onOpenOverlay,
+}: {
+  listing: UiListing;
+  isSaved: boolean;
+  onToggleSave: (listingKey: string) => void;
+  onOpenOverlay?: (listingKey: string) => void;
+}) {
   const handleClick = (e: React.MouseEvent) => {
     if (onOpenOverlay) {
       e.preventDefault();
       onOpenOverlay(listing.id);
     }
+  };
+
+  const handleToggleSave = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    onToggleSave(listing.id);
   };
 
   return (
@@ -338,24 +376,13 @@ function MobileListCard({ listing, onOpenOverlay }: { listing: UiListing; onOpen
       </div>
 
       <button
-        className="shrink-0 self-start text-gray-400 hover:text-gray-700 transition-colors p-1"
-        aria-label="Save listing"
+        className="shrink-0 self-start rounded-full border border-gray-200 bg-white p-1.5 text-gray-500 hover:border-gray-300 hover:text-gray-800 transition-colors"
+        aria-label={isSaved ? "Unsave listing" : "Save listing"}
+        onClick={handleToggleSave}
       >
-        <StarIcon />
+        <IconLove className={`w-4 h-4 ${isSaved ? "text-rose-500" : "text-gray-500"}`} active={isSaved} />
       </button>
     </Link>
-  );
-}
-
-function StarIcon() {
-  return (
-    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
-      />
-    </svg>
   );
 }
 
@@ -465,6 +492,7 @@ function SearchPage() {
   const [filterValues, setFilterValues] = useState<SearchFilterValues>(DEFAULT_FILTER_VALUES);
   const [saveToast, setSaveToast] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
+  const [savedListingKeys, setSavedListingKeys] = useState<Set<string>>(new Set());
 
   // Overlay state — `?show=listingKey` URL param
   const searchParams = useSearchParams();
@@ -524,6 +552,10 @@ function SearchPage() {
     if (urlView) setViewState(urlView);
 
     setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    setSavedListingKeys(readSavedListingKeys());
   }, []);
 
   // Sync URL on state changes (after hydration)
@@ -707,6 +739,19 @@ function SearchPage() {
     setTimeout(() => setSaveToast(null), 2500);
   };
 
+  const handleToggleSavedListing = (listingKey: string) => {
+    setSavedListingKeys((prev) => {
+      const next = new Set(prev);
+      if (next.has(listingKey)) {
+        next.delete(listingKey);
+      } else {
+        next.add(listingKey);
+      }
+      persistSavedListingKeys(next);
+      return next;
+    });
+  };
+
   const handleMarkerClick = (listingKey: string) => {
     setHighlightedListingId(listingKey);
     const target = cardRefs.current[listingKey];
@@ -743,9 +788,6 @@ function SearchPage() {
         />
       </div>
 
-      {/* Floating Save Search pill — visible when top bar Save Search is hidden (<1180px) */}
-      <FloatingSaveSearch onSave={handleSaveSearch} message={saveToast} />
-
       {errorMessage && (
         <div className="px-4 py-2 bg-amber-50 border-b border-amber-200 text-[13px] text-amber-900">
           {errorMessage}
@@ -761,7 +803,7 @@ function SearchPage() {
             ) : showNoResults ? (
               <div className="py-14 text-center text-sm text-gray-500">No properties match this search.</div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
                 {listings.map((listing) => (
                   <div
                     key={listing.id}
@@ -787,6 +829,8 @@ function SearchPage() {
                       href={listing.href}
                       listDate={listing.listDate}
                       photoCount={listing.photoCount}
+                      isSaved={savedListingKeys.has(listing.id)}
+                      onToggleSave={handleToggleSavedListing}
                       onOpenOverlay={handleOpenOverlay}
                     />
                   </div>
@@ -846,6 +890,8 @@ function SearchPage() {
                         href={listing.href}
                         listDate={listing.listDate}
                         photoCount={listing.photoCount}
+                        isSaved={savedListingKeys.has(listing.id)}
+                        onToggleSave={handleToggleSavedListing}
                         onOpenOverlay={handleOpenOverlay}
                       />
                     </div>
@@ -931,8 +977,19 @@ function SearchPage() {
                       }}
                     >
                       <td className="p-3 border border-gray-200 text-center">
-                        <button className="text-gray-400 hover:text-gray-700 group-hover:text-gray-500 transition-colors">
-                          <StarIcon />
+                        <button
+                          className="inline-flex items-center justify-center rounded-full border border-gray-200 bg-white p-1.5 text-gray-500 hover:border-gray-300 hover:text-gray-800 transition-colors"
+                          aria-label={savedListingKeys.has(listing.id) ? "Unsave listing" : "Save listing"}
+                          onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            handleToggleSavedListing(listing.id);
+                          }}
+                        >
+                          <IconLove
+                            className={`w-4 h-4 ${savedListingKeys.has(listing.id) ? "text-rose-500" : "text-gray-500"}`}
+                            active={savedListingKeys.has(listing.id)}
+                          />
                         </button>
                       </td>
                       <td className="p-3 border border-gray-200 text-[15px] text-gray-900">
@@ -957,7 +1014,7 @@ function SearchPage() {
                         {formatPriceSqft(listing.priceValue, listing.sqft)}
                       </td>
                       <td className="p-3 border border-gray-200 text-[15px] text-gray-500 whitespace-nowrap hidden 2xl:table-cell">
-                        {listing.address}
+                        {listing.buildingName || "-"}
                       </td>
                     </tr>
                   ))}
@@ -979,7 +1036,16 @@ function SearchPage() {
                 <div key={`mobile-loading-${index}`} className="mx-4 mb-3 h-24 rounded-xl bg-gray-200 animate-pulse" />
               ))}
 
-            {!showLoading && listings.map((listing) => <MobileListCard key={listing.id} listing={listing} onOpenOverlay={handleOpenOverlay} />)}
+            {!showLoading &&
+              listings.map((listing) => (
+                <MobileListCard
+                  key={listing.id}
+                  listing={listing}
+                  isSaved={savedListingKeys.has(listing.id)}
+                  onToggleSave={handleToggleSavedListing}
+                  onOpenOverlay={handleOpenOverlay}
+                />
+              ))}
 
             {showNoResults && (
               <div className="px-4 py-10 text-center text-sm text-gray-500">No properties match this search.</div>
