@@ -972,27 +972,16 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
             <div className="grid items-start lg:grid-cols-[minmax(0,1fr)_310px] min-[1300px]:grid-cols-[minmax(0,1fr)_350px]">
               <div className="min-w-0 border-r-0 lg:border-r lg:border-gray-200">
                 <div className="border-b border-gray-200 bg-white">
-                  <div className="flex items-end justify-between gap-4 px-[15px] py-[15px] border-b border-gray-200">
-                    <p className="text-[22px] font-semibold leading-none text-[#1a1a1a]">{formatCurrency(price)}</p>
-                    <div className="text-right">
-                      <p className="text-[13px] text-gray-500">Est. Payment</p>
-                      <p className="text-[13px] font-semibold leading-none text-[#1a1a1a]">
-                        {estimatedPayment ? `${estimatedPayment}/mo` : "--"}
+                  <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-7 divide-x divide-gray-200">
+                    <div className="px-[15px] py-[10px] col-span-1 sm:col-span-2">
+                      <p className="text-[20px] lg:text-[24px] leading-none font-semibold text-[#1a1a1a]">{formatCurrency(price)}</p>
+                      <p className="mt-[5px] text-[11px] lg:text-[12px] leading-none text-gray-500">
+                        Est. Payment {estimatedPayment ? <span className="font-semibold text-[#1a1a1a] underline underline-offset-2">{estimatedPayment}/mo</span> : "--"}
                       </p>
                     </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-gray-200 lg:hidden">
                     <StatMetric label="Beds" value={String(property.BedroomsTotal || 0)} />
                     <StatMetric label="Baths" value={String(bathsCount || 0)} />
-                    <StatMetric label="Sq.Ft" value={property.LivingArea ? property.LivingArea.toLocaleString() : "-"} />
-                    <StatMetric label="$/SqFt" value={pricePerSqft ? `$${pricePerSqft.toLocaleString()}` : "-"} />
-                  </div>
-
-                  <div className="hidden lg:grid lg:grid-cols-5 divide-x divide-gray-200">
-                    <StatMetric label="Beds" value={String(property.BedroomsTotal || 0)} />
-                    <StatMetric label="Baths" value={String(bathsCount || 0)} />
-                    <StatMetric label="Half Bath" value={halfBathValue} />
+                    <div className="hidden lg:block"><StatMetric label="Half Bath" value={halfBathValue} /></div>
                     <StatMetric label="Sq.Ft" value={property.LivingArea ? property.LivingArea.toLocaleString() : "-"} />
                     <StatMetric label="$/SqFt" value={pricePerSqft ? `$${pricePerSqft.toLocaleString()}` : "-"} />
                   </div>
