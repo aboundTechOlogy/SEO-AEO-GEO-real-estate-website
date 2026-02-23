@@ -330,20 +330,6 @@ function DetailMapControls() {
         )}
       </button>
 
-      <div className="h-[6px]" />
-
-      {/* 5. Move around / Pan — 4-directional arrows */}
-      <button type="button" aria-label="Pan map" title="Move around"
-        onClick={() => map?.panTo({ lat: map.getCenter()?.lat() || 0, lng: map.getCenter()?.lng() || 0 })}
-        className={`${CTRL} ${CTRL_SHADOW} rounded-[4px] border border-[#e6e6e6]`}>
-        <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <path d="M5 9l-3 3 3 3" />
-          <path d="M9 5l3-3 3 3" />
-          <path d="M15 19l-3 3-3-3" />
-          <path d="M19 9l3 3-3 3" />
-          <path d="M2 12h20M12 2v20" />
-        </svg>
-      </button>
     </div>
   );
 }
