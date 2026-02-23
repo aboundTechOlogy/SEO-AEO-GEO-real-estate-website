@@ -38,6 +38,9 @@ import {
   IconSearchFlat,
   IconTimeClock,
   IconVirtual360,
+  IconCamera,
+  IconLocation,
+  IconStreetView,
 } from "@/components/IdxIcons";
 
 interface PropertyDetailPanelProps {
@@ -314,10 +317,11 @@ export function PropertyMediaTabs({
   return (
     <div className="relative border-b border-black/10 bg-white">
       <div className="absolute left-[15px] top-8 z-20 flex items-center gap-[10px]">
-        <RectTabButton label="PHOTOS" active={activeMediaTab === "photos"} onClick={() => setActiveMediaTab("photos")} />
-        <RectTabButton label="MAP VIEW" active={activeMediaTab === "map"} onClick={() => setActiveMediaTab("map")} />
+        <RectTabButton label="PHOTOS" icon={<IconCamera className="w-[14px] h-[14px]" />} active={activeMediaTab === "photos"} onClick={() => setActiveMediaTab("photos")} />
+        <RectTabButton label="MAP VIEW" icon={<IconLocation className="w-[14px] h-[14px]" />} active={activeMediaTab === "map"} onClick={() => setActiveMediaTab("map")} />
         <RectTabButton
           label="VIRTUAL TOUR"
+          icon={<IconVirtual360 className="w-[14px] h-[14px]" />}
           active={activeMediaTab === "virtual-tour"}
           onClick={() => setActiveMediaTab("virtual-tour")}
         />
@@ -418,6 +422,24 @@ export function PropertyMediaTabs({
               </button>
             </>
           )}
+
+          <div className="absolute left-[15px] bottom-[15px] z-20">
+            <button
+              type="button"
+              onClick={() =>
+                window.open(
+                  `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${latitude},${longitude}`,
+                  "_blank",
+                  "noopener,noreferrer",
+                )
+              }
+              disabled={!hasCoords}
+              className="flex items-center gap-[6px] rounded-md border border-gray-300 bg-white/95 px-3 py-2 text-xs font-medium text-[#1a1a1a] hover:bg-white disabled:opacity-45 disabled:cursor-not-allowed"
+            >
+              <IconStreetView className="w-[14px] h-[14px]" />
+              STREET VIEW
+            </button>
+          </div>
 
           <div className="absolute right-3 bottom-3">
             <span className="rounded-md bg-black text-white text-xs px-2.5 py-1.5">
@@ -562,7 +584,7 @@ function estimateMonthlyPayment(price: number | null | undefined): string | null
 }
 
 const PANEL_CONTAINER_CLASS =
-  "relative w-full h-screen md:my-[15px] md:h-[calc(100vh-30px)] md:w-[calc(100%-50px)] min-[1300px]:w-[1200px] md:mx-auto border-0 md:border md:border-black/15 bg-[#f5f5f5] shadow-[0_24px_70px_rgba(0,0,0,0.45)]";
+  "relative w-full md:w-[calc(100%-80px)] min-[1300px]:w-[1200px] border-0 md:border md:border-black/15 bg-[#f5f5f5] shadow-[0_24px_70px_rgba(0,0,0,0.45)]";
 
 export const BASIC_INFO_ICON_MAP: Record<string, ReactNode> = {
   "MLS #": <IconSearchFlat className="w-full h-full" />,
@@ -612,11 +634,13 @@ function CircleIconButton({
 
 function RectTabButton({
   label,
+  icon,
   active,
   disabled = false,
   onClick,
 }: {
   label: string;
+  icon?: ReactNode;
   active?: boolean;
   disabled?: boolean;
   onClick?: () => void;
@@ -626,12 +650,13 @@ function RectTabButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`h-[35px] px-[15px] text-[11px] font-semibold uppercase tracking-[0.04em] border transition-colors ${
+      className={`h-[35px] px-[15px] text-[11px] font-semibold uppercase tracking-[0.04em] border transition-colors flex items-center gap-[6px] ${
         active
           ? "border-black bg-black text-white"
           : "border-gray-300 bg-white text-[#1a1a1a] hover:bg-gray-100"
       } ${disabled ? "opacity-45 cursor-not-allowed hover:bg-white" : ""}`}
     >
+      {icon}
       {label}
     </button>
   );
@@ -772,33 +797,37 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
   if (!property) {
     return (
       <div
-        className={`fixed inset-0 z-[150] transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[150] overflow-y-auto overscroll-contain transition-opacity duration-300 ${
           isClosing ? "opacity-0" : "opacity-100"
         }`}
-        onClick={(event) => {
-          if (event.target === event.currentTarget) {
-            handleClose();
-          }
-        }}
       >
-        <div className="fixed inset-0 bg-black/65 backdrop-blur-[1.5px]" />
+        <div className="fixed inset-0 bg-black/65 backdrop-blur-[1.5px] pointer-events-none" />
 
-        <aside
-          className={`${PANEL_CONTAINER_CLASS} transition-all duration-300 ${
-            isClosing ? "translate-y-3 scale-[0.985] opacity-0" : "translate-y-0 scale-100 opacity-100"
-          }`}
+        <div
+          className="relative min-h-full md:py-[15px] flex items-start justify-center"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              handleClose();
+            }
+          }}
         >
-          <div className="min-h-full flex flex-col items-center justify-center px-8 text-center bg-white">
-            <p className="text-gray-700 text-lg mb-3">Property not found.</p>
-            <button
-              type="button"
-              onClick={handleClose}
-              className="border border-gray-300 text-[#1a1a1a] px-5 py-2 text-sm rounded-full hover:bg-gray-100 transition-colors"
-            >
-              Back to Search
-            </button>
-          </div>
-        </aside>
+          <aside
+            className={`${PANEL_CONTAINER_CLASS} min-h-screen md:min-h-[calc(100vh-30px)] transition-all duration-300 ${
+              isClosing ? "translate-y-3 scale-[0.985] opacity-0" : "translate-y-0 scale-100 opacity-100"
+            }`}
+          >
+            <div className="min-h-[inherit] flex flex-col items-center justify-center px-8 text-center bg-white">
+              <p className="text-gray-700 text-lg mb-3">Property not found.</p>
+              <button
+                type="button"
+                onClick={handleClose}
+                className="border border-gray-300 text-[#1a1a1a] px-5 py-2 text-sm rounded-full hover:bg-gray-100 transition-colors"
+              >
+                Back to Search
+              </button>
+            </div>
+          </aside>
+        </div>
       </div>
     );
   }
@@ -877,29 +906,32 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
 
   return (
     <div
-      className={`fixed inset-0 z-[150] transition-opacity duration-300 ${
+      className={`fixed inset-0 z-[150] overflow-y-auto overscroll-contain [scrollbar-gutter:stable] transition-opacity duration-300 ${
         isClosing ? "opacity-0" : "opacity-100"
       }`}
-      onClick={(event) => {
-        if (event.target === event.currentTarget) {
-          handleClose();
-        }
-      }}
       role="dialog"
       aria-modal="true"
       aria-label="Property details panel"
     >
-      <div className="fixed inset-0 bg-black/65 backdrop-blur-[1.5px]" />
+      <div className="fixed inset-0 bg-black/65 backdrop-blur-[1.5px] pointer-events-none" />
 
-      <aside
-        className={`${PANEL_CONTAINER_CLASS} relative transition-all duration-300 overflow-y-auto overscroll-contain [scrollbar-gutter:stable] ${
-          isClosing ? "translate-y-3 scale-[0.985] opacity-0" : "translate-y-0 scale-100 opacity-100"
-        }`}
-        onClick={(event) => event.stopPropagation()}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+      <div
+        className="relative min-h-full md:py-[15px] flex items-start justify-center"
+        onClick={(event) => {
+          if (event.target === event.currentTarget) {
+            handleClose();
+          }
+        }}
       >
+        <aside
+          className={`${PANEL_CONTAINER_CLASS} transition-all duration-300 ${
+            isClosing ? "translate-y-3 scale-[0.985] opacity-0" : "translate-y-0 scale-100 opacity-100"
+          }`}
+          onClick={(event) => event.stopPropagation()}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
         {actionNotice && (
           <div className="absolute top-3 left-1/2 -translate-x-1/2 z-40 px-3 py-2 text-xs rounded-md bg-black text-white">
             {actionNotice}
@@ -1041,7 +1073,8 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
           </div>
         </div>
 
-      </aside>
+        </aside>
+      </div>
     </div>
   );
 }
