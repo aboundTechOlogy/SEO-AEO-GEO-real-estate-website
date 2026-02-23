@@ -361,7 +361,7 @@ function EmbeddedStreetView({ latitude, longitude }: { latitude: number; longitu
     /* Add custom zoom +/- controls */
     const controlDiv = document.createElement("div");
     controlDiv.className = "gm-sv-custom-controls";
-    controlDiv.style.cssText = "display:flex;flex-direction:column;margin:10px 10px 0 0;";
+    controlDiv.style.cssText = "display:flex;flex-direction:column;margin:56px 10px 0 0;";
 
     const btnStyle = "width:40px;height:40px;background:#fff;border:1px solid #e6e6e6;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#333;font-size:18px;box-shadow:0 1px 4px rgba(0,0,0,0.3);";
 
