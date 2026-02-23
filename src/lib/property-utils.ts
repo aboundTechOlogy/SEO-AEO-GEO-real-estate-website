@@ -1,4 +1,4 @@
-import type { BridgeIdxListing, BridgeMedia, BridgeProperty } from "@/lib/bridge";
+import type { BridgeMedia, BridgeProperty } from "@/lib/bridge";
 
 export interface IdxDetailRow {
   label: string;
@@ -17,17 +17,6 @@ export interface IdxDetailSectionBundle {
 export interface IdxLegalDisclosure {
   courtesyLine: string | null;
   disclaimer: string;
-}
-
-export interface SimilarListingSlot {
-  key: string;
-  listingKey: string | null;
-  href: string | null;
-  imageUrl: string | null;
-  priceLabel: string;
-  addressLine: string;
-  detailLine: string;
-  placeholderReason: "none" | "short-feed" | "empty-feed";
 }
 
 const IDX_DEFAULT_DISCLAIMER =
@@ -383,63 +372,5 @@ export function buildIdxLegalDisclosure(property: BridgeProperty): IdxLegalDiscl
   return {
     courtesyLine,
     disclaimer: IDX_DEFAULT_DISCLAIMER,
-  };
-}
-
-export function buildSimilarListingSlots(
-  listings: BridgeIdxListing[],
-  currentListingKey: string,
-  slotCount = 4,
-): { slots: SimilarListingSlot[]; activeCount: number; feedCount: number } {
-  const filtered = listings.filter(
-    (listing) =>
-      listing.id &&
-      listing.id.toLowerCase() !== currentListingKey.toLowerCase(),
-  );
-  const selected = filtered.slice(0, slotCount);
-
-  const slots: SimilarListingSlot[] = selected.map((listing) => {
-    const address = listing.address?.trim() || "Address unavailable";
-    const cityStateZip = [listing.city, listing.state, listing.zip].filter(Boolean).join(", ");
-    const addressLine = cityStateZip ? `${address}, ${cityStateZip}` : address;
-    const sqftLabel = listing.sqft && listing.sqft > 0 ? `${listing.sqft.toLocaleString()} Sq.Ft` : "-";
-    const detailLine = `${listing.beds || 0} Beds • ${listing.baths || 0} Baths • ${sqftLabel}`;
-
-    return {
-      key: `similar-${listing.id}`,
-      listingKey: listing.id,
-      href: `/property/${listing.id}/`,
-      imageUrl: listing.photos[0]?.url || null,
-      priceLabel: formatCurrency(listing.price),
-      addressLine,
-      detailLine,
-      placeholderReason: "none",
-    };
-  });
-
-  const placeholderReason: SimilarListingSlot["placeholderReason"] =
-    selected.length === 0 ? "empty-feed" : "short-feed";
-
-  while (slots.length < slotCount) {
-    const number = slots.length + 1;
-    slots.push({
-      key: `similar-placeholder-${number}`,
-      listingKey: null,
-      href: null,
-      imageUrl: null,
-      priceLabel: "--",
-      addressLine:
-        placeholderReason === "empty-feed"
-          ? "No similar listings available right now."
-          : "Additional similar listing unavailable.",
-      detailLine: "Beds • Baths • Sq.Ft",
-      placeholderReason,
-    });
-  }
-
-  return {
-    slots,
-    activeCount: selected.length,
-    feedCount: filtered.length,
   };
 }
