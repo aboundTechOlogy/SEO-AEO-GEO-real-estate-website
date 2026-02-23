@@ -90,6 +90,7 @@ export interface BridgeProperty {
   Sewer: string[];
   View: string[];
   WaterSource: string[];
+  VirtualTourURLUnbranded: string | null;
   Media: BridgeMedia[];
 }
 
@@ -836,6 +837,7 @@ function normalizeProperty(raw: unknown): BridgeProperty {
     Sewer: toStringArray(record.Sewer),
     View: toStringArray(record.View),
     WaterSource: toStringArray(record.WaterSource),
+    VirtualTourURLUnbranded: toNullableString(record.VirtualTourURLUnbranded),
     Media: normalizeMedia(record.Media),
   };
 }
@@ -1134,6 +1136,7 @@ export function mockListingToBridgeProperty(index: number, listing: (typeof MOCK
     Sewer: [],
     View: [],
     WaterSource: [],
+    VirtualTourURLUnbranded: null,
     Media: listing.image
       ? [{ MediaURL: listing.image, Order: 1, MimeType: "image/jpeg", MediaCategory: "Photo", ShortDescription: null }]
       : [],

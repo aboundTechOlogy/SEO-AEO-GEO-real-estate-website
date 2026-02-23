@@ -189,7 +189,7 @@ export default async function PropertyDetailPage({ params }: Props) {
 
         <div className="border-b border-black/10 bg-white">
           <div className="max-w-[1200px] mx-auto">
-            <PropertyMediaTabs photos={photos} address={address} latitude={lat} longitude={lng} />
+            <PropertyMediaTabs photos={photos} address={address} latitude={lat} longitude={lng} virtualTourUrl={property.VirtualTourURLUnbranded} />
           </div>
         </div>
 

@@ -49,7 +49,7 @@ interface PropertyDetailPanelProps {
   listingKey: string;
 }
 
-type MediaTab = "photos" | "map" | "street-view" | "virtual-tour";
+type MediaTab = "photos" | "map" | "street-view";
 
 async function fetchJson<T>(url: string): Promise<T> {
   const response = await fetch(url);
@@ -424,11 +424,13 @@ export function PropertyMediaTabs({
   address,
   latitude,
   longitude,
+  virtualTourUrl,
 }: {
   photos: BridgeMedia[];
   address: string;
   latitude: number;
   longitude: number;
+  virtualTourUrl?: string | null;
 }) {
   const [activeMediaTab, setActiveMediaTab] = useState<MediaTab>("photos");
   const [activePhoto, setActivePhoto] = useState(0);
@@ -492,12 +494,13 @@ export function PropertyMediaTabs({
       <div className="absolute left-[15px] top-[15px] z-20 flex items-center gap-[8px]">
         <RectTabButton label="Photos" icon={<IconCamera className="w-[18px] h-[18px]" />} active={activeMediaTab === "photos"} onClick={() => setActiveMediaTab("photos")} />
         <RectTabButton label="Map View" icon={<IconLocation className="w-[18px] h-[18px]" />} active={activeMediaTab === "map"} onClick={() => setActiveMediaTab("map")} />
-        <RectTabButton
-          label="Virtual Tour"
-          icon={<IconVirtual360 className="w-[18px] h-[18px]" />}
-          active={activeMediaTab === "virtual-tour"}
-          onClick={() => setActiveMediaTab("virtual-tour")}
-        />
+        {virtualTourUrl && (
+          <RectTabButton
+            label="Virtual Tour"
+            icon={<IconVirtual360 className="w-[18px] h-[18px]" />}
+            onClick={() => window.open(virtualTourUrl, "_blank", "noopener,noreferrer")}
+          />
+        )}
       </div>
 
       {activeMediaTab !== "street-view" && (
@@ -515,9 +518,9 @@ export function PropertyMediaTabs({
             activeMediaTab === "map"
               ? "bg-white text-[#333] border border-[#e6e6e6] shadow-[0_1px_4px_rgba(0,0,0,0.3)] hover:bg-gray-50"
               : "bg-black text-white hover:bg-black/90"
-          } ${activeMediaTab === "photos" && !hasDisplayablePhotos ? "opacity-40 cursor-not-allowed" : ""} ${activeMediaTab === "virtual-tour" ? "opacity-40 cursor-not-allowed" : ""}`}
+          } ${activeMediaTab === "photos" && !hasDisplayablePhotos ? "opacity-40 cursor-not-allowed" : ""}`}
           aria-label={activeMediaTab === "map" ? "Fullscreen map" : "Open full photo viewer"}
-          disabled={activeMediaTab === "virtual-tour" || (activeMediaTab === "photos" && !hasDisplayablePhotos)}
+          disabled={activeMediaTab === "photos" && !hasDisplayablePhotos}
         >
           <IconExpand className="w-[18px] h-[18px]" />
         </button>
@@ -686,15 +689,6 @@ export function PropertyMediaTabs({
               <IconStreetView className="w-[18px] h-[18px]" />
               Street View
             </button>
-          </div>
-        </div>
-      )}
-
-      {activeMediaTab === "virtual-tour" && (
-        <div className="w-full aspect-video lg:h-[450px] lg:aspect-auto bg-gray-100 flex items-center justify-center">
-          <div className="text-center text-gray-600 px-6">
-            <IconVirtual360 className="w-8 h-8 mx-auto mb-2" />
-            <p className="text-sm font-medium">Virtual tour is not available for this listing.</p>
           </div>
         </div>
       )}
@@ -1179,7 +1173,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
             </div>
           </div>
 
-          <PropertyMediaTabs photos={photos} address={address} latitude={lat} longitude={lng} />
+          <PropertyMediaTabs photos={photos} address={address} latitude={lat} longitude={lng} virtualTourUrl={property.VirtualTourURLUnbranded} />
 
           <div className="grid grid-cols-4 border-b border-black/10 bg-white lg:hidden">
             <button
