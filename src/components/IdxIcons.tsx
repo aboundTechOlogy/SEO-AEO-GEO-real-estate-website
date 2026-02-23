@@ -296,8 +296,8 @@ export function IconCamera({ className }: IconProps) {
 export function IconStreetView({ className }: IconProps) {
   return (
     <svg className={className || "w-4 h-4"} viewBox="0 0 24 24" fill="currentColor">
-      <circle cx="12" cy="4" r="2" />
-      <path d="M14.5 7h-5C8.67 7 8 7.67 8 8.5V12h2v8h1.5v-4h1v4H14v-8h2V8.5C16 7.67 15.33 7 14.5 7z" />
+      <circle cx="13.5" cy="3.5" r="2.5" />
+      <path d="M14 7h-2.5c-1.1 0-2 .9-2 2v4h2l-1.5 7h2.5l1-4.5 2 2V22h2v-7l-2.5-3 .5-3c1.1 1.2 2.5 2 4.5 2v-2c-1.9 0-3.2-1-3.8-2.2L15 8.3C14.7 7.5 13.9 7 14 7zM5.5 13.5L3 22h2.5l1.5-6z" />
     </svg>
   );
 }
