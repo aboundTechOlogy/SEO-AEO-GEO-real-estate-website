@@ -266,77 +266,85 @@ function DetailMapControls() {
   }, []);
 
   return (
-    <>
-      {/* Fullscreen — RIGHT_TOP (matches Chad's sf-icon-fullscreen) */}
-      <div className="absolute right-[10px] top-[10px] z-[5]" style={{ pointerEvents: "auto" }}>
-        <button type="button" aria-label={isFullscreen ? "Exit fullscreen" : "Fullscreen"} title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
-          onClick={() => {
-            const container = map?.getDiv()?.parentElement;
-            if (!container) return;
-            if (document.fullscreenElement) {
-              document.exitFullscreen();
-            } else {
-              container.requestFullscreen();
-            }
-          }}
-          className={`${CTRL} ${CTRL_SHADOW} rounded-[4px] border border-[#e6e6e6]`}>
-          {isFullscreen ? (
-            /* sf-icon-fullscreen-exit */
-            <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
-              <path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7" />
-            </svg>
-          ) : (
-            /* sf-icon-fullscreen */
-            <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
-              <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-            </svg>
-          )}
-        </button>
-      </div>
+    <div className="absolute right-[10px] top-[10px] z-[5] flex flex-col" style={{ pointerEvents: "auto" }}>
+      {/* 1. Fullscreen / Expand (sf-icon-fullscreen) */}
+      <button type="button" aria-label={isFullscreen ? "Exit fullscreen" : "Fullscreen"} title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+        onClick={() => {
+          const container = map?.getDiv()?.parentElement;
+          if (!container) return;
+          if (document.fullscreenElement) {
+            document.exitFullscreen();
+          } else {
+            container.requestFullscreen();
+          }
+        }}
+        className={`${CTRL} ${CTRL_SHADOW} rounded-[4px] border border-[#e6e6e6]`}>
+        {isFullscreen ? (
+          <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+            <path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7" />
+          </svg>
+        ) : (
+          <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+          </svg>
+        )}
+      </button>
 
-      {/* Zoom + Satellite — RIGHT_BOTTOM (matches Chad's layout) */}
-      <div className="absolute right-[10px] bottom-[30px] z-[5] flex flex-col" style={{ pointerEvents: "auto" }}>
-        {/* Zoom in (sf-icon-zoom) */}
-        <button type="button" aria-label="Zoom in" title="Zoom in"
-          onClick={() => map?.setZoom((map.getZoom() || 15) + 1)}
-          className={`${CTRL} ${CTRL_SHADOW} rounded-t-[4px] border border-[#e6e6e6]`}>
-          <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round">
-            <path d="M12 5v14M5 12h14" />
+      <div className="h-[6px]" />
+
+      {/* 2. Zoom in (sf-icon-zoom) */}
+      <button type="button" aria-label="Zoom in" title="Zoom in"
+        onClick={() => map?.setZoom((map.getZoom() || 15) + 1)}
+        className={`${CTRL} ${CTRL_SHADOW} rounded-t-[4px] border border-[#e6e6e6]`}>
+        <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </button>
+      {/* 3. Zoom out (sf-icon-min) */}
+      <button type="button" aria-label="Zoom out" title="Zoom out"
+        onClick={() => map?.setZoom((map.getZoom() || 15) - 1)}
+        className={`${CTRL} ${CTRL_SHADOW} border-x border-b border-[#e6e6e6]`}>
+        <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round">
+          <path d="M5 12h14" />
+        </svg>
+      </button>
+      {/* 4. Satellite toggle (sf-icon-satellite / sf-icon-guide) */}
+      <button type="button"
+        aria-label={isSatellite ? "Switch to map view" : "Switch to satellite view"}
+        title={isSatellite ? "Map view" : "Satellite view"}
+        onClick={() => {
+          if (!map) return;
+          const next = !isSatellite;
+          setIsSatellite(next);
+          map.setMapTypeId(next ? "satellite" : "roadmap");
+        }}
+        className={`${CTRL} ${CTRL_SHADOW} border-x border-b border-[#e6e6e6] rounded-b-[4px]`}>
+        {isSatellite ? (
+          <svg className="w-[20px] h-[20px]" viewBox="0 0 1024 1024" fill="currentColor">
+            <path d="M672 256l-320-128-352 128v768l352-128 320 128 352-128v-768l-352 128zM384 209.728l256 102.4v630.144l-256-102.4v-630.144zM64 300.832l256-93.088v631.808l-256 93.088v-631.808zM960 851.168l-256 93.088v-631.808l256-93.088v631.808z" />
           </svg>
-        </button>
-        {/* Zoom out (sf-icon-min) */}
-        <button type="button" aria-label="Zoom out" title="Zoom out"
-          onClick={() => map?.setZoom((map.getZoom() || 15) - 1)}
-          className={`${CTRL} ${CTRL_SHADOW} border-x border-b border-[#e6e6e6]`}>
-          <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round">
-            <path d="M5 12h14" />
+        ) : (
+          <svg className="w-[20px] h-[20px]" viewBox="0 0 1024 1024" fill="currentColor">
+            <path d="M128 533.334h-42.667c0.17 259.137 210.196 469.163 469.316 469.333h0.017v-42.667c-235.486-0.388-426.279-191.182-426.667-426.63v-0.037zM298.667 533.334h-42.667c0.194 164.871 133.796 298.473 298.648 298.667h0.018v-42.667c-141.336-0.121-255.879-114.664-256-255.988v-0.012zM938.667 759.041l-192-192-42.667 42.667-55.040-55.040 85.333-85.333-115.627-115.627-85.333 85.333-55.040-55.040 42.667-42.667-192-192h-17.92l-106.667 106.667 200.96 200.96 42.667-42.667 55.040 55.040-85.333 85.333 115.627 115.627 85.333-85.333 55.040 55.040-42.667 42.667 200.96 200.96 106.667-106.667z" />
           </svg>
-        </button>
-        {/* Satellite toggle (sf-icon-satellite / sf-icon-guide) */}
-        <button type="button"
-          aria-label={isSatellite ? "Switch to map view" : "Switch to satellite view"}
-          title={isSatellite ? "Map view" : "Satellite view"}
-          onClick={() => {
-            if (!map) return;
-            const next = !isSatellite;
-            setIsSatellite(next);
-            map.setMapTypeId(next ? "satellite" : "roadmap");
-          }}
-          className={`${CTRL} ${CTRL_SHADOW} border-x border-b border-[#e6e6e6] rounded-b-[4px]`}>
-          {isSatellite ? (
-            /* Map/roadmap icon (sf-icon-guide) */
-            <svg className="w-[20px] h-[20px]" viewBox="0 0 1024 1024" fill="currentColor">
-              <path d="M672 256l-320-128-352 128v768l352-128 320 128 352-128v-768l-352 128zM384 209.728l256 102.4v630.144l-256-102.4v-630.144zM64 300.832l256-93.088v631.808l-256 93.088v-631.808zM960 851.168l-256 93.088v-631.808l256-93.088v631.808z" />
-            </svg>
-          ) : (
-            /* Satellite icon (sf-icon-satellite) */
-            <svg className="w-[20px] h-[20px]" viewBox="0 0 1024 1024" fill="currentColor">
-              <path d="M128 533.334h-42.667c0.17 259.137 210.196 469.163 469.316 469.333h0.017v-42.667c-235.486-0.388-426.279-191.182-426.667-426.63v-0.037zM298.667 533.334h-42.667c0.194 164.871 133.796 298.473 298.648 298.667h0.018v-42.667c-141.336-0.121-255.879-114.664-256-255.988v-0.012zM938.667 759.041l-192-192-42.667 42.667-55.040-55.040 85.333-85.333-115.627-115.627-85.333 85.333-55.040-55.040 42.667-42.667-192-192h-17.92l-106.667 106.667 200.96 200.96 42.667-42.667 55.040 55.040-85.333 85.333 115.627 115.627 85.333-85.333 55.040 55.040-42.667 42.667 200.96 200.96 106.667-106.667z" />
-            </svg>
-          )}
-        </button>
-      </div>
-    </>
+        )}
+      </button>
+
+      <div className="h-[6px]" />
+
+      {/* 5. Move around / Pan — 4-directional arrows */}
+      <button type="button" aria-label="Pan map" title="Move around"
+        onClick={() => map?.panTo({ lat: map.getCenter()?.lat() || 0, lng: map.getCenter()?.lng() || 0 })}
+        className={`${CTRL} ${CTRL_SHADOW} rounded-[4px] border border-[#e6e6e6]`}>
+        <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M5 9l-3 3 3 3" />
+          <path d="M9 5l3-3 3 3" />
+          <path d="M15 19l-3 3-3-3" />
+          <path d="M19 9l3 3-3 3" />
+          <path d="M2 12h20M12 2v20" />
+        </svg>
+      </button>
+    </div>
   );
 }
 
