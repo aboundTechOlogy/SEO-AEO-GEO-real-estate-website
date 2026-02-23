@@ -1219,7 +1219,6 @@ function MobileFiltersSheet({
   totalCount: number;
   onClearAll: () => void;
 }) {
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => { setMounted(true); }, []);
@@ -1230,8 +1229,6 @@ function MobileFiltersSheet({
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = prev; };
   }, [isOpen]);
-
-  const toggle = (key: string) => setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
 
   const toggleFeature = (f: string) => {
     const next = filterValues.features.includes(f)
@@ -1269,12 +1266,12 @@ function MobileFiltersSheet({
         </button>
       </div>
 
-      {/* Scrollable body */}
+      {/* Scrollable body — all sections laid out flat, no accordions */}
       <div className="flex-1 overflow-y-auto">
         {/* 1. Property Search */}
-        <AccordionRow label="Property Search" rightLabel={status} expanded={!!expanded.search} onToggle={() => toggle("search")} />
-        {expanded.search && (
-          <div className="px-5 pb-4 pt-1 space-y-2.5">
+        <div className="border-b border-neutral-100">
+          <p className="px-5 pt-4 pb-2 text-sm font-semibold text-neutral-900">Property Search</p>
+          <div className="px-5 pb-4 space-y-2.5">
             {["For Sale", "For Rent", "Sold"].map((opt) => (
               <label key={opt} className="flex items-center gap-3 cursor-pointer group">
                 <div
@@ -1314,17 +1311,12 @@ function MobileFiltersSheet({
               </div>
             )}
           </div>
-        )}
+        </div>
 
         {/* 2. Price */}
-        <AccordionRow
-          label="Price"
-          rightLabel={filterValues.priceMin ? `$${Number(filterValues.priceMin).toLocaleString()}+` : undefined}
-          expanded={!!expanded.price}
-          onToggle={() => toggle("price")}
-        />
-        {expanded.price && (
-          <div className="flex items-center gap-3 px-5 pb-4 pt-1">
+        <div className="border-b border-neutral-100">
+          <p className="px-5 pt-4 pb-2 text-sm font-semibold text-neutral-900">Price</p>
+          <div className="flex items-center gap-3 px-5 pb-4">
             <div className="flex-1">
               <div className="flex items-center border border-neutral-200 rounded-lg px-3 py-2.5">
                 <span className="text-neutral-400 text-sm mr-1">$</span>
@@ -1341,12 +1333,12 @@ function MobileFiltersSheet({
               <p className="text-xs text-neutral-400 mt-1 ml-1">Maximum</p>
             </div>
           </div>
-        )}
+        </div>
 
         {/* 3. Rooms */}
-        <AccordionRow label="Rooms" expanded={!!expanded.rooms} onToggle={() => toggle("rooms")} />
-        {expanded.rooms && (
-          <div className="px-5 pb-4 pt-1 space-y-5">
+        <div className="border-b border-neutral-100">
+          <p className="px-5 pt-4 pb-2 text-sm font-semibold text-neutral-900">Rooms</p>
+          <div className="px-5 pb-4 space-y-5">
             <div>
               <p className="text-sm font-medium text-neutral-700 mb-2">Bedrooms</p>
               <div className="flex items-center gap-3">
@@ -1376,12 +1368,12 @@ function MobileFiltersSheet({
               </div>
             </div>
           </div>
-        )}
+        </div>
 
         {/* 4. Property Type */}
-        <AccordionRow label="Property Type" expanded={!!expanded.type} onToggle={() => toggle("type")} />
-        {expanded.type && (
-          <div className="px-5 pb-4 pt-1 space-y-2.5">
+        <div className="border-b border-neutral-100">
+          <p className="px-5 pt-4 pb-2 text-sm font-semibold text-neutral-900">Property Type</p>
+          <div className="px-5 pb-4 space-y-2.5">
             {PROPERTY_TYPES.map((type) => (
               <label key={type} className="flex items-center gap-3 cursor-pointer group">
                 <div
@@ -1413,12 +1405,12 @@ function MobileFiltersSheet({
               </label>
             </div>
           </div>
-        )}
+        </div>
 
         {/* 5. Keyword */}
-        <AccordionRow label="Keyword Search" expanded={!!expanded.keyword} onToggle={() => toggle("keyword")} />
-        {expanded.keyword && (
-          <div className="px-5 pb-4 pt-1">
+        <div className="border-b border-neutral-100">
+          <p className="px-5 pt-4 pb-2 text-sm font-semibold text-neutral-900">Keyword Search</p>
+          <div className="px-5 pb-4">
             <div className="flex items-center border border-neutral-200 rounded-lg px-3 py-2.5 mb-3">
               <input type="text" value={filterValues.keyword} onChange={(e) => onFilterChange({ keyword: e.target.value })} placeholder="Pool, Waterfront, Gated..." className="flex-1 text-sm text-neutral-900 focus:outline-none bg-transparent placeholder-neutral-400" />
               {filterValues.keyword && (
@@ -1435,16 +1427,18 @@ function MobileFiltersSheet({
               ))}
             </div>
           </div>
-        )}
+        </div>
 
         {/* 6. Garage */}
-        <AccordionRow label="Garage Spaces" rightLabel={filterValues.garage !== "Any" ? `${filterValues.garage}+` : undefined} expanded={!!expanded.garage} onToggle={() => toggle("garage")} />
-        {expanded.garage && <SegmentedButtons options={GARAGE_OPTIONS} value={filterValues.garage} onChange={(v) => onFilterChange({ garage: v })} />}
+        <div className="border-b border-neutral-100">
+          <p className="px-5 pt-4 pb-2 text-sm font-semibold text-neutral-900">Garage Spaces</p>
+          <SegmentedButtons options={GARAGE_OPTIONS} value={filterValues.garage} onChange={(v) => onFilterChange({ garage: v })} />
+        </div>
 
         {/* 7. Living Size */}
-        <AccordionRow label="Living Size (sq ft)" expanded={!!expanded.livingSize} onToggle={() => toggle("livingSize")} />
-        {expanded.livingSize && (
-          <div className="flex items-center gap-3 px-5 pb-4 pt-1">
+        <div className="border-b border-neutral-100">
+          <p className="px-5 pt-4 pb-2 text-sm font-semibold text-neutral-900">Living Size (sq ft)</p>
+          <div className="flex items-center gap-3 px-5 pb-4">
             <div className="flex-1">
               <input type="text" value={filterValues.minSqft} onChange={(e) => onFilterChange({ minSqft: e.target.value.replace(/[^0-9]/g, "") })} placeholder="Any" className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400" />
               <p className="text-xs text-neutral-400 mt-1 ml-1">Minimum</p>
@@ -1455,19 +1449,25 @@ function MobileFiltersSheet({
               <p className="text-xs text-neutral-400 mt-1 ml-1">Maximum</p>
             </div>
           </div>
-        )}
+        </div>
 
         {/* 8. Waterfront */}
-        <AccordionRow label="Waterfront" rightLabel={filterValues.waterfront !== "Any" ? filterValues.waterfront : undefined} expanded={!!expanded.waterfront} onToggle={() => toggle("waterfront")} />
-        {expanded.waterfront && <RadioList options={WATERFRONT_OPTIONS} value={filterValues.waterfront} onChange={(v) => onFilterChange({ waterfront: v })} />}
+        <div className="border-b border-neutral-100">
+          <p className="px-5 pt-4 pb-2 text-sm font-semibold text-neutral-900">Waterfront</p>
+          <RadioList options={WATERFRONT_OPTIONS} value={filterValues.waterfront} onChange={(v) => onFilterChange({ waterfront: v })} />
+        </div>
 
         {/* 9. Features */}
-        <AccordionRow label="Features" rightLabel={filterValues.features.length > 0 ? `${filterValues.features.length} selected` : undefined} expanded={!!expanded.features} onToggle={() => toggle("features")} />
-        {expanded.features && <CheckboxList options={FEATURE_OPTIONS} selected={filterValues.features} onToggle={toggleFeature} />}
+        <div className="border-b border-neutral-100">
+          <p className="px-5 pt-4 pb-2 text-sm font-semibold text-neutral-900">Features</p>
+          <CheckboxList options={FEATURE_OPTIONS} selected={filterValues.features} onToggle={toggleFeature} />
+        </div>
 
         {/* 10. Days On Market */}
-        <AccordionRow label="Days On Market" rightLabel={filterValues.domMax !== "Any" ? `≤ ${filterValues.domMax === "Today" ? "1" : filterValues.domMax} days` : undefined} expanded={!!expanded.dom} onToggle={() => toggle("dom")} />
-        {expanded.dom && <SegmentedButtons options={DOM_OPTIONS} value={filterValues.domMax} onChange={(v) => onFilterChange({ domMax: v })} />}
+        <div className="border-b border-neutral-100">
+          <p className="px-5 pt-4 pb-2 text-sm font-semibold text-neutral-900">Days On Market</p>
+          <SegmentedButtons options={DOM_OPTIONS} value={filterValues.domMax} onChange={(v) => onFilterChange({ domMax: v })} />
+        </div>
       </div>
 
       {/* Sticky footer — always reachable */}
