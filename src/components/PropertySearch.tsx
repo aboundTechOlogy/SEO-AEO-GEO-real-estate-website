@@ -37,7 +37,7 @@ export default function PropertySearch() {
       />
 
       <ScrollReveal className="relative z-10 w-full max-w-6xl mx-auto px-6 text-center">
-        <h2 className="font-playfair text-5xl md:text-6xl uppercase tracking-[0.15em] text-white mb-10">
+        <h2 className="font-playfair text-3xl sm:text-5xl md:text-6xl uppercase tracking-[0.15em] text-white mb-10">
           Property Search
         </h2>
 

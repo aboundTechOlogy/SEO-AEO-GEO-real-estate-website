@@ -31,10 +31,10 @@ export default function NeighborhoodBlades() {
 
   return (
     <section className="py-20 md:py-28 bg-[#0a0a0a]">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-6 overflow-hidden">
         <ScrollReveal className="mb-10">
           <p className="text-neutral-500 text-sm uppercase tracking-[0.2em] mb-2" data-reveal>Andrew Whalen</p>
-          <h2 className="font-playfair text-5xl md:text-6xl uppercase tracking-wider text-white" data-reveal>
+          <h2 className="font-playfair text-3xl sm:text-5xl md:text-6xl uppercase tracking-wider text-white" data-reveal>
             Neighborhoods
           </h2>
         </ScrollReveal>

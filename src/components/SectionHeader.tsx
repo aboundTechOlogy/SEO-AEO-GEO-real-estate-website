@@ -40,7 +40,7 @@ export default function SectionHeader({
       </p>
       <h2
         data-reveal
-        className={`font-playfair text-5xl md:text-6xl uppercase tracking-wider mt-2 ${titleClass}`}
+        className={`font-playfair text-3xl sm:text-5xl md:text-6xl uppercase tracking-wider mt-2 ${titleClass}`}
       >
         {title}
       </h2>
