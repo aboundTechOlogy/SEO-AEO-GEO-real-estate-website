@@ -186,13 +186,17 @@ export default function PropertyMap({
   // Track whether InfoCard was opened by a click or a result-card hover
   const infoCardSourceRef = useRef<"click" | "hover" | null>(null);
 
-  // Result card hover → show InfoCard for that listing; un-hover → close it
+  // Result card hover → close any existing card, show InfoCard for hovered listing
   useEffect(() => {
     if (resultCardHovered && hoveredListingId) {
       const m = markers.find((mk) => mk.listingKey === hoveredListingId);
       if (m?.listingKey) {
         setInfoCardMarker({ listingKey: m.listingKey, lat: m.lat, lng: m.lng });
         infoCardSourceRef.current = "hover";
+      } else {
+        // Listing not visible on map — just close existing card
+        setInfoCardMarker(null);
+        infoCardSourceRef.current = null;
       }
     } else if (!resultCardHovered && infoCardSourceRef.current === "hover") {
       setInfoCardMarker(null);
