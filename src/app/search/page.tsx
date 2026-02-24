@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import SearchPropertyCard from "@/components/SearchPropertyCard";
-import { DesktopSearchBar, MobileSearchBar, DEFAULT_FILTER_VALUES } from "@/components/SearchFilters";
+import { DesktopSearchBar, MobileSearchBar, FloatingSaveSearch, DEFAULT_FILTER_VALUES } from "@/components/SearchFilters";
 import type { SearchFilterValues } from "@/components/SearchFilters";
 import PropertyMap from "@/components/PropertyMap";
 import PropertyDetailPanel from "@/components/PropertyDetailPanel";
@@ -894,6 +894,9 @@ function SearchPage() {
           onSaveSearch={handleSaveSearch}
         />
       </div>
+
+      {/* Floating Save Search — visible when in-bar Save Search is hidden */}
+      <FloatingSaveSearch onSave={handleSaveSearch} message={saveToast} />
 
       {errorMessage && (
         <div className="px-4 py-2 bg-amber-50 border-b border-amber-200 text-[13px] text-amber-900">

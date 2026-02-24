@@ -2052,6 +2052,7 @@ export function DesktopSearchBar({
   saveMessage: string | null;
 }) {
   const [openFilter, setOpenFilter] = useState<string | null>(null);
+  const [filtersSheetOpen, setFiltersSheetOpen] = useState(false);
 
   const toggle = (name: string) => {
     setOpenFilter((prev) => (prev === name ? null : name));
@@ -2063,7 +2064,19 @@ export function DesktopSearchBar({
   };
 
   return (
+    <>
     <div className="hidden md:flex items-center gap-2 px-[15px] py-[10px] overflow-x-auto no-scrollbar">
+      {/* Filters button — visible when More is hidden (below 1050px) */}
+      <button
+        onClick={() => setFiltersSheetOpen(true)}
+        className="shrink-0 flex min-[1050px]:hidden items-center gap-2 bg-white border border-gray-300 rounded-full px-[16px] h-[50px] text-[13px] font-semibold text-gray-700 hover:border-gray-500 transition-colors whitespace-nowrap"
+      >
+        <svg className="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
+        </svg>
+        Filters
+      </button>
+
       {/* Address */}
       <div className="shrink-0 min-w-[180px] w-[240px] min-[1180px]:w-[280px] min-[1440px]:w-[320px]">
         <AddressSearchInput
@@ -2105,18 +2118,22 @@ export function DesktopSearchBar({
         selectedTypes={filterValues.propertyTypes}
         onTypesChange={(types) => onFilterChange({ propertyTypes: types })}
       />
-      <MoreFilter
-        open={openFilter === "more"}
-        onToggle={() => toggle("more")}
-        filterValues={filterValues}
-        onFilterChange={onFilterChange}
-        status={status}
-        onStatusChange={onStatusChange}
-        soldRange={filterValues.soldRange}
-        onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
-        totalCount={totalCount}
-        onClearAll={handleClearAll}
-      />
+
+      {/* More — hidden below 1050px (Filters button replaces it) */}
+      <div className="hidden min-[1050px]:block shrink-0">
+        <MoreFilter
+          open={openFilter === "more"}
+          onToggle={() => toggle("more")}
+          filterValues={filterValues}
+          onFilterChange={onFilterChange}
+          status={status}
+          onStatusChange={onStatusChange}
+          soldRange={filterValues.soldRange}
+          onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
+          totalCount={totalCount}
+          onClearAll={handleClearAll}
+        />
+      </div>
 
       {/* Save Search — sits next to filters */}
       <div className="relative hidden min-[1180px]:block shrink-0">
@@ -2143,6 +2160,21 @@ export function DesktopSearchBar({
         />
       </div>
     </div>
+
+    {/* Full-screen filters sheet (fallback for More on narrow desktop/tablet) */}
+    <MobileFiltersSheet
+      isOpen={filtersSheetOpen}
+      onClose={() => setFiltersSheetOpen(false)}
+      filterValues={filterValues}
+      onFilterChange={onFilterChange}
+      status={status}
+      onStatusChange={onStatusChange}
+      soldRange={filterValues.soldRange}
+      onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
+      totalCount={totalCount}
+      onClearAll={handleClearAll}
+    />
+    </>
   );
 }
 
