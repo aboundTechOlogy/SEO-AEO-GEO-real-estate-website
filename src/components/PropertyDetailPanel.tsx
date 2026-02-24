@@ -1228,7 +1228,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
 
   return (
     <div
-      className={`fixed inset-0 z-[150] overflow-y-auto flex items-start justify-center transition-opacity duration-300 ${
+      className={`fixed inset-0 z-[150] overflow-y-auto flex items-start justify-center bg-black/80 backdrop-blur-[7px] transition-opacity duration-300 ${
         isClosing ? "opacity-0" : "opacity-100"
       }`}
       role="dialog"
@@ -1240,7 +1240,6 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
         }
       }}
     >
-      <div className="fixed inset-0 bg-black/80 backdrop-blur-[7px] pointer-events-none" />
 
         <aside
           className={`${PANEL_CONTAINER_CLASS} transition-all duration-300 ${
