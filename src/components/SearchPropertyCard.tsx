@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { IconLove } from "@/components/IdxIcons";
 
 interface Props {
   image?: string;
+  photos?: string[];
   price: string;
   address: string;
   city: string;
@@ -60,8 +61,25 @@ function saveSet(set: Set<string>) {
   }
 }
 
+function ChevronLeft() {
+  return (
+    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+    </svg>
+  );
+}
+
+function ChevronRight() {
+  return (
+    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+    </svg>
+  );
+}
+
 export default function SearchPropertyCard({
   image,
+  photos,
   price,
   address,
   city,
@@ -84,13 +102,31 @@ export default function SearchPropertyCard({
 }: Props) {
   const [internalSaved, setInternalSaved] = useState(false);
   const [shareLabel, setShareLabel] = useState<"idle" | "copied">("idle");
+  const [photoIndex, setPhotoIndex] = useState(0);
   const isSaved = controlledSaved ?? internalSaved;
+
+  const allPhotos = photos && photos.length > 0 ? photos : image ? [image] : [];
+  const currentPhoto = allPhotos[photoIndex] || image;
+  const totalPhotos = allPhotos.length;
+  const hasMultiplePhotos = totalPhotos > 1;
 
   // Hydrate saved state from localStorage after mount
   useEffect(() => {
     if (!listingKey || controlledSaved !== undefined) return;
     setInternalSaved(getSavedSet().has(listingKey));
   }, [listingKey, controlledSaved]);
+
+  const handlePrevPhoto = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setPhotoIndex((i) => (i === 0 ? totalPhotos - 1 : i - 1));
+  }, [totalPhotos]);
+
+  const handleNextPhoto = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setPhotoIndex((i) => (i === totalPhotos - 1 ? 0 : i + 1));
+  }, [totalPhotos]);
 
   function handleShare(e: React.MouseEvent) {
     e.preventDefault();
@@ -145,9 +181,9 @@ export default function SearchPropertyCard({
       className="group block relative overflow-hidden bg-neutral-200 cursor-pointer aspect-[5/3] md:rounded-[10px] md:shadow-[0_1px_4px_rgba(0,0,0,0.16)]"
     >
       {/* Image or placeholder */}
-      {image ? (
+      {currentPhoto ? (
         <img
-          src={image}
+          src={currentPhoto}
           alt={address}
           className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${isSold ? "grayscale" : ""}`}
         />
@@ -157,6 +193,28 @@ export default function SearchPropertyCard({
             <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0 0 22.5 18.75V5.25A2.25 2.25 0 0 0 20.25 3H3.75A2.25 2.25 0 0 0 1.5 5.25v13.5A2.25 2.25 0 0 0 3.75 21Z" />
           </svg>
         </div>
+      )}
+
+      {/* Photo navigation arrows — show on hover when multiple photos */}
+      {hasMultiplePhotos && (
+        <>
+          <button
+            type="button"
+            onClick={handlePrevPhoto}
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 hover:bg-white flex items-center justify-center shadow text-neutral-800 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+            aria-label="Previous photo"
+          >
+            <ChevronLeft />
+          </button>
+          <button
+            type="button"
+            onClick={handleNextPhoto}
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 hover:bg-white flex items-center justify-center shadow text-neutral-800 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+            aria-label="Next photo"
+          >
+            <ChevronRight />
+          </button>
+        </>
       )}
 
       {/* Bottom gradient for text legibility */}
@@ -211,10 +269,10 @@ export default function SearchPropertyCard({
       </div>
 
       {/* Photo counter — bottom right */}
-      {photoCount && photoCount > 0 && (
+      {totalPhotos > 0 && (
         <div className="absolute bottom-4 right-4">
           <span className="bg-black/60 text-white text-xs px-2 py-0.5 rounded-sm">
-            1 of {photoCount}
+            {photoIndex + 1} of {totalPhotos}
           </span>
         </div>
       )}

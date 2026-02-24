@@ -26,6 +26,7 @@ type DrawCoords = Array<{ lat: number; lng: number }>;
 interface UiListing {
   id: string;
   image?: string;
+  photos: string[];
   price: string;
   priceValue: number;
   address: string;
@@ -152,6 +153,7 @@ function toUiListing(listing: BridgeIdxListing): UiListing {
   return {
     id: listing.id,
     image: listing.photos[0]?.url,
+    photos: listing.photos.map((p) => p.url),
     price: formatCurrency(listing.price),
     priceValue: listing.price,
     address: listing.address || "Address unavailable",
@@ -559,16 +561,6 @@ function SearchPage() {
     setSavedListingKeys(readSavedListingKeys());
   }, []);
 
-  // Lock body scroll when in map view (prevents double scrollbar)
-  useEffect(() => {
-    if (view === "map") {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => { document.body.style.overflow = ""; };
-  }, [view]);
-
   // Sync URL on state changes (after hydration)
   useEffect(() => {
     if (!hydrated) return;
@@ -838,6 +830,7 @@ function SearchPage() {
                     <SearchPropertyCard
                       listingKey={listing.id}
                       image={listing.image}
+                      photos={listing.photos}
                       price={listing.price}
                       address={listing.address}
                       city={listing.city}
@@ -864,8 +857,12 @@ function SearchPage() {
       )}
 
       {view === "map" && (
-        <div className="flex" style={{ height: "calc(100vh - 72px - 56px)" }}>
-          <div className="w-full lg:w-[60%] xl:w-1/2 shrink-0">
+        <div className="lg:flex">
+          {/* Map — sticky on desktop, fixed height on mobile */}
+          <div
+            className="w-full lg:w-[60%] xl:w-1/2 lg:shrink-0 lg:sticky lg:self-start"
+            style={{ height: `calc(100vh - ${theadTop}px)`, top: theadTop }}
+          >
             <PropertyMap
               center={mapCenter}
               zoom={10}
@@ -883,10 +880,10 @@ function SearchPage() {
             />
           </div>
 
-          {/* Results panel — single scroll container */}
-          <div className="hidden lg:flex lg:w-[40%] xl:w-1/2 bg-white flex-col overflow-hidden">
+          {/* Results panel — normal page flow, scrolls with page */}
+          <div className="hidden lg:block lg:w-[40%] xl:w-1/2 bg-white">
             <SorterRow count={totalCount} selectedSort={sortLabel} onSortChange={setSortLabel} />
-            <div className="flex-1 overflow-y-auto overflow-x-hidden px-[10px] pt-[10px]">
+            <div className="px-[10px] pt-[10px]">
               {showLoading ? (
                 <LoadingGrid count={8} />
               ) : showNoResults ? (
@@ -896,11 +893,11 @@ function SearchPage() {
                   {listings.map((listing) => (
                     <div
                       key={listing.id}
-                      className={`px-[5px] mb-[10px] transition-shadow duration-200 ${
+                      className={`px-[5px] mb-[10px] rounded-[10px] transition-shadow duration-200 ${
                         highlightedListingId === listing.id
-                          ? "ring-2 ring-amber-400 ring-offset-2"
+                          ? "ring-2 ring-black"
                           : hoveredListingId === listing.id
-                            ? "ring-2 ring-black/30 ring-offset-1"
+                            ? "ring-2 ring-black"
                             : ""
                       }`}
                       ref={(node) => {

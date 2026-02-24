@@ -92,12 +92,12 @@ html {
 /* Map count alert banner — fade in, hold, fade out */
 @keyframes fadeInOut {
   0% { opacity: 0; }
-  8% { opacity: 1; }
-  83% { opacity: 1; }
+  5% { opacity: 1; }
+  85% { opacity: 1; }
   100% { opacity: 0; }
 }
 .animate-fadeInOut {
-  animation: fadeInOut 6s forwards;
+  animation: fadeInOut 8s forwards;
 }
 
 /* Subtle background pattern for sections that need texture */
