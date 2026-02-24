@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchIdxSearch } from "@/lib/bridge";
 
-const PROPERTY_TYPE_MAP: Record<string, string> = {
-  "Single Family Homes": "Residential",
-  "Condominiums": "Condominium",
-  "Townhouses": "Residential",
-  "Multi-Family": "Residential Income",
-  "Vacant Land": "Land",
+/**
+ * Maps UI filter labels → OData filter expressions.
+ * Miami MLS uses PropertyType for broad category and PropertySubType for specifics.
+ * e.g. Condos are PropertyType='Residential' AND PropertySubType='Condominium'.
+ */
+const PROPERTY_TYPE_FILTERS: Record<string, string> = {
+  "Single Family Homes": "PropertySubType eq 'Single Family Residence'",
+  "Condominiums": "PropertySubType eq 'Condominium'",
+  "Townhouses": "PropertySubType eq 'Townhouse'",
+  "Multi-Family": "PropertyType eq 'Residential Income'",
+  "Vacant Land": "(PropertyType eq 'Land/Boat Docks')",
 };
 
 /** Features that map directly to Bridge boolean fields */
@@ -80,8 +85,8 @@ export async function GET(req: NextRequest) {
   const orderby = search.get("orderby") || search.get("sort") || "ListPrice desc";
 
   const typesRaw = search.get("types");
-  const types = typesRaw
-    ? typesRaw.split(",").map((t) => PROPERTY_TYPE_MAP[t.trim()] || t.trim()).filter(Boolean)
+  const typeFilterExprs = typesRaw
+    ? typesRaw.split(",").map((t) => PROPERTY_TYPE_FILTERS[t.trim()]).filter(Boolean)
     : undefined;
 
   // New params
@@ -117,8 +122,7 @@ export async function GET(req: NextRequest) {
     baths: parseNumber(search.get("baths")),
     maxBaths,
     status: search.get("status") || "Active",
-    type: search.get("type") || undefined,
-    types,
+    typeFilterExprs,
     swLat: parseNumber(search.get("swLat")),
     swLng: parseNumber(search.get("swLng")),
     neLat: parseNumber(search.get("neLat")),

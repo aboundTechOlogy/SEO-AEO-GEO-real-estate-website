@@ -686,8 +686,15 @@ function SearchPage() {
       params.set("neLng", String(bbox.neLng));
     }
 
+    // Pass filter params so markers match search results
+    if (filterValues.priceMin) params.set("minPrice", filterValues.priceMin);
+    if (filterValues.priceMax) params.set("maxPrice", filterValues.priceMax);
+    if (filterValues.bedMin) params.set("beds", filterValues.bedMin);
+    if (filterValues.bathMin) params.set("baths", filterValues.bathMin);
+    if (filterValues.propertyTypes.length > 0) params.set("types", filterValues.propertyTypes.join(","));
+
     return `/api/search/markers?${params.toString()}`;
-  }, [bbox, bridgeStatus, view]);
+  }, [bbox, bridgeStatus, view, filterValues.priceMin, filterValues.priceMax, filterValues.bedMin, filterValues.bathMin, filterValues.propertyTypes]);
 
   const {
     data: searchData,

@@ -132,6 +132,8 @@ export interface BridgeIdxSearchParams {
   status?: "Active" | "Pending" | "Closed" | string;
   type?: string;
   types?: string[];
+  /** Pre-built OData filter expressions for property type (from UI type picker) */
+  typeFilterExprs?: string[];
   swLat?: number;
   swLng?: number;
   neLat?: number;
@@ -446,7 +448,14 @@ function buildIdxFilters(params: BridgeIdxSearchParams): string[] {
     );
   }
 
-  if (params.types && params.types.length > 0) {
+  if (params.typeFilterExprs && params.typeFilterExprs.length > 0) {
+    // Pre-built OData expressions from UI type picker (e.g. "PropertySubType eq 'Condominium'")
+    if (params.typeFilterExprs.length === 1) {
+      filters.push(params.typeFilterExprs[0]);
+    } else {
+      filters.push(`(${params.typeFilterExprs.join(" or ")})`);
+    }
+  } else if (params.types && params.types.length > 0) {
     if (params.types.length === 1) {
       filters.push(`PropertyType eq '${escapeOData(params.types[0])}'`);
     } else {
@@ -455,6 +464,9 @@ function buildIdxFilters(params: BridgeIdxSearchParams): string[] {
     }
   } else if (params.type) {
     filters.push(`PropertyType eq '${escapeOData(params.type)}'`);
+  } else if (status === "Active") {
+    // "Any Type" default: only residential property types (exclude commercial, leases, etc.)
+    filters.push(`(PropertyType eq 'Residential' or PropertyType eq 'Residential Income' or PropertyType eq 'Land/Boat Docks')`);
   }
 
   const hasBBox =
@@ -923,6 +935,9 @@ function buildFilters(params: BridgeSearchParams): string[] {
 
   if (params.propertyType) {
     filters.push(`PropertyType eq '${escapeOData(params.propertyType)}'`);
+  } else if (params.status === "Active") {
+    // Only residential property types (exclude commercial, leases, etc.)
+    filters.push(`(PropertyType eq 'Residential' or PropertyType eq 'Residential Income' or PropertyType eq 'Land/Boat Docks')`);
   }
 
   if (typeof params.minPrice === "number") {
@@ -1250,7 +1265,7 @@ export async function getRecentListings(limit = 8): Promise<BridgeProperty[]> {
   const query = new URLSearchParams();
   query.set("$top", String(toPositiveInt(limit, 8, 1, 100)));
   query.set("$orderby", "ListingContractDate desc");
-  query.set("$filter", "StandardStatus eq 'Active'");
+  query.set("$filter", "StandardStatus eq 'Active' and (PropertyType eq 'Residential' or PropertyType eq 'Residential Income' or PropertyType eq 'Land/Boat Docks')");
 
   try {
     const response = await bridgeFetch<unknown>(query, SEARCH_REVALIDATE_SECONDS);
