@@ -759,7 +759,7 @@ function FullScreenPhotoViewer({
   const gmapsKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
   return (
-    <div className="fixed inset-0 z-[300] bg-black overflow-y-auto">
+    <div className={`fixed inset-0 z-[300] bg-black ${viewMode === "photos" ? "overflow-y-auto" : "flex flex-col overflow-hidden"}`}>
       {/* Header bar — matches Carroll's fullScreenModal header */}
       <div className="shrink-0 bg-white">
         <div className="h-[80px] px-[15px] flex items-center justify-between gap-[10px] max-w-[1368px] mx-auto">
@@ -791,7 +791,7 @@ function FullScreenPhotoViewer({
       </div>
 
       {/* Content — Photos or Map */}
-      <div className="px-[15px] pt-[8px] pb-[15px] flex items-center justify-center">
+      <div className={`px-[15px] pt-[8px] pb-[15px] flex items-center justify-center ${viewMode === "map" ? "flex-1 min-h-0" : ""}`}>
         {viewMode === "photos" ? (
           <div className="relative max-w-[1368px] w-full" style={{ aspectRatio: '3/2' }}>
             {url && !failed ? (
@@ -829,6 +829,7 @@ function FullScreenPhotoViewer({
         ) : (
           /* Map view */
           latitude && longitude && gmapsKey ? (
+            <div className="w-full h-full">
             <APIProvider apiKey={gmapsKey}>
               <GoogleMap
                 defaultCenter={{ lat: latitude, lng: longitude }}
@@ -840,6 +841,7 @@ function FullScreenPhotoViewer({
                 <Marker position={{ lat: latitude, lng: longitude }} />
               </GoogleMap>
             </APIProvider>
+            </div>
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">Map unavailable</div>
           )
