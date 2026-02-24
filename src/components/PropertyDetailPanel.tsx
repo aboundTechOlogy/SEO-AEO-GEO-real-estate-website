@@ -774,16 +774,16 @@ function FullScreenPhotoViewer({
       </div>
 
       {/* Photo — fills remaining viewport */}
-      <div className="relative flex-1 min-h-0 flex items-center justify-center">
+      <div className="relative flex-1 min-h-0">
         {url && !failed ? (
           <img
             src={url}
             alt={`${address} photo ${activePhoto + 1}`}
-            className="max-w-full max-h-full object-contain"
+            className="w-full h-full object-cover"
             onError={() => setFailedPhotos((prev) => ({ ...prev, [activePhoto]: true }))}
           />
         ) : (
-          <div className="text-gray-400 text-sm">Photo unavailable</div>
+          <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">Photo unavailable</div>
         )}
 
         {photoCount > 1 && (
