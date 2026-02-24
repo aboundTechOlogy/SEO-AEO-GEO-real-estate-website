@@ -143,7 +143,7 @@ export default function MapInfoCard({ listingKey, onClose, onOpenOverlay, isSave
             <button
               type="button"
               onClick={handleShare}
-              className="w-7 h-7 flex items-center justify-center rounded-full border border-neutral-300 hover:bg-neutral-100 transition-colors text-neutral-500 hover:text-neutral-800"
+              className="w-7 h-7 flex items-center justify-center rounded-full border border-neutral-300 hover:bg-neutral-100 transition-colors text-black"
               title={shareLabel === "copied" ? "Copied!" : "Share"}
             >
               {shareLabel === "copied" ? (
@@ -162,7 +162,7 @@ export default function MapInfoCard({ listingKey, onClose, onOpenOverlay, isSave
               className="w-7 h-7 flex items-center justify-center rounded-full border border-neutral-300 hover:bg-neutral-100 transition-colors"
               title={isSaved ? "Remove from saved" : "Save listing"}
             >
-              <IconLove className={`w-3.5 h-3.5 ${isSaved ? "text-rose-500" : "text-neutral-500"}`} active={isSaved} />
+              <IconLove className={`w-3.5 h-3.5 ${isSaved ? "text-rose-500" : "text-black"}`} active={isSaved} />
             </button>
           </div>
         </div>
