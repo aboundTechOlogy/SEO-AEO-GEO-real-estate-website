@@ -178,6 +178,11 @@ export default function PropertyMap({
   const [bannerKey, setBannerKey] = useState(0);
   const [infoCardMarker, setInfoCardMarker] = useState<{ listingKey: string; lat: number; lng: number } | null>(null);
 
+  // Close InfoCard when user hovers a card in the results panel
+  useEffect(() => {
+    if (hoveredListingId) setInfoCardMarker(null);
+  }, [hoveredListingId]);
+
   // Re-trigger banner animation when marker count changes
   useEffect(() => {
     if (markerCount !== undefined) setBannerKey((k) => k + 1);
