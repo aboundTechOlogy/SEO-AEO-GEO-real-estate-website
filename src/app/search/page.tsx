@@ -438,7 +438,7 @@ function buildSearchUrl(
   if (filterValues.domMax !== "Any") params.set("maxDom", filterValues.domMax);
   if (filterValues.waterfront !== "Any") params.set("waterfront", filterValues.waterfront);
   if (filterValues.features.length > 0) params.set("features", filterValues.features.join(","));
-  if (filterValues.hidePending) params.set("hidePending", "true");
+  if (filterValues.hideActiveWithContract) params.set("hideActiveWithContract", "true");
   if (filterValues.minSqft) params.set("minSqft", filterValues.minSqft);
   if (filterValues.maxSqft) params.set("maxSqft", filterValues.maxSqft);
   if (status === "Sold" && filterValues.soldRange) params.set("soldRange", filterValues.soldRange);
@@ -475,7 +475,7 @@ function hydrateFromUrl(): {
   if (search.get("maxDom")) filterPartial.domMax = search.get("maxDom")!;
   if (search.get("waterfront")) filterPartial.waterfront = search.get("waterfront")!;
   if (search.get("features")) filterPartial.features = search.get("features")!.split(",").filter(Boolean);
-  if (search.get("hidePending") === "true") filterPartial.hidePending = true;
+  if (search.get("hideActiveWithContract") === "true") filterPartial.hideActiveWithContract = true;
   if (search.get("minSqft")) filterPartial.minSqft = search.get("minSqft")!;
   if (search.get("maxSqft")) filterPartial.maxSqft = search.get("maxSqft")!;
   if (search.get("types")) filterPartial.propertyTypes = search.get("types")!.split(",").filter(Boolean);
@@ -659,7 +659,7 @@ function SearchPage() {
     if (filterValues.domMax && filterValues.domMax !== "Any") params.set("maxDom", filterValues.domMax);
     if (filterValues.waterfront && filterValues.waterfront !== "Any") params.set("waterfront", filterValues.waterfront);
     if (filterValues.features.length > 0) params.set("features", filterValues.features.join(","));
-    if (filterValues.hidePending) params.set("hidePending", "true");
+    if (filterValues.hideActiveWithContract) params.set("hideActiveWithContract", "true");
     if (filterValues.minSqft) params.set("minSqft", filterValues.minSqft);
     if (filterValues.maxSqft) params.set("maxSqft", filterValues.maxSqft);
     if (bridgeStatus === "Closed" && filterValues.soldRange) params.set("soldRange", filterValues.soldRange);
@@ -696,9 +696,10 @@ function SearchPage() {
     if (filterValues.bedMin) params.set("beds", filterValues.bedMin);
     if (filterValues.bathMin) params.set("baths", filterValues.bathMin);
     if (filterValues.propertyTypes.length > 0) params.set("types", filterValues.propertyTypes.join(","));
+    if (filterValues.hideActiveWithContract) params.set("hideActiveWithContract", "true");
 
     return `/api/search/markers?${params.toString()}`;
-  }, [bbox, bridgeStatus, isForRent, view, filterValues.priceMin, filterValues.priceMax, filterValues.bedMin, filterValues.bathMin, filterValues.propertyTypes]);
+  }, [bbox, bridgeStatus, isForRent, view, filterValues.priceMin, filterValues.priceMax, filterValues.bedMin, filterValues.bathMin, filterValues.propertyTypes, filterValues.hideActiveWithContract]);
 
   const {
     data: searchData,

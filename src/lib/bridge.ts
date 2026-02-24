@@ -150,8 +150,8 @@ export interface BridgeIdxSearchParams {
   waterfrontOnly?: boolean;
   /** Filter to pool-only listings */
   poolOnly?: boolean;
-  /** Exclude Pending/Contingent listings */
-  hidePending?: boolean;
+  /** Exclude Active Under Contract listings (For Sale sub-filter) */
+  hideActiveWithContract?: boolean;
   /** Filter to rental listings only (PropertyType eq 'Residential Lease') */
   forRent?: boolean;
   /** Minimum living area (sq ft) */
@@ -378,10 +378,16 @@ function clampIdxInt(value: number | undefined, fallback: number, min: number, m
 function buildIdxFilters(params: BridgeIdxSearchParams): string[] {
   const filters: string[] = [];
   const status = params.status || "Active";
-  filters.push(`StandardStatus eq '${escapeOData(status)}'`);
 
-  if (params.hidePending) {
-    filters.push(`StandardStatus ne 'Pending'`);
+  if (status === "Active") {
+    // "For Sale" — show Active + Active Under Contract, never Pending
+    if (params.hideActiveWithContract) {
+      filters.push(`StandardStatus eq 'Active'`);
+    } else {
+      filters.push(`(StandardStatus eq 'Active' or StandardStatus eq 'Active Under Contract')`);
+    }
+  } else {
+    filters.push(`StandardStatus eq '${escapeOData(status)}'`);
   }
 
   if (typeof params.minPrice === "number") {
@@ -598,8 +604,8 @@ function filterIdxMockListings(listings: BridgeIdxListing[], params: BridgeIdxSe
     filtered = filtered.filter((item) => item.price <= params.maxPrice!);
   }
 
-  if (params.hidePending) {
-    filtered = filtered.filter((item) => item.status !== "Pending");
+  if (params.hideActiveWithContract) {
+    filtered = filtered.filter((item) => item.status !== "Active Under Contract");
   }
 
   if (typeof params.beds === "number") {

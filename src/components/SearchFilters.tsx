@@ -19,7 +19,7 @@ export interface SearchFilterValues {
   domMax: string;
   waterfront: string;
   features: string[];
-  hidePending: boolean;
+  hideActiveWithContract: boolean;
   minSqft: string;
   maxSqft: string;
   /** Sold time-range: number of days as string, or "" for any time */
@@ -40,7 +40,7 @@ export const DEFAULT_FILTER_VALUES: SearchFilterValues = {
   domMax: "Any",
   waterfront: "Any",
   features: [],
-  hidePending: false,
+  hideActiveWithContract: false,
   minSqft: "",
   maxSqft: "",
   soldRange: "",
@@ -337,8 +337,8 @@ function ForSaleFilter({
   onChange,
   soldRange,
   onSoldRangeChange,
-  hidePending,
-  onHidePendingChange,
+  hideActiveWithContract,
+  onHideActiveWithContractChange,
   open,
   onToggle,
 }: {
@@ -346,8 +346,8 @@ function ForSaleFilter({
   onChange: (v: string) => void;
   soldRange: string;
   onSoldRangeChange: (v: string) => void;
-  hidePending: boolean;
-  onHidePendingChange: (v: boolean) => void;
+  hideActiveWithContract: boolean;
+  onHideActiveWithContractChange: (v: boolean) => void;
   open: boolean;
   onToggle: () => void;
 }) {
@@ -389,24 +389,24 @@ function ForSaleFilter({
           </label>
         ))}
 
-        {/* Hide Pending — sub-selection under "For Sale" */}
+        {/* Hide Active with Contract — sub-selection under "For Sale" */}
         {value === "For Sale" && (
           <div className="mt-1 ml-8 border-l-2 border-neutral-100 pl-3">
             <label className="flex items-center gap-2.5 cursor-pointer group">
               <div
-                onClick={() => onHidePendingChange(!hidePending)}
+                onClick={() => onHideActiveWithContractChange(!hideActiveWithContract)}
                 className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
-                  hidePending ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                  hideActiveWithContract ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
                 }`}
               >
-                {hidePending && (
+                {hideActiveWithContract && (
                   <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
                     <path d="M4.5 12.75l6 6 9-13.5" />
                   </svg>
                 )}
               </div>
-              <span className={`text-[13px] ${hidePending ? "text-neutral-900 font-medium" : "text-neutral-500"}`}>
-                Hide Pending / Contingent
+              <span className={`text-[13px] ${hideActiveWithContract ? "text-neutral-900 font-medium" : "text-neutral-500"}`}>
+                Hide Active with Contract
               </span>
             </label>
           </div>
@@ -895,19 +895,19 @@ function MoreFilter({
               <div className="mt-1 ml-8 border-l-2 border-neutral-100 pl-3">
                 <label className="flex items-center gap-2.5 cursor-pointer group">
                   <div
-                    onClick={() => onFilterChange({ hidePending: !filterValues.hidePending })}
+                    onClick={() => onFilterChange({ hideActiveWithContract: !filterValues.hideActiveWithContract })}
                     className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
-                      filterValues.hidePending ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                      filterValues.hideActiveWithContract ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
                     }`}
                   >
-                    {filterValues.hidePending && (
+                    {filterValues.hideActiveWithContract && (
                       <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
                         <path d="M4.5 12.75l6 6 9-13.5" />
                       </svg>
                     )}
                   </div>
-                  <span className={`text-[13px] ${filterValues.hidePending ? "text-neutral-900 font-medium" : "text-neutral-500"}`}>
-                    Hide Pending / Contingent
+                  <span className={`text-[13px] ${filterValues.hideActiveWithContract ? "text-neutral-900 font-medium" : "text-neutral-500"}`}>
+                    Hide Active with Contract
                   </span>
                 </label>
               </div>
@@ -1301,19 +1301,19 @@ function MobileFiltersSheet({
               <div className="mt-1 ml-8 border-l-2 border-neutral-100 pl-3">
                 <label className="flex items-center gap-2.5 cursor-pointer group">
                   <div
-                    onClick={() => onFilterChange({ hidePending: !filterValues.hidePending })}
+                    onClick={() => onFilterChange({ hideActiveWithContract: !filterValues.hideActiveWithContract })}
                     className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
-                      filterValues.hidePending ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                      filterValues.hideActiveWithContract ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
                     }`}
                   >
-                    {filterValues.hidePending && (
+                    {filterValues.hideActiveWithContract && (
                       <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
                         <path d="M4.5 12.75l6 6 9-13.5" />
                       </svg>
                     )}
                   </div>
-                  <span className={`text-[13px] ${filterValues.hidePending ? "text-neutral-900 font-medium" : "text-neutral-500"}`}>
-                    Hide Pending / Contingent
+                  <span className={`text-[13px] ${filterValues.hideActiveWithContract ? "text-neutral-900 font-medium" : "text-neutral-500"}`}>
+                    Hide Active with Contract
                   </span>
                 </label>
               </div>
@@ -1680,11 +1680,11 @@ export function DesktopSearchBar({
       {/* Filters */}
       <ForSaleFilter
         value={status}
-        onChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); if (v !== "For Sale") onFilterChange({ hidePending: false }); }}
+        onChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); if (v !== "For Sale") onFilterChange({ hideActiveWithContract: false }); }}
         soldRange={filterValues.soldRange}
         onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
-        hidePending={filterValues.hidePending}
-        onHidePendingChange={(v) => onFilterChange({ hidePending: v })}
+        hideActiveWithContract={filterValues.hideActiveWithContract}
+        onHideActiveWithContractChange={(v) => onFilterChange({ hideActiveWithContract: v })}
         open={openFilter === "status"}
         onToggle={() => toggle("status")}
       />
@@ -1804,11 +1804,11 @@ export function MobileSearchBar({
       <div className="flex items-center gap-1.5 pb-2 overflow-x-auto no-scrollbar">
         <ForSaleFilter
           value={status}
-          onChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); if (v !== "For Sale") onFilterChange({ hidePending: false }); }}
+          onChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); if (v !== "For Sale") onFilterChange({ hideActiveWithContract: false }); }}
           soldRange={filterValues.soldRange}
           onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
-          hidePending={filterValues.hidePending}
-          onHidePendingChange={(v) => onFilterChange({ hidePending: v })}
+          hideActiveWithContract={filterValues.hideActiveWithContract}
+          onHideActiveWithContractChange={(v) => onFilterChange({ hideActiveWithContract: v })}
           open={openFilter === "status"}
           onToggle={() => toggle("status")}
         />

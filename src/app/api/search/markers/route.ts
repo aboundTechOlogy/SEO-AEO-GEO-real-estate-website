@@ -27,6 +27,7 @@ export async function GET(req: NextRequest) {
     : undefined;
 
   const forRent = search.get("forRent") === "true";
+  const hideActiveWithContract = search.get("hideActiveWithContract") === "true";
 
   const result = await fetchIdxMarkers({
     minPrice: parseNumber(search.get("minPrice")),
@@ -36,6 +37,7 @@ export async function GET(req: NextRequest) {
     status: search.get("status") || "Active",
     typeFilterExprs,
     forRent: forRent || undefined,
+    hideActiveWithContract: hideActiveWithContract || undefined,
     swLat: parseNumber(search.get("swLat")),
     swLng: parseNumber(search.get("swLng")),
     neLat: parseNumber(search.get("neLat")),
