@@ -28,8 +28,8 @@ interface PropertyMapProps {
   onOpenOverlay?: (listingKey: string) => void;
   savedListingKeys?: Set<string>;
   onToggleSave?: (listingKey: string) => void;
-  /** True when the mouse is over a result card in the right panel. */
-  resultCardHovered?: boolean;
+  /** Set when mouse is over a result card — includes coordinates for InfoCard positioning. */
+  hoveredResultCard?: { listingKey: string; lat: number; lng: number } | null;
   /** Called when the InfoCard is dismissed (X click, hover end, etc.) so parent can clear highlight. */
   onInfoCardClose?: () => void;
 }
@@ -176,7 +176,7 @@ export default function PropertyMap({
   onOpenOverlay,
   savedListingKeys,
   onToggleSave,
-  resultCardHovered,
+  hoveredResultCard,
   onInfoCardClose,
 }: PropertyMapProps) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
@@ -186,23 +186,16 @@ export default function PropertyMap({
   // Track whether InfoCard was opened by a click or a result-card hover
   const infoCardSourceRef = useRef<"click" | "hover" | null>(null);
 
-  // Result card hover → close any existing card, show InfoCard for hovered listing
+  // Result card hover → show InfoCard for that listing; un-hover → close it
   useEffect(() => {
-    if (resultCardHovered && hoveredListingId) {
-      const m = markers.find((mk) => mk.listingKey === hoveredListingId);
-      if (m?.listingKey) {
-        setInfoCardMarker({ listingKey: m.listingKey, lat: m.lat, lng: m.lng });
-        infoCardSourceRef.current = "hover";
-      } else {
-        // Listing not visible on map — just close existing card
-        setInfoCardMarker(null);
-        infoCardSourceRef.current = null;
-      }
-    } else if (!resultCardHovered && infoCardSourceRef.current === "hover") {
+    if (hoveredResultCard) {
+      setInfoCardMarker(hoveredResultCard);
+      infoCardSourceRef.current = "hover";
+    } else if (infoCardSourceRef.current === "hover") {
       setInfoCardMarker(null);
       infoCardSourceRef.current = null;
     }
-  }, [resultCardHovered, hoveredListingId, markers]);
+  }, [hoveredResultCard]);
 
   // Re-trigger banner animation when marker count changes
   useEffect(() => {

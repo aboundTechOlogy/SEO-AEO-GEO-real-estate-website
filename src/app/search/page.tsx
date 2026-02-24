@@ -517,7 +517,7 @@ function SearchPage() {
   const [drawBounds, setDrawBounds] = useState<DrawCoords | null>(null);
   const [highlightedListingId, setHighlightedListingId] = useState<string | null>(null);
   const [hoveredListingId, setHoveredListingId] = useState<string | null>(null);
-  const [resultCardHovered, setResultCardHovered] = useState(false);
+  const [hoveredResultCard, setHoveredResultCard] = useState<{ listingKey: string; lat: number; lng: number } | null>(null);
   const [filterValues, setFilterValues] = useState<SearchFilterValues>(DEFAULT_FILTER_VALUES);
   const [saveToast, setSaveToast] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
@@ -919,7 +919,7 @@ function SearchPage() {
               onOpenOverlay={handleOpenOverlay}
               savedListingKeys={savedListingKeys}
               onToggleSave={handleToggleSavedListing}
-              resultCardHovered={resultCardHovered}
+              hoveredResultCard={hoveredResultCard}
               onInfoCardClose={() => setHighlightedListingId(null)}
             />
           </div>
@@ -947,8 +947,8 @@ function SearchPage() {
                       ref={(node) => {
                         cardRefs.current[listing.id] = node;
                       }}
-                      onMouseEnter={() => { setHoveredListingId(listing.id); setResultCardHovered(true); setHighlightedListingId(null); }}
-                      onMouseLeave={() => { setHoveredListingId(null); setResultCardHovered(false); }}
+                      onMouseEnter={() => { setHoveredListingId(listing.id); setHoveredResultCard({ listingKey: listing.id, lat: listing.lat, lng: listing.lng }); setHighlightedListingId(null); }}
+                      onMouseLeave={() => { setHoveredListingId(null); setHoveredResultCard(null); }}
                     >
                       <SearchPropertyCard
                         listingKey={listing.id}
