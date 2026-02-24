@@ -1124,7 +1124,7 @@ function MoreFilter({
       }
       width="440px"
     >
-      <div className="max-h-[65vh] overflow-y-auto no-scrollbar">
+      <div>
 
         {/* 1. Property Search (searchType) */}
         <AccordionRow
