@@ -55,7 +55,7 @@ const STATUS_TO_BRIDGE: Record<string, string> = {
 };
 
 const SORT_OPTIONS = [
-  { label: "Newest Listings", orderby: "OnMarketTimestamp desc" },
+  { label: "Newest Listings", orderby: "OriginalEntryTimestamp desc" },
   { label: "Highest Price", orderby: "ListPrice desc" },
   { label: "Lowest Price", orderby: "ListPrice asc" },
   { label: "Highest Sq.Ft", orderby: "LivingArea desc" },
