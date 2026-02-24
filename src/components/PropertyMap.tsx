@@ -84,6 +84,7 @@ export default function PropertyMap({
         <Map
           defaultCenter={center}
           defaultZoom={zoom}
+          mapId="DEMO_MAP_ID"
           style={{ width: "100%", height: "100%" }}
           gestureHandling={interactive ? "greedy" : "none"}
           clickableIcons={interactive}
