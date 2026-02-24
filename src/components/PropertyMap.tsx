@@ -85,23 +85,25 @@ function InfoCardOverlay({
     const cardW = card?.offsetWidth || 380;
     const cardH = card?.offsetHeight || 130;
     const pad = 10;
+    const markerTagH = 28; // approx marker pill height
+    const gap = 6;
 
-    // Default: centered above marker
+    // Default: below marker tag so the tag stays visible
     let left = px.x - cardW / 2;
-    let top = px.y - cardH - 15;
+    let top = px.y + markerTagH + gap;
 
-    // If card goes above container → show below marker
+    // If card goes below container → flip above marker
+    if (top + cardH > cH - pad) {
+      top = px.y - cardH - markerTagH - gap;
+    }
+
+    // If still above container top → clamp to top
     if (top < pad) {
-      top = px.y + 30;
+      top = pad;
     }
 
     // Clamp horizontal
     left = Math.max(pad, Math.min(left, cW - cardW - pad));
-
-    // Clamp bottom
-    if (top + cardH > cH - pad) {
-      top = cH - cardH - pad;
-    }
 
     setPos({ left, top });
   }, [marker.lat, marker.lng, containerEl]);
