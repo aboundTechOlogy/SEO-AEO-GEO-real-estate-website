@@ -489,6 +489,7 @@ function SearchPage() {
   const [page, setPage] = useState(1);
   const [drawBounds, setDrawBounds] = useState<DrawCoords | null>(null);
   const [highlightedListingId, setHighlightedListingId] = useState<string | null>(null);
+  const [hoveredListingId, setHoveredListingId] = useState<string | null>(null);
   const [filterValues, setFilterValues] = useState<SearchFilterValues>(DEFAULT_FILTER_VALUES);
   const [saveToast, setSaveToast] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
@@ -557,6 +558,16 @@ function SearchPage() {
   useEffect(() => {
     setSavedListingKeys(readSavedListingKeys());
   }, []);
+
+  // Lock body scroll when in map view (prevents double scrollbar)
+  useEffect(() => {
+    if (view === "map") {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [view]);
 
   // Sync URL on state changes (after hydration)
   useEffect(() => {
@@ -760,6 +771,16 @@ function SearchPage() {
     }
   };
 
+  const handleMarkerHover = useCallback((listingKey: string | null) => {
+    setHoveredListingId(listingKey);
+    if (listingKey) {
+      const target = cardRefs.current[listingKey];
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
+  }, []);
+
   return (
     <>
       <div className="h-[50px] lg:h-[82px] min-[1440px]:h-[90px]" />
@@ -853,12 +874,19 @@ function SearchPage() {
               onClick={handleMarkerClick}
               className="w-full h-full"
               onDrawBounds={setDrawBounds}
+              hoveredListingId={hoveredListingId}
+              selectedListingId={highlightedListingId}
+              onMarkerHover={handleMarkerHover}
+              markerCount={filteredMarkers.length}
+              totalCount={markersData?.total ?? totalCount}
+              onOpenOverlay={handleOpenOverlay}
             />
           </div>
 
-          <div className="hidden lg:flex lg:w-[40%] xl:w-1/2 bg-white flex-col overflow-y-auto">
+          {/* Results panel — single scroll container */}
+          <div className="hidden lg:flex lg:w-[40%] xl:w-1/2 bg-white flex-col overflow-hidden">
             <SorterRow count={totalCount} selectedSort={sortLabel} onSortChange={setSortLabel} />
-            <div className="px-[10px] pt-[10px] flex-1">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden px-[10px] pt-[10px]">
               {showLoading ? (
                 <LoadingGrid count={8} />
               ) : showNoResults ? (
@@ -868,12 +896,18 @@ function SearchPage() {
                   {listings.map((listing) => (
                     <div
                       key={listing.id}
-                      className={`px-[5px] mb-[10px] ${
-                        highlightedListingId === listing.id ? "ring-2 ring-amber-400 ring-offset-2" : ""
+                      className={`px-[5px] mb-[10px] transition-shadow duration-200 ${
+                        highlightedListingId === listing.id
+                          ? "ring-2 ring-amber-400 ring-offset-2"
+                          : hoveredListingId === listing.id
+                            ? "ring-2 ring-black/30 ring-offset-1"
+                            : ""
                       }`}
                       ref={(node) => {
                         cardRefs.current[listing.id] = node;
                       }}
+                      onMouseEnter={() => setHoveredListingId(listing.id)}
+                      onMouseLeave={() => setHoveredListingId(null)}
                     >
                       <SearchPropertyCard
                         listingKey={listing.id}

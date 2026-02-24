@@ -89,6 +89,17 @@ html {
   background-color: #171717;
 }
 
+/* Map count alert banner — fade in, hold, fade out */
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  8% { opacity: 1; }
+  83% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.animate-fadeInOut {
+  animation: fadeInOut 6s forwards;
+}
+
 /* Subtle background pattern for sections that need texture */
 .bg-texture {
   background-image: radial-gradient(circle at 25% 25%, rgba(255,255,255,0.02) 1px, transparent 1px);

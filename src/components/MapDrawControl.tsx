@@ -18,8 +18,8 @@ const POLYGON_FILL = "rgba(66, 133, 244, 0.15)";
 const POLYGON_STROKE = "#4285F4";
 
 const BTN =
-  "w-10 h-10 bg-white flex items-center justify-center transition-colors cursor-pointer text-neutral-700 hover:bg-neutral-50";
-const BTN_SHADOW = "shadow-[0_1px_4px_rgba(0,0,0,0.3)]";
+  "w-[45px] h-[45px] bg-white flex items-center justify-center transition-colors cursor-pointer text-neutral-700 hover:bg-neutral-50 rounded-[10px]";
+const BTN_SHADOW = "shadow-[0_1px_4px_-1px_rgba(0,0,0,0.3)]";
 
 /* ── Icons matching Chad Carroll's toolbar ── */
 
@@ -278,30 +278,28 @@ export default function MapDrawControl({ onBoundsChange, containerRef }: MapDraw
 
       {/* ── Toolbar (hidden during draw mode, matching Chad) ── */}
       {!drawActive && (
-        <div className="absolute right-[10px] top-[10px] z-[5] flex flex-col" style={{ pointerEvents: "auto" }}>
+        <div className="absolute right-[10px] top-[10px] z-[5] flex flex-col gap-[10px]" style={{ pointerEvents: "auto" }}>
           {/* Zoom in */}
           <button type="button" onClick={handleZoomIn} aria-label="Zoom in" title="Zoom in"
-            className={`${BTN} ${BTN_SHADOW} rounded-t-sm border border-black/10`}>
+            className={`${BTN} ${BTN_SHADOW}`}>
             <PlusIcon />
           </button>
           {/* Zoom out */}
           <button type="button" onClick={handleZoomOut} aria-label="Zoom out" title="Zoom out"
-            className={`${BTN} ${BTN_SHADOW} border-x border-b border-black/10`}>
+            className={`${BTN} ${BTN_SHADOW}`}>
             <MinusIcon />
           </button>
 
-          <div className="h-2" />
-
           {/* Draw boundary — freehand */}
           <button type="button" onClick={handleDrawClick} aria-label="Draw boundary" title="Draw boundary"
-            className={`${BTN} ${BTN_SHADOW} rounded-t-sm border border-black/10`}>
+            className={`${BTN} ${BTN_SHADOW}`}>
             <DrawIcon />
           </button>
 
           {/* Clear polygon */}
           {hasPolygon && (
             <button type="button" onClick={handleCancel} aria-label="Clear boundary" title="Clear boundary"
-              className={`${BTN} ${BTN_SHADOW} border-x border-b border-black/10 !text-red-500 hover:!bg-red-50`}>
+              className={`${BTN} ${BTN_SHADOW} !text-red-500 hover:!bg-red-50`}>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
               </svg>
@@ -312,7 +310,7 @@ export default function MapDrawControl({ onBoundsChange, containerRef }: MapDraw
           <button type="button" onClick={handleSatelliteToggle}
             aria-label={isSatellite ? "Map view" : "Satellite view"}
             title={isSatellite ? "Map view" : "Satellite view"}
-            className={`${BTN} ${BTN_SHADOW} rounded-b-sm border-x border-b border-black/10`}>
+            className={`${BTN} ${BTN_SHADOW}`}>
             {isSatellite ? <MapViewIcon /> : <SatelliteIcon />}
           </button>
         </div>

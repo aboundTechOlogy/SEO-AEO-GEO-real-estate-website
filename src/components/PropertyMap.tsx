@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { APIProvider, AdvancedMarker, ControlPosition, Map } from "@vis.gl/react-google-maps";
 import MapDrawControl, { type DrawCoordinate } from "@/components/MapDrawControl";
+import MapInfoCard from "@/components/MapInfoCard";
 
 interface PropertyMapProps {
   center: { lat: number; lng: number };
@@ -18,6 +19,12 @@ interface PropertyMapProps {
   interactive?: boolean;
   onClick?: (listingKey: string) => void;
   onDrawBounds?: (coords: DrawCoordinate[] | null) => void;
+  hoveredListingId?: string | null;
+  selectedListingId?: string | null;
+  onMarkerHover?: (listingKey: string | null) => void;
+  markerCount?: number;
+  totalCount?: number;
+  onOpenOverlay?: (listingKey: string) => void;
 }
 
 function formatPriceLabel(value: number): string {
@@ -39,9 +46,22 @@ export default function PropertyMap({
   interactive = true,
   onClick,
   onDrawBounds,
+  hoveredListingId,
+  selectedListingId,
+  onMarkerHover,
+  markerCount,
+  totalCount,
+  onOpenOverlay,
 }: PropertyMapProps) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
   const containerRef = useRef<HTMLDivElement>(null);
+  const [bannerKey, setBannerKey] = useState(0);
+  const [infoCardMarker, setInfoCardMarker] = useState<{ listingKey: string; lat: number; lng: number } | null>(null);
+
+  // Re-trigger banner animation when marker count changes
+  useEffect(() => {
+    if (markerCount !== undefined) setBannerKey((k) => k + 1);
+  }, [markerCount]);
 
   if (!apiKey) {
     return (
@@ -76,26 +96,75 @@ export default function PropertyMap({
         >
           {markers.map((marker, index) => {
             const markerLabel = marker.price ? formatPriceLabel(marker.price) : marker.label || "";
+            const isActive =
+              (hoveredListingId != null && marker.listingKey === hoveredListingId) ||
+              (selectedListingId != null && marker.listingKey === selectedListingId);
 
             return (
               <AdvancedMarker
                 key={`${marker.listingKey || markerLabel}-${index}`}
                 position={{ lat: marker.lat, lng: marker.lng }}
-                onClick={() => marker.listingKey && onClick?.(marker.listingKey)}
+                onClick={() => {
+                  if (!marker.listingKey) return;
+                  onClick?.(marker.listingKey);
+                  setInfoCardMarker({ listingKey: marker.listingKey, lat: marker.lat, lng: marker.lng });
+                }}
+                zIndex={isActive ? 999 : undefined}
               >
-                <button
-                  type="button"
-                  className="bg-black text-white text-[11px] font-semibold px-2.5 py-1 rounded-md border border-white/25 shadow-lg hover:bg-neutral-800 transition-colors"
+                <div
+                  className={`
+                    relative cursor-pointer select-none
+                    text-[13px] font-bold rounded-[10px] px-[10px] py-[5px]
+                    shadow-[3px_3px_5px_rgba(0,0,0,0.25)]
+                    transition-all duration-300 ease-in-out
+                    ${isActive
+                      ? "bg-black text-white scale-[1.2]"
+                      : "bg-white text-black"
+                    }
+                  `}
+                  onMouseEnter={() => marker.listingKey && onMarkerHover?.(marker.listingKey)}
+                  onMouseLeave={() => onMarkerHover?.(null)}
                 >
                   {markerLabel}
-                </button>
+                </div>
               </AdvancedMarker>
             );
           })}
 
+          {/* InfoCard popup — anchored to clicked marker */}
+          {infoCardMarker && (
+            <AdvancedMarker
+              position={{ lat: infoCardMarker.lat, lng: infoCardMarker.lng }}
+              zIndex={1000}
+            >
+              <div className="relative" style={{ transform: "translate(-50%, -100%)", marginBottom: "8px" }}>
+                <MapInfoCard
+                  listingKey={infoCardMarker.listingKey}
+                  onClose={() => setInfoCardMarker(null)}
+                  onOpenOverlay={onOpenOverlay}
+                />
+              </div>
+            </AdvancedMarker>
+          )}
+
           {/* MUST be inside <Map> so useMap() returns the map instance */}
           {interactive && <MapDrawControl onBoundsChange={onDrawBounds} containerRef={containerRef} />}
         </Map>
+
+        {/* Count alert banner — "Showing X of Y properties" */}
+        {markerCount !== undefined && totalCount !== undefined && totalCount > markerCount && (
+          <div
+            key={bannerKey}
+            className="absolute top-0 left-0 z-[2] m-[15px] pointer-events-none animate-fadeInOut"
+          >
+            <div className="bg-black rounded-[15px] px-[15px] py-[10px]">
+              <span className="text-white text-[14px]">
+                Showing {markerCount.toLocaleString()} of {totalCount.toLocaleString()} properties.
+                Zoom in to see more.
+              </span>
+            </div>
+          </div>
+        )}
       </APIProvider>
     </div>
   );
