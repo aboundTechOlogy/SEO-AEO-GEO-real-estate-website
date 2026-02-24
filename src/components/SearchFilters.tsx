@@ -74,14 +74,15 @@ const SOLD_RANGE_OPTIONS: { label: string; value: string }[] = [
 /* ==================== SOUTH FLORIDA CITY SUGGESTIONS ==================== */
 
 const CITY_SUGGESTIONS = [
-  "Miami", "Miami Beach", "Coral Gables", "Brickell", "Aventura",
-  "Bal Harbour", "Sunny Isles Beach", "Fisher Island", "Key Biscayne",
-  "Coconut Grove", "Edgewater", "Wynwood", "Downtown Miami", "Brickell Key",
-  "Fort Lauderdale", "Hollywood", "Hallandale Beach", "Doral",
-  "Pinecrest", "South Miami", "Kendall", "Hialeah",
-  "North Miami Beach", "Surfside", "Bay Harbor Islands",
-  "Palmetto Bay", "Cutler Bay", "El Portal", "Boca Raton",
-  "Pembroke Pines", "Weston", "Miramar", "Coral Springs", "Plantation",
+  "Aventura", "Bal Harbour", "Bay Harbor Islands", "Boca Raton",
+  "Brickell", "Brickell Key", "Coconut Grove", "Coral Gables",
+  "Coral Springs", "Cutler Bay", "Doral", "Downtown Miami",
+  "Edgewater", "El Portal", "Fisher Island", "Fort Lauderdale",
+  "Hallandale Beach", "Hialeah", "Hollywood", "Kendall",
+  "Key Biscayne", "Miami", "Miami Beach", "Miramar",
+  "North Miami Beach", "Palmetto Bay", "Pembroke Pines", "Pinecrest",
+  "Plantation", "South Miami", "Sunny Isles Beach", "Surfside",
+  "Weston", "Wynwood",
 ];
 
 /* ==================== AUTOCOMPLETE SUGGESTION TYPES ==================== */
@@ -92,16 +93,16 @@ interface SuggestionItem {
   type: "location" | "city" | "address" | "zip" | "building" | "neighborhood";
 }
 
-/** Merged list of all locally-known place names for instant matching */
+/** Merged list of all locally-known place names for instant matching (sorted alphabetically) */
 const LOCAL_PLACES: SuggestionItem[] = [
   ...CITY_SUGGESTIONS.map((c) => ({ label: c, type: "city" as const })),
   ...neighborhoods.map((n) => ({ label: n.name, type: "neighborhood" as const })),
   ...buildings.map((b) => ({ label: b.name, type: "building" as const })),
   ...developments.map((d) => ({ label: d.name, type: "building" as const })),
-];
+].sort((a, b) => a.label.localeCompare(b.label));
 
 /** Zip codes from neighborhood data for instant zip matching */
-const ALL_ZIP_CODES = [...new Set(neighborhoods.flatMap((n) => n.zipCodes))];
+const ALL_ZIP_CODES = [...new Set(neighborhoods.flatMap((n) => n.zipCodes))].sort();
 
 const SUGGESTION_ICONS: Record<SuggestionItem["type"], ReactNode> = {
   location: (
@@ -245,10 +246,10 @@ export function AddressSearchInput({
       }
     }
 
-    // Local city/neighborhood/building matches
+    // Local city/neighborhood/building matches (alphabetical)
     const localMatches = LOCAL_PLACES.filter((p) =>
       p.label.toLowerCase().includes(trimmed)
-    ).slice(0, 5);
+    ).sort((a, b) => a.label.localeCompare(b.label)).slice(0, 8);
     for (const m of localMatches) {
       items.push(m);
     }
