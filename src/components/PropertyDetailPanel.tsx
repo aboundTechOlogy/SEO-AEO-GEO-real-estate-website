@@ -715,6 +715,9 @@ function FullScreenPhotoViewer({
   onSave,
   onShare,
   isSaved,
+  latitude,
+  longitude,
+  listingKey,
 }: {
   photos: BridgeMedia[];
   startIndex: number;
@@ -724,22 +727,35 @@ function FullScreenPhotoViewer({
   onSave: () => void;
   onShare: () => void;
   isSaved: boolean;
+  latitude?: number;
+  longitude?: number;
+  listingKey?: string;
 }) {
   const [activePhoto, setActivePhoto] = useState(startIndex);
   const [failedPhotos, setFailedPhotos] = useState<Record<number, boolean>>({});
+  const [viewMode, setViewMode] = useState<"photos" | "map">("photos");
+  const [showContactForm, setShowContactForm] = useState(false);
   const photoCount = photos.length;
   const url = photos[activePhoto]?.MediaURL;
   const failed = failedPhotos[activePhoto];
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
+      if (showContactForm) {
+        if (e.key === "Escape") setShowContactForm(false);
+        return;
+      }
       if (e.key === "Escape") onClose();
-      if (e.key === "ArrowLeft") setActivePhoto((p) => (p - 1 + photoCount) % photoCount);
-      if (e.key === "ArrowRight") setActivePhoto((p) => (p + 1) % photoCount);
+      if (viewMode === "photos") {
+        if (e.key === "ArrowLeft") setActivePhoto((p) => (p - 1 + photoCount) % photoCount);
+        if (e.key === "ArrowRight") setActivePhoto((p) => (p + 1) % photoCount);
+      }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onClose, photoCount]);
+  }, [onClose, photoCount, viewMode, showContactForm]);
+
+  const gmapsKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
   return (
     <div className="fixed inset-0 z-[300] flex flex-col bg-black">
@@ -754,13 +770,13 @@ function FullScreenPhotoViewer({
             <CircleIconButton label={isSaved ? "Unsave" : "Save"} onClick={onSave}>
               <IconLove className="w-5 h-5" active={isSaved} />
             </CircleIconButton>
-            <CircleIconButton label="Photos" active>
+            <CircleIconButton label="Photos" active={viewMode === "photos"} onClick={() => setViewMode("photos")}>
               <IconCamera className="w-5 h-5" />
             </CircleIconButton>
-            <CircleIconButton label="Map" onClick={onClose}>
+            <CircleIconButton label="Map" active={viewMode === "map"} onClick={() => setViewMode("map")}>
               <IconLocation className="w-5 h-5" />
             </CircleIconButton>
-            <CircleIconButton label="Contact" onClick={() => window.location.assign("mailto:Andrew@IamAndrewWhalen.com")}>
+            <CircleIconButton label="Contact" onClick={() => setShowContactForm(true)}>
               <IconEnvelope className="w-5 h-5" />
             </CircleIconButton>
             <CircleIconButton label="Share" onClick={onShare}>
@@ -773,40 +789,86 @@ function FullScreenPhotoViewer({
         </div>
       </div>
 
-      {/* Photo — fills remaining viewport */}
+      {/* Content — Photos or Map */}
       <div className="relative flex-1 min-h-0">
-        {url && !failed ? (
-          <img
-            src={url}
-            alt={`${address} photo ${activePhoto + 1}`}
-            className="w-full h-full object-cover"
-            onError={() => setFailedPhotos((prev) => ({ ...prev, [activePhoto]: true }))}
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">Photo unavailable</div>
-        )}
-
-        {photoCount > 1 && (
+        {viewMode === "photos" ? (
           <>
-            <button
-              type="button"
-              onClick={() => setActivePhoto((p) => (p - 1 + photoCount) % photoCount)}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/50 text-white/80 hover:bg-black/70 hover:text-white transition-colors flex items-center justify-center"
-              aria-label="Previous photo"
-            >
-              <IconChevronLeft className="w-6 h-6" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setActivePhoto((p) => (p + 1) % photoCount)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/50 text-white/80 hover:bg-black/70 hover:text-white transition-colors flex items-center justify-center"
-              aria-label="Next photo"
-            >
-              <IconChevronRight className="w-6 h-6" />
-            </button>
+            {url && !failed ? (
+              <img
+                src={url}
+                alt={`${address} photo ${activePhoto + 1}`}
+                className="w-full h-full object-cover"
+                onError={() => setFailedPhotos((prev) => ({ ...prev, [activePhoto]: true }))}
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">Photo unavailable</div>
+            )}
+
+            {photoCount > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setActivePhoto((p) => (p - 1 + photoCount) % photoCount)}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/50 text-white/80 hover:bg-black/70 hover:text-white transition-colors flex items-center justify-center"
+                  aria-label="Previous photo"
+                >
+                  <IconChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActivePhoto((p) => (p + 1) % photoCount)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/50 text-white/80 hover:bg-black/70 hover:text-white transition-colors flex items-center justify-center"
+                  aria-label="Next photo"
+                >
+                  <IconChevronRight className="w-6 h-6" />
+                </button>
+              </>
+            )}
           </>
+        ) : (
+          /* Map view */
+          latitude && longitude && gmapsKey ? (
+            <APIProvider apiKey={gmapsKey}>
+              <GoogleMap
+                defaultCenter={{ lat: latitude, lng: longitude }}
+                defaultZoom={16}
+                mapId="expand-map"
+                className="w-full h-full"
+                gestureHandling="greedy"
+              >
+                <Marker position={{ lat: latitude, lng: longitude }} />
+              </GoogleMap>
+            </APIProvider>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">Map unavailable</div>
+          )
         )}
       </div>
+
+      {/* Contact form popup */}
+      {showContactForm && (
+        <div className="fixed inset-0 z-[310] flex items-center justify-center" onClick={() => setShowContactForm(false)}>
+          <div className="fixed inset-0 bg-black/50" />
+          <div className="relative z-10 bg-white rounded-lg shadow-2xl w-full max-w-[500px] mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-6 pt-5 pb-3">
+              <h2 className="text-[20px] font-semibold text-[#1a1a1a]">Contact Agent</h2>
+              <button type="button" onClick={() => setShowContactForm(false)} className="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center" aria-label="Close">
+                <IconClose className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex items-center gap-3 px-6 pb-4 border-b border-gray-200">
+              <img src="/andrew-headshot.png" alt="Andrew Whalen" className="w-12 h-12 rounded-full object-cover" />
+              <div>
+                <p className="font-semibold text-[#1a1a1a]">Andrew Whalen</p>
+                <a href="tel:+13054559744" className="text-sm text-[#2563eb] hover:underline">Ph. (305) 455-9744</a>
+              </div>
+            </div>
+            <div className="px-6 py-4">
+              <PropertyInquiryForm listingKey={listingKey || ""} address={address} theme="light" />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -861,6 +923,8 @@ export function PropertyMediaWithExpand({
           onSave={() => {}}
           onShare={handleShare}
           isSaved={false}
+          latitude={latitude}
+          longitude={longitude}
         />
       )}
     </>
@@ -1453,6 +1517,9 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
           onSave={toggleSaved}
           onShare={shareListing}
           isSaved={isSaved}
+          latitude={lat}
+          longitude={lng}
+          listingKey={listingKey}
         />
       )}
     </div>
