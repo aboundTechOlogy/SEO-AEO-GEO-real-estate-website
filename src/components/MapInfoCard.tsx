@@ -126,18 +126,18 @@ export default function MapInfoCard({ listingKey, onClose, onOpenOverlay, isSave
           <p className="text-[18px] font-bold text-black leading-tight">
             {formatPrice(property.ListPrice)}
           </p>
-          <p className="text-[13px] text-neutral-600 mt-0.5">
+          <p className="text-[13px] font-medium text-black mt-0.5">
             {property.BedroomsTotal} Beds
-            <span className="mx-1.5 opacity-40">&bull;</span>
+            <span className="mx-1.5 opacity-30">&bull;</span>
             {property.BathroomsTotalInteger} Baths
             {property.LivingArea > 0 && (
               <>
-                <span className="mx-1.5 opacity-40">&bull;</span>
+                <span className="mx-1.5 opacity-30">&bull;</span>
                 {property.LivingArea.toLocaleString()} Sq.Ft
               </>
             )}
           </p>
-          <p className="text-[13px] text-neutral-500 mt-0.5">{fullAddress}</p>
+          <p className="text-[13px] text-black mt-0.5">{fullAddress}</p>
           {/* Share + Save icons */}
           <div className="flex items-center gap-2 mt-1.5">
             <button
