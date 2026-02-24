@@ -1243,7 +1243,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
       <div className="fixed inset-0 bg-black/80 backdrop-blur-[7px] pointer-events-none" />
 
         <aside
-          className={`${PANEL_CONTAINER_CLASS} max-h-screen overflow-y-auto overscroll-contain transition-all duration-300 ${
+          className={`${PANEL_CONTAINER_CLASS} transition-all duration-300 ${
             isClosing ? "translate-y-3 scale-[0.985] opacity-0" : "translate-y-0 scale-100 opacity-100"
           }`}
           onClick={(event) => event.stopPropagation()}
