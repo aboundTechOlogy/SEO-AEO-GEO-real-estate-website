@@ -2,6 +2,7 @@
 
 import type { ReactNode, TouchEvent } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
@@ -789,19 +790,19 @@ function FullScreenPhotoViewer({
         </div>
       </div>
 
-      {/* Content — Photos or Map — matches Carroll's fullScreenModal body */}
-      <div className="relative flex-1 min-h-0 p-[30px] flex items-center justify-center">
+      {/* Content — Photos or Map */}
+      <div className="flex-1 min-h-0 p-[30px] flex items-center justify-center overflow-hidden">
         {viewMode === "photos" ? (
-          <>
+          <div className="relative max-w-[1368px] w-full" style={{ aspectRatio: '32/18', maxHeight: '100%' }}>
             {url && !failed ? (
               <img
                 src={url}
                 alt={`${address} photo ${activePhoto + 1}`}
-                className="max-w-[1368px] w-full aspect-[32/18] object-cover"
+                className="absolute inset-0 w-full h-full object-cover rounded-sm"
                 onError={() => setFailedPhotos((prev) => ({ ...prev, [activePhoto]: true }))}
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">Photo unavailable</div>
+              <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">Photo unavailable</div>
             )}
 
             {photoCount > 1 && (
@@ -809,7 +810,7 @@ function FullScreenPhotoViewer({
                 <button
                   type="button"
                   onClick={() => setActivePhoto((p) => (p - 1 + photoCount) % photoCount)}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/50 text-white/80 hover:bg-black/70 hover:text-white transition-colors flex items-center justify-center"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-black/50 text-white/80 hover:bg-black/70 hover:text-white transition-colors flex items-center justify-center"
                   aria-label="Previous photo"
                 >
                   <IconChevronLeft className="w-6 h-6" />
@@ -817,14 +818,14 @@ function FullScreenPhotoViewer({
                 <button
                   type="button"
                   onClick={() => setActivePhoto((p) => (p + 1) % photoCount)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/50 text-white/80 hover:bg-black/70 hover:text-white transition-colors flex items-center justify-center"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-black/50 text-white/80 hover:bg-black/70 hover:text-white transition-colors flex items-center justify-center"
                   aria-label="Next photo"
                 >
                   <IconChevronRight className="w-6 h-6" />
                 </button>
               </>
             )}
-          </>
+          </div>
         ) : (
           /* Map view */
           latitude && longitude && gmapsKey ? (
@@ -1507,7 +1508,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
         listPrice={price}
       />
 
-      {isPhotoViewerOpen && (
+      {isPhotoViewerOpen && createPortal(
         <FullScreenPhotoViewer
           photos={photos}
           startIndex={viewerStartPhoto}
@@ -1520,7 +1521,8 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
           latitude={lat}
           longitude={lng}
           listingKey={listingKey}
-        />
+        />,
+        document.body
       )}
     </div>
   );
