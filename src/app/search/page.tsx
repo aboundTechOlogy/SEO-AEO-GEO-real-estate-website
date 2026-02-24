@@ -812,12 +812,6 @@ function SearchPage() {
 
   const handleMarkerHover = useCallback((listingKey: string | null) => {
     setHoveredListingId(listingKey);
-    if (listingKey) {
-      const target = cardRefs.current[listingKey];
-      if (target) {
-        target.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      }
-    }
   }, []);
 
   const prevViewportRef = useRef<string>("");
