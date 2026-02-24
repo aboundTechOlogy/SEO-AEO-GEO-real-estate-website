@@ -153,7 +153,7 @@ export default function Header() {
           <img
             src="/logo-lockup.png"
             alt="Andrew Whalen | LoKation"
-            className="h-7 w-auto"
+            className="h-5 sm:h-7 w-auto"
           />
         </a>
 

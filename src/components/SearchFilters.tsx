@@ -1811,6 +1811,15 @@ export function MobileSearchBar({
 
       {/* Row 2: Filter pills — scrollable, single row */}
       <div className="flex items-center gap-1.5 pb-2 overflow-x-auto no-scrollbar">
+        <button
+          onClick={() => setFiltersSheetOpen(true)}
+          className="shrink-0 flex items-center gap-2 bg-white border border-gray-300 rounded-full px-[16px] h-[35px] text-[13px] font-semibold text-gray-700 hover:border-gray-500 transition-colors whitespace-nowrap"
+        >
+          <svg className="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
+          </svg>
+          Filters
+        </button>
         <ForSaleFilter
           value={status}
           onChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); if (v !== "For Sale") onFilterChange({ hideActiveWithContract: false }); }}
@@ -1841,15 +1850,6 @@ export function MobileSearchBar({
           selectedTypes={filterValues.propertyTypes}
           onTypesChange={(types) => onFilterChange({ propertyTypes: types })}
         />
-        <button
-          onClick={() => setFiltersSheetOpen(true)}
-          className="shrink-0 flex items-center gap-2 bg-white border border-gray-300 rounded-full px-[16px] h-[35px] text-[13px] font-semibold text-gray-700 hover:border-gray-500 transition-colors whitespace-nowrap"
-        >
-          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 5.25a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm0 9.75a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm0 9.75a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z" />
-          </svg>
-          More
-        </button>
       </div>
 
       {/* Full-screen filters sheet */}
