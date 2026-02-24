@@ -371,71 +371,72 @@ function ForSaleFilter({
       <PanelHeader title="Property Search" onDone={onToggle} />
       <div className="px-5 py-4 space-y-3">
         {options.map((opt) => (
-          <label
-            key={opt}
-            className="flex items-center gap-3 cursor-pointer group"
-            onClick={() => onChange(opt)}
-          >
-            <div
-              className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
-                value === opt ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
-              }`}
+          <div key={opt}>
+            <label
+              className="flex items-center gap-3 cursor-pointer group"
+              onClick={() => onChange(opt)}
             >
-              {value === opt && <div className="w-2.5 h-2.5 rounded-full bg-black" />}
-            </div>
-            <span className={`text-sm ${value === opt ? "text-neutral-900 font-medium" : "text-neutral-600"}`}>
-              {opt}
-            </span>
-          </label>
-        ))}
-
-        {/* Hide Active with Contract — sub-selection under "For Sale" */}
-        {value === "For Sale" && (
-          <div className="mt-1 ml-8 border-l-2 border-neutral-100 pl-3">
-            <label className="flex items-center gap-2.5 cursor-pointer group">
               <div
-                onClick={() => onHideActiveWithContractChange(!hideActiveWithContract)}
-                className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
-                  hideActiveWithContract ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                  value === opt ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
                 }`}
               >
-                {hideActiveWithContract && (
-                  <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
-                    <path d="M4.5 12.75l6 6 9-13.5" />
-                  </svg>
-                )}
+                {value === opt && <div className="w-2.5 h-2.5 rounded-full bg-black" />}
               </div>
-              <span className={`text-[13px] ${hideActiveWithContract ? "text-neutral-900 font-medium" : "text-neutral-500"}`}>
-                Hide Active with Contract
+              <span className={`text-sm ${value === opt ? "text-neutral-900 font-medium" : "text-neutral-600"}`}>
+                {opt}
               </span>
             </label>
-          </div>
-        )}
 
-        {/* Sold time-range sub-options */}
-        {value === "Sold" && (
-          <div className="mt-1 ml-8 space-y-2.5 border-l-2 border-neutral-100 pl-3">
-            <p className="text-[11px] text-neutral-400 uppercase tracking-wide font-medium mb-1">Sold within</p>
-            {SOLD_RANGE_OPTIONS.map((opt) => (
-              <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer group">
-                <div
-                  className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
-                    soldRange === opt.value ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
-                  }`}
-                  onClick={() => onSoldRangeChange(opt.value)}
-                >
-                  {soldRange === opt.value && <div className="w-2 h-2 rounded-full bg-black" />}
-                </div>
-                <span
-                  className={`text-[13px] ${soldRange === opt.value ? "text-neutral-900 font-medium" : "text-neutral-500"}`}
-                  onClick={() => onSoldRangeChange(opt.value)}
-                >
-                  {opt.label}
-                </span>
-              </label>
-            ))}
+            {/* Hide Active with Contract — directly under "For Sale" */}
+            {opt === "For Sale" && value === "For Sale" && (
+              <div className="mt-2 ml-8 border-l-2 border-neutral-100 pl-3">
+                <label className="flex items-center gap-2.5 cursor-pointer group">
+                  <div
+                    onClick={() => onHideActiveWithContractChange(!hideActiveWithContract)}
+                    className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
+                      hideActiveWithContract ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                    }`}
+                  >
+                    {hideActiveWithContract && (
+                      <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                        <path d="M4.5 12.75l6 6 9-13.5" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className={`text-[13px] ${hideActiveWithContract ? "text-neutral-900 font-medium" : "text-neutral-500"}`}>
+                    Hide Active with Contract
+                  </span>
+                </label>
+              </div>
+            )}
+
+            {/* Sold time-range sub-options — directly under "Sold" */}
+            {opt === "Sold" && value === "Sold" && (
+              <div className="mt-2 ml-8 space-y-2.5 border-l-2 border-neutral-100 pl-3">
+                <p className="text-[11px] text-neutral-400 uppercase tracking-wide font-medium mb-1">Sold within</p>
+                {SOLD_RANGE_OPTIONS.map((rangeOpt) => (
+                  <label key={rangeOpt.value} className="flex items-center gap-2.5 cursor-pointer group">
+                    <div
+                      className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
+                        soldRange === rangeOpt.value ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                      }`}
+                      onClick={() => onSoldRangeChange(rangeOpt.value)}
+                    >
+                      {soldRange === rangeOpt.value && <div className="w-2 h-2 rounded-full bg-black" />}
+                    </div>
+                    <span
+                      className={`text-[13px] ${soldRange === rangeOpt.value ? "text-neutral-900 font-medium" : "text-neutral-500"}`}
+                      onClick={() => onSoldRangeChange(rangeOpt.value)}
+                    >
+                      {rangeOpt.label}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            )}
           </div>
-        )}
+        ))}
       </div>
       <PanelFooter
         onReset={value === "Sold" ? () => onSoldRangeChange("") : undefined}
@@ -877,64 +878,68 @@ function MoreFilter({
         {expanded.search && (
           <div className="px-5 pb-4 pt-1 space-y-2.5">
             {["For Sale", "For Rent", "Sold"].map((opt) => (
-              <label key={opt} className="flex items-center gap-3 cursor-pointer group">
-                <div
-                  onClick={() => onStatusChange(opt)}
-                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
-                    status === opt ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
-                  }`}
-                >
-                  {status === opt && <div className="w-2.5 h-2.5 rounded-full bg-black" />}
-                </div>
-                <span className={`text-sm ${status === opt ? "text-neutral-900 font-medium" : "text-neutral-600"}`}>
-                  {opt}
-                </span>
-              </label>
-            ))}
-            {status === "For Sale" && (
-              <div className="mt-1 ml-8 border-l-2 border-neutral-100 pl-3">
-                <label className="flex items-center gap-2.5 cursor-pointer group">
+              <div key={opt}>
+                <label className="flex items-center gap-3 cursor-pointer group">
                   <div
-                    onClick={() => onFilterChange({ hideActiveWithContract: !filterValues.hideActiveWithContract })}
-                    className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
-                      filterValues.hideActiveWithContract ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                    onClick={() => onStatusChange(opt)}
+                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                      status === opt ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
                     }`}
                   >
-                    {filterValues.hideActiveWithContract && (
-                      <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
-                        <path d="M4.5 12.75l6 6 9-13.5" />
-                      </svg>
-                    )}
+                    {status === opt && <div className="w-2.5 h-2.5 rounded-full bg-black" />}
                   </div>
-                  <span className={`text-[13px] ${filterValues.hideActiveWithContract ? "text-neutral-900 font-medium" : "text-neutral-500"}`}>
-                    Hide Active with Contract
+                  <span className={`text-sm ${status === opt ? "text-neutral-900 font-medium" : "text-neutral-600"}`}>
+                    {opt}
                   </span>
                 </label>
+
+                {opt === "For Sale" && status === "For Sale" && (
+                  <div className="mt-2 ml-8 border-l-2 border-neutral-100 pl-3">
+                    <label className="flex items-center gap-2.5 cursor-pointer group">
+                      <div
+                        onClick={() => onFilterChange({ hideActiveWithContract: !filterValues.hideActiveWithContract })}
+                        className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
+                          filterValues.hideActiveWithContract ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                        }`}
+                      >
+                        {filterValues.hideActiveWithContract && (
+                          <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                            <path d="M4.5 12.75l6 6 9-13.5" />
+                          </svg>
+                        )}
+                      </div>
+                      <span className={`text-[13px] ${filterValues.hideActiveWithContract ? "text-neutral-900 font-medium" : "text-neutral-500"}`}>
+                        Hide Active with Contract
+                      </span>
+                    </label>
+                  </div>
+                )}
+
+                {opt === "Sold" && status === "Sold" && (
+                  <div className="mt-2 ml-8 space-y-2.5 border-l-2 border-neutral-100 pl-3">
+                    <p className="text-[11px] text-neutral-400 uppercase tracking-wide font-medium mb-1">Sold within</p>
+                    {SOLD_RANGE_OPTIONS.map((rangeOpt) => (
+                      <label key={rangeOpt.value} className="flex items-center gap-2.5 cursor-pointer group">
+                        <div
+                          className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
+                            soldRange === rangeOpt.value ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                          }`}
+                          onClick={() => onSoldRangeChange(rangeOpt.value)}
+                        >
+                          {soldRange === rangeOpt.value && <div className="w-2 h-2 rounded-full bg-black" />}
+                        </div>
+                        <span
+                          className={`text-[13px] ${soldRange === rangeOpt.value ? "text-neutral-900 font-medium" : "text-neutral-500"}`}
+                          onClick={() => onSoldRangeChange(rangeOpt.value)}
+                        >
+                          {rangeOpt.label}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-            {status === "Sold" && (
-              <div className="mt-1 ml-8 space-y-2.5 border-l-2 border-neutral-100 pl-3">
-                <p className="text-[11px] text-neutral-400 uppercase tracking-wide font-medium mb-1">Sold within</p>
-                {SOLD_RANGE_OPTIONS.map((opt) => (
-                  <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer group">
-                    <div
-                      className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
-                        soldRange === opt.value ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
-                      }`}
-                      onClick={() => onSoldRangeChange(opt.value)}
-                    >
-                      {soldRange === opt.value && <div className="w-2 h-2 rounded-full bg-black" />}
-                    </div>
-                    <span
-                      className={`text-[13px] ${soldRange === opt.value ? "text-neutral-900 font-medium" : "text-neutral-500"}`}
-                      onClick={() => onSoldRangeChange(opt.value)}
-                    >
-                      {opt.label}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            )}
+            ))}
           </div>
         )}
 
@@ -1283,64 +1288,68 @@ function MobileFiltersSheet({
           <p className="px-5 pt-4 pb-2 text-sm font-semibold text-neutral-900">Property Search</p>
           <div className="px-5 pb-4 space-y-2.5">
             {["For Sale", "For Rent", "Sold"].map((opt) => (
-              <label key={opt} className="flex items-center gap-3 cursor-pointer group">
-                <div
-                  onClick={() => onStatusChange(opt)}
-                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
-                    status === opt ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
-                  }`}
-                >
-                  {status === opt && <div className="w-2.5 h-2.5 rounded-full bg-black" />}
-                </div>
-                <span className={`text-sm ${status === opt ? "text-neutral-900 font-medium" : "text-neutral-600"}`}>
-                  {opt}
-                </span>
-              </label>
-            ))}
-            {status === "For Sale" && (
-              <div className="mt-1 ml-8 border-l-2 border-neutral-100 pl-3">
-                <label className="flex items-center gap-2.5 cursor-pointer group">
+              <div key={opt}>
+                <label className="flex items-center gap-3 cursor-pointer group">
                   <div
-                    onClick={() => onFilterChange({ hideActiveWithContract: !filterValues.hideActiveWithContract })}
-                    className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
-                      filterValues.hideActiveWithContract ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                    onClick={() => onStatusChange(opt)}
+                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                      status === opt ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
                     }`}
                   >
-                    {filterValues.hideActiveWithContract && (
-                      <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
-                        <path d="M4.5 12.75l6 6 9-13.5" />
-                      </svg>
-                    )}
+                    {status === opt && <div className="w-2.5 h-2.5 rounded-full bg-black" />}
                   </div>
-                  <span className={`text-[13px] ${filterValues.hideActiveWithContract ? "text-neutral-900 font-medium" : "text-neutral-500"}`}>
-                    Hide Active with Contract
+                  <span className={`text-sm ${status === opt ? "text-neutral-900 font-medium" : "text-neutral-600"}`}>
+                    {opt}
                   </span>
                 </label>
+
+                {opt === "For Sale" && status === "For Sale" && (
+                  <div className="mt-2 ml-8 border-l-2 border-neutral-100 pl-3">
+                    <label className="flex items-center gap-2.5 cursor-pointer group">
+                      <div
+                        onClick={() => onFilterChange({ hideActiveWithContract: !filterValues.hideActiveWithContract })}
+                        className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
+                          filterValues.hideActiveWithContract ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                        }`}
+                      >
+                        {filterValues.hideActiveWithContract && (
+                          <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                            <path d="M4.5 12.75l6 6 9-13.5" />
+                          </svg>
+                        )}
+                      </div>
+                      <span className={`text-[13px] ${filterValues.hideActiveWithContract ? "text-neutral-900 font-medium" : "text-neutral-500"}`}>
+                        Hide Active with Contract
+                      </span>
+                    </label>
+                  </div>
+                )}
+
+                {opt === "Sold" && status === "Sold" && (
+                  <div className="mt-2 ml-8 space-y-2.5 border-l-2 border-neutral-100 pl-3">
+                    <p className="text-[11px] text-neutral-400 uppercase tracking-wide font-medium mb-1">Sold within</p>
+                    {SOLD_RANGE_OPTIONS.map((rangeOpt) => (
+                      <label key={rangeOpt.value} className="flex items-center gap-2.5 cursor-pointer group">
+                        <div
+                          className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
+                            soldRange === rangeOpt.value ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                          }`}
+                          onClick={() => onSoldRangeChange(rangeOpt.value)}
+                        >
+                          {soldRange === rangeOpt.value && <div className="w-2 h-2 rounded-full bg-black" />}
+                        </div>
+                        <span
+                          className={`text-[13px] ${soldRange === rangeOpt.value ? "text-neutral-900 font-medium" : "text-neutral-500"}`}
+                          onClick={() => onSoldRangeChange(rangeOpt.value)}
+                        >
+                          {rangeOpt.label}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-            {status === "Sold" && (
-              <div className="mt-1 ml-8 space-y-2.5 border-l-2 border-neutral-100 pl-3">
-                <p className="text-[11px] text-neutral-400 uppercase tracking-wide font-medium mb-1">Sold within</p>
-                {SOLD_RANGE_OPTIONS.map((opt) => (
-                  <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer group">
-                    <div
-                      className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
-                        soldRange === opt.value ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
-                      }`}
-                      onClick={() => onSoldRangeChange(opt.value)}
-                    >
-                      {soldRange === opt.value && <div className="w-2 h-2 rounded-full bg-black" />}
-                    </div>
-                    <span
-                      className={`text-[13px] ${soldRange === opt.value ? "text-neutral-900 font-medium" : "text-neutral-500"}`}
-                      onClick={() => onSoldRangeChange(opt.value)}
-                    >
-                      {opt.label}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            )}
+            ))}
           </div>
         </div>
 
