@@ -159,9 +159,20 @@ export function AddressSearchInput({
   const [activeIndex, setActiveIndex] = useState(-1);
   const [apiResults, setApiResults] = useState<SuggestionItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number; width: number } | null>(null);
+  const [mounted, setMounted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => { setMounted(true); }, []);
+
+  // Recompute dropdown position when focused
+  useEffect(() => {
+    if (!focused || !containerRef.current) { setDropdownPos(null); return; }
+    const rect = containerRef.current.getBoundingClientRect();
+    setDropdownPos({ top: rect.bottom + 4, left: rect.left, width: rect.width });
+  }, [focused, inputVal]);
 
   // Keep local input text in sync when parent resets
   useEffect(() => {
@@ -348,8 +359,11 @@ export function AddressSearchInput({
         </div>
       </div>
 
-      {showDropdown && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 z-[210] overflow-hidden max-h-[400px] overflow-y-auto no-scrollbar">
+      {showDropdown && mounted && dropdownPos && createPortal(
+        <div
+          className="fixed bg-white rounded-lg shadow-xl border border-gray-200 z-[210] max-h-[400px] overflow-y-auto no-scrollbar"
+          style={{ top: dropdownPos.top, left: dropdownPos.left, width: dropdownPos.width }}
+        >
           {flatItems.map((item, i) => (
             <button
               key={`${item.type}-${item.label}-${i}`}
@@ -375,7 +389,8 @@ export function AddressSearchInput({
           {isLoading && (
             <div className="px-4 py-3 text-xs text-neutral-400 text-center">Searching addresses...</div>
           )}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
