@@ -265,9 +265,9 @@ export function IconBuild({ className }: IconProps) {
 
 export function IconLocation({ className }: IconProps) {
   return (
-    <I className={className} fill>
-      <path fillRule="evenodd" clipRule="evenodd" d="M12 2.25c-4.556 0-8.25 3.694-8.25 8.25 0 7.142 7.5 11.25 7.5 11.25s7.5-4.108 7.5-11.25c0-4.556-3.694-8.25-8.25-8.25Zm0 11.25a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
-    </I>
+    <svg className={className || "w-4 h-4"} viewBox="0 -960 960 960" fill="currentColor">
+      <path d="M480-80Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-472q33 0 56.5-23.5T560-632q0-33-23.5-56.5T480-712q-33 0-56.5 23.5T400-632q0 33 23.5 56.5T480-552Z" />
+    </svg>
   );
 }
 
@@ -275,10 +275,9 @@ export function IconLocation({ className }: IconProps) {
 
 export function IconCamera({ className }: IconProps) {
   return (
-    <I className={className} fill>
-      <path d="M12 9a3.75 3.75 0 1 0 0 7.5A3.75 3.75 0 0 0 12 9Z" />
-      <path fillRule="evenodd" clipRule="evenodd" d="M9.344 3.071a49.52 49.52 0 0 1 5.312 0c.967.052 1.83.585 2.332 1.39l.821 1.317c.24.383.645.643 1.11.71.386.055.77.113 1.152.176A2.678 2.678 0 0 1 22.5 9.574V18a2.75 2.75 0 0 1-2.75 2.75h-15A2.75 2.75 0 0 1 2 18V9.574c0-1.312.924-2.45 2.199-2.688.382-.063.766-.121 1.152-.176a1.81 1.81 0 0 0 1.11-.71l.822-1.316A2.692 2.692 0 0 1 9.344 3.07ZM6.75 12.75a5.25 5.25 0 1 1 10.5 0 5.25 5.25 0 0 1-10.5 0Z" />
-    </I>
+    <svg className={className || "w-4 h-4"} viewBox="0 -960 960 960" fill="currentColor">
+      <path d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260ZM100-60q-24.75 0-42.375-17.625T40-120v-560q0-24.75 17.625-42.375T100-740h137l83-100h320l83 100h137q24.75 0 42.375 17.625T920-680v560q0 24.75-17.625 42.375T860-60H100Z" />
+    </svg>
   );
 }
 

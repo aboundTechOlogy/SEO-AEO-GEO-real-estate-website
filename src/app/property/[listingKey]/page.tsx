@@ -7,7 +7,7 @@ import {
   DetailSection,
   EstPaymentLink,
   LocationSection,
-  PropertyMediaTabs,
+  PropertyMediaWithExpand,
   SimilarListingsSection,
 } from "@/components/PropertyDetailPanel";
 import { fetchIdxSearch, getProperty } from "@/lib/bridge";
@@ -69,7 +69,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 function StatMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="px-[15px] py-[10px] text-center uppercase text-gray-500">
+    <div className="px-[10px] lg:px-[12px] py-[10px] text-center uppercase text-gray-500">
       <p className="text-[17px] lg:text-[24px] leading-none font-semibold text-[#1a1a1a]">{value}</p>
       <p className="mt-[3px] text-[11px] lg:text-[12px] leading-none">{label}</p>
     </div>
@@ -203,7 +203,7 @@ export default async function PropertyDetailPage({ params }: Props) {
 
         <div className="border-b border-black/10 bg-white">
           <div className="max-w-[1200px] mx-auto">
-            <PropertyMediaTabs photos={photos} address={address} latitude={lat} longitude={lng} virtualTourUrl={property.VirtualTourURLUnbranded} singleHero />
+            <PropertyMediaWithExpand photos={photos} address={address} cityLine={`${property.City}, ${property.StateOrProvince} ${property.PostalCode}`} latitude={lat} longitude={lng} virtualTourUrl={property.VirtualTourURLUnbranded} singleHero />
           </div>
         </div>
 
@@ -234,7 +234,7 @@ export default async function PropertyDetailPage({ params }: Props) {
             <div className="min-w-0 border-r-0 lg:border-r lg:border-gray-200">
               {/* Price + Stats */}
               <div className="border-b border-gray-200 bg-white">
-                <div className="flex items-end justify-between gap-4 px-[15px] py-[15px] border-b border-gray-200">
+                <div className="flex items-end justify-between gap-4 px-[15px] py-[15px]">
                   <p className="text-[22px] font-semibold leading-none text-[#1a1a1a]">{formatCurrency(price)}</p>
                   <div className="text-right">
                     <p className="text-[13px] text-gray-500">Est. Payment</p>
@@ -244,7 +244,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-4 sm:grid-cols-5 divide-x divide-gray-200">
+                <div className="grid grid-cols-4 sm:grid-cols-5">
                   <StatMetric label="Beds" value={String(property.BedroomsTotal || 0)} />
                   <StatMetric label="Baths" value={String(bathsCount || 0)} />
                   <div className="hidden sm:block"><StatMetric label="Half Bath" value={halfBathValue} /></div>
@@ -253,10 +253,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                 </div>
               </div>
 
-              {/* Basic Information FIRST (matches Carroll) */}
-              <DetailSection title="Basic Information" rows={details.basicInformationRows} iconMap={BASIC_INFO_ICON_MAP} />
-
-              {/* Description AFTER Basic Info */}
+              {/* Description first */}
               <section className="bg-white border-b border-gray-200">
                 <div className="bg-[#f5f5f5] border-y border-gray-200 px-[15px] py-[10px]">
                   <h3 className="text-[18px] font-bold leading-none text-[#1a1a1a]">Description</h3>
@@ -265,6 +262,9 @@ export default async function PropertyDetailPage({ params }: Props) {
                   <p className="text-[14px] leading-[1.6] text-gray-700">{details.description}</p>
                 </div>
               </section>
+
+              {/* Basic Information after Description */}
+              <DetailSection title="Basic Information" rows={details.basicInformationRows} iconMap={BASIC_INFO_ICON_MAP} />
 
               <AmenitiesSection amenities={details.amenities} />
               <DetailSection title="Exterior Features" rows={details.exteriorFeatureRows} />

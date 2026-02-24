@@ -86,7 +86,7 @@ export function EstPaymentLink({ label, listPrice }: { label: string; listPrice:
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
-      <button type="button" onClick={() => setIsOpen(true)} className="font-semibold text-[#1a1a1a] underline underline-offset-2 hover:text-black/70 transition-colors">
+      <button type="button" onClick={() => setIsOpen(true)} className="font-semibold text-[#2563eb] underline underline-offset-2 hover:text-blue-700 transition-colors">
         {label}
       </button>
       <MortgageCalculatorModal isOpen={isOpen} onClose={() => setIsOpen(false)} listPrice={listPrice} />
@@ -411,6 +411,7 @@ export function PropertyMediaTabs({
   longitude,
   virtualTourUrl,
   singleHero = false,
+  onExpandPhoto,
 }: {
   photos: BridgeMedia[];
   address: string;
@@ -419,28 +420,18 @@ export function PropertyMediaTabs({
   virtualTourUrl?: string | null;
   /** When true, shows a single full-width hero image instead of 3-col grid on desktop (for standalone page) */
   singleHero?: boolean;
+  /** Called when user clicks expand — parent renders the full-screen viewer */
+  onExpandPhoto?: (photoIndex: number) => void;
 }) {
   const [activeMediaTab, setActiveMediaTab] = useState<MediaTab>("photos");
   const [activePhoto, setActivePhoto] = useState(0);
   const [failedPhotos, setFailedPhotos] = useState<Record<number, boolean>>({});
-  const [isPhotoViewerOpen, setIsPhotoViewerOpen] = useState(false);
 
   useEffect(() => {
     setActiveMediaTab("photos");
     setActivePhoto(0);
     setFailedPhotos({});
-    setIsPhotoViewerOpen(false);
   }, [photos, address]);
-
-  useEffect(() => {
-    function onEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setIsPhotoViewerOpen(false);
-      }
-    }
-    window.addEventListener("keydown", onEscape);
-    return () => window.removeEventListener("keydown", onEscape);
-  }, []);
 
   const photoCount = photos.length;
   const hasDisplayablePhotos = photos.some((photo, index) => Boolean(photo?.MediaURL) && !failedPhotos[index]);
@@ -495,7 +486,7 @@ export function PropertyMediaTabs({
         type="button"
         onClick={() => {
           if (activeMediaTab === "photos") {
-            if (hasDisplayablePhotos) setIsPhotoViewerOpen(true);
+            if (hasDisplayablePhotos && onExpandPhoto) onExpandPhoto(activePhoto);
           } else if (activeMediaTab === "map") {
             const mapContainer = document.querySelector<HTMLElement>("[data-media-map]");
             if (mapContainer) mapContainer.requestFullscreen();
@@ -579,7 +570,7 @@ export function PropertyMediaTabs({
                       type="button"
                       onClick={() => {
                         setActivePhoto(photoIndex);
-                        setIsPhotoViewerOpen(true);
+                        onExpandPhoto?.(photoIndex);
                       }}
                       className="w-full h-full border-r border-gray-200 last:border-r-0 overflow-hidden"
                       aria-label={`Open photo ${photoIndex + 1}`}
@@ -710,66 +701,175 @@ export function PropertyMediaTabs({
         </div>
       )}
 
-      {isPhotoViewerOpen && (
-        <div
-          className="hidden lg:block absolute inset-0 z-30 bg-black/75 backdrop-blur-[2px]"
-          onClick={(event) => {
-            if (event.target === event.currentTarget) {
-              setIsPhotoViewerOpen(false);
-            }
-          }}
-        >
-          <div className="relative h-full w-full flex items-center justify-center p-10">
-            {activePhotoUrl && !activePhotoFailed ? (
-              <img
-                src={activePhotoUrl}
-                alt={`${address} enlarged photo`}
-                className="max-h-full max-w-full object-contain"
-                onError={() => markPhotoFailed(activePhoto)}
-              />
-            ) : (
-              <div className="text-gray-300 text-sm">Photo unavailable</div>
-            )}
+    </div>
+  );
+}
 
-            {photoCount > 1 && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => setActivePhoto((prev) => (prev - 1 + photoCount) % photoCount)}
-                  className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/70 text-white hover:bg-black transition-colors flex items-center justify-center"
-                  aria-label="Previous photo"
-                >
-                  <IconChevronLeft className="w-6 h-6" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActivePhoto((prev) => (prev + 1) % photoCount)}
-                  className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/70 text-white hover:bg-black transition-colors flex items-center justify-center"
-                  aria-label="Next photo"
-                >
-                  <IconChevronRight className="w-6 h-6" />
-                </button>
-              </>
-            )}
+/** Full-screen photo viewer — rendered at dialog root (outside <aside>) so `fixed` works correctly */
+function FullScreenPhotoViewer({
+  photos,
+  startIndex,
+  address,
+  cityLine,
+  onClose,
+  onSave,
+  onShare,
+  isSaved,
+}: {
+  photos: BridgeMedia[];
+  startIndex: number;
+  address: string;
+  cityLine: string;
+  onClose: () => void;
+  onSave: () => void;
+  onShare: () => void;
+  isSaved: boolean;
+}) {
+  const [activePhoto, setActivePhoto] = useState(startIndex);
+  const [failedPhotos, setFailedPhotos] = useState<Record<number, boolean>>({});
+  const photoCount = photos.length;
+  const url = photos[activePhoto]?.MediaURL;
+  const failed = failedPhotos[activePhoto];
 
-            <button
-              type="button"
-              onClick={() => setIsPhotoViewerOpen(false)}
-              className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white text-[#1a1a1a] border border-gray-300 hover:bg-gray-100 flex items-center justify-center"
-              aria-label="Close photo viewer"
-            >
-              <IconClose className="w-4 h-4" />
-            </button>
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") setActivePhoto((p) => (p - 1 + photoCount) % photoCount);
+      if (e.key === "ArrowRight") setActivePhoto((p) => (p + 1) % photoCount);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose, photoCount]);
+
+  return (
+    <div className="fixed inset-0 z-[300] flex flex-col bg-black">
+      {/* Header bar — matches Carroll's expand header */}
+      <div className="shrink-0 bg-white border-b border-black/10">
+        <div className="h-[70px] px-[15px] py-[10px] flex items-center justify-between gap-[10px]">
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-[20px] leading-[1.1] font-semibold text-[#1a1a1a]">{address}</p>
+            <p className="truncate text-[13px] leading-[1.1] text-gray-600">{cityLine}</p>
+          </div>
+          <div className="flex items-center gap-[10px] shrink-0">
+            <CircleIconButton label={isSaved ? "Unsave" : "Save"} onClick={onSave}>
+              <IconLove className="w-5 h-5" active={isSaved} />
+            </CircleIconButton>
+            <CircleIconButton label="Photos" active>
+              <IconCamera className="w-5 h-5" />
+            </CircleIconButton>
+            <CircleIconButton label="Map" onClick={onClose}>
+              <IconLocation className="w-5 h-5" />
+            </CircleIconButton>
+            <CircleIconButton label="Contact" onClick={() => window.location.assign("mailto:Andrew@IamAndrewWhalen.com")}>
+              <IconEnvelope className="w-5 h-5" />
+            </CircleIconButton>
+            <CircleIconButton label="Share" onClick={onShare}>
+              <IconShared className="w-5 h-5" />
+            </CircleIconButton>
+            <CircleIconButton label="Close" onClick={onClose}>
+              <IconClose className="w-5 h-5" />
+            </CircleIconButton>
           </div>
         </div>
-      )}
+      </div>
+
+      {/* Photo — fills remaining viewport */}
+      <div className="relative flex-1 min-h-0 flex items-center justify-center">
+        {url && !failed ? (
+          <img
+            src={url}
+            alt={`${address} photo ${activePhoto + 1}`}
+            className="max-w-full max-h-full object-contain"
+            onError={() => setFailedPhotos((prev) => ({ ...prev, [activePhoto]: true }))}
+          />
+        ) : (
+          <div className="text-gray-400 text-sm">Photo unavailable</div>
+        )}
+
+        {photoCount > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={() => setActivePhoto((p) => (p - 1 + photoCount) % photoCount)}
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/50 text-white/80 hover:bg-black/70 hover:text-white transition-colors flex items-center justify-center"
+              aria-label="Previous photo"
+            >
+              <IconChevronLeft className="w-6 h-6" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setActivePhoto((p) => (p + 1) % photoCount)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/50 text-white/80 hover:bg-black/70 hover:text-white transition-colors flex items-center justify-center"
+              aria-label="Next photo"
+            >
+              <IconChevronRight className="w-6 h-6" />
+            </button>
+          </>
+        )}
+      </div>
     </div>
+  );
+}
+
+/** Client wrapper for standalone page — manages expand state since the page is a server component */
+export function PropertyMediaWithExpand({
+  photos,
+  address,
+  cityLine,
+  latitude,
+  longitude,
+  virtualTourUrl,
+  singleHero = false,
+}: {
+  photos: BridgeMedia[];
+  address: string;
+  cityLine: string;
+  latitude: number;
+  longitude: number;
+  virtualTourUrl?: string | null;
+  singleHero?: boolean;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [startPhoto, setStartPhoto] = useState(0);
+
+  function handleShare() {
+    if (navigator.share) {
+      navigator.share({ title: address, url: window.location.href }).catch(() => {});
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href).catch(() => {});
+    }
+  }
+
+  return (
+    <>
+      <PropertyMediaTabs
+        photos={photos}
+        address={address}
+        latitude={latitude}
+        longitude={longitude}
+        virtualTourUrl={virtualTourUrl}
+        singleHero={singleHero}
+        onExpandPhoto={(idx) => { setStartPhoto(idx); setIsOpen(true); }}
+      />
+      {isOpen && (
+        <FullScreenPhotoViewer
+          photos={photos}
+          startIndex={startPhoto}
+          address={address}
+          cityLine={cityLine}
+          onClose={() => setIsOpen(false)}
+          onSave={() => {}}
+          onShare={handleShare}
+          isSaved={false}
+        />
+      )}
+    </>
   );
 }
 
 function StatMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="px-[15px] py-[10px] text-center uppercase text-gray-500">
+    <div className="px-[10px] lg:px-[12px] py-[10px] text-center uppercase text-gray-500">
       <p className="text-[17px] lg:text-[24px] leading-none font-semibold text-[#1a1a1a]">{value}</p>
       <p className="mt-[3px] text-[11px] lg:text-[12px] leading-none">{label}</p>
     </div>
@@ -870,12 +970,12 @@ function RectTabButton({
       aria-label={label}
       className={[
         /* mobile/tablet: icon-only circle */
-        "w-[35px] h-[35px] rounded-full text-[14px] font-semibold border transition-all duration-300 flex items-center justify-center",
+        "w-[35px] h-[35px] rounded-full text-[14px] font-semibold transition-all duration-300 flex items-center justify-center shadow-sm",
         /* desktop: pill with text */
         "lg:w-auto lg:h-auto lg:min-h-[35px] lg:px-[15px] lg:py-[6px] lg:rounded-[6px] lg:gap-[6px]",
         active
-          ? "border-black bg-black text-white"
-          : "border-black bg-white text-[#1a1a1a] hover:bg-black hover:text-white",
+          ? "bg-black text-white"
+          : "bg-white text-[#1a1a1a] hover:bg-black hover:text-white",
         disabled ? "opacity-50 cursor-default" : "",
       ].join(" ")}
     >
@@ -893,6 +993,8 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
   const [isSaved, setIsSaved] = useState(false);
   const [actionNotice, setActionNotice] = useState<string | null>(null);
   const [isMortgageCalcOpen, setIsMortgageCalcOpen] = useState(false);
+  const [isPhotoViewerOpen, setIsPhotoViewerOpen] = useState(false);
+  const [viewerStartPhoto, setViewerStartPhoto] = useState(0);
   const closeTimeoutRef = useRef<number | null>(null);
 
   const handleClose = useCallback(() => {
@@ -924,6 +1026,10 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
       if (event.key !== "Escape") {
         return;
       }
+      if (isPhotoViewerOpen) {
+        setIsPhotoViewerOpen(false);
+        return;
+      }
       handleClose();
     }
 
@@ -931,7 +1037,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
     return () => {
       window.removeEventListener("keydown", onEscape);
     };
-  }, [handleClose]);
+  }, [handleClose, isPhotoViewerOpen]);
 
   useEffect(() => {
     return () => {
@@ -1018,22 +1124,19 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
   if (!property) {
     return (
       <div
-        className={`fixed inset-0 z-[150] overflow-y-auto overscroll-contain transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[150] flex items-start justify-center transition-opacity duration-300 ${
           isClosing ? "opacity-0" : "opacity-100"
         }`}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) {
+            handleClose();
+          }
+        }}
       >
         <div className="fixed inset-0 bg-black/80 backdrop-blur-[7px] pointer-events-none" />
 
-        <div
-          className="relative min-h-full flex items-start justify-center"
-          onClick={(event) => {
-            if (event.target === event.currentTarget) {
-              handleClose();
-            }
-          }}
-        >
           <aside
-            className={`${PANEL_CONTAINER_CLASS} min-h-screen md:min-h-[calc(100vh-30px)] transition-all duration-300 ${
+            className={`${PANEL_CONTAINER_CLASS} md:mt-[15px] min-h-screen md:min-h-[calc(100vh-30px)] transition-all duration-300 ${
               isClosing ? "translate-y-3 scale-[0.985] opacity-0" : "translate-y-0 scale-100 opacity-100"
             }`}
           >
@@ -1048,7 +1151,6 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
               </button>
             </div>
           </aside>
-        </div>
       </div>
     );
   }
@@ -1126,25 +1228,22 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
 
   return (
     <div
-      className={`fixed inset-0 z-[150] overflow-y-auto overscroll-contain [scrollbar-gutter:stable] transition-opacity duration-300 ${
+      className={`fixed inset-0 z-[150] flex items-start justify-center transition-opacity duration-300 ${
         isClosing ? "opacity-0" : "opacity-100"
       }`}
       role="dialog"
       aria-modal="true"
       aria-label="Property details panel"
+      onClick={(event) => {
+        if (event.target === event.currentTarget) {
+          handleClose();
+        }
+      }}
     >
       <div className="fixed inset-0 bg-black/80 backdrop-blur-[7px] pointer-events-none" />
 
-      <div
-        className="relative min-h-full flex items-start justify-center"
-        onClick={(event) => {
-          if (event.target === event.currentTarget) {
-            handleClose();
-          }
-        }}
-      >
         <aside
-          className={`${PANEL_CONTAINER_CLASS} transition-all duration-300 ${
+          className={`${PANEL_CONTAINER_CLASS} md:mt-[15px] max-h-screen md:max-h-[calc(100vh-30px)] overflow-y-auto overscroll-contain transition-all duration-300 ${
             isClosing ? "translate-y-3 scale-[0.985] opacity-0" : "translate-y-0 scale-100 opacity-100"
           }`}
           onClick={(event) => event.stopPropagation()}
@@ -1180,11 +1279,17 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                 <CircleIconButton label={isSaved ? "Unsave listing" : "Save listing"} onClick={toggleSaved}>
                   <IconLove className="w-5 h-5" active={isSaved} />
                 </CircleIconButton>
+                <CircleIconButton label="Photos" onClick={() => { setViewerStartPhoto(0); setIsPhotoViewerOpen(true); }}>
+                  <IconCamera className="w-5 h-5" />
+                </CircleIconButton>
+                <CircleIconButton label="Map">
+                  <IconLocation className="w-5 h-5" />
+                </CircleIconButton>
+                <CircleIconButton label="Contact" onClick={() => window.location.assign("mailto:Andrew@IamAndrewWhalen.com")}>
+                  <IconEnvelope className="w-5 h-5" />
+                </CircleIconButton>
                 <CircleIconButton label="Share" onClick={shareListing}>
                   <IconShared className="w-5 h-5" />
-                </CircleIconButton>
-                <CircleIconButton label="Open canonical property page" onClick={openCanonicalDetailsPage}>
-                  <IconOpen className="w-5 h-5" />
                 </CircleIconButton>
                 <CircleIconButton label="Close" onClick={handleClose}>
                   <IconClose className="w-5 h-5" />
@@ -1193,7 +1298,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
             </div>
           </div>
 
-          <PropertyMediaTabs photos={photos} address={address} latitude={lat} longitude={lng} virtualTourUrl={property.VirtualTourURLUnbranded} />
+          <PropertyMediaTabs photos={photos} address={address} latitude={lat} longitude={lng} virtualTourUrl={property.VirtualTourURLUnbranded} onExpandPhoto={(idx) => { setViewerStartPhoto(idx); setIsPhotoViewerOpen(true); }} />
 
           <div className="grid grid-cols-4 border-b border-black/10 bg-white lg:hidden">
             <button
@@ -1225,8 +1330,8 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
               <div className="min-w-0 border-r-0 lg:border-r lg:border-gray-200">
                 <div className="border-b border-gray-200 bg-white">
                   {/* Desktop: single-row grid (lg+) */}
-                  <div className="hidden lg:grid lg:grid-cols-7 divide-x divide-gray-200">
-                    <div className="px-[15px] py-[10px] col-span-2">
+                  <div className="hidden lg:flex">
+                    <div className="px-[15px] py-[10px] shrink-0">
                       <div className="flex items-center gap-2">
                         <p className="text-[24px] leading-none font-semibold text-[#1a1a1a]">{formatCurrency(price)}</p>
                         {property.OriginalListPrice != null && property.OriginalListPrice !== price && (() => {
@@ -1241,7 +1346,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                       </div>
                       <p className="mt-[5px] text-[12px] leading-none text-gray-500">
                         Est. Payment {estimatedPayment ? (
-                          <button type="button" onClick={() => setIsMortgageCalcOpen(true)} className="font-semibold text-[#1a1a1a] underline underline-offset-2 hover:text-black/70 transition-colors">
+                          <button type="button" onClick={() => setIsMortgageCalcOpen(true)} className="font-semibold text-[#2563eb] underline underline-offset-2 hover:text-blue-700 transition-colors">
                             {estimatedPayment}/mo
                           </button>
                         ) : "--"}
@@ -1256,7 +1361,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
 
                   {/* Mobile/Tablet: two-row layout (below lg) */}
                   <div className="lg:hidden">
-                    <div className="flex items-center justify-between px-[15px] py-[10px] border-b border-gray-200">
+                    <div className="flex items-center justify-between px-[15px] py-[10px]">
                       <div className="flex items-center gap-2">
                         <p className="text-[22px] leading-none font-semibold text-[#1a1a1a]">{formatCurrency(price)}</p>
                         {property.OriginalListPrice != null && property.OriginalListPrice !== price && (() => {
@@ -1271,13 +1376,13 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                       </div>
                       <p className="text-[12px] leading-none text-gray-500">
                         Est. Payment {estimatedPayment ? (
-                          <button type="button" onClick={() => setIsMortgageCalcOpen(true)} className="font-semibold text-[#1a1a1a] underline underline-offset-2 hover:text-black/70 transition-colors">
+                          <button type="button" onClick={() => setIsMortgageCalcOpen(true)} className="font-semibold text-[#2563eb] underline underline-offset-2 hover:text-blue-700 transition-colors">
                             {estimatedPayment}/mo
                           </button>
                         ) : "--"}
                       </p>
                     </div>
-                    <div className="grid grid-cols-4 divide-x divide-gray-200">
+                    <div className="grid grid-cols-4">
                       <StatMetric label="Beds" value={String(property.BedroomsTotal || 0)} />
                       <StatMetric label="Baths" value={String(bathsCount || 0)} />
                       <StatMetric label="Sq.Ft" value={property.LivingArea ? property.LivingArea.toLocaleString() : "-"} />
@@ -1286,8 +1391,6 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                   </div>
                 </div>
 
-                <DetailSection title="Basic Information" rows={details.basicInformationRows} iconMap={BASIC_INFO_ICON_MAP} />
-
                 <section className="bg-white border-b border-gray-200">
                   <SectionTitleStrip title="Description" />
                   <div className="px-[15px] py-[12px]">
@@ -1295,6 +1398,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                   </div>
                 </section>
 
+                <DetailSection title="Basic Information" rows={details.basicInformationRows} iconMap={BASIC_INFO_ICON_MAP} />
                 <AmenitiesSection amenities={details.amenities} />
                 <DetailSection title="Exterior Features" rows={details.exteriorFeatureRows} />
                 <DetailSection title="Interior Features" rows={details.interiorFeatureRows} />
@@ -1339,13 +1443,25 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
         </div>
 
         </aside>
-      </div>
 
       <MortgageCalculatorModal
         isOpen={isMortgageCalcOpen}
         onClose={() => setIsMortgageCalcOpen(false)}
         listPrice={price}
       />
+
+      {isPhotoViewerOpen && (
+        <FullScreenPhotoViewer
+          photos={photos}
+          startIndex={viewerStartPhoto}
+          address={address}
+          cityLine={`${property.City}, ${property.StateOrProvince} ${property.PostalCode}`}
+          onClose={() => setIsPhotoViewerOpen(false)}
+          onSave={toggleSaved}
+          onShare={shareListing}
+          isSaved={isSaved}
+        />
+      )}
     </div>
   );
 }
