@@ -869,9 +869,9 @@ export function PropertyMediaWithExpand({
 
 function StatMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="px-[10px] lg:px-[12px] py-[10px] text-center uppercase text-gray-500">
+    <div className="px-[10px] lg:px-[12px] py-[15px] flex-1 text-center uppercase text-gray-500">
       <p className="text-[17px] lg:text-[24px] leading-none font-semibold text-[#1a1a1a]">{value}</p>
-      <p className="mt-[3px] text-[11px] lg:text-[12px] leading-none">{label}</p>
+      <p className="mt-[5px] text-[11px] lg:text-[12px] leading-none">{label}</p>
     </div>
   );
 }
@@ -1323,8 +1323,8 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
               <div className="min-w-0 border-r-0 lg:border-r lg:border-gray-200">
                 <div className="border-b border-gray-200 bg-white">
                   {/* Desktop: single-row grid (lg+) */}
-                  <div className="hidden lg:flex">
-                    <div className="px-[15px] py-[10px] shrink-0">
+                  <div className="hidden lg:flex items-stretch">
+                    <div className="px-[15px] py-[15px] flex-1">
                       <div className="flex items-center gap-2">
                         <p className="text-[24px] leading-none font-semibold text-[#1a1a1a]">{formatCurrency(price)}</p>
                         {property.OriginalListPrice != null && property.OriginalListPrice !== price && (() => {
