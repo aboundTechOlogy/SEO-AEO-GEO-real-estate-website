@@ -758,10 +758,10 @@ function FullScreenPhotoViewer({
   const gmapsKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
   return (
-    <div className="fixed inset-0 z-[300] flex flex-col bg-black">
-      {/* Header bar — matches Carroll's expand header */}
-      <div className="shrink-0 bg-white border-b border-black/10">
-        <div className="h-[70px] px-[15px] py-[10px] flex items-center justify-between gap-[10px]">
+    <div className="fixed inset-0 z-[300] flex flex-col bg-black overflow-hidden">
+      {/* Header bar — matches Carroll's fullScreenModal header */}
+      <div className="shrink-0 bg-white">
+        <div className="h-[80px] px-[15px] flex items-center justify-between gap-[10px] max-w-[1368px] mx-auto">
           <div className="min-w-0 flex-1">
             <p className="truncate text-[20px] leading-[1.1] font-semibold text-[#1a1a1a]">{address}</p>
             <p className="truncate text-[13px] leading-[1.1] text-gray-600">{cityLine}</p>
@@ -789,15 +789,15 @@ function FullScreenPhotoViewer({
         </div>
       </div>
 
-      {/* Content — Photos or Map */}
-      <div className="relative flex-1 min-h-0 overflow-hidden mx-[60px] mt-[6px]">
+      {/* Content — Photos or Map — matches Carroll's fullScreenModal body */}
+      <div className="relative flex-1 min-h-0 p-[30px] flex items-center justify-center">
         {viewMode === "photos" ? (
           <>
             {url && !failed ? (
               <img
                 src={url}
                 alt={`${address} photo ${activePhoto + 1}`}
-                className="w-full"
+                className="max-w-[1368px] w-full aspect-[32/18] object-cover"
                 onError={() => setFailedPhotos((prev) => ({ ...prev, [activePhoto]: true }))}
               />
             ) : (
