@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest",
+        "--browser", "chromium",
+        "--executable-path", "/home/dreww/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome"
+      ]
+    }
+  }
+}

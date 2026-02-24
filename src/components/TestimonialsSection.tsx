@@ -66,7 +66,7 @@ export default function TestimonialsSection() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] to-transparent" />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-6">
+      <div className="relative max-w-7xl mx-auto px-6 overflow-hidden">
         <SectionHeader
           subtitle="Andrew Whalen"
           title="Testimonials"

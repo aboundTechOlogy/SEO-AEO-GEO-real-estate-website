@@ -1,0 +1,217 @@
+- document:
+  - banner:
+    - link "The Carroll Group" [ref=e1]:
+      - /url: https://thechadcarrollgroup.com
+      - img "The Carroll Group"
+    - img "Compass"
+    - navigation:
+      - list:
+        - listitem:
+          - link "Our Listings" [ref=e2]:
+            - /url: https://thechadcarrollgroup.com/exclusive-listings/
+        - listitem:
+          - link "Luxury Condos" [ref=e3]:
+            - /url: https://thechadcarrollgroup.com/luxury-condos/
+        - listitem:
+          - link "Neighborhoods" [ref=e4]:
+            - /url: https://thechadcarrollgroup.com/luxury-neighborhoods
+    - navigation:
+      - list:
+        - listitem:
+          - link "About Us" [ref=e5]:
+            - /url: /
+        - listitem:
+          - link "Press" [ref=e6]:
+            - /url: https://thechadcarrollgroup.com/press/
+        - listitem:
+          - link "Contact Us" [ref=e7]:
+            - /url: https://thechadcarrollgroup.com/contact-us/
+    - list:
+      - listitem:
+        - button "Login" [ref=e8]
+    - button "Open Menu" [ref=e9]
+    - button "Close Menu" [ref=e10]: 
+    - link "My Profile" [ref=e11]:
+      - /url: https://thechadcarrollgroup.com/my-profile
+      - text: 
+    - text: 
+    - button "Logout" [ref=e12]
+    - paragraph: Call us if you need immediate assistance. Thanks!
+    - link "Call Now" [ref=e13]:
+      - /url: /
+    - link "Send Message" [ref=e14]:
+      - /url: /
+    - button "History" [ref=e15]
+    - button "Favorites" [ref=e16]
+    - button "Saved Searches" [ref=e17]
+    - navigation "Pagination" [ref=e18]
+  - main:
+    - heading "Oops!" [ref=e19] [level=1]
+    - paragraph: We can't seem to find the page you're looking for.
+    - link "Go to Home page" [ref=e20]:
+      - /url: /
+  - heading "The Carroll Group" [ref=e21] [level=2]
+  - 'heading "COMPASS FLORIDA’S #1 TEAM" [level=3]'
+  - paragraph: Contact Trusted Professionals
+  - group "Contact":
+    - text: Contact
+    - heading "Email Us" [ref=e22] [level=3]
+    - list:
+      - listitem:
+        - text: First Name *
+        - textbox "First Name *" [ref=e23]:
+          - /placeholder: First Name
+      - listitem:
+        - text: Last Name *
+        - textbox "Last Name *" [ref=e24]:
+          - /placeholder: Last Name
+      - listitem:
+        - text: Email *
+        - textbox "Email *" [ref=e25]:
+          - /placeholder: Email
+      - listitem:
+        - text: Phone *
+        - combobox "Telephone country code" [ref=e26]: "+1"
+        - textbox "Phone *" [ref=e27]:
+          - /placeholder: Phone Number
+      - listitem:
+        - text: Comments
+        - textbox "Comments" [ref=e28]:
+          - /placeholder: Message
+      - listitem:
+        - checkbox "Follow Up Boss Follow Up Boss" [ref=e29] [checked]
+        - text: 
+        - paragraph:
+          - text: I agree to receive text messages from CCG Ventures LLC dba The Carroll Group sent from
+          - link "305-400-9507" [ref=e30]:
+            - /url: tel:3054009507
+          - text: ". Message frequency varies for real estate services. Message and data rates may apply. Reply STOP at any time to end or unsubscribe. For assistance, reply HELP or contact support at:"
+          - link "info@thechadcarrollgroup.com" [ref=e31]:
+            - /url: mailto:info@thechadcarrollgroup.com
+      - listitem:
+        - button "Submit" [ref=e32]
+  - contentinfo:
+    - link [ref=e33]:
+      - /url: https://thechadcarrollgroup.com
+    - list:
+      - listitem:
+        - heading "Our Listings" [ref=e34] [level=3]
+        - list:
+          - listitem:
+            - link "Miami-Dade County" [ref=e35]:
+              - /url: https://thechadcarrollgroup.com/miami-dade-exclusive/
+          - listitem:
+            - link "Broward County" [ref=e36]:
+              - /url: https://thechadcarrollgroup.com/broward-exclusive/
+          - listitem:
+            - link "Palm Beach County" [ref=e37]:
+              - /url: https://thechadcarrollgroup.com/palm-beach-exclusive/
+          - listitem:
+            - link "Recent Sales" [ref=e38]:
+              - /url: https://thechadcarrollgroup.com/recent-sales/
+          - listitem:
+            - link "View All" [ref=e39]:
+              - /url: https://thechadcarrollgroup.com/exclusive-listings/
+      - listitem:
+        - heading "Luxury Condos" [ref=e40] [level=3]
+        - list:
+          - listitem:
+            - link "Miami-Dade County" [ref=e41] [nth=1]:
+              - /url: https://thechadcarrollgroup.com/luxury-condos-miami-dade/
+          - listitem:
+            - link "Broward County" [ref=e42] [nth=1]:
+              - /url: https://thechadcarrollgroup.com/luxury-condos-broward/
+          - listitem:
+            - link "Palm Beach County" [ref=e43] [nth=1]:
+              - /url: https://thechadcarrollgroup.com/luxury-condos-palm-beach/
+          - listitem:
+            - link "New Construction" [ref=e44]:
+              - /url: https://thechadcarrollgroup.com/new-developments/
+          - listitem:
+            - link "View All" [ref=e45] [nth=1]:
+              - /url: https://thechadcarrollgroup.com/luxury-condos/
+      - listitem:
+        - heading "Neighborhoods" [ref=e46] [level=3]
+        - list:
+          - listitem:
+            - link "Miami-Dade County" [ref=e47] [nth=2]:
+              - /url: https://thechadcarrollgroup.com/miami-dade/
+          - listitem:
+            - link "Broward County" [ref=e48] [nth=2]:
+              - /url: https://thechadcarrollgroup.com/broward/
+          - listitem:
+            - link "Palm Beach County" [ref=e49] [nth=2]:
+              - /url: https://thechadcarrollgroup.com/palm-beach/
+          - listitem:
+            - link "Search Properties" [ref=e50]:
+              - /url: https://thechadcarrollgroup.com/search/
+          - listitem:
+            - link "View All" [ref=e51] [nth=2]:
+              - /url: https://thechadcarrollgroup.com/luxury-neighborhoods/
+      - listitem:
+        - heading "About Us" [ref=e52] [level=3]
+        - list:
+          - listitem:
+            - link "Meet Chad" [ref=e53]:
+              - /url: https://thechadcarrollgroup.com/meet-chad/
+          - listitem:
+            - link "Meet The Team" [ref=e54]:
+              - /url: https://thechadcarrollgroup.com/the-team/
+          - listitem:
+            - link "Testimonials" [ref=e55]:
+              - /url: https://thechadcarrollgroup.com/testimonials
+      - listitem:
+        - heading "Services" [ref=e56] [level=3]
+        - list:
+          - listitem:
+            - link "Press" [ref=e57] [nth=1]:
+              - /url: https://thechadcarrollgroup.com/press/
+          - listitem:
+            - link "Contact" [ref=e58]:
+              - /url: https://thechadcarrollgroup.com/contact-us/
+          - listitem:
+            - link "Leave a Review" [ref=e59]:
+              - /url: https://thechadcarrollgroup.com/leave-a-review/
+          - listitem:
+            - link "Request a Market Analysis" [ref=e60]:
+              - /url: https://thechadcarrollgroup.com/request-a-market-analysis/
+    - text: 򰁠 605 Lincoln Road, 7th Floor Miami Beach, FL 33139 򰁠 101 N Federal Hwy 5th Flr. Boca Raton, FL 33432 򰁠 2875 NE 191st Street Suite 701 Aventura, FL 33180 򰁠 1200 East Las Olas Boulevard, Suite 103 Fort Lauderdale, FL 33301 򰁠 Coconut Grove 2550 S Bayshore Dr. Suite 106 Miami, FL 33133 򰁨
+    - link "305.400.9507" [ref=e61]:
+      - /url: tel:+13054009507
+    - text: 򰌠
+    - link "info@thechadcarrollgroup.com" [ref=e62] [nth=1]:
+      - /url: mailto:info@thechadcarrollgroup.com
+    - link " Instagram" [ref=e63]:
+      - /url: https://www.instagram.com/chadcarroll/
+    - link " LinkedIn" [ref=e64]:
+      - /url: http://www.linkedin.com/in/chadcarroll1
+    - link " Youtube" [ref=e65]:
+      - /url: https://www.youtube.com/channel/UCXJc_xQuDvGfVl9JPmzi7zg
+    - link " Facebook" [ref=e66]:
+      - /url: https://www.facebook.com/ChadCarrollOfficial
+    - paragraph: Equal Housing Opportunity. All material presented herein is intended for information purposes only. While this information is believed to be correct, it is represented subject to errors, omissions, changes or withdrawal without notice. All property information, including, but not limited to square footage, room count,number of bedrooms and the school district in property listings are deemed reliable, but should be verified by your own attorney, architect or zoning expert. If your property is currently listed with another real estate broker, please disregard this offer. It is not our intention to solicit the offerings of other real estate brokers. We cooperate with them fully.
+    - paragraph: The Carroll Group is committed to providing an accessible website. If you have difficulty accessing content, have difficulty viewing a file on the website, or notice any accessibility problems, please contact us at 305.400.9507 to specify the nature of the accessibility issue and any assistive technology you use.
+    - paragraph: Copyright© 2026 The Carroll Group. All rights reserved.
+    - list:
+      - listitem:
+        - link "Terms & Conditions" [ref=e67]:
+          - /url: https://thechadcarrollgroup.com/terms-and-conditions/
+      - listitem:
+        - link "Privacy Policy" [ref=e68]:
+          - /url: https://thechadcarrollgroup.com/terms-and-conditions/#atospp-privacy
+      - listitem:
+        - link "Accessibility" [ref=e69]:
+          - /url: https://thechadcarrollgroup.com/accessibility/
+    - text: Real Estate Website Designed & Powered By
+    - link "Real Estate Marketing Company" [ref=e70]:
+      - /url: https://www.tremgroup.com/
+    - text: 򰂐 򰌇
+  - complementary "GDPR Cookie Banner":
+    - heading "We value your privacy" [ref=e71] [level=2]:
+      - strong: We value your privacy
+    - paragraph: We use cookies to enhance your browsing experience, serve personalized ads or content, and analyze our traffic. By clicking "Accept All", you consent to our use of cookies.
+    - button "Accept All" [ref=e72]
+    - button "Manage Cookie Settings" [ref=e73]
+  - button "Accessibility open UserWay" [ref=e74]:
+    - text: Accessibility open UserWay
+    - img "wheelchair"

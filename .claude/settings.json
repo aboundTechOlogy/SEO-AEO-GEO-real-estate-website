@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git diff:*)",
+      "Bash(curl:*)",
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "mcp__plugin_playwright_playwright__browser_install",
+      "Bash(kill:*)",
+      "Bash(npx next build:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(firecrawl scrape:*)",
+      "Bash(ssh:*)",
+      "Bash(gcloud compute firewall-rules list:*)",
+      "Bash(then)",
+      "Bash(echo:*)",
+      "Bash(else)",
+      "Bash(fi)",
+      "Bash(done)",
+      "Bash(node -e:*)",
+      "Bash(git status:*)",
+      "Bash(perl -ne 'print if /\\\\.ms-sf-\\(modal|detail|image|gallery\\)/' /home/dreww/lux-mia-site/reference/carroll-idx-search-filter.css)",
+      "Bash(firecrawl map \"https://thechadcarrollgroup.com\" --search \"listing\" --limit 20 -o .firecrawl/carroll-listing-urls.txt)",
+      "mcp__plugin_playwright_playwright__browser_resize",
+      "Bash(npx playwright install chromium)",
+      "Bash(npx playwright install chrome)",
+      "Bash(sudo mkdir -p /opt/google/chrome)",
+      "Bash(sudo ln -sf /home/dreww/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome /opt/google/chrome/chrome)",
+      "Bash(PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/home/dreww/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome npx @playwright/mcp@latest --browser chromium --help)",
+      "Bash(npx @playwright/mcp@latest --help)",
+      "Read(//tmp/**)"
+    ]
+  }
+}

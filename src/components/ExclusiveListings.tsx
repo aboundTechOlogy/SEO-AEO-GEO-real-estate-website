@@ -15,7 +15,7 @@ export default function ExclusiveListings({ listings }: ExclusiveListingsProps) 
 
   return (
     <section className="bg-[#0a0a0a] py-20 md:py-28">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-6 overflow-hidden">
         <SectionHeader
           subtitle="Andrew Whalen"
           title="Our Listings"

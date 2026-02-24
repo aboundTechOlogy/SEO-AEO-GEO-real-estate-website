@@ -15,7 +15,7 @@ export default function RecentlySold({ listings }: RecentlySoldProps) {
 
   return (
     <section className="bg-neutral-900 py-20 md:py-28">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-6 overflow-hidden">
         <SectionHeader
           subtitle="Andrew Whalen"
           title="Recently Sold"
