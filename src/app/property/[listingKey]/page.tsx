@@ -221,10 +221,10 @@ export default async function PropertyDetailPage({ params }: Props) {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-5 divide-x divide-gray-200">
+                <div className="grid grid-cols-4 sm:grid-cols-5 divide-x divide-gray-200">
                   <StatMetric label="Beds" value={String(property.BedroomsTotal || 0)} />
                   <StatMetric label="Baths" value={String(bathsCount || 0)} />
-                  <StatMetric label="Half Bath" value={halfBathValue} />
+                  <div className="hidden sm:block"><StatMetric label="Half Bath" value={halfBathValue} /></div>
                   <StatMetric label="Sq.Ft" value={property.LivingArea ? property.LivingArea.toLocaleString() : "-"} />
                   <StatMetric label="$/SqFt" value={pricePerSqft ? `$${pricePerSqft.toLocaleString()}` : "-"} />
                 </div>

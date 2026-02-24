@@ -602,10 +602,11 @@ export function PropertyMediaTabs({
               type="button"
               onClick={() => hasCoords && setActiveMediaTab("street-view")}
               disabled={!hasCoords}
-              className="min-h-[35px] px-[15px] py-[6px] text-[14px] font-semibold border border-black rounded-[6px] bg-white text-[#1a1a1a] hover:bg-black hover:text-white transition-all duration-300 flex items-center gap-[6px] disabled:opacity-50 disabled:cursor-default"
+              aria-label="Street View"
+              className="w-[35px] h-[35px] rounded-full lg:w-auto lg:h-auto lg:min-h-[35px] lg:px-[15px] lg:py-[6px] lg:rounded-[6px] lg:gap-[6px] text-[14px] font-semibold border border-black bg-white text-[#1a1a1a] hover:bg-black hover:text-white transition-all duration-300 flex items-center justify-center disabled:opacity-50 disabled:cursor-default"
             >
               <IconStreetView className="w-[18px] h-[18px]" />
-              Street View
+              <span className="hidden lg:inline">Street View</span>
             </button>
           </div>
 
@@ -648,10 +649,11 @@ export function PropertyMediaTabs({
               type="button"
               onClick={() => hasCoords && setActiveMediaTab("street-view")}
               disabled={!hasCoords}
-              className="min-h-[35px] px-[15px] py-[6px] text-[14px] font-semibold border border-black rounded-[6px] bg-white text-[#1a1a1a] hover:bg-black hover:text-white transition-all duration-300 flex items-center gap-[6px] disabled:opacity-50 disabled:cursor-default"
+              aria-label="Street View"
+              className="w-[35px] h-[35px] rounded-full lg:w-auto lg:h-auto lg:min-h-[35px] lg:px-[15px] lg:py-[6px] lg:rounded-[6px] lg:gap-[6px] text-[14px] font-semibold border border-black bg-white text-[#1a1a1a] hover:bg-black hover:text-white transition-all duration-300 flex items-center justify-center disabled:opacity-50 disabled:cursor-default"
             >
               <IconStreetView className="w-[18px] h-[18px]" />
-              Street View
+              <span className="hidden lg:inline">Street View</span>
             </button>
           </div>
         </div>
@@ -673,10 +675,11 @@ export function PropertyMediaTabs({
             <button
               type="button"
               onClick={() => setActiveMediaTab("street-view")}
-              className="min-h-[35px] px-[15px] py-[6px] text-[14px] font-semibold border border-black rounded-[6px] bg-black text-white transition-all duration-300 flex items-center gap-[6px]"
+              aria-label="Street View"
+              className="w-[35px] h-[35px] rounded-full lg:w-auto lg:h-auto lg:min-h-[35px] lg:px-[15px] lg:py-[6px] lg:rounded-[6px] lg:gap-[6px] text-[14px] font-semibold border border-black bg-black text-white transition-all duration-300 flex items-center justify-center"
             >
               <IconStreetView className="w-[18px] h-[18px]" />
-              Street View
+              <span className="hidden lg:inline">Street View</span>
             </button>
           </div>
         </div>
@@ -839,14 +842,20 @@ function RectTabButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`min-h-[35px] px-[15px] py-[6px] text-[14px] font-semibold border rounded-[6px] transition-all duration-300 flex items-center gap-[6px] ${
+      aria-label={label}
+      className={[
+        /* mobile/tablet: icon-only circle */
+        "w-[35px] h-[35px] rounded-full text-[14px] font-semibold border transition-all duration-300 flex items-center justify-center",
+        /* desktop: pill with text */
+        "lg:w-auto lg:h-auto lg:min-h-[35px] lg:px-[15px] lg:py-[6px] lg:rounded-[6px] lg:gap-[6px]",
         active
           ? "border-black bg-black text-white"
-          : "border-black bg-white text-[#1a1a1a] hover:bg-black hover:text-white"
-      } ${disabled ? "opacity-50 cursor-default" : ""}`}
+          : "border-black bg-white text-[#1a1a1a] hover:bg-black hover:text-white",
+        disabled ? "opacity-50 cursor-default" : "",
+      ].join(" ")}
     >
       {icon}
-      {label}
+      <span className="hidden lg:inline">{label}</span>
     </button>
   );
 }
@@ -1190,10 +1199,11 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
             <div className="grid items-start lg:grid-cols-[minmax(0,1fr)_310px] min-[1300px]:grid-cols-[minmax(0,1fr)_350px]">
               <div className="min-w-0 border-r-0 lg:border-r lg:border-gray-200">
                 <div className="border-b border-gray-200 bg-white">
-                  <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-7 divide-x divide-gray-200">
-                    <div className="px-[15px] py-[10px] col-span-1 sm:col-span-2">
+                  {/* Desktop: single-row grid (lg+) */}
+                  <div className="hidden lg:grid lg:grid-cols-7 divide-x divide-gray-200">
+                    <div className="px-[15px] py-[10px] col-span-2">
                       <div className="flex items-center gap-2">
-                        <p className="text-[20px] lg:text-[24px] leading-none font-semibold text-[#1a1a1a]">{formatCurrency(price)}</p>
+                        <p className="text-[24px] leading-none font-semibold text-[#1a1a1a]">{formatCurrency(price)}</p>
                         {property.OriginalListPrice != null && property.OriginalListPrice !== price && (() => {
                           const pct = Math.abs(((price - property.OriginalListPrice) / property.OriginalListPrice) * 100);
                           const isReduced = price < property.OriginalListPrice;
@@ -1204,7 +1214,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                           );
                         })()}
                       </div>
-                      <p className="mt-[5px] text-[11px] lg:text-[12px] leading-none text-gray-500">
+                      <p className="mt-[5px] text-[12px] leading-none text-gray-500">
                         Est. Payment {estimatedPayment ? (
                           <button type="button" onClick={() => setIsMortgageCalcOpen(true)} className="font-semibold text-[#1a1a1a] underline underline-offset-2 hover:text-black/70 transition-colors">
                             {estimatedPayment}/mo
@@ -1214,9 +1224,40 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                     </div>
                     <StatMetric label="Beds" value={String(property.BedroomsTotal || 0)} />
                     <StatMetric label="Baths" value={String(bathsCount || 0)} />
-                    <div className="hidden lg:block"><StatMetric label="Half Bath" value={halfBathValue} /></div>
+                    <StatMetric label="Half Bath" value={halfBathValue} />
                     <StatMetric label="Sq.Ft" value={property.LivingArea ? property.LivingArea.toLocaleString() : "-"} />
                     <StatMetric label="$/SqFt" value={pricePerSqft ? `$${pricePerSqft.toLocaleString()}` : "-"} />
+                  </div>
+
+                  {/* Mobile/Tablet: two-row layout (below lg) */}
+                  <div className="lg:hidden">
+                    <div className="flex items-center justify-between px-[15px] py-[10px] border-b border-gray-200">
+                      <div className="flex items-center gap-2">
+                        <p className="text-[22px] leading-none font-semibold text-[#1a1a1a]">{formatCurrency(price)}</p>
+                        {property.OriginalListPrice != null && property.OriginalListPrice !== price && (() => {
+                          const pct = Math.abs(((price - property.OriginalListPrice) / property.OriginalListPrice) * 100);
+                          const isReduced = price < property.OriginalListPrice;
+                          return (
+                            <span className={`text-[13px] font-bold ${isReduced ? "text-green-600" : "text-red-500"}`}>
+                              {isReduced ? "↓" : "↑"} {pct.toFixed(2)}%
+                            </span>
+                          );
+                        })()}
+                      </div>
+                      <p className="text-[12px] leading-none text-gray-500">
+                        Est. Payment {estimatedPayment ? (
+                          <button type="button" onClick={() => setIsMortgageCalcOpen(true)} className="font-semibold text-[#1a1a1a] underline underline-offset-2 hover:text-black/70 transition-colors">
+                            {estimatedPayment}/mo
+                          </button>
+                        ) : "--"}
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-4 divide-x divide-gray-200">
+                      <StatMetric label="Beds" value={String(property.BedroomsTotal || 0)} />
+                      <StatMetric label="Baths" value={String(bathsCount || 0)} />
+                      <StatMetric label="Sq.Ft" value={property.LivingArea ? property.LivingArea.toLocaleString() : "-"} />
+                      <StatMetric label="$/SqFt" value={pricePerSqft ? `$${pricePerSqft.toLocaleString()}` : "-"} />
+                    </div>
                   </div>
                 </div>
 
