@@ -756,7 +756,7 @@ function FullScreenPhotoViewer({
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose, photoCount, viewMode, showContactForm]);
 
-  const gmapsKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const gmapsKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
 
   return (
     <div className={`fixed inset-0 z-[300] bg-black ${viewMode === "photos" ? "overflow-y-auto" : "flex flex-col overflow-hidden"}`}>
