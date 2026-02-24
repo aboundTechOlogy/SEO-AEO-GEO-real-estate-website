@@ -28,6 +28,8 @@ interface PropertyMapProps {
   onOpenOverlay?: (listingKey: string) => void;
   savedListingKeys?: Set<string>;
   onToggleSave?: (listingKey: string) => void;
+  /** When true, dismiss any open InfoCard (triggered by result card hover). */
+  resultCardHovered?: boolean;
 }
 
 /** Renders InfoCard as a portal into the map container, clamped to stay fully visible. */
@@ -172,6 +174,7 @@ export default function PropertyMap({
   onOpenOverlay,
   savedListingKeys,
   onToggleSave,
+  resultCardHovered,
 }: PropertyMapProps) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
   const containerRef = useRef<HTMLDivElement>(null);
@@ -180,8 +183,8 @@ export default function PropertyMap({
 
   // Close InfoCard when user hovers a card in the results panel
   useEffect(() => {
-    if (hoveredListingId) setInfoCardMarker(null);
-  }, [hoveredListingId]);
+    if (resultCardHovered) setInfoCardMarker(null);
+  }, [resultCardHovered]);
 
   // Re-trigger banner animation when marker count changes
   useEffect(() => {
