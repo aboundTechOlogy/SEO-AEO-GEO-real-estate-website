@@ -410,12 +410,15 @@ export function PropertyMediaTabs({
   latitude,
   longitude,
   virtualTourUrl,
+  singleHero = false,
 }: {
   photos: BridgeMedia[];
   address: string;
   latitude: number;
   longitude: number;
   virtualTourUrl?: string | null;
+  /** When true, shows a single full-width hero image instead of 3-col grid on desktop (for standalone page) */
+  singleHero?: boolean;
 }) {
   const [activeMediaTab, setActiveMediaTab] = useState<MediaTab>("photos");
   const [activePhoto, setActivePhoto] = useState(0);
@@ -517,6 +520,7 @@ export function PropertyMediaTabs({
 
       {activeMediaTab === "photos" && (
         <>
+          {/* Mobile: always single hero */}
           <div className="relative lg:hidden">
             {activePhotoUrl && !activePhotoFailed ? (
               <img
@@ -532,49 +536,70 @@ export function PropertyMediaTabs({
             )}
           </div>
 
-          <div className="relative hidden lg:grid grid-cols-3 h-[450px] overflow-hidden">
-            {desktopIndexes.length > 0 ? (
-              desktopIndexes.map((photoIndex) => {
-                const url = photos[photoIndex]?.MediaURL;
-                const failed = failedPhotos[photoIndex];
+          {/* Desktop: single hero (standalone page) */}
+          {singleHero && (
+            <div className="relative hidden lg:block h-[450px] overflow-hidden">
+              {activePhotoUrl && !activePhotoFailed ? (
+                <img
+                  src={activePhotoUrl}
+                  alt={address}
+                  className="w-full h-full object-cover"
+                  onError={() => markPhotoFailed(activePhoto)}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm bg-gray-100">
+                  Photo unavailable
+                </div>
+              )}
+            </div>
+          )}
 
-                if (!url || failed) {
+          {/* Desktop: 3-col grid (overlay only) */}
+          {!singleHero && (
+            <div className="relative hidden lg:grid grid-cols-3 h-[450px] overflow-hidden">
+              {desktopIndexes.length > 0 ? (
+                desktopIndexes.map((photoIndex) => {
+                  const url = photos[photoIndex]?.MediaURL;
+                  const failed = failedPhotos[photoIndex];
+
+                  if (!url || failed) {
+                    return (
+                      <div
+                        key={`desktop-fallback-${photoIndex}`}
+                        className="bg-gray-100 border-r border-gray-200 last:border-r-0 flex items-center justify-center text-gray-500 text-sm"
+                      >
+                        Photo unavailable
+                      </div>
+                    );
+                  }
+
                   return (
-                    <div
-                      key={`desktop-fallback-${photoIndex}`}
-                      className="bg-gray-100 border-r border-gray-200 last:border-r-0 flex items-center justify-center text-gray-500 text-sm"
+                    <button
+                      key={`desktop-photo-${photoIndex}-${url}`}
+                      type="button"
+                      onClick={() => {
+                        setActivePhoto(photoIndex);
+                        setIsPhotoViewerOpen(true);
+                      }}
+                      className="w-full h-full border-r border-gray-200 last:border-r-0 overflow-hidden"
+                      aria-label={`Open photo ${photoIndex + 1}`}
                     >
-                      Photo unavailable
-                    </div>
+                      <img
+                        src={url}
+                        alt={`${address} photo ${photoIndex + 1}`}
+                        className="w-full h-full object-cover cursor-zoom-in"
+                        onError={() => markPhotoFailed(photoIndex)}
+                      />
+                    </button>
                   );
-                }
-
-                return (
-                  <button
-                    key={`desktop-photo-${photoIndex}-${url}`}
-                    type="button"
-                    onClick={() => {
-                      setActivePhoto(photoIndex);
-                      setIsPhotoViewerOpen(true);
-                    }}
-                    className="w-full h-full border-r border-gray-200 last:border-r-0 overflow-hidden"
-                    aria-label={`Open photo ${photoIndex + 1}`}
-                  >
-                    <img
-                      src={url}
-                      alt={`${address} photo ${photoIndex + 1}`}
-                      className="w-full h-full object-cover cursor-zoom-in"
-                      onError={() => markPhotoFailed(photoIndex)}
-                    />
-                  </button>
-                );
-              })
-            ) : (
-              <div className="col-span-3 bg-gray-100 flex items-center justify-center text-gray-500 text-sm">
-                Photo unavailable
-              </div>
-            )}
-          </div>
+                })
+              ) : (
+                <div className="col-span-3 bg-gray-100 flex items-center justify-center text-gray-500 text-sm">
+                  Photo unavailable
+                </div>
+              )}
+            </div>
+          )}
 
           {photoCount > 1 && (
             <>
@@ -1261,6 +1286,8 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                   </div>
                 </div>
 
+                <DetailSection title="Basic Information" rows={details.basicInformationRows} iconMap={BASIC_INFO_ICON_MAP} />
+
                 <section className="bg-white border-b border-gray-200">
                   <SectionTitleStrip title="Description" />
                   <div className="px-[15px] py-[12px]">
@@ -1268,7 +1295,6 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                   </div>
                 </section>
 
-                <DetailSection title="Basic Information" rows={details.basicInformationRows} iconMap={BASIC_INFO_ICON_MAP} />
                 <AmenitiesSection amenities={details.amenities} />
                 <DetailSection title="Exterior Features" rows={details.exteriorFeatureRows} />
                 <DetailSection title="Interior Features" rows={details.interiorFeatureRows} />
