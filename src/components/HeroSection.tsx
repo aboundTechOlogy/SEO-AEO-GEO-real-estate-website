@@ -1,6 +1,8 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { gsap } from "gsap";
+import { AddressSearchInput } from "@/components/SearchFilters";
 
 const GOALS = ["Buy", "Sell", "Sell & Buy", "Invest"];
 
@@ -13,6 +15,8 @@ function splitLetters(text: string) {
 }
 
 export default function HeroSection() {
+  const router = useRouter();
+  const [mobileQuery, setMobileQuery] = useState("");
   const line1Ref = useRef<HTMLDivElement>(null);
   const line2Ref = useRef<HTMLDivElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
@@ -126,14 +130,20 @@ export default function HeroSection() {
 
           {/* Mobile search bar */}
           <div className="relative max-w-sm mx-auto">
-            <input
-              type="text"
-              placeholder="Enter an address, city, zip code or MLS number"
-              className="w-full bg-transparent border-2 border-white/40 rounded-full px-5 py-3.5 pr-12 text-sm text-white placeholder-white/70 focus:outline-none focus:border-white/60 transition-colors"
+            <AddressSearchInput
+              value={mobileQuery}
+              onChange={(v) => {
+                setMobileQuery(v);
+                if (v) {
+                  const params = new URLSearchParams();
+                  params.set("q", v);
+                  router.push(`/search/?${params.toString()}`);
+                }
+              }}
+              variant="dark"
+              height="h-auto py-3.5"
+              inputClassName="text-sm rounded-full! pl-5! pr-12!"
             />
-            <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-            </svg>
           </div>
           <p className="mt-3">
             <a href="/search/" className="text-white/80 text-sm tracking-wider hover:text-white transition-colors">
