@@ -142,7 +142,7 @@ export default function SearchPropertyCard({
     <Link
       href={href}
       onClick={handleCardClick}
-      className="group block relative overflow-hidden bg-neutral-200 cursor-pointer aspect-[4/3] md:rounded-[10px] md:shadow-[0_1px_4px_rgba(0,0,0,0.16)]"
+      className="group block relative overflow-hidden bg-neutral-200 cursor-pointer aspect-[5/3] md:rounded-[10px] md:shadow-[0_1px_4px_rgba(0,0,0,0.16)]"
     >
       {/* Image or placeholder */}
       {image ? (
