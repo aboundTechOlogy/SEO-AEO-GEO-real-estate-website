@@ -190,6 +190,7 @@ export interface BridgeIdxMarker {
   lat: number;
   lng: number;
   price: number;
+  originalPrice: number | null;
 }
 
 export interface BridgeIdxSearchResponse {
@@ -262,6 +263,7 @@ const IDX_MARKER_SELECT_FIELDS = [
   "Latitude",
   "Longitude",
   "ListPrice",
+  "OriginalListPrice",
 ].join(",");
 
 function ensureServerSide() {
@@ -516,6 +518,7 @@ function toIdxMarker(raw: unknown): BridgeIdxMarker {
     lat: toNumber(record.Latitude),
     lng: toNumber(record.Longitude),
     price: toNumber(record.ListPrice),
+    originalPrice: toFiniteNumberOrNull(record.OriginalListPrice),
   };
 }
 
@@ -671,7 +674,7 @@ function buildMockIdxMarkersResponse(params: BridgeIdxSearchParams): BridgeIdxMa
   const filtered = filterIdxMockListings(source, params).slice(0, 500);
 
   return {
-    markers: filtered.map((item) => ({ id: item.id, lat: item.lat, lng: item.lng, price: item.price })),
+    markers: filtered.map((item) => ({ id: item.id, lat: item.lat, lng: item.lng, price: item.price, originalPrice: null })),
     total: filtered.length,
   };
 }

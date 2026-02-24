@@ -125,9 +125,20 @@ export default function MapInfoCard({ listingKey, onClose, onOpenOverlay, isSave
         <div className="flex-1 min-w-0">
           {/* Price + Share/Save on same line */}
           <div className="flex items-center justify-between">
-            <p className="text-[18px] font-bold text-black leading-tight">
-              {formatPrice(property.ListPrice)}
-            </p>
+            <div className="flex items-center gap-1.5">
+              <p className="text-[18px] font-bold text-black leading-tight">
+                {formatPrice(property.ListPrice)}
+              </p>
+              {property.OriginalListPrice != null && property.OriginalListPrice !== property.ListPrice && (() => {
+                const pct = Math.abs(((property.ListPrice - property.OriginalListPrice) / property.OriginalListPrice) * 100);
+                const isReduced = property.ListPrice < property.OriginalListPrice;
+                return (
+                  <span className={`text-[13px] font-bold ${isReduced ? "text-green-600" : "text-red-500"}`}>
+                    {isReduced ? "↓" : "↑"}{pct.toFixed(2)}%
+                  </span>
+                );
+              })()}
+            </div>
             <div className="flex items-center gap-1.5 shrink-0 ml-2">
               <button
                 type="button"

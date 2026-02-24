@@ -1190,7 +1190,18 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                 <div className="border-b border-gray-200 bg-white">
                   <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-7 divide-x divide-gray-200">
                     <div className="px-[15px] py-[10px] col-span-1 sm:col-span-2">
-                      <p className="text-[20px] lg:text-[24px] leading-none font-semibold text-[#1a1a1a]">{formatCurrency(price)}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-[20px] lg:text-[24px] leading-none font-semibold text-[#1a1a1a]">{formatCurrency(price)}</p>
+                        {property.OriginalListPrice != null && property.OriginalListPrice !== price && (() => {
+                          const pct = Math.abs(((price - property.OriginalListPrice) / property.OriginalListPrice) * 100);
+                          const isReduced = price < property.OriginalListPrice;
+                          return (
+                            <span className={`text-[13px] font-bold ${isReduced ? "text-green-600" : "text-red-500"}`}>
+                              {isReduced ? "↓" : "↑"} {pct.toFixed(2)}%
+                            </span>
+                          );
+                        })()}
+                      </div>
                       <p className="mt-[5px] text-[11px] lg:text-[12px] leading-none text-gray-500">
                         Est. Payment {estimatedPayment ? (
                           <button type="button" onClick={() => setIsMortgageCalcOpen(true)} className="font-semibold text-[#1a1a1a] underline underline-offset-2 hover:text-black/70 transition-colors">

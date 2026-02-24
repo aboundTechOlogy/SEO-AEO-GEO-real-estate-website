@@ -13,6 +13,7 @@ interface PropertyMapProps {
     lat: number;
     lng: number;
     price?: number;
+    originalPrice?: number | null;
     listingKey?: string;
     label?: string;
   }>;
@@ -270,6 +271,17 @@ export default function PropertyMap({
               (selectedListingId != null && marker.listingKey === selectedListingId) ||
               (infoCardMarker != null && marker.listingKey === infoCardMarker.listingKey);
 
+            // Price change arrow: green ↓ for reduction, red ↑ for increase
+            let priceArrow: React.ReactNode = null;
+            if (marker.price && marker.originalPrice && marker.originalPrice !== marker.price) {
+              const isReduced = marker.price < marker.originalPrice;
+              priceArrow = (
+                <span className={`ml-[3px] text-[11px] font-bold ${isReduced ? "text-green-600" : "text-red-500"}`}>
+                  {isReduced ? "↓" : "↑"}
+                </span>
+              );
+            }
+
             return (
               <AdvancedMarker
                 key={`${marker.listingKey || markerLabel}-${index}`}
@@ -288,6 +300,7 @@ export default function PropertyMap({
                     text-[13px] font-bold rounded-[10px] px-[10px] py-[5px]
                     shadow-[3px_3px_5px_rgba(0,0,0,0.25)]
                     transition-all duration-300 ease-in-out
+                    flex items-center whitespace-nowrap
                     ${isActive
                       ? "bg-black text-white scale-[1.2]"
                       : "bg-white text-black"
@@ -296,7 +309,7 @@ export default function PropertyMap({
                   onMouseEnter={() => marker.listingKey && onMarkerHover?.(marker.listingKey)}
                   onMouseLeave={() => onMarkerHover?.(null)}
                 >
-                  {markerLabel}
+                  {markerLabel}{priceArrow}
                 </div>
               </AdvancedMarker>
             );

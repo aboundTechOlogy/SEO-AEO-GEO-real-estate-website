@@ -732,6 +732,7 @@ function SearchPage() {
         lat: marker.lat,
         lng: marker.lng,
         price: marker.price,
+        originalPrice: marker.originalPrice,
         listingKey: marker.id,
       })),
     [filteredMarkers]
