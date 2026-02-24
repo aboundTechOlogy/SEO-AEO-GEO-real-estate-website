@@ -238,7 +238,8 @@ export default function PropertyMap({
             const markerLabel = marker.price ? formatPriceLabel(marker.price) : marker.label || "";
             const isActive =
               (hoveredListingId != null && marker.listingKey === hoveredListingId) ||
-              (selectedListingId != null && marker.listingKey === selectedListingId);
+              (selectedListingId != null && marker.listingKey === selectedListingId) ||
+              (infoCardMarker != null && marker.listingKey === infoCardMarker.listingKey);
 
             return (
               <AdvancedMarker
