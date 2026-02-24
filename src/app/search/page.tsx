@@ -920,6 +920,7 @@ function SearchPage() {
               savedListingKeys={savedListingKeys}
               onToggleSave={handleToggleSavedListing}
               resultCardHovered={resultCardHovered}
+              onInfoCardClose={() => setHighlightedListingId(null)}
             />
           </div>
 
@@ -946,7 +947,7 @@ function SearchPage() {
                       ref={(node) => {
                         cardRefs.current[listing.id] = node;
                       }}
-                      onMouseEnter={() => { setHoveredListingId(listing.id); setResultCardHovered(true); }}
+                      onMouseEnter={() => { setHoveredListingId(listing.id); setResultCardHovered(true); setHighlightedListingId(null); }}
                       onMouseLeave={() => { setHoveredListingId(null); setResultCardHovered(false); }}
                     >
                       <SearchPropertyCard

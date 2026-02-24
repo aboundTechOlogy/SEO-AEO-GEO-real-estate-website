@@ -28,8 +28,10 @@ interface PropertyMapProps {
   onOpenOverlay?: (listingKey: string) => void;
   savedListingKeys?: Set<string>;
   onToggleSave?: (listingKey: string) => void;
-  /** When true, dismiss any open InfoCard (triggered by result card hover). */
+  /** True when the mouse is over a result card in the right panel. */
   resultCardHovered?: boolean;
+  /** Called when the InfoCard is dismissed (X click, hover end, etc.) so parent can clear highlight. */
+  onInfoCardClose?: () => void;
 }
 
 /** Renders InfoCard as a portal into the map container, clamped to stay fully visible. */
@@ -175,16 +177,28 @@ export default function PropertyMap({
   savedListingKeys,
   onToggleSave,
   resultCardHovered,
+  onInfoCardClose,
 }: PropertyMapProps) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
   const containerRef = useRef<HTMLDivElement>(null);
   const [bannerKey, setBannerKey] = useState(0);
   const [infoCardMarker, setInfoCardMarker] = useState<{ listingKey: string; lat: number; lng: number } | null>(null);
+  // Track whether InfoCard was opened by a click or a result-card hover
+  const infoCardSourceRef = useRef<"click" | "hover" | null>(null);
 
-  // Close InfoCard when user hovers a card in the results panel
+  // Result card hover → show InfoCard for that listing; un-hover → close it
   useEffect(() => {
-    if (resultCardHovered) setInfoCardMarker(null);
-  }, [resultCardHovered]);
+    if (resultCardHovered && hoveredListingId) {
+      const m = markers.find((mk) => mk.listingKey === hoveredListingId);
+      if (m?.listingKey) {
+        setInfoCardMarker({ listingKey: m.listingKey, lat: m.lat, lng: m.lng });
+        infoCardSourceRef.current = "hover";
+      }
+    } else if (!resultCardHovered && infoCardSourceRef.current === "hover") {
+      setInfoCardMarker(null);
+      infoCardSourceRef.current = null;
+    }
+  }, [resultCardHovered, hoveredListingId, markers]);
 
   // Re-trigger banner animation when marker count changes
   useEffect(() => {
@@ -237,6 +251,7 @@ export default function PropertyMap({
                   if (!marker.listingKey) return;
                   onClick?.(marker.listingKey);
                   setInfoCardMarker({ listingKey: marker.listingKey, lat: marker.lat, lng: marker.lng });
+                  infoCardSourceRef.current = "click";
                 }}
                 zIndex={isActive ? 999 : undefined}
               >
@@ -264,7 +279,11 @@ export default function PropertyMap({
           {infoCardMarker && containerRef.current && (
             <InfoCardOverlay
               marker={infoCardMarker}
-              onClose={() => setInfoCardMarker(null)}
+              onClose={() => {
+                setInfoCardMarker(null);
+                infoCardSourceRef.current = null;
+                onInfoCardClose?.();
+              }}
               onOpenOverlay={onOpenOverlay}
               savedListingKeys={savedListingKeys}
               onToggleSave={onToggleSave}
