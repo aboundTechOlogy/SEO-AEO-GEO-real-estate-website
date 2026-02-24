@@ -25,6 +25,11 @@ export interface SearchFilterValues {
   hideActiveWithContract: boolean;
   minSqft: string;
   maxSqft: string;
+  yearBuiltMin: string;
+  yearBuiltMax: string;
+  minLotSqft: string;
+  maxLotSqft: string;
+  maxHoa: string;
   /** Sold time-range: number of days as string, or "" for any time */
   soldRange: string;
 }
@@ -46,6 +51,11 @@ export const DEFAULT_FILTER_VALUES: SearchFilterValues = {
   hideActiveWithContract: false,
   minSqft: "",
   maxSqft: "",
+  yearBuiltMin: "",
+  yearBuiltMax: "",
+  minLotSqft: "",
+  maxLotSqft: "",
+  maxHoa: "",
   soldRange: "",
 };
 
@@ -1386,7 +1396,81 @@ function MoreFilter({
           </div>
         )}
 
-        {/* 8. Waterfront Description */}
+        {/* 8. Year Built */}
+        <AccordionRow label="Year Built" expanded={!!expanded.yearBuilt} onToggle={() => toggle("yearBuilt")} />
+        {expanded.yearBuilt && (
+          <div className="flex items-center gap-3 px-5 pb-4 pt-1">
+            <div className="flex-1">
+              <input
+                type="text"
+                value={filterValues.yearBuiltMin}
+                onChange={(e) => onFilterChange({ yearBuiltMin: e.target.value.replace(/[^0-9]/g, "").slice(0, 4) })}
+                placeholder="Any"
+                className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400"
+              />
+              <p className="text-xs text-neutral-400 mt-1 ml-1">Minimum</p>
+            </div>
+            <span className="text-neutral-400 text-sm mt-[-16px]">to</span>
+            <div className="flex-1">
+              <input
+                type="text"
+                value={filterValues.yearBuiltMax}
+                onChange={(e) => onFilterChange({ yearBuiltMax: e.target.value.replace(/[^0-9]/g, "").slice(0, 4) })}
+                placeholder="Any"
+                className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400"
+              />
+              <p className="text-xs text-neutral-400 mt-1 ml-1">Maximum</p>
+            </div>
+          </div>
+        )}
+
+        {/* 9. Lot Size */}
+        <AccordionRow label="Lot Size (sq ft)" expanded={!!expanded.lotSize} onToggle={() => toggle("lotSize")} />
+        {expanded.lotSize && (
+          <div className="flex items-center gap-3 px-5 pb-4 pt-1">
+            <div className="flex-1">
+              <input
+                type="text"
+                value={filterValues.minLotSqft}
+                onChange={(e) => onFilterChange({ minLotSqft: e.target.value.replace(/[^0-9]/g, "") })}
+                placeholder="Any"
+                className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400"
+              />
+              <p className="text-xs text-neutral-400 mt-1 ml-1">Minimum</p>
+            </div>
+            <span className="text-neutral-400 text-sm mt-[-16px]">to</span>
+            <div className="flex-1">
+              <input
+                type="text"
+                value={filterValues.maxLotSqft}
+                onChange={(e) => onFilterChange({ maxLotSqft: e.target.value.replace(/[^0-9]/g, "") })}
+                placeholder="Any"
+                className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400"
+              />
+              <p className="text-xs text-neutral-400 mt-1 ml-1">Maximum</p>
+            </div>
+          </div>
+        )}
+
+        {/* 10. HOA Fee */}
+        <AccordionRow label="HOA Fee" expanded={!!expanded.hoa} onToggle={() => toggle("hoa")} />
+        {expanded.hoa && (
+          <div className="px-5 pb-4 pt-1">
+            <div className="flex items-center border border-neutral-200 rounded-lg px-3 py-2.5">
+              <span className="text-neutral-400 text-sm mr-1">$</span>
+              <input
+                type="text"
+                value={filterValues.maxHoa}
+                onChange={(e) => onFilterChange({ maxHoa: e.target.value.replace(/[^0-9]/g, "") })}
+                placeholder="Any"
+                className="w-full text-sm text-neutral-900 focus:outline-none bg-transparent"
+              />
+            </div>
+            <p className="text-xs text-neutral-400 mt-1 ml-1">Maximum monthly</p>
+          </div>
+        )}
+
+        {/* 11. Waterfront Description */}
         <AccordionRow
           label="Waterfront"
           rightLabel={filterValues.waterfront !== "Any" ? filterValues.waterfront : undefined}
@@ -1401,7 +1485,7 @@ function MoreFilter({
           />
         )}
 
-        {/* 9. Features */}
+        {/* 12. Features */}
         <AccordionRow
           label="Features"
           rightLabel={filterValues.features.length > 0 ? `${filterValues.features.length} selected` : undefined}
@@ -1416,7 +1500,7 @@ function MoreFilter({
           />
         )}
 
-        {/* 10. Days On Market */}
+        {/* 13. Days On Market */}
         <AccordionRow
           label="Days On Market"
           rightLabel={filterValues.domMax !== "Any" ? `≤ ${filterValues.domMax === "Today" ? "1" : filterValues.domMax} days` : undefined}
@@ -1726,19 +1810,63 @@ function MobileFiltersSheet({
           </div>
         </div>
 
-        {/* 8. Waterfront */}
+        {/* 8. Year Built */}
+        <div className="border-b border-neutral-100">
+          <p className="px-5 pt-4 pb-2 text-sm font-semibold text-neutral-900">Year Built</p>
+          <div className="flex items-center gap-3 px-5 pb-4">
+            <div className="flex-1">
+              <input type="text" value={filterValues.yearBuiltMin} onChange={(e) => onFilterChange({ yearBuiltMin: e.target.value.replace(/[^0-9]/g, "").slice(0, 4) })} placeholder="Any" className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400" />
+              <p className="text-xs text-neutral-400 mt-1 ml-1">Minimum</p>
+            </div>
+            <span className="text-neutral-400 text-sm mt-[-16px]">to</span>
+            <div className="flex-1">
+              <input type="text" value={filterValues.yearBuiltMax} onChange={(e) => onFilterChange({ yearBuiltMax: e.target.value.replace(/[^0-9]/g, "").slice(0, 4) })} placeholder="Any" className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400" />
+              <p className="text-xs text-neutral-400 mt-1 ml-1">Maximum</p>
+            </div>
+          </div>
+        </div>
+
+        {/* 9. Lot Size */}
+        <div className="border-b border-neutral-100">
+          <p className="px-5 pt-4 pb-2 text-sm font-semibold text-neutral-900">Lot Size (sq ft)</p>
+          <div className="flex items-center gap-3 px-5 pb-4">
+            <div className="flex-1">
+              <input type="text" value={filterValues.minLotSqft} onChange={(e) => onFilterChange({ minLotSqft: e.target.value.replace(/[^0-9]/g, "") })} placeholder="Any" className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400" />
+              <p className="text-xs text-neutral-400 mt-1 ml-1">Minimum</p>
+            </div>
+            <span className="text-neutral-400 text-sm mt-[-16px]">to</span>
+            <div className="flex-1">
+              <input type="text" value={filterValues.maxLotSqft} onChange={(e) => onFilterChange({ maxLotSqft: e.target.value.replace(/[^0-9]/g, "") })} placeholder="Any" className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400" />
+              <p className="text-xs text-neutral-400 mt-1 ml-1">Maximum</p>
+            </div>
+          </div>
+        </div>
+
+        {/* 10. HOA Fee */}
+        <div className="border-b border-neutral-100">
+          <p className="px-5 pt-4 pb-2 text-sm font-semibold text-neutral-900">HOA Fee</p>
+          <div className="px-5 pb-4">
+            <div className="flex items-center border border-neutral-200 rounded-lg px-3 py-2.5">
+              <span className="text-neutral-400 text-sm mr-1">$</span>
+              <input type="text" value={filterValues.maxHoa} onChange={(e) => onFilterChange({ maxHoa: e.target.value.replace(/[^0-9]/g, "") })} placeholder="Any" className="w-full text-sm text-neutral-900 focus:outline-none bg-transparent" />
+            </div>
+            <p className="text-xs text-neutral-400 mt-1 ml-1">Maximum monthly</p>
+          </div>
+        </div>
+
+        {/* 11. Waterfront */}
         <div className="border-b border-neutral-100">
           <p className="px-5 pt-4 pb-2 text-sm font-semibold text-neutral-900">Waterfront</p>
           <RadioList options={WATERFRONT_OPTIONS} value={filterValues.waterfront} onChange={(v) => onFilterChange({ waterfront: v })} />
         </div>
 
-        {/* 9. Features */}
+        {/* 12. Features */}
         <div className="border-b border-neutral-100">
           <p className="px-5 pt-4 pb-2 text-sm font-semibold text-neutral-900">Features</p>
           <CheckboxList options={FEATURE_OPTIONS} selected={filterValues.features} onToggle={toggleFeature} />
         </div>
 
-        {/* 10. Days On Market */}
+        {/* 13. Days On Market */}
         <div className="border-b border-neutral-100">
           <p className="px-5 pt-4 pb-2 text-sm font-semibold text-neutral-900">Days On Market</p>
           <SegmentedButtons options={DOM_OPTIONS} value={filterValues.domMax} onChange={(v) => onFilterChange({ domMax: v })} />

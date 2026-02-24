@@ -101,6 +101,11 @@ export async function GET(req: NextRequest) {
   const hideActiveWithContract = search.get("hideActiveWithContract") === "true";
   const forRent = search.get("forRent") === "true";
   const minCloseDate = parseSoldRange(search.get("soldRange"));
+  const minYearBuilt = parseNumber(search.get("yearBuiltMin"));
+  const maxYearBuilt = parseNumber(search.get("yearBuiltMax"));
+  const minLotSqft = parseNumber(search.get("minLotSqft"));
+  const maxLotSqft = parseNumber(search.get("maxLotSqft"));
+  const maxHoa = parseNumber(search.get("maxHoa"));
 
   const waterfrontParam = search.get("waterfront");
   const waterfrontOnly = waterfrontParam && waterfrontParam !== "Any" ? true : undefined;
@@ -139,6 +144,11 @@ export async function GET(req: NextRequest) {
     minSqft,
     maxSqft,
     minCloseDate,
+    minYearBuilt,
+    maxYearBuilt,
+    minLotSqft,
+    maxLotSqft,
+    maxHoa,
   });
 
   return NextResponse.json(result);

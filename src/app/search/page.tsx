@@ -441,6 +441,11 @@ function buildSearchUrl(
   if (filterValues.hideActiveWithContract) params.set("hideActiveWithContract", "true");
   if (filterValues.minSqft) params.set("minSqft", filterValues.minSqft);
   if (filterValues.maxSqft) params.set("maxSqft", filterValues.maxSqft);
+  if (filterValues.yearBuiltMin) params.set("yearBuiltMin", filterValues.yearBuiltMin);
+  if (filterValues.yearBuiltMax) params.set("yearBuiltMax", filterValues.yearBuiltMax);
+  if (filterValues.minLotSqft) params.set("minLotSqft", filterValues.minLotSqft);
+  if (filterValues.maxLotSqft) params.set("maxLotSqft", filterValues.maxLotSqft);
+  if (filterValues.maxHoa) params.set("maxHoa", filterValues.maxHoa);
   if (status === "Sold" && filterValues.soldRange) params.set("soldRange", filterValues.soldRange);
 
   params.set("status", status);
@@ -480,6 +485,11 @@ function hydrateFromUrl(): {
   if (search.get("maxSqft")) filterPartial.maxSqft = search.get("maxSqft")!;
   if (search.get("types")) filterPartial.propertyTypes = search.get("types")!.split(",").filter(Boolean);
   if (search.get("soldRange")) filterPartial.soldRange = search.get("soldRange")!;
+  if (search.get("yearBuiltMin")) filterPartial.yearBuiltMin = search.get("yearBuiltMin")!;
+  if (search.get("yearBuiltMax")) filterPartial.yearBuiltMax = search.get("yearBuiltMax")!;
+  if (search.get("minLotSqft")) filterPartial.minLotSqft = search.get("minLotSqft")!;
+  if (search.get("maxLotSqft")) filterPartial.maxLotSqft = search.get("maxLotSqft")!;
+  if (search.get("maxHoa")) filterPartial.maxHoa = search.get("maxHoa")!;
 
   const statusFromUrl = search.get("status") || undefined;
   const sortFromUrl = SORT_OPTIONS.some((o) => o.label === search.get("sort"))
@@ -676,6 +686,11 @@ function SearchPage() {
     if (filterValues.hideActiveWithContract) params.set("hideActiveWithContract", "true");
     if (filterValues.minSqft) params.set("minSqft", filterValues.minSqft);
     if (filterValues.maxSqft) params.set("maxSqft", filterValues.maxSqft);
+    if (filterValues.yearBuiltMin) params.set("yearBuiltMin", filterValues.yearBuiltMin);
+    if (filterValues.yearBuiltMax) params.set("yearBuiltMax", filterValues.yearBuiltMax);
+    if (filterValues.minLotSqft) params.set("minLotSqft", filterValues.minLotSqft);
+    if (filterValues.maxLotSqft) params.set("maxLotSqft", filterValues.maxLotSqft);
+    if (filterValues.maxHoa) params.set("maxHoa", filterValues.maxHoa);
     if (bridgeStatus === "Closed" && filterValues.soldRange) params.set("soldRange", filterValues.soldRange);
 
     if (bbox) {

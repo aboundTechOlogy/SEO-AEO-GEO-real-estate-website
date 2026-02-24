@@ -158,6 +158,16 @@ export interface BridgeIdxSearchParams {
   minSqft?: number;
   /** Maximum living area (sq ft) */
   maxSqft?: number;
+  /** Minimum year built */
+  minYearBuilt?: number;
+  /** Maximum year built */
+  maxYearBuilt?: number;
+  /** Minimum lot size (sq ft) */
+  minLotSqft?: number;
+  /** Maximum lot size (sq ft) */
+  maxLotSqft?: number;
+  /** Maximum HOA fee (monthly) */
+  maxHoa?: number;
   /** Minimum close date (ISO YYYY-MM-DD) — used for sold time-range filter */
   minCloseDate?: string;
 }
@@ -428,6 +438,26 @@ function buildIdxFilters(params: BridgeIdxSearchParams): string[] {
 
   if (typeof params.maxDom === "number") {
     filters.push(`DaysOnMarket le ${params.maxDom}`);
+  }
+
+  if (typeof params.minYearBuilt === "number") {
+    filters.push(`YearBuilt ge ${params.minYearBuilt}`);
+  }
+
+  if (typeof params.maxYearBuilt === "number") {
+    filters.push(`YearBuilt le ${params.maxYearBuilt}`);
+  }
+
+  if (typeof params.minLotSqft === "number") {
+    filters.push(`LotSizeSquareFeet ge ${params.minLotSqft}`);
+  }
+
+  if (typeof params.maxLotSqft === "number") {
+    filters.push(`LotSizeSquareFeet le ${params.maxLotSqft}`);
+  }
+
+  if (typeof params.maxHoa === "number") {
+    filters.push(`AssociationFee le ${params.maxHoa}`);
   }
 
   if (params.waterfrontOnly) {
