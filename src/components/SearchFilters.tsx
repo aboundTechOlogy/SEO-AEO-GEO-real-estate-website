@@ -337,6 +337,8 @@ function ForSaleFilter({
   onChange,
   soldRange,
   onSoldRangeChange,
+  hidePending,
+  onHidePendingChange,
   open,
   onToggle,
 }: {
@@ -344,6 +346,8 @@ function ForSaleFilter({
   onChange: (v: string) => void;
   soldRange: string;
   onSoldRangeChange: (v: string) => void;
+  hidePending: boolean;
+  onHidePendingChange: (v: boolean) => void;
   open: boolean;
   onToggle: () => void;
 }) {
@@ -359,7 +363,7 @@ function ForSaleFilter({
               <path d="M140 896c9.271-4.304 16.027-10.476 20-20 0.957-7.613 0.757-15.093 0.5-22.75-0.036-2.044-0.072-4.089-0.109-6.195-0.094-5.020-0.225-10.036-0.391-15.055 1.714 0.003 3.427 0.006 5.193 0.009 101.509 0.179 203.018 0.316 304.526 0.399 12.182 0.010 24.364 0.020 36.545 0.031 3.638 0.003 3.638 0.003 7.349 0.006 39.295 0.035 78.591 0.098 117.886 0.171 40.305 0.075 80.611 0.119 120.916 0.135 24.881 0.011 49.762 0.046 74.642 0.111 17.050 0.042 34.099 0.055 51.149 0.045 9.844-0.005 19.688 0.003 29.533 0.046 9.009 0.039 18.017 0.041 27.025 0.014 3.263-0.003 6.525 0.007 9.788 0.032 4.43 0.032 8.858 0.015 13.288-0.015 2.462 0.003 4.924 0.006 7.461 0.009 10.294-1.527 16.41-6.587 23.447-13.994 4.796-10.33 4.758-19.8 3.25-31-4.309-9.281-10.444-16.072-20-20-8.275-1.097-16.463-0.931-24.797-0.781-2.38 0.011-4.76 0.023-7.213 0.034-7.581 0.045-15.16 0.145-22.74 0.247-5.148 0.040-10.297 0.077-15.445 0.109-12.603 0.081-25.202 0.238-37.805 0.391 0-21.12 0-42.24 0-64 13.941 0.315 13.941 0.315 27.88 0.721 11.704 0.133 19.158-0.393 28.12-8.721 9.35-10.854 9.135-20.060 9.016-33.711 0.019-3.286 0.019-3.286 0.038-6.638 0.032-7.342 0.007-14.684-0.019-22.026 0.011-5.263 0.025-10.526 0.042-15.789 0.036-12.812 0.028-25.624 0.005-38.437-0.018-10.413-0.021-20.827-0.012-31.24 0.001-1.483 0.002-2.965 0.004-4.492 0.003-3.012 0.005-6.023 0.008-9.035 0.023-28.236-0.003-56.473-0.046-84.709-0.036-24.224-0.030-48.448 0.007-72.673-0.043-28.136-0.060-56.271-0.035-84.407-0.003-3.001-0.005-6.001-0.008-9.002-0.002-2.215-0.002-2.215-0.004-4.474-0.007-10.4 0.005-20.8 0.024-31.2 0.025-14 0.007-27.999-0.039-41.998-0.011-5.142-0.008-10.285 0.010-15.427 0.022-7.011-0.005-14.020-0.045-21.031 0.027-3.064 0.027-3.064 0.054-6.189-0.127-11.482-1.008-18.674-9.070-27.522-11.114-10.763-24.020-9.118-38.57-9.016-2.741-0.009-5.481-0.022-8.222-0.038-7.521-0.033-15.040-0.017-22.561 0.008-8.115 0.018-16.229-0.010-24.344-0.032-15.892-0.036-31.784-0.028-47.677-0.005-12.915 0.018-25.831 0.021-38.746 0.012-1.838-0.001-3.675-0.002-5.569-0.004-3.733-0.003-7.467-0.005-11.2-0.008-35.012-0.023-70.024 0.003-105.036 0.046-30.046 0.036-60.092 0.030-90.138-0.007-34.886-0.043-69.772-0.060-104.659-0.035-3.72 0.003-7.439 0.005-11.159 0.008-1.83 0.001-3.66 0.002-5.546 0.004-12.901 0.007-25.801-0.005-38.702-0.024-15.72-0.022-31.441-0.016-47.161 0.026-8.022 0.021-16.043 0.029-24.065 0.003-7.343-0.024-14.685-0.011-22.028 0.032-3.915 0.013-7.831-0.013-11.746-0.040-21.707 0.194-21.707 0.194-30.872 9.070-9.565 10.497-9.134 20.228-9.016 33.711-0.012 2.191-0.025 4.381-0.038 6.638-0.032 7.342-0.007 14.684 0.019 22.026-0.011 5.263-0.025 10.526-0.042 15.789-0.036 12.812-0.028 25.624-0.005 38.437 0.018 10.413 0.021 20.827 0.012 31.24-0.001 1.483-0.002 2.965-0.004 4.492-0.003 3.012-0.005 6.023-0.008 9.035-0.023 28.236 0.003 56.473 0.046 84.709 0.036 24.224 0.030 48.448-0.007 72.673-0.043 28.136-0.060 56.271-0.035 84.407 0.003 3.001 0.005 6.001 0.008 9.002 0.001 1.476 0.002 2.953 0.004 4.474 0.007 10.4-0.005 20.8-0.024 31.2-0.025 14-0.007 27.999 0.039 41.998 0.011 5.142 0.008 10.285-0.010 15.427-0.022 7.011 0.005 14.020 0.045 21.031-0.027 3.064-0.027 3.064-0.054 6.189 0.128 11.547 1.232 18.423 9.070 27.522 10.653 9.899 21.037 8.957 34.75 8.5 10.519-0.248 10.519-0.248 21.25-0.5 0 21.12 0 42.24 0 64-42.24 0-84.48 0-128 0 0.018-9.344 0.036-18.689 0.054-28.316 0.159-85.648 0.279-171.295 0.355-256.943 0.010-11.22 0.020-22.441 0.031-33.661 0.002-2.234 0.004-4.468 0.006-6.769 0.035-36.192 0.098-72.383 0.171-108.575 0.075-37.123 0.119-74.246 0.135-111.37 0.011-22.915 0.046-45.831 0.111-68.746 0.042-15.704 0.055-31.408 0.045-47.113-0.005-9.067 0.003-18.133 0.046-27.2 0.039-8.298 0.041-16.596 0.014-24.894-0.003-3.004 0.007-6.009 0.032-9.013 0.032-4.081 0.010-8.162-0.015-12.242 0.003-2.268 0.006-4.535 0.009-6.872-1.581-10.005-6.786-16.189-13.994-23.037-10.33-4.796-19.8-4.758-31-3.25-9.957 4.623-14.591 10.585-20 20-0.994 6.287-0.994 6.287-0.984 13.158-0.016 2.629-0.032 5.259-0.048 7.968 0.023 2.905 0.046 5.809 0.071 8.714-0.003 3.096-0.010 6.191-0.021 9.287-0.018 8.502 0.014 17.002 0.054 25.504 0.035 9.17 0.023 18.339 0.017 27.509-0.004 15.885 0.021 31.77 0.066 47.656 0.065 22.967 0.086 45.935 0.096 68.902 0.018 37.263 0.071 74.525 0.146 111.788 0.073 36.198 0.13 72.396 0.164 108.594 0.002 2.231 0.004 4.462 0.006 6.761 0.010 11.193 0.021 22.386 0.030 33.579 0.083 92.861 0.224 185.721 0.403 278.581-1.905-0.063-1.905-0.063-3.849-0.127-5.8-0.167-11.6-0.271-17.401-0.373-1.998-0.067-3.996-0.134-6.055-0.203-12.32-0.163-19.328 0.477-28.695 8.703-7.257 7.639-8.62 13.766-9 24 0.38 10.234 1.743 16.361 9 24 10.931 9.6 20.629 8.974 34.75 8.5 2.044-0.036 4.089-0.072 6.195-0.109 5.020-0.094 10.036-0.225 15.055-0.391-0.042 1.27-0.084 2.54-0.127 3.849-0.167 5.8-0.271 11.6-0.373 17.401-0.067 1.998-0.134 3.996-0.203 6.055-0.163 12.32 0.477 19.328 8.703 28.695 10.543 10.016 22.216 9.856 36 8zM352 768c0-21.12 0-42.24 0-64 147.84 0 295.68 0 448 0 0 21.12 0 42.24 0 64-147.84 0-295.68 0-448 0zM288 640c0-147.84 0-295.68 0-448 190.080 0 380.16 0 576 0 0 147.84 0 295.68 0 448-190.080 0-380.16 0-576 0z" />
             </g>
           </svg>
-          For Sale
+          {value}
         </span>
       }
       width="280px"
@@ -384,6 +388,29 @@ function ForSaleFilter({
             </span>
           </label>
         ))}
+
+        {/* Hide Pending — sub-selection under "For Sale" */}
+        {value === "For Sale" && (
+          <div className="mt-1 ml-8 border-l-2 border-neutral-100 pl-3">
+            <label className="flex items-center gap-2.5 cursor-pointer group">
+              <div
+                onClick={() => onHidePendingChange(!hidePending)}
+                className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
+                  hidePending ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                }`}
+              >
+                {hidePending && (
+                  <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                    <path d="M4.5 12.75l6 6 9-13.5" />
+                  </svg>
+                )}
+              </div>
+              <span className={`text-[13px] ${hidePending ? "text-neutral-900 font-medium" : "text-neutral-500"}`}>
+                Hide Pending / Contingent
+              </span>
+            </label>
+          </div>
+        )}
 
         {/* Sold time-range sub-options */}
         {value === "Sold" && (
@@ -574,15 +601,11 @@ function PropertyTypeFilter({
   onToggle,
   selectedTypes,
   onTypesChange,
-  hidePending,
-  onHidePendingChange,
 }: {
   open: boolean;
   onToggle: () => void;
   selectedTypes: string[];
   onTypesChange: (types: string[]) => void;
-  hidePending: boolean;
-  onHidePendingChange: (v: boolean) => void;
 }) {
   const toggle = (t: string) => {
     onTypesChange(selectedTypes.includes(t) ? selectedTypes.filter((x) => x !== t) : [...selectedTypes, t]);
@@ -629,28 +652,9 @@ function PropertyTypeFilter({
           </label>
         ))}
 
-        <div className="border-t border-neutral-100 pt-3 mt-4">
-          <label className="flex items-center gap-3 cursor-pointer group">
-            <div
-              onClick={() => onHidePendingChange(!hidePending)}
-              className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
-                hidePending
-                  ? "bg-black border-black"
-                  : "border-neutral-300 group-hover:border-neutral-400"
-              }`}
-            >
-              {hidePending && (
-                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
-                  <path d="M4.5 12.75l6 6 9-13.5" />
-                </svg>
-              )}
-            </div>
-            <span className="text-sm text-neutral-700">Hide Pending / Contingent</span>
-          </label>
-        </div>
       </div>
       <PanelFooter
-        onReset={() => { onTypesChange([]); onHidePendingChange(false); }}
+        onReset={() => onTypesChange([])}
         onDone={onToggle}
       />
     </FilterDropdown>
@@ -887,6 +891,27 @@ function MoreFilter({
                 </span>
               </label>
             ))}
+            {status === "For Sale" && (
+              <div className="mt-1 ml-8 border-l-2 border-neutral-100 pl-3">
+                <label className="flex items-center gap-2.5 cursor-pointer group">
+                  <div
+                    onClick={() => onFilterChange({ hidePending: !filterValues.hidePending })}
+                    className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
+                      filterValues.hidePending ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                    }`}
+                  >
+                    {filterValues.hidePending && (
+                      <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                        <path d="M4.5 12.75l6 6 9-13.5" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className={`text-[13px] ${filterValues.hidePending ? "text-neutral-900 font-medium" : "text-neutral-500"}`}>
+                    Hide Pending / Contingent
+                  </span>
+                </label>
+              </div>
+            )}
             {status === "Sold" && (
               <div className="mt-1 ml-8 space-y-2.5 border-l-2 border-neutral-100 pl-3">
                 <p className="text-[11px] text-neutral-400 uppercase tracking-wide font-medium mb-1">Sold within</p>
@@ -1032,23 +1057,6 @@ function MoreFilter({
                 <span className="text-sm text-neutral-700">{type}</span>
               </label>
             ))}
-            <div className="border-t border-neutral-100 pt-3 mt-3">
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <div
-                  onClick={() => onFilterChange({ hidePending: !filterValues.hidePending })}
-                  className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
-                    filterValues.hidePending ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
-                  }`}
-                >
-                  {filterValues.hidePending && (
-                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
-                      <path d="M4.5 12.75l6 6 9-13.5" />
-                    </svg>
-                  )}
-                </div>
-                <span className="text-sm text-neutral-700">Hide Pending / Contingent</span>
-              </label>
-            </div>
           </div>
         )}
 
@@ -1289,6 +1297,27 @@ function MobileFiltersSheet({
                 </span>
               </label>
             ))}
+            {status === "For Sale" && (
+              <div className="mt-1 ml-8 border-l-2 border-neutral-100 pl-3">
+                <label className="flex items-center gap-2.5 cursor-pointer group">
+                  <div
+                    onClick={() => onFilterChange({ hidePending: !filterValues.hidePending })}
+                    className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
+                      filterValues.hidePending ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                    }`}
+                  >
+                    {filterValues.hidePending && (
+                      <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                        <path d="M4.5 12.75l6 6 9-13.5" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className={`text-[13px] ${filterValues.hidePending ? "text-neutral-900 font-medium" : "text-neutral-500"}`}>
+                    Hide Pending / Contingent
+                  </span>
+                </label>
+              </div>
+            )}
             {status === "Sold" && (
               <div className="mt-1 ml-8 space-y-2.5 border-l-2 border-neutral-100 pl-3">
                 <p className="text-[11px] text-neutral-400 uppercase tracking-wide font-medium mb-1">Sold within</p>
@@ -1391,21 +1420,6 @@ function MobileFiltersSheet({
                 <span className="text-sm text-neutral-700">{type}</span>
               </label>
             ))}
-            <div className="border-t border-neutral-100 pt-3 mt-3">
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <div
-                  onClick={() => onFilterChange({ hidePending: !filterValues.hidePending })}
-                  className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
-                    filterValues.hidePending ? "bg-black border-black" : "border-neutral-300 group-hover:border-neutral-400"
-                  }`}
-                >
-                  {filterValues.hidePending && (
-                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}><path d="M4.5 12.75l6 6 9-13.5" /></svg>
-                  )}
-                </div>
-                <span className="text-sm text-neutral-700">Hide Pending / Contingent</span>
-              </label>
-            </div>
           </div>
         </div>
 
@@ -1666,9 +1680,11 @@ export function DesktopSearchBar({
       {/* Filters */}
       <ForSaleFilter
         value={status}
-        onChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); }}
+        onChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); if (v !== "For Sale") onFilterChange({ hidePending: false }); }}
         soldRange={filterValues.soldRange}
         onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
+        hidePending={filterValues.hidePending}
+        onHidePendingChange={(v) => onFilterChange({ hidePending: v })}
         open={openFilter === "status"}
         onToggle={() => toggle("status")}
       />
@@ -1691,8 +1707,6 @@ export function DesktopSearchBar({
         onToggle={() => toggle("type")}
         selectedTypes={filterValues.propertyTypes}
         onTypesChange={(types) => onFilterChange({ propertyTypes: types })}
-        hidePending={filterValues.hidePending}
-        onHidePendingChange={(v) => onFilterChange({ hidePending: v })}
       />
       <MoreFilter
         open={openFilter === "more"}
@@ -1790,9 +1804,11 @@ export function MobileSearchBar({
       <div className="flex items-center gap-1.5 pb-2 overflow-x-auto no-scrollbar">
         <ForSaleFilter
           value={status}
-          onChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); }}
+          onChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); if (v !== "For Sale") onFilterChange({ hidePending: false }); }}
           soldRange={filterValues.soldRange}
           onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
+          hidePending={filterValues.hidePending}
+          onHidePendingChange={(v) => onFilterChange({ hidePending: v })}
           open={openFilter === "status"}
           onToggle={() => toggle("status")}
         />
@@ -1815,8 +1831,6 @@ export function MobileSearchBar({
           onToggle={() => toggle("type")}
           selectedTypes={filterValues.propertyTypes}
           onTypesChange={(types) => onFilterChange({ propertyTypes: types })}
-          hidePending={filterValues.hidePending}
-          onHidePendingChange={(v) => onFilterChange({ hidePending: v })}
         />
         <button
           onClick={() => setFiltersSheetOpen(true)}

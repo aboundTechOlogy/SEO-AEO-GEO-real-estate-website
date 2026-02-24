@@ -636,12 +636,15 @@ function SearchPage() {
     return null;
   }, [drawBounds, mapViewport, view]);
 
+  const isForRent = status === "For Rent";
+
   const searchKey = useMemo(() => {
     const params = new URLSearchParams();
     params.set("top", String(PAGE_SIZE));
     params.set("skip", String(skip));
     params.set("orderby", orderby);
     params.set("status", bridgeStatus);
+    if (isForRent) params.set("forRent", "true");
 
     if (filterValues.priceMin) params.set("minPrice", filterValues.priceMin);
     if (filterValues.priceMax) params.set("maxPrice", filterValues.priceMax);
@@ -669,7 +672,7 @@ function SearchPage() {
     }
 
     return `/api/search?${params.toString()}`;
-  }, [bbox, bridgeStatus, filterValues, orderby, skip]);
+  }, [bbox, bridgeStatus, isForRent, filterValues, orderby, skip]);
 
   const markersKey = useMemo(() => {
     if (view !== "map") {
@@ -678,6 +681,7 @@ function SearchPage() {
 
     const params = new URLSearchParams();
     params.set("status", bridgeStatus);
+    if (isForRent) params.set("forRent", "true");
 
     if (bbox) {
       params.set("swLat", String(bbox.swLat));
@@ -694,7 +698,7 @@ function SearchPage() {
     if (filterValues.propertyTypes.length > 0) params.set("types", filterValues.propertyTypes.join(","));
 
     return `/api/search/markers?${params.toString()}`;
-  }, [bbox, bridgeStatus, view, filterValues.priceMin, filterValues.priceMax, filterValues.bedMin, filterValues.bathMin, filterValues.propertyTypes]);
+  }, [bbox, bridgeStatus, isForRent, view, filterValues.priceMin, filterValues.priceMax, filterValues.bedMin, filterValues.bathMin, filterValues.propertyTypes]);
 
   const {
     data: searchData,

@@ -152,6 +152,8 @@ export interface BridgeIdxSearchParams {
   poolOnly?: boolean;
   /** Exclude Pending/Contingent listings */
   hidePending?: boolean;
+  /** Filter to rental listings only (PropertyType eq 'Residential Lease') */
+  forRent?: boolean;
   /** Minimum living area (sq ft) */
   minSqft?: number;
   /** Maximum living area (sq ft) */
@@ -448,7 +450,10 @@ function buildIdxFilters(params: BridgeIdxSearchParams): string[] {
     );
   }
 
-  if (params.typeFilterExprs && params.typeFilterExprs.length > 0) {
+  if (params.forRent) {
+    // "For Rent" mode — only show rental listings
+    filters.push(`PropertyType eq 'Residential Lease'`);
+  } else if (params.typeFilterExprs && params.typeFilterExprs.length > 0) {
     // Pre-built OData expressions from UI type picker (e.g. "PropertySubType eq 'Condominium'")
     if (params.typeFilterExprs.length === 1) {
       filters.push(params.typeFilterExprs[0]);
@@ -466,6 +471,9 @@ function buildIdxFilters(params: BridgeIdxSearchParams): string[] {
     filters.push(`PropertyType eq '${escapeOData(params.type)}'`);
   } else if (status === "Active") {
     // "Any Type" default: only residential property types (exclude commercial, leases, etc.)
+    filters.push(`(PropertyType eq 'Residential' or PropertyType eq 'Residential Income' or PropertyType eq 'Land/Boat Docks')`);
+  } else if (status === "Closed") {
+    // Sold: exclude closed rentals/commercial — only show residential sales
     filters.push(`(PropertyType eq 'Residential' or PropertyType eq 'Residential Income' or PropertyType eq 'Land/Boat Docks')`);
   }
 

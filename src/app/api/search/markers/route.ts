@@ -26,6 +26,8 @@ export async function GET(req: NextRequest) {
     ? typesRaw.split(",").map((t) => PROPERTY_TYPE_FILTERS[t.trim()]).filter(Boolean)
     : undefined;
 
+  const forRent = search.get("forRent") === "true";
+
   const result = await fetchIdxMarkers({
     minPrice: parseNumber(search.get("minPrice")),
     maxPrice: parseNumber(search.get("maxPrice")),
@@ -33,6 +35,7 @@ export async function GET(req: NextRequest) {
     baths: parseNumber(search.get("baths")),
     status: search.get("status") || "Active",
     typeFilterExprs,
+    forRent: forRent || undefined,
     swLat: parseNumber(search.get("swLat")),
     swLng: parseNumber(search.get("swLng")),
     neLat: parseNumber(search.get("neLat")),

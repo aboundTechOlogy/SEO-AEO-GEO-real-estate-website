@@ -99,6 +99,7 @@ export async function GET(req: NextRequest) {
   const minGarage = parseGarage(search.get("minGarage"));
   const maxDom = parseDomMax(search.get("maxDom"));
   const hidePending = search.get("hidePending") === "true";
+  const forRent = search.get("forRent") === "true";
   const minCloseDate = parseSoldRange(search.get("soldRange"));
 
   const waterfrontParam = search.get("waterfront");
@@ -134,6 +135,7 @@ export async function GET(req: NextRequest) {
     waterfrontOnly: waterfrontOnly || poolOrWaterfrontOnly || undefined,
     poolOnly,
     hidePending: hidePending || undefined,
+    forRent: forRent || undefined,
     minSqft,
     maxSqft,
     minCloseDate,
