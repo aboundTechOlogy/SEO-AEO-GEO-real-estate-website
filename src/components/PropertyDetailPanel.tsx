@@ -790,14 +790,14 @@ function FullScreenPhotoViewer({
       </div>
 
       {/* Content — Photos or Map */}
-      <div className="relative flex-1 min-h-0 overflow-hidden px-[15px] pt-[6px]">
+      <div className="relative flex-1 min-h-0 overflow-hidden mx-[60px] mt-[6px]">
         {viewMode === "photos" ? (
           <>
             {url && !failed ? (
               <img
                 src={url}
                 alt={`${address} photo ${activePhoto + 1}`}
-                className="w-full h-auto max-h-full object-contain"
+                className="w-full"
                 onError={() => setFailedPhotos((prev) => ({ ...prev, [activePhoto]: true }))}
               />
             ) : (
