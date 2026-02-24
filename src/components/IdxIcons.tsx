@@ -141,9 +141,9 @@ export function IconLove({ className, active }: IconProps & { active?: boolean }
 
 export function IconShared({ className }: IconProps) {
   return (
-    <I className={className}>
-      <path d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z" />
-    </I>
+    <svg className={className || "w-4 h-4"} viewBox="0 0 24 24" fill="currentColor">
+      <path fillRule="evenodd" clipRule="evenodd" d="M18 3.75a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM14.25 6a3.75 3.75 0 1 1 1.942 3.292l-5.442 3.024a3.766 3.766 0 0 1 0 3.368l5.442 3.024A3.75 3.75 0 1 1 15.058 17.684l-5.442-3.024a3.75 3.75 0 1 1 0-5.32l5.442-3.024A3.744 3.744 0 0 1 14.25 6ZM6 9.75a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Zm12 6a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z" />
+    </svg>
   );
 }
 

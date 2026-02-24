@@ -764,7 +764,7 @@ function SearchPage() {
     <>
       <div className="h-[50px] lg:h-[82px] min-[1440px]:h-[90px]" />
 
-      <div ref={filterBarRef} className="sticky top-[50px] lg:top-[82px] min-[1440px]:top-[90px] z-30 bg-white">
+      <div ref={filterBarRef} className="sticky top-[50px] lg:top-[82px] min-[1440px]:top-[90px] z-30 bg-white md:pt-2">
         <DesktopSearchBar
           status={status}
           onStatusChange={setStatus}

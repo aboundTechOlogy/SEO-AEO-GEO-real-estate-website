@@ -162,7 +162,7 @@ export function AddressSearchInput({
           onFocus={() => setFocused(true)}
           onBlur={() => setTimeout(() => setFocused(false), 150)}
           onKeyDown={handleKeyDown}
-          placeholder="Address, City, Zip Code, Subdivision"
+          placeholder="Enter Address, City, Zip Code, Subdivision"
           className={[
             "w-full bg-white border border-gray-300 rounded-[6px] pl-[15px] text-gray-900 placeholder-gray-500",
             "focus:outline-none focus:border-gray-500 transition-colors",
@@ -435,8 +435,10 @@ function PriceFilter({
   const label = priceMin && priceMax
     ? `$${Number(priceMin).toLocaleString()} - $${Number(priceMax).toLocaleString()}`
     : priceMin
-      ? `$${Number(priceMin).toLocaleString()} - Any`
-      : "$800K - Any Price";
+      ? `$${Number(priceMin).toLocaleString()} - Any Price`
+      : priceMax
+        ? `Up to $${Number(priceMax).toLocaleString()}`
+        : "Price";
 
   return (
     <FilterDropdown
@@ -1706,7 +1708,7 @@ export function DesktopSearchBar({
       />
 
       {/* Right-side actions */}
-      <div className="shrink-0 ml-auto flex items-center gap-2">
+      <div className="shrink-0 ml-auto flex items-center gap-4">
         <div className="relative hidden min-[1180px]:block">
           <button
             onClick={onSaveSearch}
