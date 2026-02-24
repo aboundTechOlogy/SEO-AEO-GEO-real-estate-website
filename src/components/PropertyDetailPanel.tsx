@@ -1279,17 +1279,11 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                 <CircleIconButton label={isSaved ? "Unsave listing" : "Save listing"} onClick={toggleSaved}>
                   <IconLove className="w-5 h-5" active={isSaved} />
                 </CircleIconButton>
-                <CircleIconButton label="Photos" onClick={() => { setViewerStartPhoto(0); setIsPhotoViewerOpen(true); }}>
-                  <IconCamera className="w-5 h-5" />
-                </CircleIconButton>
-                <CircleIconButton label="Map">
-                  <IconLocation className="w-5 h-5" />
-                </CircleIconButton>
-                <CircleIconButton label="Contact" onClick={() => window.location.assign("mailto:Andrew@IamAndrewWhalen.com")}>
-                  <IconEnvelope className="w-5 h-5" />
-                </CircleIconButton>
                 <CircleIconButton label="Share" onClick={shareListing}>
                   <IconShared className="w-5 h-5" />
+                </CircleIconButton>
+                <CircleIconButton label="Open detail page" onClick={() => window.open(canonicalUrl, "_blank", "noopener,noreferrer")}>
+                  <IconOpen className="w-5 h-5" />
                 </CircleIconButton>
                 <CircleIconButton label="Close" onClick={handleClose}>
                   <IconClose className="w-5 h-5" />
