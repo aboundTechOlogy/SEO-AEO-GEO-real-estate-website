@@ -32,6 +32,8 @@ interface PropertyMapProps {
   hoveredResultCard?: { listingKey: string; lat: number; lng: number } | null;
   /** Called when the InfoCard is dismissed (X click, hover end, etc.) so parent can clear highlight. */
   onInfoCardClose?: () => void;
+  /** Called when the map viewport changes — reports SW/NE bounds. */
+  onViewportChange?: (bounds: { swLat: number; swLng: number; neLat: number; neLng: number }) => void;
 }
 
 /** Renders InfoCard as a portal into the map container, clamped to stay fully visible. */
@@ -151,6 +153,30 @@ function InfoCardOverlay({
   );
 }
 
+/** Reports map viewport bounds when the user pans or zooms. */
+function ViewportTracker({ onViewportChange }: { onViewportChange: (bounds: { swLat: number; swLng: number; neLat: number; neLng: number }) => void }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!map) return;
+
+    const report = () => {
+      const b = map.getBounds();
+      if (!b) return;
+      const sw = b.getSouthWest();
+      const ne = b.getNorthEast();
+      onViewportChange({ swLat: sw.lat(), swLng: sw.lng(), neLat: ne.lat(), neLng: ne.lng() });
+    };
+
+    // Fire once on load, then on every idle (after pan/zoom finishes)
+    const timer = setTimeout(report, 200);
+    const listener = map.addListener("idle", report);
+    return () => { clearTimeout(timer); listener.remove(); };
+  }, [map, onViewportChange]);
+
+  return null;
+}
+
 function formatPriceLabel(value: number): string {
   if (!Number.isFinite(value)) return "$0";
   if (value >= 1_000_000) {
@@ -180,6 +206,7 @@ export default function PropertyMap({
   onToggleSave,
   hoveredResultCard,
   onInfoCardClose,
+  onViewportChange,
 }: PropertyMapProps) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
   const containerRef = useRef<HTMLDivElement>(null);
@@ -293,6 +320,7 @@ export default function PropertyMap({
 
           {/* MUST be inside <Map> so useMap() returns the map instance */}
           {interactive && <MapDrawControl onBoundsChange={onDrawBounds} containerRef={containerRef} />}
+          {onViewportChange && <ViewportTracker onViewportChange={onViewportChange} />}
         </Map>
 
         {/* Count alert banner — "Showing X of Y properties" */}

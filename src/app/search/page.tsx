@@ -515,6 +515,7 @@ function SearchPage() {
   const [sortLabel, setSortLabel] = useState<string>(DEFAULT_SORT);
   const [page, setPage] = useState(1);
   const [drawBounds, setDrawBounds] = useState<DrawCoords | null>(null);
+  const [mapViewport, setMapViewport] = useState<{ swLat: number; swLng: number; neLat: number; neLng: number } | null>(null);
   const [highlightedListingId, setHighlightedListingId] = useState<string | null>(null);
   const [hoveredListingId, setHoveredListingId] = useState<string | null>(null);
   const [hoveredResultCard, setHoveredResultCard] = useState<{ listingKey: string; lat: number; lng: number } | null>(null);
@@ -626,7 +627,13 @@ function SearchPage() {
   const bridgeStatus = STATUS_TO_BRIDGE[status] || "Active";
   const orderby = getSortOrderBy(sortLabel);
   const skip = Math.max(0, (page - 1) * PAGE_SIZE);
-  const bbox = useMemo(() => getBoundingBox(drawBounds), [drawBounds]);
+  // Draw bounds take priority; otherwise use map viewport bounds when in map view
+  const bbox = useMemo(() => {
+    const drawn = getBoundingBox(drawBounds);
+    if (drawn) return drawn;
+    if (view === "map" && mapViewport) return mapViewport;
+    return null;
+  }, [drawBounds, mapViewport, view]);
 
   const searchKey = useMemo(() => {
     const params = new URLSearchParams();
@@ -813,6 +820,16 @@ function SearchPage() {
     }
   }, []);
 
+  const prevViewportRef = useRef<string>("");
+  const handleViewportChange = useCallback((bounds: { swLat: number; swLng: number; neLat: number; neLng: number }) => {
+    // Round to 3 decimals (~100m) to avoid jitter from tiny floating-point changes
+    const key = `${bounds.swLat.toFixed(3)},${bounds.swLng.toFixed(3)},${bounds.neLat.toFixed(3)},${bounds.neLng.toFixed(3)}`;
+    if (key === prevViewportRef.current) return;
+    prevViewportRef.current = key;
+    setMapViewport(bounds);
+    setPage(1);
+  }, []);
+
   return (
     <>
       <div className="h-[50px] lg:h-[82px] min-[1440px]:h-[90px]" />
@@ -921,6 +938,7 @@ function SearchPage() {
               onToggleSave={handleToggleSavedListing}
               hoveredResultCard={hoveredResultCard}
               onInfoCardClose={() => setHighlightedListingId(null)}
+              onViewportChange={handleViewportChange}
             />
           </div>
 
