@@ -800,6 +800,90 @@ export async function fetchIdxMarkers(params: BridgeIdxSearchParams = {}): Promi
   }
 }
 
+/* ==================== ADDRESS AUTOCOMPLETE ==================== */
+
+export interface AutocompleteSuggestion {
+  label: string;
+  /** Secondary text (e.g., "3 listings") */
+  detail?: string;
+  type: "city" | "address" | "zip" | "building";
+}
+
+const AUTOCOMPLETE_SELECT_FIELDS = [
+  "UnparsedAddress",
+  "City",
+  "StateOrProvince",
+  "PostalCode",
+  "BuildingName",
+].join(",");
+
+/**
+ * Query Bridge for address autocomplete suggestions.
+ * Returns unique addresses grouped with listing counts.
+ */
+export async function fetchAutocomplete(
+  q: string,
+  status: string = "Active"
+): Promise<AutocompleteSuggestion[]> {
+  const trimmed = q.trim();
+  if (trimmed.length < 2) return [];
+
+  const escaped = escapeOData(trimmed.toLowerCase());
+
+  const query = new URLSearchParams();
+  query.set("$select", AUTOCOMPLETE_SELECT_FIELDS);
+  query.set("$top", "50");
+  query.set("$count", "false");
+
+  const statusFilter =
+    status === "Closed"
+      ? "StandardStatus eq 'Closed'"
+      : status === "Active"
+        ? "(StandardStatus eq 'Active' or StandardStatus eq 'Active Under Contract')"
+        : `StandardStatus eq '${escapeOData(status)}'`;
+
+  const searchFilter = `(contains(tolower(UnparsedAddress), '${escaped}') or contains(tolower(City), '${escaped}') or contains(tolower(PostalCode), '${escaped}') or contains(tolower(BuildingName), '${escaped}'))`;
+  query.set("$filter", `${statusFilter} and ${searchFilter}`);
+
+  try {
+    const response = await bridgeFetch<Record<string, unknown>>(query, 60 * 5);
+    const records = response.value ?? [];
+
+    // Group by full address to get counts
+    const addressMap = new Map<string, { city: string; state: string; zip: string; count: number }>();
+    for (const raw of records) {
+      const addr = String(raw.UnparsedAddress ?? "").trim();
+      const city = String(raw.City ?? "").trim();
+      const state = String(raw.StateOrProvince ?? "").trim();
+      const zip = String(raw.PostalCode ?? "").trim();
+      if (!addr) continue;
+
+      const key = `${addr}, ${city}, ${state} ${zip}`;
+      const existing = addressMap.get(key);
+      if (existing) {
+        existing.count++;
+      } else {
+        addressMap.set(key, { city, state, zip, count: 1 });
+      }
+    }
+
+    const results: AutocompleteSuggestion[] = [];
+    for (const [fullAddr, data] of addressMap) {
+      results.push({
+        label: fullAddr,
+        detail: `${data.count} listing${data.count > 1 ? "s" : ""}`,
+        type: "address",
+      });
+      if (results.length >= 8) break;
+    }
+
+    return results;
+  } catch (error) {
+    console.error("fetchAutocomplete failed:", error);
+    return [];
+  }
+}
+
 function normalizeProperty(raw: unknown): BridgeProperty {
   const record = typeof raw === "object" && raw !== null ? (raw as Record<string, unknown>) : {};
 

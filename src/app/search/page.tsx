@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, startTransition, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
 import { point, polygon } from "@turf/helpers";
 import Link from "next/link";
@@ -546,9 +546,23 @@ function SearchPage() {
   );
 
   const handleFilterChange = (partial: Partial<SearchFilterValues>) => {
-    setFilterValues((prev) => ({ ...prev, ...partial }));
-    setPage(1);
+    startTransition(() => {
+      setFilterValues((prev) => ({ ...prev, ...partial }));
+      setPage(1);
+    });
   };
+
+  const handleStatusChange = useCallback((v: string) => {
+    startTransition(() => {
+      setStatus(v);
+      setFilterValues((prev) => ({
+        ...prev,
+        ...(v !== "Sold" ? { soldRange: "" } : {}),
+        ...(v !== "For Sale" ? { hideActiveWithContract: false } : {}),
+      }));
+      setPage(1);
+    });
+  }, []);
 
   const filterBarRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<Record<string, HTMLElement | null>>({});
@@ -845,7 +859,7 @@ function SearchPage() {
       <div ref={filterBarRef} className="sticky top-[50px] lg:top-[82px] min-[1440px]:top-[90px] z-30 bg-white md:pt-2">
         <DesktopSearchBar
           status={status}
-          onStatusChange={setStatus}
+          onStatusChange={handleStatusChange}
           view={view}
           onViewChange={setView}
           filterValues={filterValues}
@@ -856,7 +870,7 @@ function SearchPage() {
         />
         <MobileSearchBar
           status={status}
-          onStatusChange={setStatus}
+          onStatusChange={handleStatusChange}
           view={view}
           onViewChange={setView}
           filterValues={filterValues}

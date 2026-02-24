@@ -1,10 +1,25 @@
 "use client";
 
+import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import ScrollReveal from "@/components/ScrollReveal";
-
-// TODO: Replace with looping video — slow aerial of Biscayne Bay at dusk
+import { AddressSearchInput } from "@/components/SearchFilters";
 
 export default function PropertySearch() {
+  const router = useRouter();
+  const [status, setStatus] = useState<"sale" | "rent" | "sold">("sale");
+  const [query, setQuery] = useState("");
+  const selectRef = useRef<HTMLSelectElement>(null);
+
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+    if (query) params.set("q", query);
+    if (status === "rent") params.set("status", "For Rent");
+    else if (status === "sold") params.set("status", "Sold");
+    const qs = params.toString();
+    router.push(`/search/${qs ? `?${qs}` : ""}`);
+  };
+
   return (
     <section className="hidden md:flex relative min-h-screen items-center justify-center overflow-hidden bg-neutral-950">
       {/* Video placeholder — uncomment when video file is ready:
@@ -31,8 +46,10 @@ export default function PropertySearch() {
           {/* For Sale dropdown */}
           <div className="relative w-[200px] shrink-0">
             <select
+              ref={selectRef}
+              value={status}
+              onChange={(e) => setStatus(e.target.value as "sale" | "rent" | "sold")}
               className="appearance-none w-full bg-transparent border-2 border-white/40 rounded-full px-8 py-4 text-white text-sm uppercase tracking-wider cursor-pointer focus:outline-none focus:border-white/60 transition-colors"
-              defaultValue="sale"
             >
               <option value="sale" className="bg-neutral-900">For Sale</option>
               <option value="rent" className="bg-neutral-900">For Rent</option>
@@ -43,20 +60,22 @@ export default function PropertySearch() {
             </svg>
           </div>
 
-          {/* Search input */}
-          <input
-            type="text"
-            placeholder="Enter an address, city, zip code or MLS number"
-            className="flex-1 bg-transparent border-2 border-white/40 rounded-full px-8 py-4 text-white placeholder-white/70 focus:outline-none focus:border-white/60 transition-colors"
+          {/* Search input with autocomplete */}
+          <AddressSearchInput
+            value={query}
+            onChange={(v) => { setQuery(v); if (v) handleSearch(); }}
+            variant="dark"
+            height="h-auto py-4"
+            inputClassName="text-sm tracking-wider rounded-full! pl-8!"
           />
 
           {/* Find Now button */}
-          <a
-            href="/search/"
+          <button
+            onClick={handleSearch}
             className="w-[200px] shrink-0 bg-neutral-200 text-black font-medium rounded-full px-12 py-4 uppercase tracking-wider text-sm hover:bg-white transition-colors flex items-center justify-center"
           >
             Find Now!
-          </a>
+          </button>
         </div>
 
         {/* Advanced search link */}

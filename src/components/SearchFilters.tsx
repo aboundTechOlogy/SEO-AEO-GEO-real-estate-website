@@ -1,6 +1,9 @@
 "use client";
-import { useState, useRef, useEffect, useMemo, ReactNode } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback, ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { neighborhoods } from "@/data/neighborhoods";
+import { buildings } from "@/data/buildings";
+import { developments } from "@/data/developments";
 
 /* ==================== SHARED TYPES ==================== */
 
@@ -71,47 +74,180 @@ const CITY_SUGGESTIONS = [
   "Pembroke Pines", "Weston", "Miramar", "Coral Springs", "Plantation",
 ];
 
+/* ==================== AUTOCOMPLETE SUGGESTION TYPES ==================== */
+
+interface SuggestionItem {
+  label: string;
+  detail?: string;
+  type: "location" | "city" | "address" | "zip" | "building" | "neighborhood";
+}
+
+/** Merged list of all locally-known place names for instant matching */
+const LOCAL_PLACES: SuggestionItem[] = [
+  ...CITY_SUGGESTIONS.map((c) => ({ label: c, type: "city" as const })),
+  ...neighborhoods.map((n) => ({ label: n.name, type: "neighborhood" as const })),
+  ...buildings.map((b) => ({ label: b.name, type: "building" as const })),
+  ...developments.map((d) => ({ label: d.name, type: "building" as const })),
+];
+
+/** Zip codes from neighborhood data for instant zip matching */
+const ALL_ZIP_CODES = [...new Set(neighborhoods.flatMap((n) => n.zipCodes))];
+
+const SUGGESTION_ICONS: Record<SuggestionItem["type"], ReactNode> = {
+  location: (
+    <svg className="w-5 h-5 text-neutral-800 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M21 3L3 10.53v.98l6.84 2.65L12.48 21h.98L21 3z" />
+    </svg>
+  ),
+  city: (
+    <svg className="w-5 h-5 text-neutral-400 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M15 11V5l-3-3-3 3v2H3v14h18V11h-6zm-8 8H5v-2h2v2zm0-4H5v-2h2v2zm0-4H5V9h2v2zm6 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V9h2v2zm0-4h-2V5h2v2zm6 12h-2v-2h2v2zm0-4h-2v-2h2v2z" />
+    </svg>
+  ),
+  neighborhood: (
+    <svg className="w-5 h-5 text-neutral-400 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M15 11V5l-3-3-3 3v2H3v14h18V11h-6zm-8 8H5v-2h2v2zm0-4H5v-2h2v2zm0-4H5V9h2v2zm6 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V9h2v2zm0-4h-2V5h2v2zm6 12h-2v-2h2v2zm0-4h-2v-2h2v2z" />
+    </svg>
+  ),
+  address: (
+    <svg className="w-5 h-5 text-neutral-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 0 1 15 0Z" />
+    </svg>
+  ),
+  zip: (
+    <svg className="w-5 h-5 text-neutral-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 0 1 15 0Z" />
+    </svg>
+  ),
+  building: (
+    <svg className="w-5 h-5 text-neutral-400 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M15 11V5l-3-3-3 3v2H3v14h18V11h-6zm-8 8H5v-2h2v2zm0-4H5v-2h2v2zm0-4H5V9h2v2zm6 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V9h2v2zm0-4h-2V5h2v2zm6 12h-2v-2h2v2zm0-4h-2v-2h2v2z" />
+    </svg>
+  ),
+};
+
+const TYPE_LABELS: Record<SuggestionItem["type"], string> = {
+  location: "LOCATION",
+  city: "CITY",
+  neighborhood: "NEIGHBORHOOD",
+  address: "ADDRESS",
+  zip: "ZIP CODE",
+  building: "BUILDING",
+};
+
 /* ==================== ADDRESS SEARCH INPUT ==================== */
 
 export function AddressSearchInput({
   value,
   onChange,
+  onGeolocate,
   inputClassName,
   height = "h-[50px]",
+  variant = "light",
 }: {
   value: string;
   onChange: (v: string) => void;
+  onGeolocate?: (lat: number, lng: number) => void;
   inputClassName?: string;
   height?: string;
+  variant?: "light" | "dark";
 }) {
   const [inputVal, setInputVal] = useState(value);
   const [focused, setFocused] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [apiResults, setApiResults] = useState<SuggestionItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Keep local input text in sync when parent resets
   useEffect(() => {
     setInputVal(value);
   }, [value]);
 
-  const suggestions = useMemo(() => {
-    const trimmed = inputVal.trim();
-    if (trimmed.length < 2) return [];
-    if (/^\d{3,5}$/.test(trimmed)) {
-      return [`Zip: ${trimmed}`];
+  // Debounced API fetch for address suggestions
+  const fetchAddressSuggestions = useCallback((q: string) => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (q.trim().length < 3) {
+      setApiResults([]);
+      setIsLoading(false);
+      return;
     }
-    return CITY_SUGGESTIONS.filter((c) =>
-      c.toLowerCase().includes(trimmed.toLowerCase())
-    ).slice(0, 7);
-  }, [inputVal]);
+
+    setIsLoading(true);
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/search/autocomplete?q=${encodeURIComponent(q)}`);
+        if (!res.ok) { setApiResults([]); return; }
+        const data: { label: string; detail?: string; type: string }[] = await res.json();
+        setApiResults(data.map((d) => ({ label: d.label, detail: d.detail, type: d.type as SuggestionItem["type"] })));
+      } catch {
+        setApiResults([]);
+      } finally {
+        setIsLoading(false);
+      }
+    }, 300);
+  }, []);
+
+  // Cleanup debounce on unmount
+  useEffect(() => {
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, []);
+
+  // Build combined suggestions: Current Location + local matches + API address matches
+  const suggestions = useMemo(() => {
+    const items: SuggestionItem[] = [];
+    const trimmed = inputVal.trim().toLowerCase();
+
+    // Always show "Current Location" as first option if geolocation is available
+    if (onGeolocate) {
+      items.push({ label: "Current Location", type: "location" });
+    }
+
+    if (trimmed.length < 2) return items;
+
+    // Zip code matching
+    if (/^\d{2,5}$/.test(trimmed)) {
+      const zipMatches = ALL_ZIP_CODES.filter((z) => z.startsWith(trimmed)).slice(0, 5);
+      for (const z of zipMatches) {
+        items.push({ label: z, type: "zip" });
+      }
+    }
+
+    // Local city/neighborhood/building matches
+    const localMatches = LOCAL_PLACES.filter((p) =>
+      p.label.toLowerCase().includes(trimmed)
+    ).slice(0, 5);
+    for (const m of localMatches) {
+      items.push(m);
+    }
+
+    // API address results
+    for (const r of apiResults) {
+      items.push(r);
+    }
+
+    return items;
+  }, [inputVal, apiResults, onGeolocate]);
 
   const showDropdown = focused && suggestions.length > 0;
+  const flatItems = suggestions;
 
-  const commit = (val: string) => {
-    const clean = val.startsWith("Zip: ") ? val.replace("Zip: ", "") : val;
-    setInputVal(clean);
-    onChange(clean);
+  const commit = (item: SuggestionItem) => {
+    if (item.type === "location" && onGeolocate) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => onGeolocate(pos.coords.latitude, pos.coords.longitude),
+        () => {/* silently fail */}
+      );
+      setFocused(false);
+      return;
+    }
+
+    setInputVal(item.label);
+    onChange(item.label);
     setFocused(false);
     setActiveIndex(-1);
   };
@@ -119,7 +255,15 @@ export function AddressSearchInput({
   const handleClear = () => {
     setInputVal("");
     onChange("");
+    setApiResults([]);
     inputRef.current?.focus();
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setInputVal(val);
+    setActiveIndex(-1);
+    fetchAddressSuggestions(val);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -133,14 +277,14 @@ export function AddressSearchInput({
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setActiveIndex((i) => Math.min(i + 1, suggestions.length - 1));
+      setActiveIndex((i) => Math.min(i + 1, flatItems.length - 1));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setActiveIndex((i) => Math.max(i - 1, -1));
     } else if (e.key === "Enter") {
       e.preventDefault();
       if (activeIndex >= 0) {
-        commit(suggestions[activeIndex]);
+        commit(flatItems[activeIndex]);
       } else {
         onChange(inputVal.trim());
         setFocused(false);
@@ -151,6 +295,8 @@ export function AddressSearchInput({
     }
   };
 
+  const isDark = variant === "dark";
+
   return (
     <div ref={containerRef} className="relative flex-1 min-w-[180px] max-w-none md:max-w-[400px]">
       <div className="relative">
@@ -158,52 +304,77 @@ export function AddressSearchInput({
           ref={inputRef}
           type="text"
           value={inputVal}
-          onChange={(e) => { setInputVal(e.target.value); setActiveIndex(-1); }}
+          onChange={handleInputChange}
           onFocus={() => setFocused(true)}
-          onBlur={() => setTimeout(() => setFocused(false), 150)}
+          onBlur={() => setTimeout(() => setFocused(false), 200)}
           onKeyDown={handleKeyDown}
           placeholder="Enter Address, City, Zip Code, Subdivision"
           className={[
-            "w-full bg-white border border-gray-300 rounded-[6px] pl-[15px] text-gray-900 placeholder-gray-500",
-            "focus:outline-none focus:border-gray-500 transition-colors",
+            "w-full rounded-[6px] pl-[15px] transition-colors focus:outline-none",
+            isDark
+              ? "bg-transparent border-2 border-white/40 text-white placeholder-white/70 focus:border-white/60"
+              : "bg-white border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-gray-500",
             height,
             inputVal ? "pr-[36px]" : "pr-[15px]",
             inputClassName ?? "text-[15px]",
           ].join(" ")}
         />
-        {inputVal && (
-          <button
-            onClick={handleClear}
-            type="button"
-            className="absolute right-[10px] top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
-            aria-label="Clear address search"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        )}
+        {/* Submit arrow + clear */}
+        <div className="absolute right-[10px] top-1/2 -translate-y-1/2 flex items-center gap-1">
+          {inputVal && (
+            <>
+              <button
+                onClick={() => { onChange(inputVal.trim()); setFocused(false); }}
+                type="button"
+                className={`p-0.5 transition-colors ${isDark ? "text-white/60 hover:text-white" : "text-gray-400 hover:text-gray-700"}`}
+                aria-label="Search"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+              </button>
+              <button
+                onClick={handleClear}
+                type="button"
+                className={`p-0.5 transition-colors ${isDark ? "text-white/60 hover:text-white" : "text-gray-400 hover:text-gray-600"}`}
+                aria-label="Clear address search"
+              >
+                <svg className="w-4 h-4 rounded-full border border-current" fill="none" viewBox="0 0 24 24">
+                  <text x="12" y="16" textAnchor="middle" fontSize="14" fill="currentColor" fontFamily="sans-serif">i</text>
+                </svg>
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       {showDropdown && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 z-[210] overflow-hidden">
-          {suggestions.map((s, i) => (
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 z-[210] overflow-hidden max-h-[400px] overflow-y-auto no-scrollbar">
+          {flatItems.map((item, i) => (
             <button
-              key={s}
+              key={`${item.type}-${item.label}-${i}`}
               onMouseDown={(e) => e.preventDefault()}
-              onClick={() => commit(s)}
+              onClick={() => commit(item)}
               className={[
-                "flex items-center gap-2 w-full text-left px-4 py-2.5 text-[13px] transition-colors",
-                i === activeIndex ? "bg-gray-100 text-gray-900" : "text-gray-700 hover:bg-gray-50",
+                "flex items-center gap-3 w-full text-left px-4 py-3 transition-colors border-b border-gray-100 last:border-b-0",
+                i === activeIndex ? "bg-gray-100" : "hover:bg-gray-50",
               ].join(" ")}
             >
-              <svg className="w-3.5 h-3.5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 0 1 15 0Z" />
-              </svg>
-              {s}
+              {SUGGESTION_ICONS[item.type]}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-neutral-900 truncate">{item.label}</p>
+                {item.detail && (
+                  <p className="text-xs text-neutral-500">{item.detail}</p>
+                )}
+              </div>
+              <span className="text-[10px] font-semibold tracking-wider text-neutral-400 uppercase shrink-0">
+                {TYPE_LABELS[item.type]}
+              </span>
             </button>
           ))}
+          {isLoading && (
+            <div className="px-4 py-3 text-xs text-neutral-400 text-center">Searching addresses...</div>
+          )}
         </div>
       )}
     </div>
@@ -352,6 +523,15 @@ function ForSaleFilter({
   onToggle: () => void;
 }) {
   const options = ["For Sale", "For Rent", "Sold"];
+  // Local state for instant radio visual feedback (avoids INP blocking)
+  const [localValue, setLocalValue] = useState(value);
+  useEffect(() => { setLocalValue(value); }, [value]);
+
+  const handleClick = (opt: string) => {
+    setLocalValue(opt);
+    onChange(opt);
+  };
+
   return (
     <FilterDropdown
       open={open}
@@ -363,7 +543,7 @@ function ForSaleFilter({
               <path d="M140 896c9.271-4.304 16.027-10.476 20-20 0.957-7.613 0.757-15.093 0.5-22.75-0.036-2.044-0.072-4.089-0.109-6.195-0.094-5.020-0.225-10.036-0.391-15.055 1.714 0.003 3.427 0.006 5.193 0.009 101.509 0.179 203.018 0.316 304.526 0.399 12.182 0.010 24.364 0.020 36.545 0.031 3.638 0.003 3.638 0.003 7.349 0.006 39.295 0.035 78.591 0.098 117.886 0.171 40.305 0.075 80.611 0.119 120.916 0.135 24.881 0.011 49.762 0.046 74.642 0.111 17.050 0.042 34.099 0.055 51.149 0.045 9.844-0.005 19.688 0.003 29.533 0.046 9.009 0.039 18.017 0.041 27.025 0.014 3.263-0.003 6.525 0.007 9.788 0.032 4.43 0.032 8.858 0.015 13.288-0.015 2.462 0.003 4.924 0.006 7.461 0.009 10.294-1.527 16.41-6.587 23.447-13.994 4.796-10.33 4.758-19.8 3.25-31-4.309-9.281-10.444-16.072-20-20-8.275-1.097-16.463-0.931-24.797-0.781-2.38 0.011-4.76 0.023-7.213 0.034-7.581 0.045-15.16 0.145-22.74 0.247-5.148 0.040-10.297 0.077-15.445 0.109-12.603 0.081-25.202 0.238-37.805 0.391 0-21.12 0-42.24 0-64 13.941 0.315 13.941 0.315 27.88 0.721 11.704 0.133 19.158-0.393 28.12-8.721 9.35-10.854 9.135-20.060 9.016-33.711 0.019-3.286 0.019-3.286 0.038-6.638 0.032-7.342 0.007-14.684-0.019-22.026 0.011-5.263 0.025-10.526 0.042-15.789 0.036-12.812 0.028-25.624 0.005-38.437-0.018-10.413-0.021-20.827-0.012-31.24 0.001-1.483 0.002-2.965 0.004-4.492 0.003-3.012 0.005-6.023 0.008-9.035 0.023-28.236-0.003-56.473-0.046-84.709-0.036-24.224-0.030-48.448 0.007-72.673-0.043-28.136-0.060-56.271-0.035-84.407-0.003-3.001-0.005-6.001-0.008-9.002-0.002-2.215-0.002-2.215-0.004-4.474-0.007-10.4 0.005-20.8 0.024-31.2 0.025-14 0.007-27.999-0.039-41.998-0.011-5.142-0.008-10.285 0.010-15.427 0.022-7.011-0.005-14.020-0.045-21.031 0.027-3.064 0.027-3.064 0.054-6.189-0.127-11.482-1.008-18.674-9.070-27.522-11.114-10.763-24.020-9.118-38.57-9.016-2.741-0.009-5.481-0.022-8.222-0.038-7.521-0.033-15.040-0.017-22.561 0.008-8.115 0.018-16.229-0.010-24.344-0.032-15.892-0.036-31.784-0.028-47.677-0.005-12.915 0.018-25.831 0.021-38.746 0.012-1.838-0.001-3.675-0.002-5.569-0.004-3.733-0.003-7.467-0.005-11.2-0.008-35.012-0.023-70.024 0.003-105.036 0.046-30.046 0.036-60.092 0.030-90.138-0.007-34.886-0.043-69.772-0.060-104.659-0.035-3.72 0.003-7.439 0.005-11.159 0.008-1.83 0.001-3.66 0.002-5.546 0.004-12.901 0.007-25.801-0.005-38.702-0.024-15.72-0.022-31.441-0.016-47.161 0.026-8.022 0.021-16.043 0.029-24.065 0.003-7.343-0.024-14.685-0.011-22.028 0.032-3.915 0.013-7.831-0.013-11.746-0.040-21.707 0.194-21.707 0.194-30.872 9.070-9.565 10.497-9.134 20.228-9.016 33.711-0.012 2.191-0.025 4.381-0.038 6.638-0.032 7.342-0.007 14.684 0.019 22.026-0.011 5.263-0.025 10.526-0.042 15.789-0.036 12.812-0.028 25.624-0.005 38.437 0.018 10.413 0.021 20.827 0.012 31.24-0.001 1.483-0.002 2.965-0.004 4.492-0.003 3.012-0.005 6.023-0.008 9.035-0.023 28.236 0.003 56.473 0.046 84.709 0.036 24.224 0.030 48.448-0.007 72.673-0.043 28.136-0.060 56.271-0.035 84.407 0.003 3.001 0.005 6.001 0.008 9.002 0.001 1.476 0.002 2.953 0.004 4.474 0.007 10.4-0.005 20.8-0.024 31.2-0.025 14-0.007 27.999 0.039 41.998 0.011 5.142 0.008 10.285-0.010 15.427-0.022 7.011 0.005 14.020 0.045 21.031-0.027 3.064-0.027 3.064-0.054 6.189 0.128 11.547 1.232 18.423 9.070 27.522 10.653 9.899 21.037 8.957 34.75 8.5 10.519-0.248 10.519-0.248 21.25-0.5 0 21.12 0 42.24 0 64-42.24 0-84.48 0-128 0 0.018-9.344 0.036-18.689 0.054-28.316 0.159-85.648 0.279-171.295 0.355-256.943 0.010-11.22 0.020-22.441 0.031-33.661 0.002-2.234 0.004-4.468 0.006-6.769 0.035-36.192 0.098-72.383 0.171-108.575 0.075-37.123 0.119-74.246 0.135-111.37 0.011-22.915 0.046-45.831 0.111-68.746 0.042-15.704 0.055-31.408 0.045-47.113-0.005-9.067 0.003-18.133 0.046-27.2 0.039-8.298 0.041-16.596 0.014-24.894-0.003-3.004 0.007-6.009 0.032-9.013 0.032-4.081 0.010-8.162-0.015-12.242 0.003-2.268 0.006-4.535 0.009-6.872-1.581-10.005-6.786-16.189-13.994-23.037-10.33-4.796-19.8-4.758-31-3.25-9.957 4.623-14.591 10.585-20 20-0.994 6.287-0.994 6.287-0.984 13.158-0.016 2.629-0.032 5.259-0.048 7.968 0.023 2.905 0.046 5.809 0.071 8.714-0.003 3.096-0.010 6.191-0.021 9.287-0.018 8.502 0.014 17.002 0.054 25.504 0.035 9.17 0.023 18.339 0.017 27.509-0.004 15.885 0.021 31.77 0.066 47.656 0.065 22.967 0.086 45.935 0.096 68.902 0.018 37.263 0.071 74.525 0.146 111.788 0.073 36.198 0.13 72.396 0.164 108.594 0.002 2.231 0.004 4.462 0.006 6.761 0.010 11.193 0.021 22.386 0.030 33.579 0.083 92.861 0.224 185.721 0.403 278.581-1.905-0.063-1.905-0.063-3.849-0.127-5.8-0.167-11.6-0.271-17.401-0.373-1.998-0.067-3.996-0.134-6.055-0.203-12.32-0.163-19.328 0.477-28.695 8.703-7.257 7.639-8.62 13.766-9 24 0.38 10.234 1.743 16.361 9 24 10.931 9.6 20.629 8.974 34.75 8.5 2.044-0.036 4.089-0.072 6.195-0.109 5.020-0.094 10.036-0.225 15.055-0.391-0.042 1.27-0.084 2.54-0.127 3.849-0.167 5.8-0.271 11.6-0.373 17.401-0.067 1.998-0.134 3.996-0.203 6.055-0.163 12.32 0.477 19.328 8.703 28.695 10.543 10.016 22.216 9.856 36 8zM352 768c0-21.12 0-42.24 0-64 147.84 0 295.68 0 448 0 0 21.12 0 42.24 0 64-147.84 0-295.68 0-448 0zM288 640c0-147.84 0-295.68 0-448 190.080 0 380.16 0 576 0 0 147.84 0 295.68 0 448-190.080 0-380.16 0-576 0z" />
             </g>
           </svg>
-          {value}
+          {localValue}
         </span>
       }
       width="280px"
@@ -374,22 +554,22 @@ function ForSaleFilter({
           <div key={opt}>
             <label
               className="flex items-center gap-3 cursor-pointer group"
-              onClick={() => onChange(opt)}
+              onClick={() => handleClick(opt)}
             >
               <div
                 className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
-                  value === opt ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                  localValue === opt ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
                 }`}
               >
-                {value === opt && <div className="w-2.5 h-2.5 rounded-full bg-black" />}
+                {localValue === opt && <div className="w-2.5 h-2.5 rounded-full bg-black" />}
               </div>
-              <span className={`text-sm ${value === opt ? "text-neutral-900 font-medium" : "text-neutral-600"}`}>
+              <span className={`text-sm ${localValue === opt ? "text-neutral-900 font-medium" : "text-neutral-600"}`}>
                 {opt}
               </span>
             </label>
 
             {/* Hide Active with Contract — directly under "For Sale" */}
-            {opt === "For Sale" && value === "For Sale" && (
+            {opt === "For Sale" && localValue === "For Sale" && (
               <div className="mt-2 ml-8 border-l-2 border-neutral-100 pl-3">
                 <label className="flex items-center gap-2.5 cursor-pointer group">
                   <div
@@ -412,7 +592,7 @@ function ForSaleFilter({
             )}
 
             {/* Sold time-range sub-options — directly under "Sold" */}
-            {opt === "Sold" && value === "Sold" && (
+            {opt === "Sold" && localValue === "Sold" && (
               <div className="mt-2 ml-8 space-y-2.5 border-l-2 border-neutral-100 pl-3">
                 <p className="text-[11px] text-neutral-400 uppercase tracking-wide font-medium mb-1">Sold within</p>
                 {SOLD_RANGE_OPTIONS.map((rangeOpt) => (
@@ -439,7 +619,7 @@ function ForSaleFilter({
         ))}
       </div>
       <PanelFooter
-        onReset={value === "Sold" ? () => onSoldRangeChange("") : undefined}
+        onReset={localValue === "Sold" ? () => onSoldRangeChange("") : undefined}
         onDone={onToggle}
       />
     </FilterDropdown>
@@ -526,18 +706,24 @@ function BedBathFilter({
   open,
   onToggle,
   bedMin,
+  bedMax,
   bathMin,
+  bathMax,
   onBedBathChange,
 }: {
   open: boolean;
   onToggle: () => void;
   bedMin: string;
+  bedMax: string;
   bathMin: string;
-  onBedBathChange: (bedMin: string, bathMin: string) => void;
+  bathMax: string;
+  onBedBathChange: (field: string, value: string) => void;
 }) {
-  const label = bedMin || bathMin
-    ? [bedMin && `${bedMin}+ Bed`, bathMin && `${bathMin}+ Bath`].filter(Boolean).join(", ")
-    : "Bed / Bath";
+  const parts = [
+    bedMin && bedMax ? `${bedMin}-${bedMax} Bed` : bedMin ? `${bedMin}+ Bed` : bedMax ? `≤${bedMax} Bed` : "",
+    bathMin && bathMax ? `${bathMin}-${bathMax} Bath` : bathMin ? `${bathMin}+ Bath` : bathMax ? `≤${bathMax} Bath` : "",
+  ].filter(Boolean);
+  const label = parts.length > 0 ? parts.join(", ") : "Bed / Bath";
 
   return (
     <FilterDropdown
@@ -558,30 +744,61 @@ function BedBathFilter({
       <PanelHeader title="Rooms" onDone={onToggle} />
       <div className="px-5 py-5 space-y-6">
         <div>
-          <p className="text-sm font-medium text-neutral-700 mb-3">Bedrooms (min)</p>
-          <input
-            type="text"
-            value={bedMin}
-            onChange={(e) => onBedBathChange(e.target.value.replace(/[^0-9]/g, ""), bathMin)}
-            placeholder="Any minimum"
-            className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400 transition-colors"
-          />
-          <p className="text-xs text-neutral-400 mt-1 ml-1">Use More filters for max beds/baths</p>
+          <p className="text-sm font-medium text-neutral-700 mb-3">Bedrooms</p>
+          <div className="flex items-center gap-3">
+            <div className="flex-1">
+              <input
+                type="text"
+                value={bedMin}
+                onChange={(e) => onBedBathChange("bedMin", e.target.value.replace(/[^0-9]/g, ""))}
+                placeholder="Any"
+                className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400 transition-colors"
+              />
+              <p className="text-xs text-neutral-400 mt-1 ml-1">Minimum</p>
+            </div>
+            <span className="text-sm text-neutral-400 pt-[-16px]">to</span>
+            <div className="flex-1">
+              <input
+                type="text"
+                value={bedMax}
+                onChange={(e) => onBedBathChange("bedMax", e.target.value.replace(/[^0-9]/g, ""))}
+                placeholder="Any"
+                className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400 transition-colors"
+              />
+              <p className="text-xs text-neutral-400 mt-1 ml-1">Maximum</p>
+            </div>
+          </div>
         </div>
         <div className="border-t border-dashed border-neutral-200" />
         <div>
-          <p className="text-sm font-medium text-neutral-700 mb-3">Bathrooms (min)</p>
-          <input
-            type="text"
-            value={bathMin}
-            onChange={(e) => onBedBathChange(bedMin, e.target.value.replace(/[^0-9]/g, ""))}
-            placeholder="Any minimum"
-            className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400 transition-colors"
-          />
+          <p className="text-sm font-medium text-neutral-700 mb-3">Bathrooms</p>
+          <div className="flex items-center gap-3">
+            <div className="flex-1">
+              <input
+                type="text"
+                value={bathMin}
+                onChange={(e) => onBedBathChange("bathMin", e.target.value.replace(/[^0-9]/g, ""))}
+                placeholder="Any"
+                className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400 transition-colors"
+              />
+              <p className="text-xs text-neutral-400 mt-1 ml-1">Minimum</p>
+            </div>
+            <span className="text-sm text-neutral-400">to</span>
+            <div className="flex-1">
+              <input
+                type="text"
+                value={bathMax}
+                onChange={(e) => onBedBathChange("bathMax", e.target.value.replace(/[^0-9]/g, ""))}
+                placeholder="Any"
+                className="w-full border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-400 transition-colors"
+              />
+              <p className="text-xs text-neutral-400 mt-1 ml-1">Maximum</p>
+            </div>
+          </div>
         </div>
       </div>
       <PanelFooter
-        onReset={() => onBedBathChange("", "")}
+        onReset={() => { onBedBathChange("bedMin", ""); onBedBathChange("bedMax", ""); onBedBathChange("bathMin", ""); onBedBathChange("bathMax", ""); }}
         onDone={onToggle}
       />
     </FilterDropdown>
@@ -753,7 +970,7 @@ function RadioList({
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="px-5 pb-4 space-y-2.5 max-h-[220px] overflow-y-auto">
+    <div className="px-5 pb-4 space-y-2.5">
       {options.map((opt) => (
         <label key={opt} className="flex items-center gap-3 cursor-pointer group">
           <div
@@ -783,7 +1000,7 @@ function CheckboxList({
   onToggle: (v: string) => void;
 }) {
   return (
-    <div className="px-5 pb-4 space-y-2.5 max-h-[220px] overflow-y-auto">
+    <div className="px-5 pb-4 space-y-2.5">
       {options.map((opt) => (
         <label key={opt} className="flex items-center gap-3 cursor-pointer group">
           <div
@@ -831,6 +1048,15 @@ function MoreFilter({
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const toggle = (key: string) => setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
 
+  // Local state for instant radio visual feedback (avoids INP blocking)
+  const [localStatus, setLocalStatus] = useState(status);
+  useEffect(() => { setLocalStatus(status); }, [status]);
+
+  const handleStatusClick = (opt: string) => {
+    setLocalStatus(opt);
+    onStatusChange(opt);
+  };
+
   const toggleFeature = (f: string) => {
     const next = filterValues.features.includes(f)
       ? filterValues.features.filter((x) => x !== f)
@@ -866,12 +1092,12 @@ function MoreFilter({
       }
       width="440px"
     >
-      <div className="max-h-[65vh] overflow-y-auto">
+      <div className="max-h-[65vh] overflow-y-auto no-scrollbar">
 
         {/* 1. Property Search (searchType) */}
         <AccordionRow
           label="Property Search"
-          rightLabel={status}
+          rightLabel={localStatus}
           expanded={!!expanded.search}
           onToggle={() => toggle("search")}
         />
@@ -881,19 +1107,19 @@ function MoreFilter({
               <div key={opt}>
                 <label className="flex items-center gap-3 cursor-pointer group">
                   <div
-                    onClick={() => onStatusChange(opt)}
+                    onClick={() => handleStatusClick(opt)}
                     className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
-                      status === opt ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                      localStatus === opt ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
                     }`}
                   >
-                    {status === opt && <div className="w-2.5 h-2.5 rounded-full bg-black" />}
+                    {localStatus === opt && <div className="w-2.5 h-2.5 rounded-full bg-black" />}
                   </div>
-                  <span className={`text-sm ${status === opt ? "text-neutral-900 font-medium" : "text-neutral-600"}`}>
+                  <span className={`text-sm ${localStatus === opt ? "text-neutral-900 font-medium" : "text-neutral-600"}`}>
                     {opt}
                   </span>
                 </label>
 
-                {opt === "For Sale" && status === "For Sale" && (
+                {opt === "For Sale" && localStatus === "For Sale" && (
                   <div className="mt-2 ml-8 border-l-2 border-neutral-100 pl-3">
                     <label className="flex items-center gap-2.5 cursor-pointer group">
                       <div
@@ -915,7 +1141,7 @@ function MoreFilter({
                   </div>
                 )}
 
-                {opt === "Sold" && status === "Sold" && (
+                {opt === "Sold" && localStatus === "Sold" && (
                   <div className="mt-2 ml-8 space-y-2.5 border-l-2 border-neutral-100 pl-3">
                     <p className="text-[11px] text-neutral-400 uppercase tracking-wide font-medium mb-1">Sold within</p>
                     {SOLD_RANGE_OPTIONS.map((rangeOpt) => (
@@ -1245,6 +1471,15 @@ function MobileFiltersSheet({
     return () => { document.body.style.overflow = prev; };
   }, [isOpen]);
 
+  // Local state for instant radio visual feedback (avoids INP blocking)
+  const [localStatus, setLocalStatus] = useState(status);
+  useEffect(() => { setLocalStatus(status); }, [status]);
+
+  const handleStatusClick = (opt: string) => {
+    setLocalStatus(opt);
+    onStatusChange(opt);
+  };
+
   const toggleFeature = (f: string) => {
     const next = filterValues.features.includes(f)
       ? filterValues.features.filter((x) => x !== f)
@@ -1282,7 +1517,7 @@ function MobileFiltersSheet({
       </div>
 
       {/* Scrollable body — all sections laid out flat, no accordions */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto no-scrollbar">
         {/* 1. Property Search */}
         <div className="border-b border-neutral-100">
           <p className="px-5 pt-4 pb-2 text-sm font-semibold text-neutral-900">Property Search</p>
@@ -1291,19 +1526,19 @@ function MobileFiltersSheet({
               <div key={opt}>
                 <label className="flex items-center gap-3 cursor-pointer group">
                   <div
-                    onClick={() => onStatusChange(opt)}
+                    onClick={() => handleStatusClick(opt)}
                     className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
-                      status === opt ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
+                      localStatus === opt ? "border-black" : "border-neutral-300 group-hover:border-neutral-400"
                     }`}
                   >
-                    {status === opt && <div className="w-2.5 h-2.5 rounded-full bg-black" />}
+                    {localStatus === opt && <div className="w-2.5 h-2.5 rounded-full bg-black" />}
                   </div>
-                  <span className={`text-sm ${status === opt ? "text-neutral-900 font-medium" : "text-neutral-600"}`}>
+                  <span className={`text-sm ${localStatus === opt ? "text-neutral-900 font-medium" : "text-neutral-600"}`}>
                     {opt}
                   </span>
                 </label>
 
-                {opt === "For Sale" && status === "For Sale" && (
+                {opt === "For Sale" && localStatus === "For Sale" && (
                   <div className="mt-2 ml-8 border-l-2 border-neutral-100 pl-3">
                     <label className="flex items-center gap-2.5 cursor-pointer group">
                       <div
@@ -1325,7 +1560,7 @@ function MobileFiltersSheet({
                   </div>
                 )}
 
-                {opt === "Sold" && status === "Sold" && (
+                {opt === "Sold" && localStatus === "Sold" && (
                   <div className="mt-2 ml-8 space-y-2.5 border-l-2 border-neutral-100 pl-3">
                     <p className="text-[11px] text-neutral-400 uppercase tracking-wide font-medium mb-1">Sold within</p>
                     {SOLD_RANGE_OPTIONS.map((rangeOpt) => (
@@ -1689,7 +1924,7 @@ export function DesktopSearchBar({
       {/* Filters */}
       <ForSaleFilter
         value={status}
-        onChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); if (v !== "For Sale") onFilterChange({ hideActiveWithContract: false }); }}
+        onChange={onStatusChange}
         soldRange={filterValues.soldRange}
         onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
         hideActiveWithContract={filterValues.hideActiveWithContract}
@@ -1708,8 +1943,10 @@ export function DesktopSearchBar({
         open={openFilter === "bedbath"}
         onToggle={() => toggle("bedbath")}
         bedMin={filterValues.bedMin}
+        bedMax={filterValues.bedMax}
         bathMin={filterValues.bathMin}
-        onBedBathChange={(bed, bath) => onFilterChange({ bedMin: bed, bathMin: bath })}
+        bathMax={filterValues.bathMax}
+        onBedBathChange={(field, value) => onFilterChange({ [field]: value })}
       />
       <PropertyTypeFilter
         open={openFilter === "type"}
@@ -1723,7 +1960,7 @@ export function DesktopSearchBar({
         filterValues={filterValues}
         onFilterChange={onFilterChange}
         status={status}
-        onStatusChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); }}
+        onStatusChange={onStatusChange}
         soldRange={filterValues.soldRange}
         onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
         totalCount={totalCount}
@@ -1822,7 +2059,7 @@ export function MobileSearchBar({
         </button>
         <ForSaleFilter
           value={status}
-          onChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); if (v !== "For Sale") onFilterChange({ hideActiveWithContract: false }); }}
+          onChange={onStatusChange}
           soldRange={filterValues.soldRange}
           onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
           hideActiveWithContract={filterValues.hideActiveWithContract}
@@ -1841,8 +2078,10 @@ export function MobileSearchBar({
           open={openFilter === "bedbath"}
           onToggle={() => toggle("bedbath")}
           bedMin={filterValues.bedMin}
+          bedMax={filterValues.bedMax}
           bathMin={filterValues.bathMin}
-          onBedBathChange={(bed, bath) => onFilterChange({ bedMin: bed, bathMin: bath })}
+          bathMax={filterValues.bathMax}
+          onBedBathChange={(field, value) => onFilterChange({ [field]: value })}
         />
         <PropertyTypeFilter
           open={openFilter === "type"}
@@ -1859,7 +2098,7 @@ export function MobileSearchBar({
         filterValues={filterValues}
         onFilterChange={onFilterChange}
         status={status}
-        onStatusChange={(v) => { onStatusChange(v); if (v !== "Sold") onFilterChange({ soldRange: "" }); }}
+        onStatusChange={onStatusChange}
         soldRange={filterValues.soldRange}
         onSoldRangeChange={(v) => onFilterChange({ soldRange: v })}
         totalCount={totalCount}
