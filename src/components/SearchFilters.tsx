@@ -1707,21 +1707,23 @@ export function DesktopSearchBar({
         onClearAll={handleClearAll}
       />
 
-      {/* Right-side actions */}
-      <div className="shrink-0 ml-auto flex items-center gap-4">
-        <div className="relative hidden min-[1180px]:block">
-          <button
-            onClick={onSaveSearch}
-            className="shrink-0 bg-black text-white rounded-full px-5 h-[50px] text-sm font-semibold hover:bg-neutral-800 transition-colors whitespace-nowrap"
-          >
-            Save Search
-          </button>
-          {saveMessage && (
-            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-neutral-900 text-white text-xs rounded-full whitespace-nowrap shadow-lg z-50">
-              {saveMessage}
-            </div>
-          )}
-        </div>
+      {/* Save Search — sits next to filters */}
+      <div className="relative hidden min-[1180px]:block shrink-0">
+        <button
+          onClick={onSaveSearch}
+          className="shrink-0 bg-black text-white rounded-full px-5 h-[50px] text-sm font-semibold hover:bg-neutral-800 transition-colors whitespace-nowrap"
+        >
+          Save Search
+        </button>
+        {saveMessage && (
+          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-neutral-900 text-white text-xs rounded-full whitespace-nowrap shadow-lg z-50">
+            {saveMessage}
+          </div>
+        )}
+      </div>
+
+      {/* View toggle — far right */}
+      <div className="shrink-0 ml-auto">
         <ViewDropdown
           view={view}
           setView={onViewChange}
