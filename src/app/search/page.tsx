@@ -285,74 +285,47 @@ function Pagination({
   const canPrev = page > 1;
   const canNext = page < totalPages;
 
-  // Build page numbers: show up to 7 pages centered around current
-  const pageNumbers: (number | "...")[] = [];
+  // Sliding window of 7 consecutive pages centered on current — no ellipsis, no total
   const maxVisible = 7;
+  const half = Math.floor(maxVisible / 2);
+  let start = Math.max(1, page - half);
+  let end = Math.min(totalPages, start + maxVisible - 1);
+  start = Math.max(1, end - maxVisible + 1);
 
-  if (totalPages <= maxVisible) {
-    for (let i = 1; i <= totalPages; i++) pageNumbers.push(i);
-  } else {
-    const half = Math.floor(maxVisible / 2);
-    let start = Math.max(1, page - half);
-    let end = start + maxVisible - 1;
-
-    if (end > totalPages) {
-      end = totalPages;
-      start = end - maxVisible + 1;
-    }
-
-    if (start > 1) {
-      pageNumbers.push(1);
-      if (start > 2) pageNumbers.push("...");
-    }
-
-    for (let i = start; i <= end; i++) {
-      if (!pageNumbers.includes(i)) pageNumbers.push(i);
-    }
-
-    if (end < totalPages) {
-      if (end < totalPages - 1) pageNumbers.push("...");
-      if (!pageNumbers.includes(totalPages)) pageNumbers.push(totalPages);
-    }
-  }
+  const pageNumbers: number[] = [];
+  for (let i = start; i <= end; i++) pageNumbers.push(i);
 
   const btnBase =
-    "w-9 h-9 rounded border text-sm transition-colors flex items-center justify-center";
+    "w-10 h-10 rounded border text-[14px] font-semibold transition-colors flex items-center justify-center";
 
   return (
     <div className="flex items-center justify-center gap-1.5 py-8 bg-white">
       <button
         onClick={() => canPrev && onPageChange(page - 1)}
         disabled={!canPrev}
-        className={`${btnBase} border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed`}
+        className={`${btnBase} border-gray-300 text-gray-800 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed`}
       >
         {"<"}
       </button>
 
-      {pageNumbers.map((p, i) =>
-        p === "..." ? (
-          <span key={`ellipsis-${i}`} className="w-6 text-center text-gray-400 text-sm">
-            ...
-          </span>
-        ) : (
-          <button
-            key={p}
-            onClick={() => onPageChange(p)}
-            className={`${btnBase} ${
-              p === page
-                ? "bg-gray-900 text-white border-gray-900"
-                : "border-gray-300 text-gray-700 hover:bg-gray-100"
-            }`}
-          >
-            {p}
-          </button>
-        )
-      )}
+      {pageNumbers.map((p) => (
+        <button
+          key={p}
+          onClick={() => onPageChange(p)}
+          className={`${btnBase} ${
+            p === page
+              ? "bg-black text-white border-black"
+              : "border-gray-300 text-gray-800 hover:bg-gray-100"
+          }`}
+        >
+          {p}
+        </button>
+      ))}
 
       <button
         onClick={() => canNext && onPageChange(page + 1)}
         disabled={!canNext}
-        className={`${btnBase} border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed`}
+        className={`${btnBase} border-gray-300 text-gray-800 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed`}
       >
         {">"}
       </button>
@@ -943,6 +916,8 @@ function SearchPage() {
               markerCount={filteredMarkers.length}
               totalCount={markersData?.total ?? totalCount}
               onOpenOverlay={handleOpenOverlay}
+              savedListingKeys={savedListingKeys}
+              onToggleSave={handleToggleSavedListing}
             />
           </div>
 

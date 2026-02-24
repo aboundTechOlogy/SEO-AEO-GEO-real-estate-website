@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import useSWR from "swr";
+import { IconLove } from "@/components/IdxIcons";
 import type { BridgeProperty } from "@/lib/bridge";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
@@ -13,9 +15,12 @@ interface MapInfoCardProps {
   listingKey: string;
   onClose: () => void;
   onOpenOverlay?: (listingKey: string) => void;
+  isSaved?: boolean;
+  onToggleSave?: (listingKey: string) => void;
 }
 
-export default function MapInfoCard({ listingKey, onClose, onOpenOverlay }: MapInfoCardProps) {
+export default function MapInfoCard({ listingKey, onClose, onOpenOverlay, isSaved, onToggleSave }: MapInfoCardProps) {
+  const [shareLabel, setShareLabel] = useState<"idle" | "copied">("idle");
   const { data: property, isLoading } = useSWR<BridgeProperty>(
     `/api/property/${listingKey}`,
     fetcher,
@@ -32,11 +37,29 @@ export default function MapInfoCard({ listingKey, onClose, onOpenOverlay }: MapI
     onClose();
   };
 
+  const handleShare = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const url = `${window.location.origin}/property/${listingKey}/`;
+    if (navigator.share) {
+      navigator.share({ title: "Property", url }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(url).then(() => {
+        setShareLabel("copied");
+        setTimeout(() => setShareLabel("idle"), 2000);
+      }).catch(() => {});
+    }
+  };
+
+  const handleSave = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleSave?.(listingKey);
+  };
+
   // Skeleton while loading
   if (isLoading || !property) {
     return (
       <div
-        className="w-[280px] bg-white rounded-lg shadow-lg overflow-hidden"
+        className="w-[360px] bg-white rounded-lg shadow-lg overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between bg-neutral-800 px-3 h-[27px]">
@@ -66,7 +89,7 @@ export default function MapInfoCard({ listingKey, onClose, onOpenOverlay }: MapI
 
   return (
     <div
-      className="w-[280px] bg-white rounded-lg shadow-lg overflow-hidden cursor-pointer"
+      className="w-[360px] bg-white rounded-lg shadow-lg overflow-hidden cursor-pointer"
       onClick={handleCardClick}
     >
       {/* Dark header with neighborhood name */}
@@ -100,9 +123,38 @@ export default function MapInfoCard({ listingKey, onClose, onOpenOverlay }: MapI
 
         {/* Details */}
         <div className="flex-1 min-w-0">
-          <p className="text-[18px] font-bold text-black leading-tight">
-            {formatPrice(property.ListPrice)}
-          </p>
+          <div className="flex items-start justify-between">
+            <p className="text-[18px] font-bold text-black leading-tight">
+              {formatPrice(property.ListPrice)}
+            </p>
+            {/* Share + Save icons */}
+            <div className="flex items-center gap-1 shrink-0 ml-2">
+              <button
+                type="button"
+                onClick={handleShare}
+                className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors text-neutral-500 hover:text-neutral-800"
+                title={shareLabel === "copied" ? "Copied!" : "Share"}
+              >
+                {shareLabel === "copied" ? (
+                  <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4" viewBox="0 -960 960 960" fill="currentColor">
+                    <path d="M719.94-49Q657-49 613-93.04T569-200q0-7.95 1-16.48 1-8.52 3-16.52L340-369q-20 19-45.85 29.5Q268.31-329 240-329q-62.92 0-106.96-44.06Q89-417.12 89-480.06T133.04-587q44.04-44 106.96-44 28.31 0 54.15 10.5Q320-610 340-591l233-136q-2-8-3-16.52-1-8.53-1-16.48 0-62.92 44.06-106.96 44.06-44.04 107-44.04T827-866.94q44 44.06 44 107T826.96-653Q782.92-609 720-609q-28.31 0-54.15-9.5Q640-628 620-647L387-513q2 8 3 16.52 1 8.53 1 16.48 0 7.95-1 16.48-1 8.52-3 16.52l233 134q20-19 45.85-28.5Q691.69-351 720-351q62.92 0 106.96 44.06 44.04 44.06 44.04 107T826.94-93q-44.06 44-107 44Z" />
+                  </svg>
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={handleSave}
+                className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors"
+                title={isSaved ? "Remove from saved" : "Save listing"}
+              >
+                <IconLove className={`w-4 h-4 ${isSaved ? "text-rose-500" : "text-neutral-500"}`} active={isSaved} />
+              </button>
+            </div>
+          </div>
           <p className="text-[13px] text-neutral-600 mt-0.5">
             {property.BedroomsTotal} Beds
             <span className="mx-1.5 opacity-40">&bull;</span>
@@ -114,7 +166,7 @@ export default function MapInfoCard({ listingKey, onClose, onOpenOverlay }: MapI
               </>
             )}
           </p>
-          <p className="text-[13px] text-neutral-500 mt-0.5 truncate">{fullAddress}</p>
+          <p className="text-[13px] text-neutral-500 mt-0.5">{fullAddress}</p>
         </div>
       </div>
     </div>

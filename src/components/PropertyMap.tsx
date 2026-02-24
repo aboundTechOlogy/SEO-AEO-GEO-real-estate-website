@@ -25,6 +25,8 @@ interface PropertyMapProps {
   markerCount?: number;
   totalCount?: number;
   onOpenOverlay?: (listingKey: string) => void;
+  savedListingKeys?: Set<string>;
+  onToggleSave?: (listingKey: string) => void;
 }
 
 function formatPriceLabel(value: number): string {
@@ -52,6 +54,8 @@ export default function PropertyMap({
   markerCount,
   totalCount,
   onOpenOverlay,
+  savedListingKeys,
+  onToggleSave,
 }: PropertyMapProps) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
   const containerRef = useRef<HTMLDivElement>(null);
@@ -143,6 +147,8 @@ export default function PropertyMap({
                   listingKey={infoCardMarker.listingKey}
                   onClose={() => setInfoCardMarker(null)}
                   onOpenOverlay={onOpenOverlay}
+                  isSaved={savedListingKeys?.has(infoCardMarker.listingKey)}
+                  onToggleSave={onToggleSave}
                 />
               </div>
             </AdvancedMarker>
