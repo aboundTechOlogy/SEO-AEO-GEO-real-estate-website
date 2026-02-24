@@ -1,7 +1,8 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
-import { APIProvider, AdvancedMarker, ControlPosition, Map } from "@vis.gl/react-google-maps";
+import { useRef, useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
+import { APIProvider, AdvancedMarker, ControlPosition, Map, useMap } from "@vis.gl/react-google-maps";
 import MapDrawControl, { type DrawCoordinate } from "@/components/MapDrawControl";
 import MapInfoCard from "@/components/MapInfoCard";
 
@@ -27,6 +28,121 @@ interface PropertyMapProps {
   onOpenOverlay?: (listingKey: string) => void;
   savedListingKeys?: Set<string>;
   onToggleSave?: (listingKey: string) => void;
+}
+
+/** Renders InfoCard as a portal into the map container, clamped to stay fully visible. */
+function InfoCardOverlay({
+  marker,
+  onClose,
+  onOpenOverlay,
+  savedListingKeys,
+  onToggleSave,
+  containerEl,
+}: {
+  marker: { listingKey: string; lat: number; lng: number };
+  onClose: () => void;
+  onOpenOverlay?: (key: string) => void;
+  savedListingKeys?: Set<string>;
+  onToggleSave?: (key: string) => void;
+  containerEl: HTMLDivElement;
+}) {
+  const map = useMap();
+  const cardRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<google.maps.OverlayView | null>(null);
+  const [pos, setPos] = useState<{ left: number; top: number } | null>(null);
+
+  // Create OverlayView for projection access
+  useEffect(() => {
+    if (!map) return;
+    const ov = new google.maps.OverlayView();
+    ov.draw = () => {};
+    ov.onAdd = () => {};
+    ov.onRemove = () => {};
+    ov.setMap(map);
+    overlayRef.current = ov;
+    return () => {
+      ov.setMap(null);
+      overlayRef.current = null;
+    };
+  }, [map]);
+
+  const reposition = useCallback(() => {
+    const proj = overlayRef.current?.getProjection();
+    if (!proj) return;
+
+    const px = proj.fromLatLngToContainerPixel(
+      new google.maps.LatLng(marker.lat, marker.lng)
+    );
+    if (!px) return;
+
+    const card = cardRef.current;
+    const cW = containerEl.offsetWidth;
+    const cH = containerEl.offsetHeight;
+    const cardW = card?.offsetWidth || 380;
+    const cardH = card?.offsetHeight || 130;
+    const pad = 10;
+
+    // Default: centered above marker
+    let left = px.x - cardW / 2;
+    let top = px.y - cardH - 15;
+
+    // If card goes above container → show below marker
+    if (top < pad) {
+      top = px.y + 30;
+    }
+
+    // Clamp horizontal
+    left = Math.max(pad, Math.min(left, cW - cardW - pad));
+
+    // Clamp bottom
+    if (top + cardH > cH - pad) {
+      top = cH - cardH - pad;
+    }
+
+    setPos({ left, top });
+  }, [marker.lat, marker.lng, containerEl]);
+
+  // Track map panning/zooming
+  useEffect(() => {
+    if (!map) return;
+    const timer = setTimeout(reposition, 80);
+    const listener = map.addListener("bounds_changed", reposition);
+    return () => {
+      clearTimeout(timer);
+      listener.remove();
+    };
+  }, [map, reposition]);
+
+  // Re-position when card resizes (e.g. after SWR data loads)
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!card) return;
+    const observer = new ResizeObserver(reposition);
+    observer.observe(card);
+    return () => observer.disconnect();
+  }, [reposition]);
+
+  return createPortal(
+    <div
+      ref={cardRef}
+      className="absolute z-[1000]"
+      style={
+        pos
+          ? { left: pos.left, top: pos.top }
+          : { left: 0, top: 0, opacity: 0, pointerEvents: "none" as const }
+      }
+      onClick={(e) => e.stopPropagation()}
+    >
+      <MapInfoCard
+        listingKey={marker.listingKey}
+        onClose={onClose}
+        onOpenOverlay={onOpenOverlay}
+        isSaved={savedListingKeys?.has(marker.listingKey)}
+        onToggleSave={onToggleSave}
+      />
+    </div>,
+    containerEl
+  );
 }
 
 function formatPriceLabel(value: number): string {
@@ -136,22 +252,16 @@ export default function PropertyMap({
             );
           })}
 
-          {/* InfoCard popup — anchored to clicked marker */}
-          {infoCardMarker && (
-            <AdvancedMarker
-              position={{ lat: infoCardMarker.lat, lng: infoCardMarker.lng }}
-              zIndex={1000}
-            >
-              <div className="relative" style={{ transform: "translate(-50%, -100%)", marginBottom: "8px" }}>
-                <MapInfoCard
-                  listingKey={infoCardMarker.listingKey}
-                  onClose={() => setInfoCardMarker(null)}
-                  onOpenOverlay={onOpenOverlay}
-                  isSaved={savedListingKeys?.has(infoCardMarker.listingKey)}
-                  onToggleSave={onToggleSave}
-                />
-              </div>
-            </AdvancedMarker>
+          {/* InfoCard — rendered via portal, uses map projection for smart positioning */}
+          {infoCardMarker && containerRef.current && (
+            <InfoCardOverlay
+              marker={infoCardMarker}
+              onClose={() => setInfoCardMarker(null)}
+              onOpenOverlay={onOpenOverlay}
+              savedListingKeys={savedListingKeys}
+              onToggleSave={onToggleSave}
+              containerEl={containerRef.current}
+            />
           )}
 
           {/* MUST be inside <Map> so useMap() returns the map instance */}
