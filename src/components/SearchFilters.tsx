@@ -228,7 +228,14 @@ export function AddressSearchInput({
       items.push({ label: "Current Location", type: "location" });
     }
 
-    if (trimmed.length < 2) return items;
+    // Show default city suggestions on focus when nothing typed
+    if (trimmed.length < 2) {
+      const defaults = CITY_SUGGESTIONS.slice(0, 8);
+      for (const c of defaults) {
+        items.push({ label: c, type: "city" });
+      }
+      return items;
+    }
 
     // Zip code matching
     if (/^\d{2,5}$/.test(trimmed)) {
