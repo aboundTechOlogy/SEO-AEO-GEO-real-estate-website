@@ -759,7 +759,7 @@ function FullScreenPhotoViewer({
   const gmapsKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
   return (
-    <div className="fixed inset-0 z-[300] flex flex-col bg-black overflow-hidden">
+    <div className="fixed inset-0 z-[300] bg-black overflow-y-auto">
       {/* Header bar — matches Carroll's fullScreenModal header */}
       <div className="shrink-0 bg-white">
         <div className="h-[80px] px-[15px] flex items-center justify-between gap-[10px] max-w-[1368px] mx-auto">
@@ -791,9 +791,9 @@ function FullScreenPhotoViewer({
       </div>
 
       {/* Content — Photos or Map */}
-      <div className="flex-1 min-h-0 p-[30px] flex items-center justify-center overflow-hidden">
+      <div className="px-[15px] pt-[8px] pb-[15px] flex items-center justify-center">
         {viewMode === "photos" ? (
-          <div className="relative max-w-[1368px] w-full" style={{ aspectRatio: '32/18', maxHeight: '100%' }}>
+          <div className="relative max-w-[1368px] w-full" style={{ aspectRatio: '3/2' }}>
             {url && !failed ? (
               <img
                 src={url}
