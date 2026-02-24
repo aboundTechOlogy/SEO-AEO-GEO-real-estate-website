@@ -35,6 +35,61 @@ const IDX_DEFAULT_DISCLAIMER =
   "The compilation of listings and each individual listing are copyrighted. The information provided is for consumers' personal, noncommercial use and may not be used for any purpose other than to identify prospective properties consumers may be interested in purchasing. " +
   "All properties are subject to prior sale or withdrawal. All information provided is deemed reliable but is not guaranteed accurate, and should be independently verified.";
 
+// ---------------------------------------------------------------------------
+// SEO-friendly property URL slugs
+// Format: /property/5961-sw-56th-ter-south-miami-fl-33143-a11961479/
+// ---------------------------------------------------------------------------
+
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/** Build a slug from a full BridgeProperty. */
+export function generatePropertySlug(property: BridgeProperty): string {
+  const parts = [
+    property.StreetNumber,
+    property.StreetName,
+    property.StreetSuffix,
+    property.UnitNumber,
+    property.City,
+    property.StateOrProvince,
+    property.PostalCode,
+    property.ListingKey,
+  ].filter(Boolean);
+  return slugify(parts.join(" "));
+}
+
+/** Build a slug from a BridgeIdxListing (search-result shape). */
+export function generateListingSlug(listing: BridgeIdxListing): string {
+  const parts = [
+    listing.address,
+    listing.city,
+    listing.state,
+    listing.zip,
+    listing.id,
+  ].filter(Boolean);
+  return slugify(parts.join(" "));
+}
+
+/**
+ * Extract the ListingKey from a property slug or raw key.
+ * Looks for a 5-digit zip code near the end; everything after it is the key.
+ * Falls back to the full value if no zip pattern is found (raw key).
+ */
+export function extractListingKeyFromSlug(slugOrKey: string): string {
+  // Match: ...-{5-digit-zip}-{listingKey}
+  const match = slugOrKey.match(/-(\d{5})-([^/]+)$/);
+  if (match) {
+    // Restore underscores that slugify converted to hyphens (e.g. P_xxx mock keys)
+    return match[2];
+  }
+  // No zip pattern — assume it's a raw listingKey
+  return slugOrKey;
+}
+
 export function getListingPhotos(property: BridgeProperty): BridgeMedia[] {
   return [...property.Media]
     .filter((item) => item.MediaCategory === "Photo")
@@ -408,7 +463,7 @@ export function buildSimilarListingSlots(
     return {
       key: `similar-${listing.id}`,
       listingKey: listing.id,
-      href: `/property/${listing.id}/`,
+      href: `/property/${generateListingSlug(listing)}/`,
       imageUrl: listing.photos[0]?.url || null,
       priceLabel: formatCurrency(listing.price),
       addressLine,

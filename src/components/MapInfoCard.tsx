@@ -4,6 +4,7 @@ import { useState } from "react";
 import useSWR from "swr";
 import { IconLove } from "@/components/IdxIcons";
 import type { BridgeProperty } from "@/lib/bridge";
+import { generatePropertySlug } from "@/lib/property-utils";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -39,7 +40,8 @@ export default function MapInfoCard({ listingKey, onClose, onOpenOverlay, isSave
 
   const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const url = `${window.location.origin}/property/${listingKey}/`;
+    const slug = property ? generatePropertySlug(property) : listingKey;
+    const url = `${window.location.origin}/property/${slug}/`;
     if (navigator.share) {
       navigator.share({ title: "Property", url }).catch(() => {});
     } else {

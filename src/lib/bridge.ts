@@ -1052,10 +1052,19 @@ export function formatCompactPrice(value: number): string {
   return formatCurrency(value);
 }
 
+function slugifyForUrl(text: string): string {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
 export function propertyToCardListing(property: BridgeProperty, sold = false): PropertyCardListing {
   const photos = getListingPhotos(property);
   const photo = photos[0]?.MediaURL;
   const amount = sold ? property.ClosePrice || property.ListPrice : property.ListPrice;
+  const slug = slugifyForUrl(
+    [property.StreetNumber, property.StreetName, property.StreetSuffix, property.UnitNumber,
+     property.City, property.StateOrProvince, property.PostalCode, property.ListingKey]
+      .filter(Boolean).join(" ")
+  );
 
   return {
     image: photo,
@@ -1068,7 +1077,7 @@ export function propertyToCardListing(property: BridgeProperty, sold = false): P
     baths: property.BathroomsTotalInteger,
     sqft: property.LivingArea,
     status: sold ? "SOLD" : property.StandardStatus,
-    href: `/property/${property.ListingKey}/`,
+    href: `/property/${slug}/`,
     isSold: sold,
   };
 }

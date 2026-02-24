@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import PropertyInquiryForm from "@/components/PropertyInquiryForm";
 import {
   AmenitiesSection,
@@ -15,8 +15,10 @@ import {
   buildIdxDetailSections,
   buildIdxLegalDisclosure,
   calculatePricePerSqft,
+  extractListingKeyFromSlug,
   formatAddress,
   formatCurrency,
+  generatePropertySlug,
   getListingPhotos,
 } from "@/lib/property-utils";
 
@@ -27,8 +29,9 @@ interface Props {
 export const revalidate = 3600;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { listingKey } = await params;
-  const property = await getProperty(listingKey);
+  const { listingKey: slugOrKey } = await params;
+  const actualKey = extractListingKeyFromSlug(slugOrKey);
+  const property = await getProperty(actualKey);
 
   if (!property) {
     return {
@@ -40,19 +43,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const address = formatAddress(property);
   const photos = getListingPhotos(property);
   const price = property.StandardStatus === "Closed" ? property.ClosePrice || property.ListPrice : property.ListPrice;
+  const slug = generatePropertySlug(property);
+  const canonicalUrl = `https://iamandrewwhalen.com/property/${slug}/`;
 
   return {
     title: `${address} | ${formatCurrency(price)} | Andrew Whalen`,
     description:
       property.PublicRemarks?.slice(0, 160) ||
       `${address} in ${property.City}, ${property.StateOrProvince} ${property.PostalCode}.`,
+    alternates: { canonical: canonicalUrl },
     openGraph: {
       title: `${address} | Andrew Whalen`,
       description:
         property.PublicRemarks?.slice(0, 160) ||
         `${address} in ${property.City}, ${property.StateOrProvince} ${property.PostalCode}.`,
       type: "website",
-      url: `https://iamandrewwhalen.com/property/${property.ListingKey}/`,
+      url: canonicalUrl,
       images: photos[0]?.MediaURL
         ? [{ url: photos[0].MediaURL, alt: address }]
         : undefined,
@@ -94,11 +100,18 @@ function estimateMonthlyPayment(price: number | null | undefined): string | null
 }
 
 export default async function PropertyDetailPage({ params }: Props) {
-  const { listingKey } = await params;
-  const property = await getProperty(listingKey);
+  const { listingKey: slugOrKey } = await params;
+  const actualKey = extractListingKeyFromSlug(slugOrKey);
+  const property = await getProperty(actualKey);
 
   if (!property) {
     notFound();
+  }
+
+  // 301 redirect raw listingKey URLs → canonical slug URL
+  const slug = generatePropertySlug(property);
+  if (slugOrKey !== slug) {
+    permanentRedirect(`/property/${slug}/`);
   }
 
   const photos = getListingPhotos(property);
@@ -137,7 +150,7 @@ export default async function PropertyDetailPage({ params }: Props) {
     "@type": "RealEstateListing",
     name: address,
     description: property.PublicRemarks || `${address} listing details`,
-    url: `https://iamandrewwhalen.com/property/${property.ListingKey}/`,
+    url: `https://iamandrewwhalen.com/property/${slug}/`,
     datePosted: property.ListingContractDate || undefined,
     offers: {
       "@type": "Offer",
@@ -238,7 +251,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                 addressShort={[property.StreetNumber, property.StreetName].filter(Boolean).join(" ") || address}
                 addressLong={`${property.City || ""}, ${property.StateOrProvince || ""} ${property.PostalCode || ""}`}
               />
-              <SimilarListingsSection listingKey={listingKey} city={property.City} listings={similarListings} />
+              <SimilarListingsSection listingKey={actualKey} city={property.City} listings={similarListings} />
 
               <section className="bg-[#f5f5f5] border-b border-gray-200 px-[15px] py-[20px] text-[11px] text-gray-500 leading-[1.6] space-y-2">
                 {legal.courtesyLine && <p>{legal.courtesyLine}</p>}

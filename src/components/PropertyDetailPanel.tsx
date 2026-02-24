@@ -13,6 +13,7 @@ import {
   calculatePricePerSqft,
   formatAddress,
   formatCurrency,
+  generatePropertySlug,
   getListingPhotos,
   type IdxDetailRow,
 } from "@/lib/property-utils";
@@ -1039,10 +1040,11 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
   const lat = property.Latitude;
   const lng = property.Longitude;
 
+  const propertySlug = property ? generatePropertySlug(property) : listingKey;
   const canonicalUrl =
     typeof window !== "undefined"
-      ? `${window.location.origin}/property/${listingKey}/`
-      : `/property/${listingKey}/`;
+      ? `${window.location.origin}/property/${propertySlug}/`
+      : `/property/${propertySlug}/`;
 
   function toggleSaved() {
     try {
@@ -1085,7 +1087,7 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
   }
 
   function openCanonicalDetailsPage() {
-    window.location.assign(`/property/${listingKey}/`);
+    window.location.assign(`/property/${propertySlug}/`);
   }
 
   return (

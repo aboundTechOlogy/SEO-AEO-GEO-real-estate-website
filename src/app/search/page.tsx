@@ -12,6 +12,7 @@ import type { SearchFilterValues } from "@/components/SearchFilters";
 import PropertyMap from "@/components/PropertyMap";
 import PropertyDetailPanel from "@/components/PropertyDetailPanel";
 import { IconLove } from "@/components/IdxIcons";
+import { generateListingSlug } from "@/lib/property-utils";
 import type {
   BridgeIdxListing,
   BridgeIdxMarker,
@@ -164,7 +165,7 @@ function toUiListing(listing: BridgeIdxListing): UiListing {
     baths: listing.baths,
     sqft: listing.sqft || undefined,
     status: listing.status || undefined,
-    href: `/property/${listing.id}/`,
+    href: `/property/${generateListingSlug(listing)}/`,
     listDate: listing.listDate || undefined,
     photoCount: listing.photoCount,
     lat: listing.lat,
