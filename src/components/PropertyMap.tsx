@@ -84,7 +84,6 @@ export default function PropertyMap({
         <Map
           defaultCenter={center}
           defaultZoom={zoom}
-          mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID || "DEMO_MAP_ID"}
           style={{ width: "100%", height: "100%" }}
           gestureHandling={interactive ? "greedy" : "none"}
           clickableIcons={interactive}

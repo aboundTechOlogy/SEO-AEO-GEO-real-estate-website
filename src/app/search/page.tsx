@@ -285,22 +285,74 @@ function Pagination({
   const canPrev = page > 1;
   const canNext = page < totalPages;
 
+  // Build page numbers: show up to 7 pages centered around current
+  const pageNumbers: (number | "...")[] = [];
+  const maxVisible = 7;
+
+  if (totalPages <= maxVisible) {
+    for (let i = 1; i <= totalPages; i++) pageNumbers.push(i);
+  } else {
+    const half = Math.floor(maxVisible / 2);
+    let start = Math.max(1, page - half);
+    let end = start + maxVisible - 1;
+
+    if (end > totalPages) {
+      end = totalPages;
+      start = end - maxVisible + 1;
+    }
+
+    if (start > 1) {
+      pageNumbers.push(1);
+      if (start > 2) pageNumbers.push("...");
+    }
+
+    for (let i = start; i <= end; i++) {
+      if (!pageNumbers.includes(i)) pageNumbers.push(i);
+    }
+
+    if (end < totalPages) {
+      if (end < totalPages - 1) pageNumbers.push("...");
+      if (!pageNumbers.includes(totalPages)) pageNumbers.push(totalPages);
+    }
+  }
+
+  const btnBase =
+    "w-9 h-9 rounded border text-sm transition-colors flex items-center justify-center";
+
   return (
-    <div className="flex items-center justify-center gap-3 py-8 bg-white">
+    <div className="flex items-center justify-center gap-1.5 py-8 bg-white">
       <button
         onClick={() => canPrev && onPageChange(page - 1)}
         disabled={!canPrev}
-        className="w-9 h-9 rounded border border-gray-300 text-gray-600 text-sm hover:bg-gray-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        className={`${btnBase} border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed`}
       >
         {"<"}
       </button>
-      <p className="text-sm text-gray-700">
-        Page {page} of {totalPages}
-      </p>
+
+      {pageNumbers.map((p, i) =>
+        p === "..." ? (
+          <span key={`ellipsis-${i}`} className="w-6 text-center text-gray-400 text-sm">
+            ...
+          </span>
+        ) : (
+          <button
+            key={p}
+            onClick={() => onPageChange(p)}
+            className={`${btnBase} ${
+              p === page
+                ? "bg-gray-900 text-white border-gray-900"
+                : "border-gray-300 text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            {p}
+          </button>
+        )
+      )}
+
       <button
         onClick={() => canNext && onPageChange(page + 1)}
         disabled={!canNext}
-        className="w-9 h-9 rounded border border-gray-300 text-gray-600 text-sm hover:bg-gray-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        className={`${btnBase} border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed`}
       >
         {">"}
       </button>
@@ -560,6 +612,20 @@ function SearchPage() {
   useEffect(() => {
     setSavedListingKeys(readSavedListingKeys());
   }, []);
+
+  // Hide footer on map view — map should be permanently sticky with no footer
+  useEffect(() => {
+    const footer = document.querySelector("footer");
+    if (!footer) return;
+    if (view === "map") {
+      footer.style.display = "none";
+    } else {
+      footer.style.display = "";
+    }
+    return () => {
+      footer.style.display = "";
+    };
+  }, [view]);
 
   // Sync URL on state changes (after hydration)
   useEffect(() => {
@@ -889,11 +955,11 @@ function SearchPage() {
               ) : showNoResults ? (
                 <div className="py-14 text-center text-sm text-gray-500">No properties match this search.</div>
               ) : (
-                <div className="grid grid-cols-1 xl:grid-cols-2">
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-[10px] p-[5px]">
                   {listings.map((listing) => (
                     <div
                       key={listing.id}
-                      className={`px-[5px] mb-[10px] rounded-[10px] transition-shadow duration-200 ${
+                      className={`rounded-[10px] transition-shadow duration-200 ${
                         highlightedListingId === listing.id
                           ? "ring-2 ring-black"
                           : hoveredListingId === listing.id
@@ -909,6 +975,7 @@ function SearchPage() {
                       <SearchPropertyCard
                         listingKey={listing.id}
                         image={listing.image}
+                        photos={listing.photos}
                         price={listing.price}
                         address={listing.address}
                         city={listing.city}

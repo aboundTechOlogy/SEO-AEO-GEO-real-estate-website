@@ -725,32 +725,42 @@ export async function fetchIdxSearch(params: BridgeIdxSearchParams = {}): Promis
 export async function fetchIdxMarkers(params: BridgeIdxSearchParams = {}): Promise<BridgeIdxMarkersResponse> {
   const safeParams: BridgeIdxSearchParams = {
     ...params,
-    top: 500,
+    top: 200,
     skip: 0,
     orderby: "ListPrice desc",
     status: params.status || "Active",
   };
 
-  const query = new URLSearchParams();
-  query.set("$select", IDX_MARKER_SELECT_FIELDS);
-  query.set("$count", "true");
-  query.set("$top", "500");
-  query.set("$skip", "0");
-
   const filters = buildIdxFilters(safeParams);
-  if (filters.length > 0) {
-    query.set("$filter", filters.join(" and "));
-  }
+  const filterStr = filters.length > 0 ? filters.join(" and ") : undefined;
+
+  // Bridge production API limits $top to 200, so paginate to get more markers
+  const PAGE_SIZE = 200;
+  const MAX_MARKERS = 500;
+  const allMarkers: BridgeIdxMarker[] = [];
+  let total = 0;
 
   try {
-    const response = await bridgeFetch<unknown>(query, IDX_SEARCH_REVALIDATE_SECONDS);
-    const markers = (response.value || []).map((item) => toIdxMarker(item));
-    const total = typeof response["@odata.count"] === "number" ? response["@odata.count"] : markers.length;
+    for (let skip = 0; skip < MAX_MARKERS; skip += PAGE_SIZE) {
+      const query = new URLSearchParams();
+      query.set("$select", IDX_MARKER_SELECT_FIELDS);
+      query.set("$count", "true");
+      query.set("$top", String(PAGE_SIZE));
+      query.set("$skip", String(skip));
+      if (filterStr) query.set("$filter", filterStr);
 
-    return {
-      markers,
-      total,
-    };
+      const response = await bridgeFetch<unknown>(query, IDX_SEARCH_REVALIDATE_SECONDS);
+      const batch = (response.value || []).map((item) => toIdxMarker(item));
+      if (skip === 0) {
+        total = typeof response["@odata.count"] === "number" ? response["@odata.count"] : batch.length;
+      }
+      allMarkers.push(...batch);
+
+      // Stop if we got fewer than a full page (no more results)
+      if (batch.length < PAGE_SIZE) break;
+    }
+
+    return { markers: allMarkers, total };
   } catch (error) {
     console.error("fetchIdxMarkers failed:", error);
     if (IS_DEV) {
