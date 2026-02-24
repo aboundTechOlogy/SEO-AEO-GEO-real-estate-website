@@ -121,21 +121,21 @@ export function IconRuler({ className }: IconProps) {
 
 export function IconClose({ className }: IconProps) {
   return (
-    <I className={className}>
-      <path d="M6 18L18 6M6 6l12 12" />
-    </I>
+    <svg className={className || "w-4 h-4"} viewBox="0 -960 960 960" fill="currentColor">
+      <path d="m256-168-88-88 224-224-224-224 88-88 224 224 224-224 88 88-224 224 224 224-88 88-224-224-224 224Z" />
+    </svg>
   );
 }
 
 export function IconLove({ className, active }: IconProps & { active?: boolean }) {
   return active ? (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth={1.8}>
-      <path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+    <svg className={className || "w-4 h-4"} viewBox="0 -960 960 960" fill="currentColor">
+      <path d="m479-74-81-73q-105-94-173.5-163t-108-124Q77-489 61-536t-16-98q0-109 72.5-182T299-889q51 0 97 18t83 53q37-35 83-53t97-18q109 0 182.5 73T915-634q0 50-15.5 97T844-435.5q-40 54.5-109 124T560-147l-81 73Z" />
     </svg>
   ) : (
-    <I className={className}>
-      <path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-    </I>
+    <svg className={className || "w-4 h-4"} viewBox="0 -960 960 960" fill="currentColor">
+      <path d="m479-74-81-73q-105-94-173.5-163t-108-124Q77-489 61-536t-16-98q0-108.95 72.74-181.98Q190.47-889 299-889q50.93 0 96.97 18Q442-853 479-818q37-35 83.03-53 46.04-18 96.97-18 109.38 0 182.69 73.02Q915-742.95 915-634q0 50-15.5 97T844-435.5q-40 54.5-109 124T560-147l-81 73Zm0-169q94-86 154.5-145t95-103q34.5-44 47.5-77.15 13-33.15 13-65.83 0-56.02-37.01-92.52-37-36.5-92.51-36.5Q616-763 578-736.5 540-710 525-669h-91q-14.53-41-53.26-67.5Q342-763 299.27-763q-54.54 0-90.91 36.5Q172-690 172-634q0 33.76 13.44 67.99 13.44 34.24 48 78.13Q268-444 327.5-385.5 387-327 479-243Zm2-260Z" />
+    </svg>
   );
 }
 
@@ -149,44 +149,33 @@ export function IconShared({ className }: IconProps) {
 
 export function IconOpen({ className }: IconProps) {
   return (
-    <I className={className}>
-      <path d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5" />
-      <path d="M15 3h6v6" />
-      <path d="M10 14L21 3" />
-    </I>
+    <svg className={className || "w-4 h-4"} viewBox="0 -960 960 960" fill="currentColor">
+      <path d="M212-86q-53 0-89.5-36.5T86-212v-536q0-53 36.5-89.5T212-874h268v126H212v536h536v-268h126v268q0 53-36.5 89.5T748-86H212Zm207-246-87-87 329-329H560v-126h314v314H748v-101L419-332Z" />
+    </svg>
   );
 }
 
 export function IconExpand({ className }: IconProps) {
   return (
-    <I className={className}>
-      <path d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9" />
-      <path d="M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9" />
-      <path d="M20.25 20.25v-4.5m0 4.5h-4.5m4.5 0L15 15" />
-      <path d="M3.75 20.25h4.5m-4.5 0v-4.5m0 4.5L9 15" />
-    </I>
+    <svg className={className || "w-4 h-4"} viewBox="0 -960 960 960" fill="currentColor">
+      <path d="M86-86v-260h126v134h134v126H86Zm529 0v-126h133v-134h126v260H615ZM86-615v-259h260v126H212v133H86Zm662 0v-133H615v-126h259v259H748Z" />
+    </svg>
   );
 }
 
 export function IconFullscreen({ className }: IconProps) {
   return (
-    <I className={className}>
-      <path d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9" />
-      <path d="M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9" />
-      <path d="M20.25 20.25v-4.5m0 4.5h-4.5m4.5 0L15 15" />
-      <path d="M3.75 20.25h4.5m-4.5 0v-4.5m0 4.5L9 15" />
-    </I>
+    <svg className={className || "w-4 h-4"} viewBox="0 -960 960 960" fill="currentColor">
+      <path d="M86-86v-260h126v134h134v126H86Zm529 0v-126h133v-134h126v260H615ZM86-615v-259h260v126H212v133H86Zm662 0v-133H615v-126h259v259H748Z" />
+    </svg>
   );
 }
 
 export function IconFullscreenExit({ className }: IconProps) {
   return (
-    <I className={className}>
-      <path d="M9 3.75v4.5m0 0H4.5m4.5 0L3.75 3.75" />
-      <path d="M15 3.75v4.5m0 0h4.5m-4.5 0l5.25-4.5" />
-      <path d="M9 20.25v-4.5m0 0H4.5m4.5 0l-5.25 4.5" />
-      <path d="M15 20.25v-4.5m0 0h4.5m-4.5 0l5.25 4.5" />
-    </I>
+    <svg className={className || "w-4 h-4"} viewBox="0 -960 960 960" fill="currentColor">
+      <path d="M220-86v-134H86v-126h260v260H220Zm395 0v-260h259v126H741v134H615ZM86-615v-126h134v-133h126v259H86Zm529 0v-259h126v133h133v126H615Z" />
+    </svg>
   );
 }
 
@@ -359,16 +348,16 @@ export function IconChevronDown({ className }: IconProps) {
 
 export function IconPhone({ className }: IconProps) {
   return (
-    <I className={className}>
-      <path d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
-    </I>
+    <svg className={className || "w-4 h-4"} viewBox="0 -960 960 960" fill="currentColor">
+      <path d="M800-86q-131 0-259-57T307-305Q201-411 144-539.5T87-799q0-32 21-53.5t53-21.5h161q37 0 60 18t31 52l25 119q6 31-.5 53T411-593l-103 90q16 26 37.5 52.5T396-396q26 26 50 45.5t48 33.5l101-98q20-19 44.5-25.5t53.5-.5l111 25q35 10 52.5 31t17.5 55v169q0 32-21.5 53.5T800-86Z" />
+    </svg>
   );
 }
 
 export function IconEnvelope({ className }: IconProps) {
   return (
-    <I className={className}>
-      <path d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
-    </I>
+    <svg className={className || "w-4 h-4"} viewBox="0 -960 960 960" fill="currentColor">
+      <path d="M172-126q-53 0-89.5-36.5T46-252v-456q0-53 36.5-89.5T172-834h616q53 0 89.5 36.5T914-708v456q0 53-36.5 89.5T788-126H172Zm308-271 308-200v-111L480-508 172-708v111l308 200Z" />
+    </svg>
   );
 }
