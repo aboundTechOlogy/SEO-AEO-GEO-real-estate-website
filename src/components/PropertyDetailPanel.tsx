@@ -105,16 +105,35 @@ export function DetailSection({
   iconMap?: Record<string, ReactNode>;
 }) {
   if (rows.length === 0) return null;
+
+  // Sections with icons (Basic Information) use the icon+grid row layout
+  if (iconMap) {
+    return (
+      <section className="bg-white border-b border-gray-200">
+        <SectionTitleStrip title={title} />
+        <div className="px-[15px] py-[12px]">
+          <ul className="grid md:grid-cols-2 gap-x-6">
+            {rows.map((row) => (
+              <DetailRow key={row.label} label={row.label} value={row.value} icon={iconMap[row.label]} />
+            ))}
+          </ul>
+        </div>
+      </section>
+    );
+  }
+
+  // Sections without icons (Exterior, Interior, Property Features) use bullet list like Chad's
   return (
     <section className="bg-white border-b border-gray-200">
       <SectionTitleStrip title={title} />
-      <div className="px-[15px] py-[12px]">
-        <ul className="grid md:grid-cols-2 gap-x-6">
+      <ul className="px-[15px] py-[12px] grid md:grid-cols-2 gap-x-8 gap-y-1.5 text-[14px] text-[#1a1a1a] leading-[1.6]">
         {rows.map((row) => (
-            <DetailRow key={row.label} label={row.label} value={row.value} icon={iconMap?.[row.label]} />
+          <li key={row.label} className="flex items-start gap-2">
+            <span className="text-gray-400 mt-[2px]">•</span>
+            <span><strong>{row.label}:</strong> {row.value}</span>
+          </li>
         ))}
-        </ul>
-      </div>
+      </ul>
     </section>
   );
 }
