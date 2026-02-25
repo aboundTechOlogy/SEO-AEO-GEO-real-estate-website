@@ -73,9 +73,9 @@ function SectionTitleStrip({ title }: { title: string }) {
 
 function DetailRow({ label, value, icon }: { label: string; value: string; icon?: ReactNode }) {
   return (
-    <li className="grid gap-1.5 border-b border-gray-200 py-[10px] last:border-b-0 sm:grid-cols-[230px_minmax(0,1fr)]">
-      <p className="text-[13px] text-gray-600 flex items-center gap-2">
-        {icon && <span className="w-4 h-4 shrink-0 text-gray-500">{icon}</span>}
+    <li className="grid gap-1.5 border-b border-gray-200 py-[12px] last:border-b-0 sm:grid-cols-[230px_minmax(0,1fr)] items-center">
+      <p className="text-[13px] text-gray-600 flex items-center gap-2.5">
+        {icon && <span className="w-7 h-7 shrink-0 text-gray-500">{icon}</span>}
         <span>{label}</span>
       </p>
       <p className="text-[14px] text-[#1a1a1a] leading-[1.5]">{value}</p>
