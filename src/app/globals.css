@@ -125,12 +125,12 @@ html {
 .phone-input-wrapper {
   display: flex !important;
   width: 100%;
+  gap: 8px;
 }
 .phone-input-wrapper .react-international-phone-country-selector-button {
   border: 1px solid #d1d5db;
-  border-right: none;
   border-radius: 0;
-  padding: 0 12px;
+  padding: 0 16px 0 12px;
   height: 100%;
   background: white;
 }
