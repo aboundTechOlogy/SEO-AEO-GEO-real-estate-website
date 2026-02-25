@@ -219,13 +219,13 @@ export function SimilarListingsSection({
 
   return (
     <section className="bg-white border-b border-gray-200">
-      <SectionTitleStrip title="Similar Properties For Sale" />
+      <SectionTitleStrip title={`Similar Properties For Sale in ${city || "This Area"}`} />
       <div className="px-[15px] py-[12px]">
-        <p className="text-[14px] text-gray-600 mb-3">
-          {isEmptyFeed
-            ? `No active similar listings are available in ${city || "this area"} right now.`
-            : `Explore more properties in ${city || "this area"}.`}
-        </p>
+        {isEmptyFeed && (
+          <p className="text-[14px] text-gray-600 mb-3">
+            No active similar listings are available right now.
+          </p>
+        )}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {slots.map((slot) =>
             slot.href ? (
