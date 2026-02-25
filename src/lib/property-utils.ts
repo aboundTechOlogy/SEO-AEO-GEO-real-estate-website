@@ -402,7 +402,6 @@ export function buildIdxDetailSections(property: BridgeProperty): IdxDetailSecti
     row("Subdivision Complex", toNonEmptyString(property.SubdivisionName)),
     row("Subdivision Info", toNonEmptyString(property.SubdivisionName)),
     row("Tax Amount", formatCurrencyOrNull(property.TaxAnnualAmount)),
-    row("Tax Legal desc", toNonEmptyString(property.TaxLegalDescription)),
     row("Tax Year", property.TaxYear ? String(property.TaxYear) : null),
     row("Terms Considered", joinList(property.ListingTerms)),
     row("Type of Property", toNonEmptyString(property.PropertySubType) || toNonEmptyString(property.PropertyType)),
@@ -411,6 +410,7 @@ export function buildIdxDetailSections(property: BridgeProperty): IdxDetailSecti
     row("Window Features", null),
     row("Year Built Details", property.YearBuilt ? String(property.YearBuilt) : null),
     row("Waterfront Description", waterfrontDescription),
+    row("Tax Legal desc", toNonEmptyString(property.TaxLegalDescription)),
   ]);
 
   return {
