@@ -1,6 +1,8 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { PhoneInput } from "react-international-phone";
+import "react-international-phone/style.css";
 
 type SubmitState = "idle" | "submitting" | "success" | "error";
 
@@ -13,6 +15,7 @@ interface PropertyInquiryFormProps {
 export default function PropertyInquiryForm({ listingKey, address, theme = "dark" }: PropertyInquiryFormProps) {
   const [state, setState] = useState<SubmitState>("idle");
   const [agreed, setAgreed] = useState(true);
+  const [phone, setPhone] = useState("");
 
   const inputClass =
     theme === "light"
@@ -82,19 +85,14 @@ export default function PropertyInquiryForm({ listingKey, address, theme = "dark
         className={inputClass}
       />
 
-      <div className="flex">
-        <div className={`flex items-center gap-1 px-3 border border-r-0 border-gray-300 ${theme === "light" ? "bg-white text-[#1a1a1a]" : "bg-black/20 text-white border-white/15"}`}>
-          <span className="text-sm">🇺🇸</span>
-          <svg className="w-3 h-3 opacity-50" viewBox="0 0 12 12" fill="currentColor"><path d="M3 5l3 3 3-3z" /></svg>
-        </div>
-        <input
-          name="phone"
-          type="tel"
-          required
-          placeholder="+1"
-          className={inputClass}
-        />
-      </div>
+      <PhoneInput
+        defaultCountry="us"
+        value={phone}
+        onChange={setPhone}
+        inputProps={{ name: "phone", required: true }}
+        className="phone-input-wrapper"
+        inputClassName={inputClass}
+      />
 
       <textarea
         name="message"

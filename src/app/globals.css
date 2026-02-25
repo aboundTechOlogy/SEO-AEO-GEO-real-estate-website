@@ -120,3 +120,29 @@ html {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
+
+/* Phone input styling to match form inputs */
+.phone-input-wrapper {
+  display: flex !important;
+  width: 100%;
+}
+.phone-input-wrapper .react-international-phone-country-selector-button {
+  border: 1px solid #d1d5db;
+  border-right: none;
+  border-radius: 0;
+  padding: 0 8px;
+  height: auto;
+  background: white;
+}
+.phone-input-wrapper .react-international-phone-input {
+  flex: 1;
+  border: 1px solid #d1d5db;
+  border-radius: 0;
+  padding: 10px 12px;
+  font-size: 14px;
+  width: 100%;
+}
+.phone-input-wrapper .react-international-phone-input:focus {
+  outline: none;
+  border-color: #6b7280;
+}
