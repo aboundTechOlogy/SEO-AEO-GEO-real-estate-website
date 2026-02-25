@@ -130,8 +130,8 @@ html {
   border: 1px solid #d1d5db;
   border-right: none;
   border-radius: 0;
-  padding: 0 8px;
-  height: auto;
+  padding: 0 12px;
+  height: 100%;
   background: white;
 }
 .phone-input-wrapper .react-international-phone-input {
