@@ -170,9 +170,7 @@ export function LocationSection({
     <section className="bg-white border-b border-gray-200">
       {/* Address header with grey background like other sections */}
       <div className="bg-[#f5f5f5] px-[15px] py-[12px] flex items-center gap-3">
-        <svg className="w-8 h-8 shrink-0 text-[#1a1a1a]" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" />
-        </svg>
+        <IconLocation className="w-8 h-8 shrink-0 text-[#1a1a1a]" />
         <div className="min-w-0">
           <p className="text-[16px] font-semibold text-[#1a1a1a] leading-tight">{addressShort || address}</p>
           {addressLong && <p className="text-[13px] text-gray-500 leading-tight mt-[2px]">{addressLong}</p>}

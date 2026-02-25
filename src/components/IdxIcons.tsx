@@ -265,8 +265,8 @@ export function IconBuild({ className }: IconProps) {
 
 export function IconLocation({ className }: IconProps) {
   return (
-    <svg className={className || "w-4 h-4"} viewBox="0 -960 960 960" fill="currentColor">
-      <path d="M480-80Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-472q33 0 56.5-23.5T560-632q0-33-23.5-56.5T480-712q-33 0-56.5 23.5T400-632q0 33 23.5 56.5T480-552Z" />
+    <svg className={className || "w-4 h-4"} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" />
     </svg>
   );
 }
