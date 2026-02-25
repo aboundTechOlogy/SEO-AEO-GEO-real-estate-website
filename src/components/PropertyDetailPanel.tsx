@@ -146,12 +146,10 @@ export function AmenitiesSection({ amenities }: { amenities: string[] }) {
   return (
     <section className="bg-white border-b border-gray-200">
       <SectionTitleStrip title="Amenities" />
-      <ul className="px-[15px] py-[12px] grid sm:grid-cols-2 gap-x-6 gap-y-2 text-[14px] text-gray-700 leading-[1.5]">
+      <ul className="px-[15px] py-[12px] grid md:grid-cols-2 gap-x-8 gap-y-1.5 text-[14px] text-[#1a1a1a] leading-[1.6]">
         {amenities.map((amenity) => (
           <li key={amenity} className="flex items-start gap-2">
-            <span aria-hidden className="text-gray-400 leading-[1.2] mt-[1px]">
-              •
-            </span>
+            <span className="text-gray-400 mt-[2px]">•</span>
             <span>{amenity}</span>
           </li>
         ))}
