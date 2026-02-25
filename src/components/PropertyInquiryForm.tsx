@@ -21,7 +21,7 @@ export default function PropertyInquiryForm({ listingKey, address, theme = "dark
 
   const buttonClass =
     theme === "light"
-      ? "w-full rounded-full border border-gray-300 text-[#1a1a1a] py-3 text-xs uppercase tracking-[0.14em] hover:bg-gray-100 disabled:opacity-60 transition-colors"
+      ? "w-full bg-[#1a1a1a] text-white py-3 text-sm font-medium hover:bg-black disabled:opacity-60 transition-colors"
       : "w-full rounded-full border border-white/30 text-white py-3 text-xs uppercase tracking-[0.14em] hover:bg-white/10 disabled:opacity-60 transition-colors";
 
   const successClass = theme === "light" ? "text-xs text-emerald-700" : "text-xs text-emerald-300";

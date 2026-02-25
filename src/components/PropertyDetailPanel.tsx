@@ -109,7 +109,7 @@ export function DetailSection({
     <section className="bg-white border-b border-gray-200">
       <SectionTitleStrip title={title} />
       <div className="px-[15px] py-[12px]">
-        <ul>
+        <ul className="grid md:grid-cols-2 gap-x-6">
         {rows.map((row) => (
             <DetailRow key={row.label} label={row.label} value={row.value} icon={iconMap?.[row.label]} />
         ))}
@@ -1489,8 +1489,8 @@ export default function PropertyDetailPanel({ property, listingKey }: PropertyDe
                     <div>
                       <p className="text-[#1a1a1a] font-semibold leading-none">Andrew Whalen</p>
                       <p className="text-gray-600 text-sm">LoKation Real Estate</p>
-                      <a href="tel:+13054559744" className="text-sm text-[#1a1a1a] hover:underline">
-                        (305) 455-9744
+                      <a href="tel:+13054559744" className="text-sm text-[#2563eb] hover:underline">
+                        Ph. +1 (305) 455-9744
                       </a>
                     </div>
                   </div>
