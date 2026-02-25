@@ -195,7 +195,7 @@ export function LocationSection({
           {addressLong && <p className="text-[13px] text-gray-500 leading-tight mt-[2px]">{addressLong}</p>}
         </div>
       </div>
-      <div className="relative w-full aspect-[2/1] overflow-hidden bg-gray-100">
+      <div className="relative w-full h-[350px] overflow-hidden bg-gray-100">
         {apiKey ? (
           <APIProvider apiKey={apiKey}>
             <GoogleMap
