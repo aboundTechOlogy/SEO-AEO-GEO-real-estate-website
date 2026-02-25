@@ -78,6 +78,7 @@ export interface BridgeProperty {
   ArchitecturalStyle: string[];
   ConstructionMaterials: string[];
   CommunityFeatures: string[];
+  AssociationAmenities: string[];
   Flooring: string[];
   Levels: string[];
   ListingTerms: string[];
@@ -270,6 +271,7 @@ const IDX_SELECT_FIELDS = [
   "LotSizeAcres",
   "GarageSpaces",
   "AssociationFee",
+  "AssociationAmenities",
 ].join(",");
 
 const IDX_MARKER_SELECT_FIELDS = [
@@ -978,6 +980,7 @@ function normalizeProperty(raw: unknown): BridgeProperty {
     ArchitecturalStyle: toStringArray(record.ArchitecturalStyle),
     ConstructionMaterials: toStringArray(record.ConstructionMaterials),
     CommunityFeatures: toStringArray(record.CommunityFeatures),
+    AssociationAmenities: toStringArray(record.AssociationAmenities),
     Flooring: toStringArray(record.Flooring),
     Levels: toStringArray(record.Levels),
     ListingTerms: toStringArray(record.ListingTerms),
@@ -1289,6 +1292,7 @@ export function mockListingToBridgeProperty(index: number, listing: (typeof MOCK
     ArchitecturalStyle: [],
     ConstructionMaterials: [],
     CommunityFeatures: [],
+    AssociationAmenities: [],
     Flooring: [],
     Levels: [],
     ListingTerms: [],

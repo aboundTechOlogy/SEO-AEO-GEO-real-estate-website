@@ -342,6 +342,7 @@ export function buildIdxDetailSections(property: BridgeProperty): IdxDetailSecti
     ...property.CommunityFeatures,
     ...property.BuildingFeatures,
     ...property.PoolFeatures,
+    ...property.AssociationAmenities,
   ]);
 
   const exteriorFeatureRows = collectRows([
